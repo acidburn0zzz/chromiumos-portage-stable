@@ -1,0 +1,17 @@
+diff -ru a/x11vnc/x11vnc_defs.c b/x11vnc/x11vnc_defs.c
+--- a/x11vnc/x11vnc_defs.c	2012-11-13 16:47:08.709036787 -0800
++++ b/x11vnc/x11vnc_defs.c	2012-11-13 16:47:53.880591396 -0800
+@@ -82,10 +82,10 @@
+ XImage *raw_fb_image = NULL;	/* the raw fb */
+
+ /* corresponding shm structures */
+-XShmSegmentInfo scanline_shm;
+-XShmSegmentInfo fullscreen_shm;
++XShmSegmentInfo scanline_shm = {.shmid = -1};
++XShmSegmentInfo fullscreen_shm = {.shmid = -1};
+ XShmSegmentInfo *tile_row_shm;	/* for all possible row runs */
+-XShmSegmentInfo snaprect_shm;
++XShmSegmentInfo snaprect_shm = {.shmid = -1};
+
+ /* rfb screen info */
+ rfbScreenInfoPtr screen = NULL;

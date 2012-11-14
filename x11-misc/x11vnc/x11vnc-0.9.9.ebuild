@@ -50,7 +50,8 @@ pkg_setup() {
 src_prepare() {
 	epatch \
 		"${FILESDIR}"/${PN}-0.9.11-rename-pointer.patch \
-		"${FILESDIR}"/${PN}-0.9.12-warnings.patch
+		"${FILESDIR}"/${PN}-0.9.12-warnings.patch \
+		"${FILESDIR}"/${PN}-0.9.13-shm-cleanup.patch
 }
 
 src_configure() {
