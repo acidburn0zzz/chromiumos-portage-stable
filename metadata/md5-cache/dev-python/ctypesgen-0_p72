@@ -8,5 +8,5 @@ LICENSE=BSD
 RDEPEND=>=app-admin/eselect-python-20091230 || ( =dev-lang/python-2.7* =dev-lang/python-2.6* =dev-lang/python-2.5* )
 SLOT=0
 SRC_URI=mirror://gentoo/ctypesgen-0_p72.tar.bz2
-_eclasses_=distutils	b4c334e216d998c4ce4b750cb091e42e	multilib	5f4ad6cf85e365e8f0c6050ddd21659e	python	6bbd984910e27780e5d0ea543d83ef84	toolchain-funcs	6526ac6fc9aedf391efb91fcd75ace68
+_eclasses_=distutils	b4c334e216d998c4ce4b750cb091e42e	multilib	5f4ad6cf85e365e8f0c6050ddd21659e	python	6bbd984910e27780e5d0ea543d83ef84	toolchain-funcs	69a2016af67775a812f4c03ba4b0e03e
 _md5_=9e1fb2db94fbbdd4f5e6cf2fab874078
