@@ -1,13 +1,13 @@
-DEFINED_PHASES=compile configure install postinst preinst prepare setup unpack
-DEPEND=media-libs/libsdl[audio,video] >=sys-libs/zlib-1.2.3-r1 amd64? ( >=app-emulation/emul-linux-x86-sdl-10.1 ) ao? ( media-libs/libao ) opengl? ( virtual/opengl ) png? ( media-libs/libpng ) dev-lang/nasm amd64? ( >=sys-apps/portage-2.1 ) || ( >=sys-devel/automake-1.11.1:1.11 >=sys-devel/automake-1.12:1.12 ) >=sys-devel/autoconf-2.68 sys-devel/libtool
+DEFINED_PHASES=compile configure install prepare unpack
+DEPEND=!static? ( media-libs/libsdl[audio,video] media-libs/libsdl >=sys-libs/zlib-1.2.3-r1 amd64? ( >=app-emulation/emul-linux-x86-sdl-10.1 ) ao? ( media-libs/libao ) debug? ( sys-libs/ncurses ) opengl? ( virtual/opengl ) png? ( media-libs/libpng ) ) static? ( media-libs/libsdl[audio,video] media-libs/libsdl[static-libs(+)] >=sys-libs/zlib-1.2.3-r1[static-libs(+)] amd64? ( >=app-emulation/emul-linux-x86-sdl-10.1 ) ao? ( media-libs/libao[static-libs(+)] ) debug? ( sys-libs/ncurses[static-libs(+)] ) opengl? ( virtual/opengl ) png? ( media-libs/libpng[static-libs(+)] ) ) dev-lang/nasm || ( >=sys-devel/automake-1.11.1:1.11 >=sys-devel/automake-1.12:1.12 ) >=sys-devel/autoconf-2.68 sys-devel/libtool
 DESCRIPTION=SNES (Super Nintendo) emulator that uses x86 assembly
-EAPI=2
+EAPI=4
 HOMEPAGE=http://www.zsnes.com/ http://ipherswipsite.com/zsnes/
-IUSE=ao custom-cflags opengl pax_kernel png
+IUSE=ao custom-cflags +debug opengl pax_kernel png static
 KEYWORDS=-* amd64 x86 ~x86-fbsd ~x86-freebsd ~amd64-linux ~x86-linux
 LICENSE=GPL-2
-RDEPEND=media-libs/libsdl[audio,video] >=sys-libs/zlib-1.2.3-r1 amd64? ( >=app-emulation/emul-linux-x86-sdl-10.1 ) ao? ( media-libs/libao ) opengl? ( virtual/opengl ) png? ( media-libs/libpng )
+RDEPEND=!static? ( media-libs/libsdl[audio,video] media-libs/libsdl >=sys-libs/zlib-1.2.3-r1 amd64? ( >=app-emulation/emul-linux-x86-sdl-10.1 ) ao? ( media-libs/libao ) debug? ( sys-libs/ncurses ) opengl? ( virtual/opengl ) png? ( media-libs/libpng ) )
 SLOT=0
 SRC_URI=mirror://sourceforge/zsnes/zsnes151src.tar.bz2
 _eclasses_=autotools	1b0fa473be98091220edff9f51d06153	base	fc89786f3f7e7bcf03334359bd5b639b	eutils	33ef77a15337022e05342d2c772a7a5a	flag-o-matic	01a8b1eb019305bc4b4a8bd0b04e4cd8	games	dd242b42e6cf30a93dce9ab15dfea1ca	libtool	0fd90d183673bf1107465ec45849d1ea	multilib	5f4ad6cf85e365e8f0c6050ddd21659e	multiprocessing	1512bdfe7004902b8cd2c466fc3df772	pax-utils	3551398d6ede2b572568832730cc2a45	portability	0be430f759a631e692678ed796e09f5c	toolchain-funcs	69a2016af67775a812f4c03ba4b0e03e	user	9e552f935106ff0bc92af16da64b4b29
-_md5_=7ad89c81f86877d9729518190b02db2d
+_md5_=8736c922e652421e8b75a5af03e1f76a
