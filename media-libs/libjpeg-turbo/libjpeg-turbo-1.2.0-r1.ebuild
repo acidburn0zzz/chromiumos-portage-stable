@@ -54,11 +54,14 @@ src_configure() {
 		export JAVACFLAGS="$(java-pkg_javac-args)"
 		export JNI_CFLAGS="$(java-pkg_get-jni-cflags)"
 	fi
+	local myconf=()
+	[[ ${ABI} == "x32" ]] && myconf+=( --without-simd ) #420239
 
 	econf \
 		$(use_enable static-libs static) \
 		--with-jpeg${JPEG_ABI} \
-		$(use_with java)
+		$(use_with java) \
+		"${myconf[@]}"
 }
 
 src_compile() {
