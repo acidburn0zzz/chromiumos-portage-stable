@@ -7,5 +7,5 @@ LICENSE=GPL-3
 RDEPEND=>=sys-libs/ncurses-5.2-r2
 SLOT=0
 SRC_URI=mirror://gnu/readline/readline-6.2.tar.gz ftp://ftp.cwru.edu/pub/bash/readline-6.2-patches/readline62-001 mirror://gnu/readline/readline-6.2-patches/readline62-001
-_eclasses_=eutils	33ef77a15337022e05342d2c772a7a5a	flag-o-matic	01a8b1eb019305bc4b4a8bd0b04e4cd8	multilib	5f4ad6cf85e365e8f0c6050ddd21659e	portability	0be430f759a631e692678ed796e09f5c	toolchain-funcs	69a2016af67775a812f4c03ba4b0e03e	user	9e552f935106ff0bc92af16da64b4b29
+_eclasses_=eutils	d40dc948067bd3db1c8ebf7d51897313	flag-o-matic	01a8b1eb019305bc4b4a8bd0b04e4cd8	multilib	ded93e450747134a079e647d888aa80b	toolchain-funcs	69a2016af67775a812f4c03ba4b0e03e	user	9e552f935106ff0bc92af16da64b4b29
 _md5_=f8d2a9c8bd547cceb0ad680315bdc470
