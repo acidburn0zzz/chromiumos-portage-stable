@@ -1,6 +1,6 @@
-# Copyright 1999-2011 Gentoo Foundation
+# Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/eclass/linux-info.eclass,v 1.91 2011/12/12 22:01:37 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/eclass/linux-info.eclass,v 1.100 2013/02/10 07:53:31 vapier Exp $
 
 # @ECLASS: linux-info.eclass
 # @MAINTAINER:
@@ -18,6 +18,14 @@
 # "kernel config" in this file means:
 # The .config of the currently installed sources is used as the first
 # preference, with a fall-back to bundled config (/proc/config.gz) if available.
+#
+# Before using any of the config-handling functions in this eclass, you must
+# ensure that one of the following functions has been called (in order of
+# preference), otherwise you will get bugs like #364041):
+# linux-info_pkg_setup
+# linux-info_get_any_version
+# get_version
+# get_running_version
 
 # A Couple of env vars are available to effect usage of this eclass
 # These are as follows:
@@ -103,9 +111,6 @@ inherit toolchain-funcs versionator
 
 EXPORT_FUNCTIONS pkg_setup
 
-DEPEND=""
-RDEPEND=""
-
 # Overwritable environment Var's
 # ---------------------------------------
 KERNEL_DIR="${KERNEL_DIR:-${ROOT}usr/src/linux}"
@@ -159,7 +164,7 @@ qeerror() { qout eerror "${@}" ; }
 # done by including the configfile, and printing the variable with Make.
 # It WILL break if your makefile has missing dependencies!
 getfilevar() {
-local	ERROR basefname basedname myARCH="${ARCH}"
+	local ERROR basefname basedname myARCH="${ARCH}"
 	ERROR=0
 
 	[ -z "${1}" ] && ERROR=1
@@ -175,8 +180,10 @@ local	ERROR basefname basedname myARCH="${ARCH}"
 		basedname="$(dirname ${2})"
 		unset ARCH
 
+		# We use nonfatal because we want the caller to take care of things #373151
+		[[ ${EAPI:-0} == [0123] ]] && nonfatal() { "$@"; }
 		echo -e "e:\\n\\t@echo \$(${1})\\ninclude ${basefname}" | \
-			make -C "${basedname}" M="${S}" ${BUILD_FIXES} -s -f - 2>/dev/null
+			nonfatal emake -C "${basedname}" M="${S}" ${BUILD_FIXES} -s -f - 2>/dev/null
 
 		ARCH=${myARCH}
 	fi
@@ -190,7 +197,7 @@ local	ERROR basefname basedname myARCH="${ARCH}"
 # This is done with sed matching an expression only. If the variable is defined,
 # you will run into problems. See getfilevar for those cases.
 getfilevar_noexec() {
-	local	ERROR basefname basedname mycat myARCH="${ARCH}"
+	local ERROR basefname basedname mycat myARCH="${ARCH}"
 	ERROR=0
 	mycat='cat'
 
@@ -237,7 +244,7 @@ linux_config_qa_check() {
 # It returns true if .config exists in a build directory otherwise false
 linux_config_src_exists() {
 	export _LINUX_CONFIG_EXISTS_DONE=1
-	[ -s "${KV_OUT_DIR}/.config" ]
+	[[ -n ${KV_OUT_DIR} && -s ${KV_OUT_DIR}/.config ]]
 }
 
 # @FUNCTION: linux_config_bin_exists
@@ -246,7 +253,7 @@ linux_config_src_exists() {
 # It returns true if .config exists in /proc, otherwise false
 linux_config_bin_exists() {
 	export _LINUX_CONFIG_EXISTS_DONE=1
-	[ -s "/proc/config.gz" ]
+	[[ -s /proc/config.gz ]]
 }
 
 # @FUNCTION: linux_config_exists
@@ -258,6 +265,20 @@ linux_config_bin_exists() {
 # functions.
 linux_config_exists() {
 	linux_config_src_exists || linux_config_bin_exists
+}
+
+# @FUNCTION: linux_config_path
+# @DESCRIPTION:
+# Echo the name of the config file to use.  If none are found,
+# then return false.
+linux_config_path() {
+	if linux_config_src_exists; then
+		echo "${KV_OUT_DIR}/.config"
+	elif linux_config_bin_exists; then
+		echo "/proc/config.gz"
+	else
+		return 1
+	fi
 }
 
 # @FUNCTION: require_configured_kernel
@@ -283,12 +304,7 @@ require_configured_kernel() {
 # MUST call linux_config_exists first.
 linux_chkconfig_present() {
 	linux_config_qa_check linux_chkconfig_present
-	local	RESULT
-	local config
-	config="${KV_OUT_DIR}/.config"
-	[ ! -f "${config}" ] && config="/proc/config.gz"
-	RESULT="$(getfilevar_noexec CONFIG_${1} "${config}")"
-	[ "${RESULT}" = "m" -o "${RESULT}" = "y" ] && return 0 || return 1
+	[[ $(getfilevar_noexec "CONFIG_$1" "$(linux_config_path)") == [my] ]]
 }
 
 # @FUNCTION: linux_chkconfig_module
@@ -300,12 +316,7 @@ linux_chkconfig_present() {
 # MUST call linux_config_exists first.
 linux_chkconfig_module() {
 	linux_config_qa_check linux_chkconfig_module
-	local	RESULT
-	local config
-	config="${KV_OUT_DIR}/.config"
-	[ ! -f "${config}" ] && config="/proc/config.gz"
-	RESULT="$(getfilevar_noexec CONFIG_${1} "${config}")"
-	[ "${RESULT}" = "m" ] && return 0 || return 1
+	[[ $(getfilevar_noexec "CONFIG_$1" "$(linux_config_path)") == m ]]
 }
 
 # @FUNCTION: linux_chkconfig_builtin
@@ -317,12 +328,7 @@ linux_chkconfig_module() {
 # MUST call linux_config_exists first.
 linux_chkconfig_builtin() {
 	linux_config_qa_check linux_chkconfig_builtin
-	local	RESULT
-	local config
-	config="${KV_OUT_DIR}/.config"
-	[ ! -f "${config}" ] && config="/proc/config.gz"
-	RESULT="$(getfilevar_noexec CONFIG_${1} "${config}")"
-	[ "${RESULT}" = "y" ] && return 0 || return 1
+	[[ $(getfilevar_noexec "CONFIG_$1" "$(linux_config_path)") == y ]]
 }
 
 # @FUNCTION: linux_chkconfig_string
@@ -334,10 +340,7 @@ linux_chkconfig_builtin() {
 # MUST call linux_config_exists first.
 linux_chkconfig_string() {
 	linux_config_qa_check linux_chkconfig_string
-	local config
-	config="${KV_OUT_DIR}/.config"
-	[ ! -f "${config}" ] && config="/proc/config.gz"
-	getfilevar_noexec "CONFIG_${1}" "${config}"
+	getfilevar_noexec "CONFIG_$1" "$(linux_config_path)"
 }
 
 # Versioning Functions
@@ -459,6 +462,13 @@ get_version() {
 		return 1
 	fi
 
+	# See if the kernel dir is actually an output dir. #454294
+	if [ -z "${KBUILD_OUTPUT}" -a -L "${KERNEL_DIR}/source" ]; then
+		KBUILD_OUTPUT=${KERNEL_DIR}
+		KERNEL_DIR=$(readlink -f "${KERNEL_DIR}/source")
+		KV_DIR=${KERNEL_DIR}
+	fi
+
 	if [ -z "${get_version_warning_done}" ]; then
 		qeinfo "Found kernel source directory:"
 		qeinfo "    ${KV_DIR}"
@@ -478,7 +488,7 @@ get_version() {
 	# KBUILD_OUTPUT, and we need this for .config and localversions-*
 	# so we better find it eh?
 	# do we pass KBUILD_OUTPUT on the CLI?
-	OUTPUT_DIR="${OUTPUT_DIR:-${KBUILD_OUTPUT}}"
+	local OUTPUT_DIR=${KBUILD_OUTPUT}
 
 	# keep track of it
 	KERNEL_MAKEFILE="${KV_DIR}/Makefile"
@@ -581,11 +591,14 @@ get_running_version() {
 		get_version
 		return $?
 	else
-		KV_MAJOR=$(get_version_component_range 1 ${KV_FULL})
-		KV_MINOR=$(get_version_component_range 2 ${KV_FULL})
-		KV_PATCH=$(get_version_component_range 3 ${KV_FULL})
-		KV_PATCH=${KV_PATCH//-*}
-		KV_EXTRA="${KV_FULL#${KV_MAJOR}.${KV_MINOR}.${KV_PATCH}}"
+		# This handles a variety of weird kernel versions.  Make sure to update
+		# tests/linux-info:get_running_version.sh if you want to change this.
+		local kv_full=${KV_FULL//[-+_]*}
+		KV_MAJOR=$(get_version_component_range 1 ${kv_full})
+		KV_MINOR=$(get_version_component_range 2 ${kv_full})
+		KV_PATCH=$(get_version_component_range 3 ${kv_full})
+		KV_EXTRA="${KV_FULL#${KV_MAJOR}.${KV_MINOR}${KV_PATCH:+.${KV_PATCH}}}"
+		: ${KV_PATCH:=0}
 	fi
 	return 0
 }
@@ -617,7 +630,14 @@ check_kernel_built() {
 	require_configured_kernel
 	get_version
 
-	if [ ! -f "${KV_OUT_DIR}/include/linux/version.h" ]
+	local versionh_path
+	if kernel_is -ge 3 7; then
+		versionh_path="include/generated/uapi/linux/version.h"
+	else
+		versionh_path="include/linux/version.h"
+	fi
+
+	if [ ! -f "${KV_OUT_DIR}/${versionh_path}" ]
 	then
 		eerror "These sources have not yet been prepared."
 		eerror "We cannot build against an unprepared tree."
@@ -640,8 +660,7 @@ check_modules_supported() {
 	require_configured_kernel
 	get_version
 
-	if ! linux_chkconfig_builtin "MODULES"
-	then
+	if ! linux_chkconfig_builtin "MODULES"; then
 		eerror "These sources do not support loading external modules."
 		eerror "to be able to use this module please enable \"Loadable modules support\""
 		eerror "in your kernel, recompile and then try merging this module again."
@@ -654,20 +673,19 @@ check_modules_supported() {
 # It checks the kernel config options specified by CONFIG_CHECK. It dies only when a required config option (i.e.
 # the prefix ~ is not used) doesn't satisfy the directive.
 check_extra_config() {
-	local	config negate die error reworkmodulenames
-	local	soft_errors_count=0 hard_errors_count=0 config_required=0
+	local config negate die error reworkmodulenames
+	local soft_errors_count=0 hard_errors_count=0 config_required=0
 	# store the value of the QA check, because otherwise we won't catch usages
 	# after if check_extra_config is called AND other direct calls are done
 	# later.
-	local   old_LINUX_CONFIG_EXISTS_DONE="${_LINUX_CONFIG_EXISTS_DONE}"
+	local old_LINUX_CONFIG_EXISTS_DONE="${_LINUX_CONFIG_EXISTS_DONE}"
 
 	# if we haven't determined the version yet, we need to
 	linux-info_get_any_version
 
 	# Determine if we really need a .config. The only time when we don't need
 	# one is when all of the CONFIG_CHECK options are prefixed with "~".
-	for config in ${CONFIG_CHECK}
-	do
+	for config in ${CONFIG_CHECK}; do
 		if [[ "${config:0:1}" != "~" ]]; then
 			config_required=1
 			break
