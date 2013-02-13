@@ -21,15 +21,17 @@ LICENSE="GPL-2"
 SLOT="0"
 IUSE="unicode"
 
-DEPEND="
+COMMON_DEPEND="
 	dev-libs/libnl
 	sys-apps/pciutils
-	sys-devel/gettext
 	sys-libs/ncurses[unicode?]
 	sys-libs/zlib
 "
+DEPEND="${COMMON_DEPEND}
+	sys-devel/gettext
+"
 RDEPEND="
-	${DEPEND}
+	${COMMON_DEPEND}
 	x11-apps/xset
 "
 
