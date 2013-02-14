@@ -1,6 +1,6 @@
-# Copyright 1999-2012 Gentoo Foundation
+# Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-vcs/git/git-1.7.8.6.ebuild,v 1.12 2012/08/19 16:58:25 armin76 Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-vcs/git/git-1.7.12.4.ebuild,v 1.10 2013/01/21 16:16:28 ago Exp $
 
 EAPI=4
 
@@ -32,7 +32,7 @@ if [[ ${PV} != *9999 ]]; then
 			${SRC_URI_KORG}/${PN}-htmldocs-${DOC_VER}.tar.${SRC_URI_SUFFIX}
 			${SRC_URI_GOOG}/${PN}-htmldocs-${DOC_VER}.tar.${SRC_URI_SUFFIX}
 			)"
-	KEYWORDS="alpha amd64 arm hppa ia64 ~mips ppc ppc64 s390 sh sparc x86 ~ppc-aix ~amd64-fbsd ~sparc-fbsd ~x86-fbsd ~x64-freebsd ~x86-freebsd ~ia64-hpux ~x86-interix ~amd64-linux ~ia64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris"
+	KEYWORDS="alpha amd64 arm hppa ia64 ~mips ppc ppc64 ~s390 ~sh sparc x86 ~ppc-aix ~amd64-fbsd ~sparc-fbsd ~x86-fbsd ~x64-freebsd ~x86-freebsd ~ia64-hpux ~x86-interix ~amd64-linux ~ia64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris"
 else
 	SRC_URI=""
 	KEYWORDS=""
@@ -40,25 +40,27 @@ fi
 
 LICENSE="GPL-2"
 SLOT="0"
-IUSE="+blksha1 +curl cgi doc emacs gtk +iconv +perl +python ppcsha1 tk +threads +webdav xinetd cvs subversion"
+IUSE="+blksha1 +curl cgi doc emacs +gpg gtk highlight +iconv +nls +pcre +perl +python ppcsha1 tk +threads +webdav xinetd cvs subversion test"
 
 # Common to both DEPEND and RDEPEND
 CDEPEND="
-	!blksha1? ( dev-libs/openssl )
+	dev-libs/openssl
 	sys-libs/zlib
-	perl?   ( dev-lang/perl[-build] dev-libs/libpcre )
-	tk?     ( dev-lang/tk )
-	curl?   (
+	pcre? ( dev-libs/libpcre )
+	perl? ( dev-lang/perl[-build] )
+	tk? ( dev-lang/tk )
+	curl? (
 		net-misc/curl
 		webdav? ( dev-libs/expat )
 	)
 	emacs?  ( virtual/emacs )"
 
 RDEPEND="${CDEPEND}
+	gpg? ( app-crypt/gnupg )
 	perl? ( dev-perl/Error
 			dev-perl/Net-SMTP-SSL
 			dev-perl/Authen-SASL
-			cgi? ( virtual/perl-CGI )
+			cgi? ( virtual/perl-CGI highlight? ( app-text/highlight ) )
 			cvs? ( >=dev-vcs/cvsps-2.1 dev-perl/DBI dev-perl/DBD-SQLite )
 			subversion? ( dev-vcs/subversion[-dso,perl] dev-perl/libwww-perl dev-perl/TermReadKey )
 			)
@@ -74,10 +76,13 @@ RDEPEND="${CDEPEND}
 #   .texi         --(makeinfo)---------> .info
 DEPEND="${CDEPEND}
 	app-arch/cpio
-	doc?    (
+	doc? (
 		app-text/asciidoc
 		app-text/docbook2X
 		sys-apps/texinfo
+	)
+	test? (
+		app-crypt/gnupg
 	)"
 
 # Live ebuild builds man pages and HTML docs, additionally
@@ -139,10 +144,14 @@ exportmakeopts() {
 
 	use iconv \
 		|| myopts="${myopts} NO_ICONV=YesPlease"
+	use nls \
+		|| myopts="${myopts} NO_GETTEXT=YesPlease"
 	use tk \
 		|| myopts="${myopts} NO_TCLTK=YesPlease"
+	use pcre \
+		&& myopts="${myopts} USE_LIBPCRE=yes"
 	use perl \
-		&& myopts="${myopts} INSTALLDIRS=vendor USE_LIBPCRE=yes" \
+		&& myopts="${myopts} INSTALLDIRS=vendor" \
 		|| myopts="${myopts} NO_PERL=YesPlease"
 	use python \
 		|| myopts="${myopts} NO_PYTHON=YesPlease"
@@ -163,9 +172,6 @@ exportmakeopts() {
 #	fi
 	if [[ ${CHOST} == ia64-*-hpux* ]]; then
 		myopts="${myopts} NO_NSEC=YesPlease"
-	fi
-	if [[ ${CHOST} == *-solaris* ]]; then
-		myopts="${myopts} NEEDS_LIBICONV=YesPlease"
 	fi
 	if [[ ${CHOST} == *-*-aix* ]]; then
 		myopts="${myopts} NO_FNMATCH_CASEFOLD=YesPlease"
@@ -201,28 +207,12 @@ src_unpack() {
 }
 
 src_prepare() {
-	# Noperl is being merged to upstream as of 2009/04/05
-	#epatch "${FILESDIR}"/20090305-git-1.6.2-noperl.patch
-
-	# GetOpt-Long v2.38 is strict
-	# Merged in 1.6.3 final 2009/05/07
-	#epatch "${FILESDIR}"/20090505-git-1.6.2.5-getopt-fixes.patch
-
-	# JS install fixup
-	# Merged in 1.7.5.x
-	#epatch "${FILESDIR}"/git-1.7.2-always-install-js.patch
-
-	# Fix false positives with t3404 due to SHELL=/bin/false for the portage
-	# user.
-	# Merged upstream
-	#epatch "${FILESDIR}"/git-1.7.3.4-avoid-shell-issues.patch
-
-	# bug #350075: t9001: fix missing prereq on some tests
-	# Merged upstream
-	#epatch "${FILESDIR}"/git-1.7.3.4-fix-perl-test-prereq.patch
+	# bug #418431 - stated for upstream 1.7.13. Developed by Michael Schwern,
+	# funded as a bounty by the Gentoo Foundation.
+	epatch "${FILESDIR}"/git-1.7.12-git-svn-backport.patch
 
 	# bug #350330 - automagic CVS when we don't want it is bad.
-	epatch "${FILESDIR}"/git-1.7.3.5-optional-cvs.patch
+	epatch "${FILESDIR}"/git-1.7.12-optional-cvs.patch
 
 	sed -i \
 		-e 's:^\(CFLAGS =\).*$:\1 $(OPTCFLAGS) -Wall:' \
@@ -258,7 +248,6 @@ git_emake() {
 		htmldir="${EPREFIX}"/usr/share/doc/${PF}/html \
 		sysconfdir="${EPREFIX}"/etc \
 		PYTHON_PATH="${PYTHON_PATH}" \
-		PERL_PATH="${EPREFIX}/usr/bin/perl" \
 		PERL_MM_OPT="" \
 		GIT_TEST_OPTS="--no-color" \
 		"$@"
@@ -272,6 +261,10 @@ src_configure() {
 }
 
 src_compile() {
+	if use perl ; then
+	git_emake perl/PM.stamp || die "emake perl/PM.stamp failed"
+	git_emake perl/perl.mak || die "emake perl/perl.mak failed"
+	fi
 	git_emake || die "emake failed"
 
 	if use emacs ; then
@@ -283,6 +276,11 @@ src_compile() {
 		git_emake \
 			gitweb/gitweb.cgi \
 			|| die "emake gitweb/gitweb.cgi failed"
+	fi
+
+	if [[ ${CHOST} == *-darwin* ]]; then
+		cd "${S}"/contrib/credential/osxkeychain || die "cd credential/osxkeychain"
+		git_emake || die "email credential-osxkeychain"
 	fi
 
 	cd "${S}"/Documentation
@@ -306,6 +304,10 @@ src_install() {
 		install || \
 		die "make install failed"
 
+	if [[ ${CHOST} == *-darwin* ]]; then
+		dobin contrib/credential/osxkeychain/git-credential-osxkeychain
+	fi
+
 	# Depending on the tarball and manual rebuild of the documentation, the
 	# manpages may exist in either OR both of these directories.
 	find man?/*.[157] >/dev/null 2>&1 && doman man?/*.[157]
@@ -323,6 +325,7 @@ src_install() {
 	use doc && doinfo Documentation/{git,gitman}.info
 
 	newbashcomp contrib/completion/git-completion.bash ${PN}
+	newbashcomp contrib/completion/git-prompt.sh ${PN}-prompt
 
 	if use emacs ; then
 		elisp-install ${PN} contrib/emacs/git.{el,elc} || die
@@ -340,8 +343,8 @@ src_install() {
 		dodoc "${S}"/contrib/gitview/gitview.txt
 	fi
 
-	dobin contrib/fast-import/git-p4
-	dodoc contrib/fast-import/git-p4.txt
+	#dobin contrib/fast-import/git-p4 # Moved upstream
+	#dodoc contrib/fast-import/git-p4.txt # Moved upstream
 	newbin contrib/fast-import/import-tars.perl import-tars
 	newbin contrib/git-resurrect.sh git-resurrect
 
@@ -422,6 +425,8 @@ src_test() {
 		t1004-read-tree-m-u-wf.sh \
 		t3700-add.sh \
 		t7300-clean.sh"
+	# t9100 still fails with symlinks in SVN 1.7
+	local test_svn="t9100-git-svn-basic.sh"
 
 	# Unzip is used only for the testcase code, not by any normal parts of Git.
 	if ! has_version app-arch/unzip ; then
@@ -457,6 +462,9 @@ src_test() {
 		disabled="${disabled} ${tests_perl}"
 	fi
 
+	einfo "Disabling tests that fail with SVN 1.7"
+	disabled="${disabled} ${test_svn}"
+
 	# Reset all previously disabled tests
 	cd "${S}/t"
 	for i in *.sh.DISABLED ; do
@@ -471,21 +479,23 @@ src_test() {
 	sed -e '/^[[:space:]]*$(MAKE) clean/s,^,#,g' \
 		-i "${S}"/t/Makefile
 
-	# Clean old results first
+	# Clean old results first, must always run
 	cd "${S}/t"
-	git_emake clean
+	nonfatal git_emake clean
 
-	# Now run the tests
+	# Now run the tests, keep going if we hit an error, and don't terminate on
+	# failure
 	cd "${S}"
 	einfo "Start test run"
-	git_emake test
+	#MAKEOPTS=-j1
+	nonfatal git_emake --keep-going test
 	rc=$?
 
-	# Display nice results
+	# Display nice results, now print the results
 	cd "${S}/t"
-	git_emake aggregate-results
+	nonfatal git_emake aggregate-results
 
-	# And exit
+	# And bail if there was a problem
 	[ $rc -eq 0 ] || die "tests failed. Please file a bug."
 }
 
@@ -498,7 +508,9 @@ showpkgdeps() {
 pkg_postinst() {
 	use emacs && elisp-site-regen
 	use python && python_mod_optimize git_remote_helpers
-		einfo "Please read /usr/share/bash-completion/git for Git bash completion"
+	einfo "Please read /usr/share/bash-completion/git for Git bash command completion"
+	einfo "Please read /usr/share/bash-completion/git-prompt for Git bash prompt"
+	einfo "Note that the prompt bash code is now in the seperate script"
 	elog "These additional scripts need some dependencies:"
 	echo
 	showpkgdeps git-quiltimport "dev-util/quilt"
