@@ -1,6 +1,6 @@
-# Copyright 1999-2012 Gentoo Foundation
+# Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/app-portage/gentoolkit/gentoolkit-0.3.0.6-r3.ebuild,v 1.12 2012/10/29 16:31:11 mgorny Exp $
+# $Header: /var/cvsroot/gentoo-x86/app-portage/gentoolkit/gentoolkit-0.3.0.7-r1.ebuild,v 1.1 2013/02/25 18:03:52 vapier Exp $
 
 EAPI="3"
 SUPPORT_PYTHON_ABIS="1"
@@ -18,9 +18,8 @@ LICENSE="GPL-2"
 SLOT="0"
 IUSE=""
 
-KEYWORDS="alpha amd64 arm hppa ia64 m68k ~mips ppc ppc64 s390 sh sparc x86 ~ppc-aix ~amd64-fbsd ~x86-fbsd ~x64-freebsd ~hppa-hpux ~ia64-hpux ~x86-interix ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~m68k-mint ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris"
+KEYWORDS="alpha amd64 arm hppa ia64 m68k mips ppc ppc64 s390 sh sparc x86 ~ppc-aix ~amd64-fbsd ~x86-fbsd ~x64-freebsd ~hppa-hpux ~ia64-hpux ~x86-interix ~amd64-linux ~arm-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~m68k-mint ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris"
 
-# Note: argparse is provided in python 2.7 and 3.2 (Bug 346005)
 # Note: dev-lang/python dependencies are so emerge will print a blocker if any
 # installed slot of python is not built with +xml.  This is used since
 # PYTHON_USE_WITH just dies in the middle of the emerge. See bug 399331.
@@ -41,12 +40,7 @@ distutils_src_compile_pre_hook() {
 }
 
 src_prepare() {
-	epatch "${FILESDIR}/${PV}-eread-413577.patch"
-	epatch "${FILESDIR}/${PV}-eshowkw-414627.patch"
-	epatch "${FILESDIR}/${PV}-gentoolkit-304125.patch"
-	epatch "${FILESDIR}/${PV}-euse-410365.patch"
-	epatch "${FILESDIR}/${PV}-eshowkw-409449.patch"
-	epatch "${FILESDIR}/${PV}-euse-422675.patch"
+	epatch "${FILESDIR}"/${PV}-root.patch
 }
 
 src_install() {
@@ -89,9 +83,13 @@ pkg_postinst() {
 	einfo "guide: http://www.gentoo.org/doc/en/gentoolkit.xml"
 	einfo
 	einfo "Another alternative to equery is app-portage/portage-utils"
-	ewarn
-	ewarn "glsa-check since gentoolkit 0.3 has modified some output,"
-	ewarn "options and default behavior. The list of injected GLSAs"
-	ewarn "has moved to /var/lib/portage/glsa_injected, please"
-	ewarn "run 'glsa-check -p affected' before copying the existing checkfile."
+	einfo
+	einfo "Additional tools that may be of interest:"
+	einfo
+	einfo "    app-admin/eclean-kernel"
+	einfo "    app-portage/diffmask"
+	einfo "    app-portage/flaggie"
+	einfo "    app-portage/install-mask"
+	einfo "    app-portage/portpeek"
+	einfo "    app-portage/smart-live-rebuild"
 }
