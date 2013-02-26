@@ -102,7 +102,7 @@ index e324399..2a103de 100644
 -	nolocal_settings.lock()
 +def _NewPortageConfig(local_config):
 +	ret = portage.config(local_config=local_config,
-+			eprefix=EPREFIX if EPREFIX else None,
++			#eprefix=EPREFIX if EPREFIX else None,
 +			target_root=os.environ.get('ROOT', None))
 +	ret.lock()
 +	return ret
