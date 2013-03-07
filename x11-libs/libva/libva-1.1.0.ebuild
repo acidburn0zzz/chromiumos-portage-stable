@@ -1,8 +1,8 @@
-# Copyright 1999-2012 Gentoo Foundation
+# Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/x11-libs/libva/libva-1.1.0.ebuild,v 1.2 2012/06/08 15:33:00 aballier Exp $
+# $Header: /var/cvsroot/gentoo-x86/x11-libs/libva/libva-1.1.0.ebuild,v 1.7 2013/02/14 19:07:35 aballier Exp $
 
-EAPI="3"
+EAPI=4
 
 SCM=""
 if [ "${PV%9999}" != "${PV}" ] ; then # Live ebuild
@@ -11,7 +11,7 @@ if [ "${PV%9999}" != "${PV}" ] ; then # Live ebuild
 	EGIT_REPO_URI="git://anongit.freedesktop.org/vaapi/libva"
 fi
 
-inherit autotools ${SCM} multilib
+inherit autotools ${SCM} multilib eutils
 
 DESCRIPTION="Video Acceleration (VA) API for Linux"
 HOMEPAGE="http://www.freedesktop.org/wiki/Software/vaapi"
@@ -20,12 +20,6 @@ if [ "${PV%9999}" != "${PV}" ] ; then # Live ebuild
 	S="${WORKDIR}/${PN}"
 else
 	SRC_URI="http://cgit.freedesktop.org/vaapi/libva/snapshot/${P}.tar.bz2"
-	if [ "${PV}" == "1.1.0_rc1" ]; then
-		# Temporary hack to work around a badly named upstream tarball;
-		# this is chrome-os specific, and should be removed once we move
-		# away from 1.1.0_rc1 .  See crosbug.com/35116
-		S="${WORKDIR}/${PN}-1.1.0"
-	fi
 fi
 
 LICENSE="MIT"
@@ -35,7 +29,7 @@ if [ "${PV%9999}" = "${PV}" ] ; then
 else
 	KEYWORDS=""
 fi
-IUSE="egl opengl"
+IUSE="egl opengl wayland X"
 
 VIDEO_CARDS="dummy nvidia intel fglrx"
 for x in ${VIDEO_CARDS}; do
@@ -43,30 +37,37 @@ for x in ${VIDEO_CARDS}; do
 done
 
 RDEPEND=">=x11-libs/libdrm-2.4
-	video_cards_dummy? ( sys-fs/udev )
-	x11-libs/libX11
-	x11-libs/libXext
-	x11-libs/libXfixes
+	X? (
+		x11-libs/libX11
+		x11-libs/libXext
+		x11-libs/libXfixes
+	)
 	egl? ( media-libs/mesa[egl] )
-	opengl? ( virtual/opengl )"
+	opengl? ( virtual/opengl )
+	wayland? ( >=dev-libs/wayland-0.95.0 )"
 
 DEPEND="${RDEPEND}
 	virtual/pkgconfig"
-PDEPEND="video_cards_nvidia? ( x11-libs/vdpau-video )
+PDEPEND="video_cards_nvidia? ( x11-libs/libva-vdpau-driver )
 	video_cards_fglrx? ( x11-libs/xvba-video )
 	video_cards_intel? ( >=x11-libs/libva-intel-driver-1.0.18 )
 	"
 
+REQUIRED_USE="opengl? ( X )"
+
 src_prepare() {
+	has_version '>=dev-libs/wayland-1' && epatch "${FILESDIR}/${P}-wayland1.patch"
 	eautoreconf
 }
 
 src_configure() {
 	econf \
+		--disable-silent-rules \
 		--with-drivers-path="${EPREFIX}/usr/$(get_libdir)/va/drivers" \
 		$(use_enable video_cards_dummy dummy-driver) \
-		$(use_enable video_cards_dummy dummy-backend) \
 		$(use_enable opengl glx) \
+		$(use_enable X x11) \
+		$(use_enable wayland) \
 		$(use_enable egl)
 }
 
