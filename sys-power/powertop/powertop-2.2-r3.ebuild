@@ -85,6 +85,7 @@ pkg_setup() {
 
 src_prepare() {
 	epatch "${FILESDIR}"/${P}-use-package_version.patch
+        epatch "${FILESDIR}"/${P}-cpu-add-new-Intel-cpuid.patch
 	if [[ ${PV} == "9999" ]] ; then
 		eautoreconf
 	fi
