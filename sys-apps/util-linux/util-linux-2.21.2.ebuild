@@ -28,7 +28,7 @@ fi
 
 LICENSE="GPL-2 GPL-3 LGPL-2.1 BSD-4 MIT public-domain"
 SLOT="0"
-IUSE="+cramfs crypt ddate ncurses nls old-linux perl selinux slang static-libs uclibc udev unicode"
+IUSE="+cramfs crypt ddate ncurses nls old-linux perl selinux slang static-libs +suid uclibc udev unicode"
 
 RDEPEND="!sys-process/schedutils
 	!sys-apps/setarch
@@ -92,6 +92,8 @@ src_configure() {
 		--enable-schedutils \
 		--disable-wall \
 		--enable-write \
+		$(use_enable suid makeinstall-chown) \
+		$(use_enable suid makeinstall-setuid) \
 		$(use_with selinux) \
 		$(use_with slang) \
 		$(use_enable static-libs static) \
