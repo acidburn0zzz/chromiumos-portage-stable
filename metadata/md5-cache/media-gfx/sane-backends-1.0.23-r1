@@ -11,4 +11,4 @@ REQUIRED_USE=sane_backends_mustek_usb2? ( threads ) sane_backends_kvs40xx? ( thr
 SLOT=0
 SRC_URI=https://alioth.debian.org/frs/download.php/3752/sane-backends-1.0.23.tar.gz.1 https://alioth.debian.org/frs/download.php/3753/sane-backends-1.0.23.tar.gz.2 https://alioth.debian.org/frs/download.php/3754/sane-backends-1.0.23.tar.gz.3
 _eclasses_=eutils	d40dc948067bd3db1c8ebf7d51897313	flag-o-matic	01a8b1eb019305bc4b4a8bd0b04e4cd8	multilib	ded93e450747134a079e647d888aa80b	toolchain-funcs	69a2016af67775a812f4c03ba4b0e03e	udev	f7490675e06a5e4db55adf394f078b7b	user	9e552f935106ff0bc92af16da64b4b29
-_md5_=ae87b37db9abca6ab6ae6fec57ada0be
+_md5_=9309c72be6ac6b3191605e2034d83f2a
