@@ -16,4 +16,7 @@
 		and wall/write as setgid so non-root users can notify other users
 	</flag>
 </use>
+	<upstream>
+		<remote-id type="cpe">cpe:/a:andries_brouwer:util-linux</remote-id>
+	</upstream>
 </pkgmetadata>
