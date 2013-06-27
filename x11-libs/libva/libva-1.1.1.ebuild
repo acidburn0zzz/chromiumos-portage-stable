@@ -1,6 +1,6 @@
 # Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/x11-libs/libva/libva-1.1.0.ebuild,v 1.7 2013/02/14 19:07:35 aballier Exp $
+# $Header: /var/cvsroot/gentoo-x86/x11-libs/libva/libva-1.1.1.ebuild,v 1.2 2013/06/19 19:34:54 aballier Exp $
 
 EAPI=4
 
@@ -11,7 +11,7 @@ if [ "${PV%9999}" != "${PV}" ] ; then # Live ebuild
 	EGIT_REPO_URI="git://anongit.freedesktop.org/vaapi/libva"
 fi
 
-inherit autotools ${SCM} multilib eutils
+inherit autotools ${SCM} multilib
 
 DESCRIPTION="Video Acceleration (VA) API for Linux"
 HOMEPAGE="http://www.freedesktop.org/wiki/Software/vaapi"
@@ -19,7 +19,7 @@ if [ "${PV%9999}" != "${PV}" ] ; then # Live ebuild
 	SRC_URI=""
 	S="${WORKDIR}/${PN}"
 else
-	SRC_URI="http://cgit.freedesktop.org/vaapi/libva/snapshot/${P}.tar.bz2"
+	SRC_URI="http://www.freedesktop.org/software/vaapi/releases/libva/${P}.tar.bz2"
 fi
 
 LICENSE="MIT"
@@ -29,7 +29,8 @@ if [ "${PV%9999}" = "${PV}" ] ; then
 else
 	KEYWORDS=""
 fi
-IUSE="egl opengl wayland X"
+IUSE="+drm egl opengl wayland X"
+REQUIRED_USE="|| ( drm wayland X )"
 
 VIDEO_CARDS="dummy nvidia intel fglrx"
 for x in ${VIDEO_CARDS}; do
@@ -44,7 +45,7 @@ RDEPEND=">=x11-libs/libdrm-2.4
 	)
 	egl? ( media-libs/mesa[egl] )
 	opengl? ( virtual/opengl )
-	wayland? ( >=dev-libs/wayland-0.95.0 )"
+	wayland? ( >=dev-libs/wayland-1 )"
 
 DEPEND="${RDEPEND}
 	virtual/pkgconfig"
@@ -56,7 +57,6 @@ PDEPEND="video_cards_nvidia? ( x11-libs/libva-vdpau-driver )
 REQUIRED_USE="opengl? ( X )"
 
 src_prepare() {
-	has_version '>=dev-libs/wayland-1' && epatch "${FILESDIR}/${P}-wayland1.patch"
 	eautoreconf
 }
 
@@ -68,7 +68,8 @@ src_configure() {
 		$(use_enable opengl glx) \
 		$(use_enable X x11) \
 		$(use_enable wayland) \
-		$(use_enable egl)
+		$(use_enable egl) \
+		$(use_enable drm)
 }
 
 src_install() {
