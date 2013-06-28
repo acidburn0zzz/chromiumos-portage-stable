@@ -1,0 +1,15 @@
+DEFINED_PHASES=configure install prepare
+DEPEND=>=x11-libs/libdrm-2.4 X? ( x11-libs/libX11 x11-libs/libXext x11-libs/libXfixes ) egl? ( media-libs/mesa[egl] ) opengl? ( virtual/opengl ) wayland? ( >=dev-libs/wayland-1 ) virtual/pkgconfig || ( >=sys-devel/automake-1.11.1:1.11 >=sys-devel/automake-1.12:1.12 ) >=sys-devel/autoconf-2.68 sys-devel/libtool
+DESCRIPTION=Video Acceleration (VA) API for Linux
+EAPI=4
+HOMEPAGE=http://www.freedesktop.org/wiki/Software/vaapi
+IUSE=+drm egl opengl wayland X video_cards_dummy video_cards_nvidia video_cards_intel video_cards_fglrx
+KEYWORDS=amd64 x86 ~amd64-linux ~x86-linux
+LICENSE=MIT
+PDEPEND=video_cards_nvidia? ( x11-libs/libva-vdpau-driver ) video_cards_fglrx? ( x11-libs/xvba-video ) video_cards_intel? ( >=x11-libs/libva-intel-driver-1.0.18 )
+RDEPEND=>=x11-libs/libdrm-2.4 X? ( x11-libs/libX11 x11-libs/libXext x11-libs/libXfixes ) egl? ( media-libs/mesa[egl] ) opengl? ( virtual/opengl ) wayland? ( >=dev-libs/wayland-1 )
+REQUIRED_USE=opengl? ( X )
+SLOT=0
+SRC_URI=http://www.freedesktop.org/software/vaapi/releases/libva/libva-1.1.1.tar.bz2
+_eclasses_=autotools	1b0fa473be98091220edff9f51d06153	libtool	0fd90d183673bf1107465ec45849d1ea	multilib	ded93e450747134a079e647d888aa80b	multiprocessing	1512bdfe7004902b8cd2c466fc3df772	toolchain-funcs	69a2016af67775a812f4c03ba4b0e03e
+_md5_=5aed6adc66fa931bfee05e09c1281e57
