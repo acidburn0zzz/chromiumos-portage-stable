@@ -9,5 +9,5 @@ LICENSE=GPL-3
 RDEPEND=!static? ( acl? ( sys-apps/acl ) caps? ( sys-libs/libcap ) gmp? ( dev-libs/gmp ) xattr? ( !userland_BSD? ( sys-apps/attr ) ) ) selinux? ( sys-libs/libselinux ) nls? ( >=sys-devel/gettext-0.15 ) !app-misc/realpath !<sys-apps/util-linux-2.13 !sys-apps/stat !net-mail/base64 !sys-apps/mktemp !<app-forensics/tct-1.18-r1 !<net-fs/netatalk-2.0.3-r4 !<sci-chemistry/ccp4-6.1.1
 SLOT=0
 SRC_URI=mirror://gnu-alpha/coreutils/coreutils-8.20.tar.xz mirror://gnu/coreutils/coreutils-8.20.tar.xz mirror://gentoo/coreutils-8.20.tar.xz mirror://gentoo/coreutils-8.20-patches-1.2.tar.xz http://dev.gentoo.org/~ryao/dist/coreutils-8.20-patches-1.2.tar.xz
-_eclasses_=eutils	d40dc948067bd3db1c8ebf7d51897313	flag-o-matic	01a8b1eb019305bc4b4a8bd0b04e4cd8	multilib	ded93e450747134a079e647d888aa80b	toolchain-funcs	69a2016af67775a812f4c03ba4b0e03e	user	9e552f935106ff0bc92af16da64b4b29
+_eclasses_=eutils	d40dc948067bd3db1c8ebf7d51897313	flag-o-matic	c3131dc67d3bd39f044e92b8280505e4	multilib	ded93e450747134a079e647d888aa80b	toolchain-funcs	69a2016af67775a812f4c03ba4b0e03e	user	9e552f935106ff0bc92af16da64b4b29
 _md5_=a3a2cff83ab096cad7b658c9bb321931
