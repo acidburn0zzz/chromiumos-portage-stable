@@ -2,11 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/dev-libs/libxml2/libxml2-2.9.1-r1.ebuild,v 1.12 2013/08/06 12:32:42 ago Exp $
 
-EAPI="5"
-PYTHON_COMPAT=( python{2_5,2_6,2_7,3_1,3_2,3_3} )
-PYTHON_REQ_USE="xml"
+EAPI="4"
 
-inherit libtool flag-o-matic eutils python-r1 autotools prefix
+inherit libtool flag-o-matic eutils autotools prefix
 
 DESCRIPTION="Version 2 of the library to manipulate XML files"
 HOMEPAGE="http://www.xmlsoft.org/"
@@ -14,7 +12,7 @@ HOMEPAGE="http://www.xmlsoft.org/"
 LICENSE="MIT"
 SLOT="2"
 KEYWORDS="alpha amd64 arm hppa ia64 ~m68k ~mips ppc ppc64 s390 sh sparc x86 ~ppc-aix ~amd64-fbsd ~sparc-fbsd ~x86-fbsd ~x64-freebsd ~x86-freebsd ~hppa-hpux ~ia64-hpux ~x86-interix ~amd64-linux ~arm-linux ~ia64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~m68k-mint ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris ~x86-winnt"
-IUSE="debug examples icu ipv6 lzma python readline static-libs test"
+IUSE="debug examples icu ipv6 lzma readline static-libs test"
 
 XSTS_HOME="http://www.w3.org/XML/2004/xml-schema-test-suite"
 XSTS_NAME_1="xmlschema2002-01-16"
@@ -29,11 +27,10 @@ SRC_URI="ftp://xmlsoft.org/${PN}/${PN}-${PV/_rc/-rc}.tar.gz
 		${XSTS_HOME}/${XSTS_NAME_2}/${XSTS_TARBALL_2}
 		http://www.w3.org/XML/Test/${XMLCONF_TARBALL} )"
 
-RDEPEND="sys-libs/zlib:=
-	icu? ( dev-libs/icu:= )
-	lzma? ( app-arch/xz-utils:= )
-	python? ( ${PYTHON_DEPS} )
-	readline? ( sys-libs/readline:= )"
+RDEPEND="sys-libs/zlib
+	icu? ( dev-libs/icu )
+	lzma? ( app-arch/xz-utils )
+	readline? ( sys-libs/readline )"
 
 DEPEND="${RDEPEND}
 	dev-util/gtk-doc-am
@@ -102,24 +99,11 @@ src_configure() {
 		$(use_with debug run-debug) \
 		$(use_with icu) \
 		$(use_with lzma) \
-		$(use_with python) \
+		--without-python \
 		$(use_with readline) \
 		$(use_with readline history) \
 		$(use_enable ipv6) \
 		$(use_enable static-libs static)
-}
-
-src_compile() {
-	default
-	if use python; then
-		python_copy_sources
-		python_foreach_impl libxml2_py_emake
-	fi
-}
-
-src_test() {
-	default
-	use python && python_foreach_impl libxml2_py_emake test
 }
 
 src_install() {
@@ -133,14 +117,6 @@ src_install() {
 	if [[ ${CHOST} == *-winnt* ]]; then
 		rm -rf "${ED}"/usr/bin/xmllint
 		rm -rf "${ED}"/usr/bin/xmlcatalog
-	fi
-
-	if use python; then
-		python_foreach_impl libxml2_py_emake DESTDIR="${D}" \
-			docsdir="${EPREFIX}"/usr/share/doc/${PF}/python \
-			exampledir="${EPREFIX}"/usr/share/doc/${PF}/python/examples \
-			install
-		python_foreach_impl python_optimize
 	fi
 
 	rm -rf "${ED}"/usr/share/doc/${P}
@@ -177,15 +153,4 @@ pkg_postinst() {
 			einfo "Created XML catalog in ${CATALOG}"
 		fi
 	fi
-}
-
-libxml2_py_emake() {
-	pushd "${BUILD_DIR}/python" > /dev/null || die
-	emake \
-		PYTHON="${PYTHON}" \
-		PYTHON_INCLUDES="${EPREFIX}/usr/include/${EPYTHON}" \
-		PYTHON_LIBS="$(python-config --ldflags)" \
-		PYTHON_SITE_PACKAGES="$(python_get_sitedir)" \
-		pythondir="$(python_get_sitedir)" "$@"
-	popd > /dev/null
 }
