@@ -7,7 +7,7 @@ inherit multilib toolchain-funcs base
 
 if [[ ${PV} == *9999* ]]; then
 	inherit git-2
-	EGIT_REPO_URI="http://git.chromium.org/webm/${PN}.git"
+	EGIT_REPO_URI="https://chromium.googlesource.com/webm/${PN}.git"
 	KEYWORDS=""
 elif [[ ${PV} == *pre* ]]; then
 	SRC_URI="mirror://gentoo/${P}.tar.bz2"
