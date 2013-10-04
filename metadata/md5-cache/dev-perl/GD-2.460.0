@@ -9,5 +9,5 @@ LICENSE=|| ( Artistic-2 GPL-1 GPL-2 GPL-3 )
 RDEPEND=>=media-libs/gd-2.0.33 png? ( media-libs/gd[png] media-libs/libpng sys-libs/zlib ) jpeg? ( media-libs/gd[jpeg] virtual/jpeg ) truetype? ( media-libs/gd[truetype] media-libs/freetype:2 ) xpm? ( media-libs/gd[xpm] x11-libs/libXpm ) gif? ( media-libs/giflib ) dev-lang/perl[-build]
 SLOT=0
 SRC_URI=mirror://cpan/authors/id/L/LD/LDS/GD-2.46.tar.gz
-_eclasses_=base	fc89786f3f7e7bcf03334359bd5b639b	eutils	d40dc948067bd3db1c8ebf7d51897313	multilib	ded93e450747134a079e647d888aa80b	perl-module	62eaf4b4e2dfe2d7766c20bfd93e7199	toolchain-funcs	69a2016af67775a812f4c03ba4b0e03e	user	9e552f935106ff0bc92af16da64b4b29
+_eclasses_=base	fc89786f3f7e7bcf03334359bd5b639b	eutils	d40dc948067bd3db1c8ebf7d51897313	multilib	ded93e450747134a079e647d888aa80b	perl-module	62eaf4b4e2dfe2d7766c20bfd93e7199	toolchain-funcs	3e30ef439a720915f8f4fd4fe75f704c	user	9e552f935106ff0bc92af16da64b4b29
 _md5_=1f89459a8cdb02eb42d7a06ab86b4ba5

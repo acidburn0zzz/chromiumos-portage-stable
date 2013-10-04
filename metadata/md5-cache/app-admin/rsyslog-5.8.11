@@ -10,5 +10,5 @@ RDEPEND=dbi? ( dev-db/libdbi ) extras? ( net-libs/libnet ) kerberos? ( virtual/k
 RESTRICT=test
 SLOT=0
 SRC_URI=http://www.rsyslog.com/files/download/rsyslog/rsyslog-5.8.11.tar.gz zeromq? ( https://github.com/aggregateknowledge/rsyslog-zeromq/tarball/44b551abc29dd5b541884bd51b45b413855a93d8 -> rsyslog-zeromq.tar.gz )
-_eclasses_=autotools	1b0fa473be98091220edff9f51d06153	autotools-utils	966fed1f979132a778b0b48c74a16adb	base	fc89786f3f7e7bcf03334359bd5b639b	eutils	d40dc948067bd3db1c8ebf7d51897313	libtool	0fd90d183673bf1107465ec45849d1ea	multilib	ded93e450747134a079e647d888aa80b	multiprocessing	1512bdfe7004902b8cd2c466fc3df772	systemd	b5da52630b2559da43198bfb56ccacba	toolchain-funcs	69a2016af67775a812f4c03ba4b0e03e	user	9e552f935106ff0bc92af16da64b4b29
+_eclasses_=autotools	1b0fa473be98091220edff9f51d06153	autotools-utils	966fed1f979132a778b0b48c74a16adb	base	fc89786f3f7e7bcf03334359bd5b639b	eutils	d40dc948067bd3db1c8ebf7d51897313	libtool	0fd90d183673bf1107465ec45849d1ea	multilib	ded93e450747134a079e647d888aa80b	multiprocessing	1512bdfe7004902b8cd2c466fc3df772	systemd	b5da52630b2559da43198bfb56ccacba	toolchain-funcs	3e30ef439a720915f8f4fd4fe75f704c	user	9e552f935106ff0bc92af16da64b4b29
 _md5_=05d5a9f41a21bc9c0ec0c7233f165bc9

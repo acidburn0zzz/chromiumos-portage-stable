@@ -9,5 +9,5 @@ LICENSE=LGPL-2.1
 RDEPEND=>=sys-devel/libtool-2.2.6b alsa? ( media-libs/alsa-lib ) amr? ( media-libs/opencore-amr ) encode? ( >=media-sound/lame-3.98.4 ) flac? ( media-libs/flac ) mad? ( media-libs/libmad ) sndfile? ( media-libs/libsndfile ) ogg? ( media-libs/libvorbis media-libs/libogg ) ao? ( media-libs/libao ) ffmpeg? ( virtual/ffmpeg ) ladspa? ( media-libs/ladspa-sdk ) >=media-sound/gsm-1.0.12-r1 id3tag? ( media-libs/libid3tag ) png? ( media-libs/libpng sys-libs/zlib ) pulseaudio? ( media-sound/pulseaudio ) wavpack? ( media-sound/wavpack )
 SLOT=0
 SRC_URI=mirror://sourceforge/sox/sox-14.3.2.tar.gz
-_eclasses_=eutils	d40dc948067bd3db1c8ebf7d51897313	flag-o-matic	c3131dc67d3bd39f044e92b8280505e4	multilib	ded93e450747134a079e647d888aa80b	toolchain-funcs	69a2016af67775a812f4c03ba4b0e03e	user	9e552f935106ff0bc92af16da64b4b29
+_eclasses_=eutils	d40dc948067bd3db1c8ebf7d51897313	flag-o-matic	c3131dc67d3bd39f044e92b8280505e4	multilib	ded93e450747134a079e647d888aa80b	toolchain-funcs	3e30ef439a720915f8f4fd4fe75f704c	user	9e552f935106ff0bc92af16da64b4b29
 _md5_=e6a0f6b9d0be796a7722ac2061a2b20b
