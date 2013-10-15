@@ -13,7 +13,7 @@ HOMEPAGE="http://code.google.com/p/google-gflags/"
 SRC_URI="http://google-gflags.googlecode.com/files/${P}.tar.gz"
 LICENSE="BSD"
 SLOT="0"
-KEYWORDS="~amd64"
+KEYWORDS="alpha amd64 arm hppa ia64 m68k mips ppc ppc64 s390 sh sparc x86"
 IUSE="python"
 
 DEPEND=""

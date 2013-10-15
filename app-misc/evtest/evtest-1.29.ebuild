@@ -13,7 +13,7 @@ SRC_URI="http://cgit.freedesktop.org/evtest/snapshot/${P}.tar.bz2
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="amd64 arm x86"
+KEYWORDS="alpha amd64 arm hppa ia64 m68k mips ppc ppc64 s390 sh sparc x86"
 IUSE="+xml"
 
 # We bundled the man pages ourselves to avoid xmlto/asciidoc.

@@ -11,7 +11,7 @@ SRC_URI="http://cloud.github.com/downloads/tias/${PN}/${P}.tar.gz"
 
 LICENSE="MIT"
 SLOT="0"
-KEYWORDS="amd64 x86"
+KEYWORDS="alpha amd64 arm hppa ia64 m68k mips ppc ppc64 s390 sh sparc x86"
 IUSE="gtk"
 
 DEPEND="x11-libs/libX11
