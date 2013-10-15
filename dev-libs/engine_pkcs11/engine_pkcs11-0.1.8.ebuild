@@ -16,7 +16,7 @@ HOMEPAGE="http://www.opensc-project.org/engine_pkcs11"
 
 LICENSE="LGPL-2.1"
 SLOT="0"
-KEYWORDS="~alpha ~amd64 ~hppa ~ia64 ppc ppc64 ~sparc ~x86"
+KEYWORDS="alpha ~amd64 hppa ia64 ppc ppc64 sparc ~x86"
 IUSE="doc"
 
 DEPEND=">=dev-libs/libp11-0.2.5

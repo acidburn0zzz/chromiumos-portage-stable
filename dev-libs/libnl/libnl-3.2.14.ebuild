@@ -13,7 +13,7 @@ SRC_URI="
 "
 LICENSE="LGPL-2.1"
 SLOT="3"
-KEYWORDS="alpha amd64 arm hppa ia64 ~mips ppc ppc64 ~s390 ~sh sparc x86 ~amd64-linux ~ia64-linux ~x86-linux"
+KEYWORDS="alpha amd64 arm hppa ia64 mips ppc ppc64 s390 sh sparc x86 ~amd64-linux ~ia64-linux ~x86-linux"
 IUSE="doc static-libs utils"
 
 DEPEND="

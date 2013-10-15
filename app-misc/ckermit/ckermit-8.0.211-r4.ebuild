@@ -16,7 +16,7 @@ HOMEPAGE="http://www.kermit-project.org/"
 
 LICENSE="Kermit"
 SLOT="0"
-KEYWORDS="amd64 arm ~hppa ppc ppc64 x86"
+KEYWORDS="amd64 arm hppa ppc ppc64 x86"
 IUSE="ncurses"
 
 DEPEND="ncurses? ( >=sys-libs/ncurses-5.2 )"

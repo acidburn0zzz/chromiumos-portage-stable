@@ -152,7 +152,7 @@ SRC_URI="https://alioth.debian.org/frs/download.php/3752/sane-backends-1.0.23.ta
 	https://alioth.debian.org/frs/download.php/3754/sane-backends-1.0.23.tar.gz.3"
 SLOT="0"
 LICENSE="GPL-2 public-domain"
-KEYWORDS="~alpha amd64 arm ~hppa ~ia64 ~ppc ~ppc64 ~sparc x86 ~x86-fbsd ~amd64-linux ~x86-linux"
+KEYWORDS="alpha amd64 arm hppa ia64 ppc ppc64 sparc x86 ~x86-fbsd ~amd64-linux ~x86-linux"
 
 pkg_setup() {
 	enewgroup scanner

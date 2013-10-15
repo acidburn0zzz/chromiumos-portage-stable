@@ -11,7 +11,7 @@ SRC_URI="mirror://sourceforge/avf/${P}.tar.bz2"
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="~alpha amd64 arm ~hppa ~ppc ~ppc64 x86"
+KEYWORDS="alpha amd64 arm hppa ppc ppc64 x86"
 IUSE="static-libs +lzma"
 
 RDEPEND=">=sys-fs/fuse-2.4

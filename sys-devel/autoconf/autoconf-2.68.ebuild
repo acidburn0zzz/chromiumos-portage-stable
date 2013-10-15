@@ -12,7 +12,7 @@ if [[ ${PV} == "9999" ]] ; then
 else
 	SRC_URI="mirror://gnu/${PN}/${P}.tar.bz2
 		ftp://alpha.gnu.org/pub/gnu/${PN}/${P}.tar.bz2"
-	KEYWORDS="alpha amd64 arm hppa ia64 m68k ~mips ppc ppc64 s390 sh sparc x86 ~sparc-fbsd ~x86-fbsd"
+	KEYWORDS="alpha amd64 arm hppa ia64 m68k mips ppc ppc64 s390 sh sparc x86 ~sparc-fbsd ~x86-fbsd"
 fi
 
 DESCRIPTION="Used to create autoconfiguration files"

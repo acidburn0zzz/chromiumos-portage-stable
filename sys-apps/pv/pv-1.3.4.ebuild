@@ -12,7 +12,7 @@ SRC_URI="http://www.ivarch.com/programs/sources/${P}.tar.gz"
 
 LICENSE="Artistic-2"
 SLOT="0"
-KEYWORDS="alpha amd64 arm hppa ~mips ppc ppc64 sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~x86-macos ~sparc64-solaris ~x86-solaris"
+KEYWORDS="alpha amd64 arm hppa mips ppc ppc64 sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~x86-macos ~sparc64-solaris ~x86-solaris"
 
 IUSE="nls"
 PV_LINGUAS="de fr pl pt"

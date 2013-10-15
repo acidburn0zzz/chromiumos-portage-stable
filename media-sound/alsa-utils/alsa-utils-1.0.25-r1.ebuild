@@ -14,7 +14,7 @@ SRC_URI="mirror://alsaproject/utils/${MY_P}.tar.bz2
 
 LICENSE="GPL-2"
 SLOT="0.9"
-KEYWORDS="alpha amd64 arm hppa ia64 ~mips ~ppc ppc64 sh sparc x86"
+KEYWORDS="alpha amd64 arm hppa ia64 mips ppc ppc64 sh sparc x86"
 IUSE="doc nls minimal"
 
 COMMON_DEPEND=">=sys-libs/ncurses-5.1

@@ -11,7 +11,7 @@ DESCRIPTION="Accelerated Open Source driver for nVidia cards"
 HOMEPAGE="http://nouveau.freedesktop.org/"
 SRC_URI="mirror://gentoo/${P}.tar.bz2"
 
-KEYWORDS="amd64 ppc ~ppc64 x86"
+KEYWORDS="amd64 ppc ppc64 x86"
 IUSE=""
 
 RDEPEND=">=x11-libs/libdrm-2.4.34[video_cards_nouveau]"

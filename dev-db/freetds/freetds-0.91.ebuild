@@ -6,7 +6,7 @@ EAPI=4
 
 inherit autotools
 
-KEYWORDS="~alpha amd64 arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc x86 ~x86-fbsd ~ppc-macos"
+KEYWORDS="alpha amd64 arm hppa ia64 mips ppc ppc64 s390 sh sparc x86 ~x86-fbsd ~ppc-macos"
 DESCRIPTION="Tabular Datastream Library."
 HOMEPAGE="http://www.freetds.org/"
 SRC_URI="http://ibiblio.org/pub/Linux/ALPHA/freetds/stable/${P}.tar.gz"

@@ -9,7 +9,7 @@ HOMEPAGE="http://people.suug.ch/~tgr/libnl/"
 SRC_URI="http://people.suug.ch/~tgr/libnl/files/${P}.tar.gz"
 LICENSE="LGPL-2.1"
 SLOT="0"
-KEYWORDS="amd64 arm hppa ~ia64 ppc ppc64 ~sh ~sparc x86"
+KEYWORDS="amd64 arm hppa ia64 ppc ppc64 sh sparc x86"
 IUSE=""
 
 src_unpack() {

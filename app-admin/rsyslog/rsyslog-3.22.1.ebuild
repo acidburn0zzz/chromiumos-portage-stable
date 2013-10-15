@@ -11,7 +11,7 @@ HOMEPAGE="http://www.rsyslog.com/"
 SRC_URI="http://download.rsyslog.com/${PN}/${P}.tar.gz"
 LICENSE="GPL-3 LGPL-3"
 SLOT="0"
-KEYWORDS="~amd64 ~arm ~hppa ~sparc ~x86"
+KEYWORDS="~amd64 ~arm hppa sparc ~x86"
 IUSE="debug kerberos dbi gnutls mysql postgres relp snmp zlib"
 
 DEPEND="kerberos? ( virtual/krb5 )
