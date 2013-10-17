@@ -3,10 +3,10 @@ DEPEND=|| ( >=sys-devel/automake-1.11.1:1.11 >=sys-devel/automake-1.12:1.12 ) >=
 DESCRIPTION=X.Org GL protocol headers
 EAPI=3
 HOMEPAGE=http://xorg.freedesktop.org/
-KEYWORDS=alpha amd64 arm hppa ia64 ~mips ppc ppc64 s390 sh sparc x86 ~x86-fbsd ~x64-freebsd ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~sparc-solaris ~x64-solaris ~x86-solaris
+KEYWORDS=alpha amd64 arm hppa ia64 mips ppc ppc64 s390 sh sparc x86 ~x86-fbsd ~x64-freebsd ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~sparc-solaris ~x64-solaris ~x86-solaris
 LICENSE=SGI-B-2.0
 RDEPEND=app-admin/eselect-opengl
 SLOT=0
 SRC_URI=http://xorg.freedesktop.org/releases/individual/proto/glproto-1.4.14.tar.bz2
 _eclasses_=autotools	1b0fa473be98091220edff9f51d06153	autotools-utils	966fed1f979132a778b0b48c74a16adb	base	fc89786f3f7e7bcf03334359bd5b639b	eutils	d40dc948067bd3db1c8ebf7d51897313	flag-o-matic	c3131dc67d3bd39f044e92b8280505e4	libtool	0fd90d183673bf1107465ec45849d1ea	multilib	ded93e450747134a079e647d888aa80b	multiprocessing	1512bdfe7004902b8cd2c466fc3df772	toolchain-funcs	3e30ef439a720915f8f4fd4fe75f704c	user	9e552f935106ff0bc92af16da64b4b29	xorg-2	b83efc910bb3ac2c64f89e2623f181f5
-_md5_=da16a52b386d0143f287b1da7412b5e2
+_md5_=23786e6a490f6d594134efd8217f708a

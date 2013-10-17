@@ -4,10 +4,10 @@ DESCRIPTION=Google's C++ mocking framework
 EAPI=4
 HOMEPAGE=http://code.google.com/p/googlemock/
 IUSE=static-libs
-KEYWORDS=amd64 arm ~mips ppc ~ppc64 x86
+KEYWORDS=amd64 arm mips ppc ppc64 x86
 LICENSE=BSD
 RDEPEND==dev-cpp/gtest-1.6.0*
 SLOT=0
 SRC_URI=http://googlemock.googlecode.com/files/gmock-1.6.0.zip
 _eclasses_=eutils	d40dc948067bd3db1c8ebf7d51897313	libtool	0fd90d183673bf1107465ec45849d1ea	multilib	ded93e450747134a079e647d888aa80b	toolchain-funcs	3e30ef439a720915f8f4fd4fe75f704c	user	9e552f935106ff0bc92af16da64b4b29
-_md5_=a80e3d41ac6ab5cb9d6a8a7b531a2d78
+_md5_=f28c2d0be3f04fcff7e69cd0fee66a46

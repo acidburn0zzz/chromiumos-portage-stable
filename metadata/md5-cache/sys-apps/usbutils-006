@@ -4,10 +4,10 @@ DESCRIPTION=USB enumeration utilities
 EAPI=4
 HOMEPAGE=http://linux-usb.sourceforge.net/
 IUSE=python zlib
-KEYWORDS=~alpha amd64 arm hppa ~ia64 ~m68k ~mips ppc ppc64 ~s390 ~sh ~sparc x86 ~amd64-linux ~x86-linux
+KEYWORDS=alpha amd64 arm hppa ia64 m68k mips ppc ppc64 s390 sh sparc x86 ~amd64-linux ~x86-linux
 LICENSE=GPL-2
 RDEPEND=virtual/libusb:1 zlib? ( sys-libs/zlib ) sys-apps/hwids >=app-admin/eselect-python-20091230 python? ( || ( =dev-lang/python-2.7* =dev-lang/python-2.6* ) )
 SLOT=0
 SRC_URI=mirror://kernel/linux/utils/usb/usbutils/usbutils-006.tar.xz
 _eclasses_=eutils	d40dc948067bd3db1c8ebf7d51897313	multilib	ded93e450747134a079e647d888aa80b	python	6bbd984910e27780e5d0ea543d83ef84	toolchain-funcs	3e30ef439a720915f8f4fd4fe75f704c	user	9e552f935106ff0bc92af16da64b4b29
-_md5_=8fbc1a48b18c7ba30e88057a8be3cd61
+_md5_=0fabe1d1a040a963eea4448da371a89a

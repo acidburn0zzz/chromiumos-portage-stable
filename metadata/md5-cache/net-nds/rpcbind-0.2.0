@@ -3,10 +3,10 @@ DEPEND=net-libs/libtirpc dev-util/pkgconfig || ( >=sys-devel/automake-1.11.1:1.1
 DESCRIPTION=portmap replacement which supports RPC over various protocols
 EAPI=2
 HOMEPAGE=http://sourceforge.net/projects/rpcbind/
-KEYWORDS=alpha amd64 arm hppa ia64 ~mips ppc ppc64 s390 sh sparc x86
+KEYWORDS=alpha amd64 arm hppa ia64 mips ppc ppc64 s390 sh sparc x86
 LICENSE=BSD
 RDEPEND=net-libs/libtirpc
 SLOT=0
 SRC_URI=mirror://sourceforge/rpcbind/rpcbind-0.2.0.tar.bz2
 _eclasses_=autotools	1b0fa473be98091220edff9f51d06153	libtool	0fd90d183673bf1107465ec45849d1ea	multilib	ded93e450747134a079e647d888aa80b	multiprocessing	1512bdfe7004902b8cd2c466fc3df772	toolchain-funcs	3e30ef439a720915f8f4fd4fe75f704c
-_md5_=1ae0fadafb1ff999f6c48ffd6cc106ba
+_md5_=fe300a29fed0e78cd3a815b045a6f725

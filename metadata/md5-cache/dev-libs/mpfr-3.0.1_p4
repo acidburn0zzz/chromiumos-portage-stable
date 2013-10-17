@@ -2,10 +2,10 @@ DEFINED_PHASES=install postinst preinst unpack
 DEPEND=>=dev-libs/gmp-4.1.4-r2
 DESCRIPTION=library for multiple-precision floating-point computations with exact rounding
 HOMEPAGE=http://www.mpfr.org/
-KEYWORDS=~alpha amd64 arm ~hppa ~ia64 ~m68k ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc x86 ~sparc-fbsd ~x86-fbsd
+KEYWORDS=alpha amd64 arm hppa ia64 m68k mips ppc ppc64 s390 sh sparc x86 ~sparc-fbsd ~x86-fbsd
 LICENSE=LGPL-2.1
 RDEPEND=>=dev-libs/gmp-4.1.4-r2
 SLOT=0
 SRC_URI=http://www.mpfr.org/mpfr-3.0.1/mpfr-3.0.1.tar.bz2
 _eclasses_=eutils	d40dc948067bd3db1c8ebf7d51897313	multilib	ded93e450747134a079e647d888aa80b	toolchain-funcs	3e30ef439a720915f8f4fd4fe75f704c	user	9e552f935106ff0bc92af16da64b4b29
-_md5_=b4687288c2da6398a8d785da0099e90a
+_md5_=66fb1d08ddb9c0eb561a1bba8a06c1c6

@@ -4,10 +4,10 @@ DESCRIPTION=access control list utilities, libraries and headers
 EAPI=4
 HOMEPAGE=http://savannah.nongnu.org/projects/acl
 IUSE=nfs nls static-libs
-KEYWORDS=alpha amd64 arm hppa ia64 m68k ~mips ppc ~ppc64 s390 sh sparc x86 ~amd64-linux ~ia64-linux ~x86-linux
+KEYWORDS=alpha amd64 arm hppa ia64 m68k mips ppc ppc64 s390 sh sparc x86 ~amd64-linux ~ia64-linux ~x86-linux
 LICENSE=LGPL-2.1
 RDEPEND=>=sys-apps/attr-2.4 nfs? ( net-libs/libnfsidmap )
 SLOT=0
 SRC_URI=http://download.savannah.gnu.org/releases/acl/acl-2.2.51.src.tar.gz nfs? ( http://www.citi.umich.edu/projects/nfsv4/linux/acl-patches/2.2.42-2/acl-2.2.42-CITI_NFS4_ALL-2.dif )
 _eclasses_=eutils	d40dc948067bd3db1c8ebf7d51897313	multilib	ded93e450747134a079e647d888aa80b	toolchain-funcs	3e30ef439a720915f8f4fd4fe75f704c	user	9e552f935106ff0bc92af16da64b4b29
-_md5_=72d30e1108922869f65cb2ffcd89ef2a
+_md5_=b6879f3a5bef98ebef5a6078abf31267
