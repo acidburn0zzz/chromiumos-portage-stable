@@ -4,10 +4,10 @@ DESCRIPTION=TrouSerS' support tools for the Trusted Platform Modules
 EAPI=4
 HOMEPAGE=http://trousers.sourceforge.net
 IUSE=nls pkcs11 debug
-KEYWORDS=amd64 arm x86
+KEYWORDS=alpha amd64 arm hppa ia64 m68k mips ppc ppc64 s390 sh sparc x86
 LICENSE=CPL-1.0
 RDEPEND=>=app-crypt/trousers-0.3.0 dev-libs/openssl pkcs11? ( dev-libs/opencryptoki ) nls? ( virtual/libintl )
 SLOT=0
 SRC_URI=mirror://sourceforge/trousers/tpm-tools-1.3.5.tar.gz
 _eclasses_=autotools	1b0fa473be98091220edff9f51d06153	eutils	d40dc948067bd3db1c8ebf7d51897313	flag-o-matic	c3131dc67d3bd39f044e92b8280505e4	libtool	0fd90d183673bf1107465ec45849d1ea	multilib	ded93e450747134a079e647d888aa80b	multiprocessing	1512bdfe7004902b8cd2c466fc3df772	toolchain-funcs	3e30ef439a720915f8f4fd4fe75f704c	user	9e552f935106ff0bc92af16da64b4b29
-_md5_=92411526272a3f6a34d979cacbe3c602
+_md5_=ad1490aed45c166a0183fe842e411dab
