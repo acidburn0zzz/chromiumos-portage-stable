@@ -25,7 +25,7 @@ inherit eutils
 DESCRIPTION="utils for managing LZMA compressed files"
 HOMEPAGE="http://tukaani.org/xz/"
 
-LICENSE="LGPL-2.1"
+LICENSE="LGPL-2.1 GPLv2+ public-domain"
 SLOT="0"
 IUSE="nls static-libs +threads"
 
