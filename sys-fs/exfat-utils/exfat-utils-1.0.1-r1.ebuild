@@ -1,9 +1,9 @@
 # Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-fs/exfat-utils/exfat-utils-0.9.8.ebuild,v 1.3 2013/01/09 23:03:22 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-fs/exfat-utils/exfat-utils-1.0.1.ebuild,v 1.3 2013/07/04 15:31:58 ssuominen Exp $
 
-EAPI=4
-inherit scons-utils toolchain-funcs eutils
+EAPI=5
+inherit scons-utils toolchain-funcs
 
 DESCRIPTION="exFAT filesystem utilities"
 HOMEPAGE="http://code.google.com/p/exfat/"
@@ -14,12 +14,8 @@ SLOT="0"
 KEYWORDS="alpha amd64 arm hppa ia64 m68k mips ppc ppc64 s390 sh sparc x86"
 IUSE=""
 
-src_prepare() {
-	epatch "${FILESDIR}"/${PN}-0.9.8-build-vars.patch
-}
-
 src_compile() {
-	tc-export CC
+	tc-export AR CC RANLIB
 	escons CCFLAGS="${CFLAGS}"
 }
 
