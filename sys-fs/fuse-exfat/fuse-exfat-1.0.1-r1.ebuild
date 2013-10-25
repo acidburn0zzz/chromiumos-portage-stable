@@ -1,9 +1,9 @@
 # Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-fs/fuse-exfat/fuse-exfat-0.9.8-r1.ebuild,v 1.4 2013/01/09 19:23:14 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-fs/fuse-exfat/fuse-exfat-1.0.1.ebuild,v 1.5 2013/10/19 03:47:28 vapier Exp $
 
-EAPI=4
-inherit scons-utils udev toolchain-funcs eutils
+EAPI=5
+inherit scons-utils toolchain-funcs #udev
 
 DESCRIPTION="exFAT filesystem FUSE module"
 HOMEPAGE="http://code.google.com/p/exfat/"
@@ -11,15 +11,11 @@ SRC_URI="http://exfat.googlecode.com/files/${P}.tar.gz"
 
 LICENSE="GPL-3"
 SLOT="0"
-KEYWORDS="alpha amd64 arm hppa ia64 m68k mips ppc ppc64 s390 sh sparc x86"
+KEYWORDS="alpha amd64 arm hppa ia64 m68k mips ppc64 s390 sh sparc x86 arm-linux x86-linux"
 IUSE=""
 
 RDEPEND="sys-fs/fuse"
-DEPEND="${RDEPEND}"
-
-src_prepare() {
-	epatch "${FILESDIR}"/${PN}-0.9.8-build-vars.patch
-}
+DEPEND=${RDEPEND}
 
 src_compile() {
 	tc-export AR CC RANLIB
@@ -33,5 +29,10 @@ src_install() {
 	doman */*.8
 	dodoc ChangeLog
 
-	udev_dorules "${FILESDIR}"/99-exfat.rules
+	#This shouldn't really be required. Comment it out for now.
+	#udev_dorules "${FILESDIR}"/99-exfat.rules
+}
+
+pkg_postinst() {
+	elog "You can emerge sys-fs/exfat-utils for dump, label, mkfs and fsck utilities."
 }
