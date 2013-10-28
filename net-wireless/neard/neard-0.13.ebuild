@@ -1,8 +1,8 @@
 # Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/net-wireless/neard/neard-0.11.ebuild,v 1.1 2013/06/21 19:39:05 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/net-wireless/neard/neard-0.13.ebuild,v 1.1 2013/09/22 19:07:31 mrueg Exp $
 
-EAPI="4"
+EAPI=5
 
 DESCRIPTION="Near Field Communication (NFC) management daemon"
 HOMEPAGE="https://01.org/linux-nfc/"
