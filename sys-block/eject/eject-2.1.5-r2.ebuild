@@ -13,6 +13,9 @@ SLOT="0"
 KEYWORDS="alpha amd64 arm hppa ia64 m68k mips ppc ppc64 s390 sh sparc x86"
 IUSE="nls"
 
+RDEPEND="!sys-apps/eject"
+DEPEND="${RDEPEND}"
+
 S=${WORKDIR}/${PN}
 
 src_unpack() {
