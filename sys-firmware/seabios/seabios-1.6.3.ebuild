@@ -20,7 +20,7 @@ fi
 inherit ${GIT_ECLASS} python
 
 if [[ ${PV} != *9999* ]]; then
-	KEYWORDS="amd64 ~x86"
+	KEYWORDS="amd64 x86"
 fi
 
 DESCRIPTION="Open Source implementation of a 16-bit x86 BIOS"
@@ -30,7 +30,7 @@ LICENSE="LGPL-3 GPL-3"
 SLOT="0"
 IUSE=""
 
-DEPEND=""
+DEPEND="!sys-apps/seabios"
 RDEPEND="${DEPEND}
 	!app-emulation/qemu
 	!<=app-emulation/qemu-kvm-0.15.0"
