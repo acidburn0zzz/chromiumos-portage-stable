@@ -1,12 +1,12 @@
 DEFINED_PHASES=compile configure install prepare setup
-DEPEND=>=app-admin/eselect-python-20091230 =dev-lang/python-2*
+DEPEND=!sys-apps/seabios >=app-admin/eselect-python-20091230 =dev-lang/python-2*
 DESCRIPTION=Open Source implementation of a 16-bit x86 BIOS
 EAPI=4
 HOMEPAGE=http://www.seabios.org
-KEYWORDS=amd64 ~x86
+KEYWORDS=amd64 x86
 LICENSE=LGPL-3 GPL-3
-RDEPEND=!app-emulation/qemu !<=app-emulation/qemu-kvm-0.15.0 >=app-admin/eselect-python-20091230 =dev-lang/python-2*
+RDEPEND=!sys-apps/seabios !app-emulation/qemu !<=app-emulation/qemu-kvm-0.15.0 >=app-admin/eselect-python-20091230 =dev-lang/python-2*
 SLOT=0
 SRC_URI=http://www.linuxtogo.org/~kevin/SeaBIOS/seabios-1.6.3.tar.gz
 _eclasses_=multilib	ded93e450747134a079e647d888aa80b	python	6bbd984910e27780e5d0ea543d83ef84	toolchain-funcs	3e30ef439a720915f8f4fd4fe75f704c
-_md5_=e13b1a1e4d5b63bb08f43e487f5bfb9b
+_md5_=411c6067ef76ab3b39efd4308d1bfe49
