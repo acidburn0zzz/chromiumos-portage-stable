@@ -1,32 +1,25 @@
-# Copyright 1999-2011 Gentoo Foundation
+# Copyright 1999-2012 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-apps/gawk/gawk-3.1.8.ebuild,v 1.7 2011/08/05 19:08:07 jer Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-apps/gawk/gawk-4.0.1.ebuild,v 1.10 2012/09/27 02:02:47 blueness Exp $
 
-EAPI="2"
+EAPI="4"
 
 inherit eutils toolchain-funcs multilib
 
 DESCRIPTION="GNU awk pattern-matching language"
 HOMEPAGE="http://www.gnu.org/software/gawk/gawk.html"
-SRC_URI="mirror://gnu/gawk/${P}.tar.bz2"
+SRC_URI="mirror://gnu/gawk/${P}.tar.xz"
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="alpha amd64 arm hppa ia64 m68k mips ppc ppc64 s390 sh sparc x86 ~sparc-fbsd ~x86-fbsd"
-IUSE="nls"
+KEYWORDS="alpha amd64 arm hppa ia64 m68k mips ppc ppc64 s390 sh sparc x86 ~ppc-aix ~amd64-fbsd ~sparc-fbsd ~x86-fbsd ~x64-freebsd ~x86-freebsd ~hppa-hpux ~ia64-hpux ~x86-interix ~amd64-linux ~ia64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~m68k-mint ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris"
+IUSE="nls readline"
 
-RDEPEND=""
+# older gawk's provided shared lib for baselayout-1
+RDEPEND="!<sys-apps/baselayout-2.0.1
+	readline? ( sys-libs/readline )"
 DEPEND="${RDEPEND}
 	nls? ( sys-devel/gettext )"
-
-SFFS=${WORKDIR}/filefuncs
-
-src_unpack() {
-	unpack ${A}
-
-	# Copy filefuncs module's source over ...
-	cp -r "${FILESDIR}"/filefuncs "${SFFS}" || die "cp failed"
-}
 
 src_prepare() {
 	# use symlinks rather than hardlinks, and disable version links
@@ -34,6 +27,7 @@ src_prepare() {
 		-e '/^LN =/s:=.*:= $(LN_S):' \
 		-e '/install-exec-hook:/s|$|\nfoo:|' \
 		Makefile.in doc/Makefile.in
+	sed -i '/^pty1:$/s|$|\n_pty1:|' test/Makefile.in #413327
 }
 
 src_configure() {
@@ -41,22 +35,16 @@ src_configure() {
 	econf \
 		--libexec='$(libdir)/misc' \
 		$(use_enable nls) \
-		--enable-switch
-}
-
-src_compile() {
-	emake || die
-	emake -C "${SFFS}" CC="$(tc-getCC)" || die "filefuncs emake failed"
+		$(use_with readline)
 }
 
 src_install() {
 	emake install DESTDIR="${D}" || die
-	emake -C "${SFFS}" LIBDIR="$(get_libdir)" install || die
 
 	# Keep important gawk in /bin
 	if use userland_GNU ; then
 		dodir /bin
-		mv "${D}"/usr/bin/gawk "${D}"/bin/ || die
+		mv "${ED}"/usr/bin/gawk "${ED}"/bin/ || die
 		dosym /bin/gawk /usr/bin/gawk
 
 		# Provide canonical `awk`
@@ -68,8 +56,7 @@ src_install() {
 	# Install headers
 	insinto /usr/include/awk
 	doins *.h || die
-	# We do not want 'acconfig.h' in there ...
-	rm -f "${D}"/usr/include/awk/acconfig.h
+	rm "${ED}"/usr/include/awk/config.h || die
 
 	dodoc AUTHORS ChangeLog FUTURES LIMITATIONS NEWS PROBLEMS POSIX.STD README README_d/*.*
 	for x in */ChangeLog ; do
