@@ -1,6 +1,6 @@
-# Copyright 1999-2012 Gentoo Foundation
+# Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-devel/gnuconfig/gnuconfig-20120818.ebuild,v 1.2 2012/10/01 04:59:11 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-devel/gnuconfig/gnuconfig-20130516.ebuild,v 1.1 2013/05/16 15:21:59 vapier Exp $
 
 EAPI="2"
 
@@ -53,6 +53,10 @@ src_prepare() {
 }
 
 src_compile() { :;}
+
+src_test() {
+	emake check
+}
 
 src_install() {
 	insinto /usr/share/${PN}
