@@ -1,35 +1,55 @@
 # Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-devel/automake/automake-1.10.3.ebuild,v 1.10 2013/04/04 22:15:06 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-devel/automake/automake-1.11.6.ebuild,v 1.8 2013/04/04 22:15:06 vapier Exp $
 
-inherit eutils
+inherit eutils versionator unpacker
+
+if [[ ${PV/_beta} == ${PV} ]]; then
+	MY_P=${P}
+	SRC_URI="mirror://gnu/${PN}/${P}.tar.xz
+		ftp://alpha.gnu.org/pub/gnu/${PN}/${MY_P}.tar.xz"
+else
+	MY_PV="$(get_major_version).$(($(get_version_component_range 2)-1))b"
+	MY_P="${PN}-${MY_PV}"
+
+	# Alpha/beta releases are not distributed on the usual mirrors.
+	SRC_URI="ftp://alpha.gnu.org/pub/gnu/${PN}/${MY_P}.tar.xz"
+fi
+
+S="${WORKDIR}/${MY_P}"
+
+# Use Gentoo versioning for slotting.
+SLOT="${PV:0:4}"
 
 DESCRIPTION="Used to generate Makefile.in from Makefile.am"
 HOMEPAGE="http://www.gnu.org/software/automake/"
-SRC_URI="mirror://gnu/${PN}/${P}.tar.bz2"
 
 LICENSE="GPL-2"
-SLOT="${PV:0:4}"
 KEYWORDS="*"
 IUSE=""
 
 RDEPEND="dev-lang/perl
-	>=sys-devel/automake-wrapper-2
-	>=sys-devel/autoconf-2.60
+	>=sys-devel/automake-wrapper-3-r2
+	>=sys-devel/autoconf-2.62
 	sys-devel/gnuconfig"
 DEPEND="${RDEPEND}
 	sys-apps/help2man"
 
 src_unpack() {
-	unpack ${A}
+	unpacker_src_unpack
 	cd "${S}"
 	chmod a+rx tests/*.test
 	export WANT_AUTOCONF=2.5
 }
 
 src_compile() {
-	econf --docdir=/usr/share/doc/${PF} || die
-	emake || die
+	econf --docdir=/usr/share/doc/${PF} HELP2MAN=true || die
+	emake APIVERSION="${SLOT}" pkgvdatadir="/usr/share/${PN}-${SLOT}" || die
+
+	local x
+	for x in aclocal automake; do
+		help2man "perl -Ilib ${x}" > doc/${x}-${SLOT}.1
+	done
 }
 
 # slot the info pages.  do this w/out munging the source so we don't have
@@ -62,20 +82,18 @@ slot_info_pages() {
 }
 
 src_install() {
-	emake DESTDIR="${D}" install || die
+	emake DESTDIR="${D}" install \
+		APIVERSION="${SLOT}" pkgvdatadir="/usr/share/${PN}-${SLOT}" || die
 	slot_info_pages
 	dodoc NEWS README THANKS TODO AUTHORS ChangeLog
 
-	# SLOT the docs and junk
-	local x
-	for x in aclocal automake ; do
-		help2man "perl -Ilib ${x}" > ${x}-${SLOT}.1
-		doman ${x}-${SLOT}.1
-		rm -f "${D}"/usr/bin/${x}
-	done
+	rm \
+		"${D}"/usr/bin/{aclocal,automake} \
+		"${D}"/usr/share/man/man1/{aclocal,automake}.1
 
 	# remove all config.guess and config.sub files replacing them
 	# w/a symlink to a specific gnuconfig version
+	local x
 	for x in guess sub ; do
 		dosym ../gnuconfig/config.${x} /usr/share/${PN}-${SLOT}/config.${x}
 	done
