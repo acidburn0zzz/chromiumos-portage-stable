@@ -1,6 +1,6 @@
-# Copyright 1999-2012 Gentoo Foundation
+# Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/app-shells/bash/bash-4.2_p20.ebuild,v 1.10 2012/03/25 16:31:53 maekke Exp $
+# $Header: /var/cvsroot/gentoo-x86/app-shells/bash/bash-4.2_p45.ebuild,v 1.12 2013/05/20 18:01:51 ago Exp $
 
 EAPI="1"
 
@@ -34,14 +34,14 @@ SRC_URI="mirror://gnu/bash/${MY_P}.tar.gz $(patches)"
 
 LICENSE="GPL-3"
 SLOT="0"
-KEYWORDS="alpha amd64 arm hppa ia64 m68k mips ppc ppc64 s390 sh sparc x86 ~sparc-fbsd ~x86-fbsd"
-IUSE="afs bashlogger examples mem-scramble +net nls plugins vanilla"
+KEYWORDS="alpha amd64 arm hppa ia64 m68k mips ppc ppc64 s390 sh sparc x86 ~amd64-fbsd ~sparc-fbsd ~x86-fbsd"
+IUSE="afs bashlogger examples mem-scramble +net nls plugins +readline vanilla"
 
 DEPEND=">=sys-libs/ncurses-5.2-r2
-	>=sys-libs/readline-6.2
+	readline? ( >=sys-libs/readline-6.2 )
 	nls? ( virtual/libintl )"
 RDEPEND="${DEPEND}
-	!<sys-apps/portage-2.1.7.16
+	!<sys-apps/portage-2.1.6.7_p1
 	!<sys-apps/paludis-0.26.0_alpha5"
 # we only need yacc when the .y files get patched (bash42-005)
 DEPEND+=" virtual/yacc"
@@ -78,6 +78,10 @@ src_unpack() {
 
 	epatch "${FILESDIR}"/${PN}-4.2-execute-job-control.patch #383237
 	epatch "${FILESDIR}"/${PN}-4.2-parallel-build.patch
+	epatch "${FILESDIR}"/${PN}-4.2-no-readline.patch
+	epatch "${FILESDIR}"/${PN}-4.2-speed-up-read-N.patch
+
+	epatch_user
 }
 
 src_compile() {
@@ -115,6 +119,7 @@ src_compile() {
 	# ncurses in one or two small places :(.
 
 	use plugins && append-ldflags -Wl,-rpath,/usr/$(get_libdir)/bash
+	tc-export AR #444070
 	econf \
 		--with-installed-readline=. \
 		--with-curses \
@@ -123,6 +128,9 @@ src_compile() {
 		--disable-profiling \
 		$(use_enable mem-scramble) \
 		$(use_with mem-scramble bash-malloc) \
+		$(use_enable readline) \
+		$(use_enable readline history) \
+		$(use_enable readline bang-history) \
 		${myconf}
 	emake || die
 
@@ -145,12 +153,27 @@ src_install() {
 		newins "${FILESDIR}"/dot-${f} .${f}
 	done
 
-	sed -i -e "s:#${USERLAND}#@::" "${D}"/etc/skel/.bashrc "${D}"/etc/bash/bashrc
-	sed -i -e '/#@/d' "${D}"/etc/skel/.bashrc "${D}"/etc/bash/bashrc
+	local sed_args=(
+		-e "s:#${USERLAND}#@::"
+		-e '/#@/d'
+	)
+	if ! use readline ; then
+		sed_args+=( #432338
+			-e '/^shopt -s histappend/s:^:#:'
+			-e 's:use_color=true:use_color=false:'
+		)
+	fi
+	sed -i \
+		"${sed_args[@]}" \
+		"${D}"/etc/skel/.bashrc \
+		"${D}"/etc/bash/bashrc || die
 
 	if use plugins ; then
 		exeinto /usr/$(get_libdir)/bash
 		doexe $(echo examples/loadables/*.o | sed 's:\.o::g') || die
+		insinto /usr/include/bash-plugins
+		doins *.h builtins/*.h examples/loadables/*.h include/*.h \
+			lib/{glob/glob.h,tilde/tilde.h}
 	fi
 
 	if use examples ; then
