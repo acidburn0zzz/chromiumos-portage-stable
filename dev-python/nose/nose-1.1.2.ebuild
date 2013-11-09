@@ -20,7 +20,7 @@ RDEPEND="coverage? ( dev-python/coverage )
 	dev-python/setuptools"
 DEPEND="${RDEPEND}
 	doc? ( >=dev-python/sphinx-0.6 )
-	test? ( dev-python/twisted )"
+	test? ( dev-python/twisted-core )"
 
 DOCS="AUTHORS"
 

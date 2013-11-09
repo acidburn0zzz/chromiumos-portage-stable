@@ -94,7 +94,7 @@ if [[ -z "${DISTUTILS_DISABLE_TEST_DEPENDENCY}" ]]; then
 	# trial requires an argument, which is usually equal to "${PN}".
 	elif [[ "${DISTUTILS_SRC_TEST}" =~ ^trial(\ .*)?$ ]]; then
 		IUSE="test"
-		DEPEND+="${DEPEND:+ }test? ( dev-python/twisted )"
+		DEPEND+="${DEPEND:+ }test? ( dev-python/twisted-core )"
 	fi
 fi
 
