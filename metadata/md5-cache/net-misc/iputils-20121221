@@ -1,0 +1,13 @@
+DEFINED_PHASES=compile install prepare
+DEPEND=!net-misc/rarpd !static? ( caps? ( sys-libs/libcap ) idn? ( net-dns/libidn ) ipv6? ( gnutls? ( net-libs/gnutls ) ssl? ( dev-libs/openssl:0 ) ) ) static? ( caps? ( sys-libs/libcap[static-libs(+)] ) idn? ( net-dns/libidn[static-libs(+)] ) ipv6? ( gnutls? ( net-libs/gnutls[static-libs(+)] ) ssl? ( dev-libs/openssl:0[static-libs(+)] ) ) ) virtual/os-headers
+DESCRIPTION=Network monitoring tools including ping and ping6
+EAPI=4
+HOMEPAGE=http://www.linuxfoundation.org/collaborate/workgroups/networking/iputils
+IUSE=caps doc gnutls idn ipv6 SECURITY_HAZARD ssl static
+KEYWORDS=alpha amd64 arm hppa ia64 m68k mips ppc ppc64 s390 sh sparc x86 ~ppc-aix ~amd64-linux ~x86-linux
+LICENSE=BSD-4
+RDEPEND=!net-misc/rarpd !static? ( caps? ( sys-libs/libcap ) idn? ( net-dns/libidn ) ipv6? ( gnutls? ( net-libs/gnutls ) ssl? ( dev-libs/openssl:0 ) ) )
+SLOT=0
+SRC_URI=http://www.skbuff.net/iputils/iputils-s20121221.tar.bz2 mirror://gentoo/iputils-s20121221-manpages.tar.bz2
+_eclasses_=eutils	d40dc948067bd3db1c8ebf7d51897313	flag-o-matic	c3131dc67d3bd39f044e92b8280505e4	multilib	ded93e450747134a079e647d888aa80b	toolchain-funcs	3e30ef439a720915f8f4fd4fe75f704c	user	9e552f935106ff0bc92af16da64b4b29
+_md5_=83dcb660f9b951a3376fb4b0c8089b9d
