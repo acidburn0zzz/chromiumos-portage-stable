@@ -1,6 +1,6 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2011 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/eclass/kernel-2.eclass,v 1.290 2013/11/18 13:19:49 tomwij Exp $
+# $Header: /var/cvsroot/gentoo-x86/eclass/kernel-2.eclass,v 1.273 2011/12/12 22:01:37 vapier Exp $
 
 # Description: kernel.eclass rewrite for a clean base regarding the 2.6
 #              series of kernel with back-compatibility for 2.4
@@ -40,13 +40,7 @@
 # K_DEFCONFIG			- Allow specifying a different defconfig target.
 #						  If length zero, defaults to "defconfig".
 # K_WANT_GENPATCHES		- Apply genpatches to kernel source. Provide any
-# 						  combination of "base", "extras" or "experimental".
-# K_EXP_GENPATCHES_PULL	- If set, we pull "experimental" regardless of the USE FLAG
-#						  but expect the ebuild maintainer to use K_EXP_GENPATCHES_LIST.
-# K_EXP_GENPATCHES_NOUSE	- If set, no USE flag will be provided for "experimental";
-# 						  as a result the user cannot choose to apply those patches.
-# K_EXP_GENPATCHES_LIST	- A list of patches to pick from "experimental" to apply when
-# 						  the USE flag is unset and K_EXP_GENPATCHES_PULL is set.
+# 						  combination of "base" and "extras"
 # K_GENPATCHES_VER		- The version of the genpatches tarball(s) to apply.
 #						  A value of "5" would apply genpatches-2.6.12-5 to
 #						  my-sources-2.6.12.ebuild
@@ -74,11 +68,6 @@
 #						  the doc dir
 # UNIPATCH_STRICTORDER	- if this is set places patches into directories of
 #						  order, so they are applied in the order passed
-
-# Changing any other variable in this eclass is not supported; you can request
-# for additional variables to be added by contacting the current maintainer.
-# If you do change them, there is a chance that we will not fix resulting bugs;
-# that of course does not mean we're not willing to help.
 
 inherit eutils toolchain-funcs versionator multilib
 EXPORT_FUNCTIONS pkg_setup src_unpack src_compile src_test src_install pkg_preinst pkg_postinst pkg_postrm
@@ -132,36 +121,22 @@ handle_genpatches() {
 
 	# for > 3.0 kernels, handle genpatches tarball name
 	# genpatches for 3.0 and 3.0.1 might be named
-	# genpatches-3.0-1.base.tar.xz and genpatches-3.0-2.base.tar.xz
+	# genpatches-3.0-1.base.tar.bz2 and genpatches-3.0-2.base.tar.bz2
 	# respectively.  Handle this.
 
 	for i in ${K_WANT_GENPATCHES} ; do
-		if [[ ${KV_MAJOR} -ge 3 ]]; then
-			if [[ ${#OKV_ARRAY[@]} -ge 3 ]]; then
-				tarball="genpatches-${KV_MAJOR}.${KV_MINOR}-${K_GENPATCHES_VER}.${i}.tar.xz"
-			else
-				tarball="genpatches-${KV_MAJOR}.${KV_PATCH}-${K_GENPATCHES_VER}.${i}.tar.xz"
-			fi
+	if [[ ${KV_MAJOR} -ge 3 ]]; then
+		if [[ ${#OKV_ARRAY[@]} -ge 3 ]]; then
+			tarball="genpatches-${KV_MAJOR}.${KV_MINOR}-${K_GENPATCHES_VER}.${i}.tar.bz2"
 		else
-			tarball="genpatches-${OKV}-${K_GENPATCHES_VER}.${i}.tar.xz"
+			tarball="genpatches-${KV_MAJOR}.${KV_PATCH}-${K_GENPATCHES_VER}.${i}.tar.bz2"
 		fi
-
-		local use_cond_start="" use_cond_end=""
-
-		if [[ "${i}" == "experimental" && -z ${K_EXP_GENPATCHES_PULL} && -z ${K_EXP_GENPATCHES_NOUSE} ]] ; then
-			use_cond_start="experimental? ( "
-			use_cond_end=" )"
-
-			if use experimental ; then
-				UNIPATCH_LIST_GENPATCHES+=" ${DISTDIR}/${tarball}"
-				debug-print "genpatches tarball: $tarball"
-			fi
-		else
-			UNIPATCH_LIST_GENPATCHES+=" ${DISTDIR}/${tarball}"
-			debug-print "genpatches tarball: $tarball"
-		fi
-
-		GENPATCHES_URI+=" ${use_cond_start}mirror://gentoo/${tarball}${use_cond_end}"
+	else
+		tarball="genpatches-${OKV}-${K_GENPATCHES_VER}.${i}.tar.bz2"
+	fi
+	debug-print "genpatches tarball: $tarball"
+	GENPATCHES_URI="${GENPATCHES_URI} mirror://gentoo/${tarball}"
+	UNIPATCH_LIST_GENPATCHES="${UNIPATCH_LIST_GENPATCHES} ${DISTDIR}/${tarball}"
 	done
 }
 
@@ -232,10 +207,14 @@ detect_version() {
 	if [[ ${#OKV_ARRAY[@]} -lt 3 ]]; then
 		KV_PATCH_ARR=(${KV_PATCH//\./ })
 
-		# at this point 031412, Linus is putting all 3.x kernels in a 
-		# 3.x directory, may need to revisit when 4.x is released
-		KERNEL_BASE_URI="mirror://kernel/linux/kernel/v${KV_MAJOR}.x"
-
+		# at this point 080811, Linus is putting 3.1 kernels in 3.0 directory
+		# revisit when 3.1 is released
+		if [[ ${KV_PATCH} -gt 0 ]]; then
+			KERNEL_BASE_URI="mirror://kernel/linux/kernel/v${KV_MAJOR}.$((${KV_PATCH_ARR} - 1))"
+		else
+			KERNEL_BASE_URI="mirror://kernel/linux/kernel/v${KV_MAJOR}.${KV_PATCH_ARR}"
+		fi
+		# KERNEL_BASE_URI="mirror://kernel/linux/kernel/v${KV_MAJOR}.${KV_PATCH_ARR}"
 		[[ -n "${K_LONGTERM}" ]] &&
 			KERNEL_BASE_URI="${KERNEL_BASE_URI}/longterm/v${KV_MAJOR}.${KV_PATCH_ARR}"
 	else
@@ -248,8 +227,8 @@ detect_version() {
 		fi
 
 		[[ -n "${K_LONGTERM}" ]] &&
-			#KERNEL_BASE_URI="${KERNEL_BASE_URI}/longterm"
-			KERNEL_BASE_URI="${KERNEL_BASE_URI}/longterm/v${KV_MAJOR}.${KV_MINOR}.${KV_PATCH}"
+			KERNEL_BASE_URI="${KERNEL_BASE_URI}/longterm"
+			#KERNEL_BASE_URI="${KERNEL_BASE_URI}/longterm/v${KV_MAJOR}.${KV_MINOR}.${KV_PATCH}"
 	fi
 
 	debug-print "KERNEL_BASE_URI is ${KERNEL_BASE_URI}"
@@ -257,12 +236,12 @@ detect_version() {
 	if [[ ${#OKV_ARRAY[@]} -ge 3 ]] && [[ ${KV_MAJOR} -ge 3 ]]; then
 		# handle non genpatch using sources correctly
 		if [[ -z ${K_WANT_GENPATCHES} && -z ${K_GENPATCHES_VER} && ${KV_PATCH} -gt 0 ]]; then
-			KERNEL_URI="${KERNEL_BASE_URI}/patch-${OKV}.xz"
-			UNIPATCH_LIST_DEFAULT="${DISTDIR}/patch-${CKV}.xz"
+			KERNEL_URI="${KERNEL_BASE_URI}/patch-${OKV}.bz2"
+			UNIPATCH_LIST_DEFAULT="${DISTDIR}/patch-${CKV}.bz2"
 		fi
-		KERNEL_URI="${KERNEL_URI} ${KERNEL_BASE_URI}/linux-${KV_MAJOR}.${KV_MINOR}.tar.xz"
+		KERNEL_URI="${KERNEL_URI} ${KERNEL_BASE_URI}/linux-${KV_MAJOR}.${KV_MINOR}.tar.bz2"
 	else
-		KERNEL_URI="${KERNEL_BASE_URI}/linux-${OKV}.tar.xz"
+		KERNEL_URI="${KERNEL_BASE_URI}/linux-${OKV}.tar.bz2"
 	fi
 
 	RELEASE=${CKV/${OKV}}
@@ -316,9 +295,9 @@ detect_version() {
 		else
 			OKV="${KV_MAJOR}.${KV_PATCH}"
 		fi
-		KERNEL_URI="${KERNEL_BASE_URI}/patch-${CKV}.xz
-					${KERNEL_BASE_URI}/linux-${OKV}.tar.xz"
-		UNIPATCH_LIST_DEFAULT="${DISTDIR}/patch-${CKV}.xz"
+		KERNEL_URI="${KERNEL_BASE_URI}/patch-${CKV}.bz2
+					${KERNEL_BASE_URI}/linux-${OKV}.tar.bz2"
+		UNIPATCH_LIST_DEFAULT="${DISTDIR}/patch-${CKV}.bz2"
 	fi
 
 	# We need to set this using OKV, but we need to set it before we do any
@@ -333,30 +312,30 @@ detect_version() {
 	# for example:
 	#   CKV="2.6.11_rc3_pre2"
 	# will pull:
-	#   linux-2.6.10.tar.xz & patch-2.6.11-rc3.xz & patch-2.6.11-rc3-git2.xz
+	#   linux-2.6.10.tar.bz2 & patch-2.6.11-rc3.bz2 & patch-2.6.11-rc3-git2.bz2
 
 	if [[ ${KV_MAJOR}${KV_MINOR} -eq 26 ]]; then
 
 		if [[ ${RELEASETYPE} == -rc ]] || [[ ${RELEASETYPE} == -pre ]]; then
 			OKV="${KV_MAJOR}.${KV_MINOR}.$((${KV_PATCH} - 1))"
-			KERNEL_URI="${KERNEL_BASE_URI}/testing/patch-${CKV//_/-}.xz
-						${KERNEL_BASE_URI}/linux-${OKV}.tar.xz"
-			UNIPATCH_LIST_DEFAULT="${DISTDIR}/patch-${CKV//_/-}.xz"
+			KERNEL_URI="${KERNEL_BASE_URI}/testing/patch-${CKV//_/-}.bz2
+						${KERNEL_BASE_URI}/linux-${OKV}.tar.bz2"
+			UNIPATCH_LIST_DEFAULT="${DISTDIR}/patch-${CKV//_/-}.bz2"
 		fi
 
 		if [[ ${RELEASETYPE} == -git ]]; then
-			KERNEL_URI="${KERNEL_BASE_URI}/snapshots/patch-${OKV}${RELEASE}.xz
-						${KERNEL_BASE_URI}/linux-${OKV}.tar.xz"
-			UNIPATCH_LIST_DEFAULT="${DISTDIR}/patch-${OKV}${RELEASE}.xz"
+			KERNEL_URI="${KERNEL_BASE_URI}/snapshots/patch-${OKV}${RELEASE}.bz2
+						${KERNEL_BASE_URI}/linux-${OKV}.tar.bz2"
+			UNIPATCH_LIST_DEFAULT="${DISTDIR}/patch-${OKV}${RELEASE}.bz2"
 		fi
 
 		if [[ ${RELEASETYPE} == -rc-git ]]; then
 			OKV="${KV_MAJOR}.${KV_MINOR}.$((${KV_PATCH} - 1))"
-			KERNEL_URI="${KERNEL_BASE_URI}/snapshots/patch-${KV_MAJOR}.${KV_MINOR}.${KV_PATCH}${RELEASE}.xz
-						${KERNEL_BASE_URI}/testing/patch-${KV_MAJOR}.${KV_MINOR}.${KV_PATCH}${RELEASE/-git*}.xz
-						${KERNEL_BASE_URI}/linux-${OKV}.tar.xz"
+			KERNEL_URI="${KERNEL_BASE_URI}/snapshots/patch-${KV_MAJOR}.${KV_MINOR}.${KV_PATCH}${RELEASE}.bz2
+						${KERNEL_BASE_URI}/testing/patch-${KV_MAJOR}.${KV_MINOR}.${KV_PATCH}${RELEASE/-git*}.bz2
+						${KERNEL_BASE_URI}/linux-${OKV}.tar.bz2"
 
-			UNIPATCH_LIST_DEFAULT="${DISTDIR}/patch-${KV_MAJOR}.${KV_MINOR}.${KV_PATCH}${RELEASE/-git*}.xz ${DISTDIR}/patch-${KV_MAJOR}.${KV_MINOR}.${KV_PATCH}${RELEASE}.xz"
+			UNIPATCH_LIST_DEFAULT="${DISTDIR}/patch-${KV_MAJOR}.${KV_MINOR}.${KV_PATCH}${RELEASE/-git*}.bz2 ${DISTDIR}/patch-${KV_MAJOR}.${KV_MINOR}.${KV_PATCH}${RELEASE}.bz2"
 		fi
 	else
 		if [[ ${RELEASETYPE} == -rc ]] || [[ ${RELEASETYPE} == -pre ]]; then
@@ -366,15 +345,15 @@ detect_version() {
 				KV_PATCH_ARR=(${KV_PATCH//\./ })
 				OKV="${KV_MAJOR}.$((${KV_PATCH_ARR} - 1))"
 			fi
-			KERNEL_URI="${KERNEL_BASE_URI}/testing/patch-${CKV//_/-}.xz
-						${KERNEL_BASE_URI}/linux-${OKV}.tar.xz"
-			UNIPATCH_LIST_DEFAULT="${DISTDIR}/patch-${CKV//_/-}.xz"
+			KERNEL_URI="${KERNEL_BASE_URI}/testing/patch-${CKV//_/-}.bz2
+						${KERNEL_BASE_URI}/testing/linux-${OKV}.tar.bz2"
+			UNIPATCH_LIST_DEFAULT="${DISTDIR}/patch-${CKV//_/-}.bz2"
 		fi
 
 		if [[ ${RELEASETYPE} == -git ]]; then
-			KERNEL_URI="${KERNEL_BASE_URI}/snapshots/patch-${OKV}${RELEASE}.xz
-						${KERNEL_BASE_URI}/linux-${OKV}.tar.xz"
-			UNIPATCH_LIST_DEFAULT="${DISTDIR}/patch-${OKV}${RELEASE}.xz"
+			KERNEL_URI="${KERNEL_BASE_URI}/snapshots/patch-${OKV}${RELEASE}.bz2
+						${KERNEL_BASE_URI}/linux-${OKV}.tar.bz2"
+			UNIPATCH_LIST_DEFAULT="${DISTDIR}/patch-${OKV}${RELEASE}.bz2"
 		fi
 
 		if [[ ${RELEASETYPE} == -rc-git ]]; then
@@ -384,11 +363,11 @@ detect_version() {
 				KV_PATCH_ARR=(${KV_PATCH//\./ })
 				OKV="${KV_MAJOR}.$((${KV_PATCH_ARR} - 1))"
 			fi
-			KERNEL_URI="${KERNEL_BASE_URI}/snapshots/patch-${KV_MAJOR}.${KV_PATCH}${RELEASE}.xz
-						${KERNEL_BASE_URI}/testing/patch-${KV_MAJOR}.${KV_PATCH}${RELEASE/-git*}.xz
-						${KERNEL_BASE_URI}/linux-${OKV}.tar.xz"
+			KERNEL_URI="${KERNEL_BASE_URI}/snapshots/patch-${KV_MAJOR}.${KV_PATCH}${RELEASE}.bz2
+						${KERNEL_BASE_URI}/testing/patch-${KV_MAJOR}.${KV_PATCH}${RELEASE/-git*}.bz2
+						${KERNEL_BASE_URI}/linux-${OKV}.tar.bz2"
 
-			UNIPATCH_LIST_DEFAULT="${DISTDIR}/patch-${KV_MAJOR}.${KV_PATCH}${RELEASE/-git*}.xz ${DISTDIR}/patch-${KV_MAJOR}.${KV_PATCH}${RELEASE}.xz"
+			UNIPATCH_LIST_DEFAULT="${DISTDIR}/patch-${KV_MAJOR}.${KV_PATCH}${RELEASE/-git*}.bz2 ${DISTDIR}/patch-${KV_MAJOR}.${KV_PATCH}${RELEASE}.bz2"
 		fi
 
 
@@ -440,13 +419,11 @@ if [[ ${ETYPE} == sources ]]; then
 	DEPEND="!build? ( sys-apps/sed
 					  >=sys-devel/binutils-2.11.90.0.31 )"
 	RDEPEND="!build? ( >=sys-libs/ncurses-5.2
-					   sys-devel/make 
-					   dev-lang/perl
-					   sys-devel/bc )"
+					   sys-devel/make )"
 	PDEPEND="!build? ( virtual/dev-manager )"
 
 	SLOT="${PVR}"
-	DESCRIPTION="Sources based on the Linux Kernel."
+	DESCRIPTION="Sources for the ${KV_MAJOR}.${KV_MINOR:-$KV_PATCH} linux kernel"
 	IUSE="symlink build"
 
 	# Bug #266157, deblob for libre support
@@ -484,7 +461,6 @@ if [[ ${ETYPE} == sources ]]; then
 			DEBLOB_URI="${DEBLOB_HOMEPAGE}/${DEBLOB_URI_PATH}/${DEBLOB_A}"
 			HOMEPAGE="${HOMEPAGE} ${DEBLOB_HOMEPAGE}"
 
-			DEPEND+=" deblob? ( =dev-lang/python-2* )"
 			KERNEL_URI="${KERNEL_URI}
 				deblob? (
 					${DEBLOB_URI}
@@ -577,9 +553,9 @@ universal_unpack() {
 
 	cd "${WORKDIR}"
 	if [[ ${#OKV_ARRAY[@]} -ge 3 ]] && [[ ${KV_MAJOR} -ge 3 ]]; then
-		unpack linux-${KV_MAJOR}.${KV_MINOR}.tar.xz
+		unpack linux-${KV_MAJOR}.${KV_MINOR}.tar.bz2
 	else
-		unpack linux-${OKV}.tar.xz
+		unpack linux-${OKV}.tar.bz2
 	fi
 
 	if [[ -d "linux" ]]; then
@@ -606,6 +582,19 @@ universal_unpack() {
 	# remove all backup files
 	find . -iname "*~" -exec rm {} \; 2> /dev/null
 
+	# fix a problem on ppc where TOUT writes to /usr/src/linux breaking sandbox
+	# only do this for kernel < 2.6.27 since this file does not exist in later
+	# kernels
+	if [[ -n ${KV_MINOR} &&  ${KV_MAJOR}.${KV_MINOR}.${KV_PATCH} < 2.6.27 ]]
+	then
+		sed -i \
+			-e 's|TOUT	:= .tmp_gas_check|TOUT	:= $(T).tmp_gas_check|' \
+			"${S}"/arch/ppc/Makefile
+	else
+		sed -i \
+			-e 's|TOUT	:= .tmp_gas_check|TOUT	:= $(T).tmp_gas_check|' \
+			"${S}"/arch/powerpc/Makefile
+	fi
 }
 
 unpack_set_extraversion() {
@@ -692,9 +681,9 @@ compile_headers_tweak_config() {
 # install functions
 #==============================================================
 install_universal() {
-	# Fix silly permissions in tarball
+	#fix silly permissions in tarball
 	cd "${WORKDIR}"
-	chown -R 0:0 * >& /dev/null
+	chown -R root:0 * >& /dev/null
 	chmod -R a+r-w+X,u+w *
 	cd ${OLDPWD}
 }
@@ -709,6 +698,7 @@ install_headers() {
 		emake headers_install INSTALL_HDR_PATH="${D}"/${ddir}/.. ${xmakeopts} || die
 
 		# let other packages install some of these headers
+		rm -rf "${D}"/${ddir}/sound #alsa-headers
 		rm -rf "${D}"/${ddir}/scsi  #glibc/uclibc/etc...
 		return 0
 	fi
@@ -760,12 +750,6 @@ install_sources() {
 	fi
 
 	mv ${WORKDIR}/linux* "${D}"/usr/src
-
-	if [[ -n "${UNIPATCH_DOCS}" ]] ; then
-		for i in ${UNIPATCH_DOCS}; do
-			dodoc "${T}"/${i}
-		done
-	fi
 }
 
 # pkg_preinst functions
@@ -834,8 +818,7 @@ postinst_sources() {
 	# optionally display security unsupported message
 	#  Start with why
 	if [[ ${K_SECURITY_UNSUPPORTED} = deblob ]]; then
-		ewarn "Deblobbed kernels may not be up-to-date security-wise"
-		ewarn "as they depend on external scripts."
+		ewarn "Deblobbed kernels are UNSUPPORTED by Gentoo Security."
 	elif [[ -n ${K_SECURITY_UNSUPPORTED} ]]; then
 		ewarn "${PN} is UNSUPPORTED by Gentoo Security."
 	fi
@@ -938,7 +921,7 @@ unipatch() {
 				     xz) PIPE_CMD="xz -dc";;
 				   lzma) PIPE_CMD="lzma -dc";;
 				    bz2) PIPE_CMD="bzip2 -dc";;
-				  patch*) PIPE_CMD="cat";;
+				  patch) PIPE_CMD="cat";;
 				   diff) PIPE_CMD="cat";;
 				 gz|Z|z) PIPE_CMD="gzip -dc";;
 				ZIP|zip) PIPE_CMD="unzip -p";;
@@ -974,21 +957,6 @@ unipatch() {
 					$(${PIPE_CMD} ${i} > ${KPATCH_DIR}/${x}.patch${PATCH_LEVEL}) || die "uncompressing patch failed"
 				fi
 			fi
-		fi
-
-		# If experimental was not chosen by the user, drop experimental patches not in K_EXP_GENPATCHES_LIST.
-		if [[ "${i}" == *"genpatches-"*".experimental."* && -n ${K_EXP_GENPATCHES_PULL} ]] ; then
-			if [[ -z ${K_EXP_GENPATCHES_NOUSE} ]] && use experimental; then
-				continue
-			fi
-
-			local j
-			for j in ${KPATCH_DIR}/*/50*_*.patch*; do
-				for k in ${K_EXP_GENPATCHES_LIST} ; do
-					[[ "$(basename ${j})" == ${k}* ]] && continue 2
-				done
-				UNIPATCH_DROP+=" $(basename ${j})"
-			done
 		fi
 	done
 
@@ -1031,12 +999,12 @@ unipatch() {
 
 			if [ -z "${PATCH_DEPTH}" ]; then PATCH_DEPTH=0; fi
 
+			ebegin "Applying ${i/*\//} (-p${PATCH_DEPTH}+)"
 			while [ ${PATCH_DEPTH} -lt 5 ]; do
 				echo "Attempting Dry-run:" >> ${STDERR_T}
 				echo "cmd: patch -p${PATCH_DEPTH} --no-backup-if-mismatch --dry-run -f < ${i}" >> ${STDERR_T}
 				echo "=======================================================" >> ${STDERR_T}
 				if [ $(patch -p${PATCH_DEPTH} --no-backup-if-mismatch --dry-run -f < ${i} >> ${STDERR_T}) $? -eq 0 ]; then
-					ebegin "Applying ${i/*\//} (-p${PATCH_DEPTH})"
 					echo "Attempting patch:" > ${STDERR_T}
 					echo "cmd: patch -p${PATCH_DEPTH} --no-backup-if-mismatch -f < ${i}" >> ${STDERR_T}
 					echo "=======================================================" >> ${STDERR_T}
@@ -1049,38 +1017,28 @@ unipatch() {
 						eerror "Failed to apply patch ${i/*\//}"
 						eerror "Please attach ${STDERR_T} to any bug you may post."
 						eshopts_pop
-						die "Failed to apply ${i/*\//} on patch depth ${PATCH_DEPTH}."
+						die "Failed to apply ${i/*\//}"
 					fi
 				else
 					PATCH_DEPTH=$((${PATCH_DEPTH} + 1))
 				fi
 			done
 			if [ ${PATCH_DEPTH} -eq 5 ]; then
-				eerror "Failed to dry-run patch ${i/*\//}"
+				eend 1
 				eerror "Please attach ${STDERR_T} to any bug you may post."
 				eshopts_pop
-				die "Unable to dry-run patch on any patch depth lower than 5."
+				die "Unable to dry-run patch."
 			fi
 		done
 	done
 
-	# When genpatches is used, we want to install 0000_README which documents
-	# the patches that were used; such that the user can see them, bug #301478.
-	if [[ ! -z ${K_WANT_GENPATCHES} ]] ; then
-		UNIPATCH_DOCS="${UNIPATCH_DOCS} 0000_README"
-	fi
-
-	# When files listed in UNIPATCH_DOCS are found in KPATCH_DIR's, we copy it
-	# to the temporary directory and remember them in UNIPATCH_DOCS to install
-	# them during the install phase.
+	# This is a quick, and kind of nasty hack to deal with UNIPATCH_DOCS which
+	# sit in KPATCH_DIR's. This is handled properly in the unipatch rewrite,
+	# which is why I'm not taking too much time over this.
 	local tmp
-	for x in ${KPATCH_DIR}; do
-		for i in ${UNIPATCH_DOCS}; do
-			if [[ -f "${x}/${i}" ]] ; then
-				tmp="${tmp} ${i}"
-				cp -f "${x}/${i}" "${T}"/
-			fi
-		done
+	for i in ${UNIPATCH_DOCS}; do
+		tmp="${tmp} ${i//*\/}"
+		cp -f ${i} "${T}"/
 	done
 	UNIPATCH_DOCS="${tmp}"
 
@@ -1201,20 +1159,6 @@ kernel-2_src_unpack() {
 		cp "${DISTDIR}/${DEBLOB_CHECK_A}" "${T}/deblob-check" || die "cp ${DEBLOB_CHECK_A} failed"
 		chmod +x "${T}/${DEBLOB_A}" "${T}/deblob-check" || die "chmod deblob scripts failed"
 	fi
-
-	# fix a problem on ppc where TOUT writes to /usr/src/linux breaking sandbox
-	# only do this for kernel < 2.6.27 since this file does not exist in later
-	# kernels
-	if [[ -n ${KV_MINOR} &&  ${KV_MAJOR}.${KV_MINOR}.${KV_PATCH} < 2.6.27 ]]
-	then
-		sed -i \
-			-e 's|TOUT      := .tmp_gas_check|TOUT  := $(T).tmp_gas_check|' \
-			"${S}"/arch/ppc/Makefile
-	else
-		sed -i \
-			-e 's|TOUT      := .tmp_gas_check|TOUT  := $(T).tmp_gas_check|' \
-			"${S}"/arch/powerpc/Makefile
-	fi
 }
 
 kernel-2_src_compile() {
@@ -1223,7 +1167,8 @@ kernel-2_src_compile() {
 
 	if [[ $K_DEBLOB_AVAILABLE == 1 ]] && use deblob ; then
 		echo ">>> Running deblob script ..."
-		EPYTHON="python2" sh "${T}/${DEBLOB_A}" --force || die "Deblob script failed to run!!!"
+		sh "${T}/${DEBLOB_A}" --force || \
+			die "Deblob script failed to run!!!"
 	fi
 }
 
