@@ -1,13 +1,13 @@
 DEFINED_PHASES=compile install postinst postrm prepare
-DEPEND=doc? ( dev-python/sphinx ) >=app-admin/eselect-python-20091230 || ( =dev-lang/python-2.7* =dev-lang/python-2.6* =dev-lang/python-2.5* )
+DEPEND=doc? ( dev-python/sphinx ) || ( =dev-lang/python-2.7* =dev-lang/python-2.6* =dev-lang/python-2.5* )
 DESCRIPTION=Platform-independent file locking module
 EAPI=3
 HOMEPAGE=http://code.google.com/p/pylockfile/ http://pypi.python.org/pypi/lockfile http://smontanaro.dyndns.org/python/
 IUSE=doc
 KEYWORDS=amd64 arm ppc x86
 LICENSE=MIT
-RDEPEND=>=app-admin/eselect-python-20091230 || ( =dev-lang/python-2.7* =dev-lang/python-2.6* =dev-lang/python-2.5* )
+RDEPEND=|| ( =dev-lang/python-2.7* =dev-lang/python-2.6* =dev-lang/python-2.5* )
 SLOT=0
 SRC_URI=http://pylockfile.googlecode.com/files/lockfile-0.9.1.tar.gz
-_eclasses_=distutils	c2658824b3debc637c77b58e1d658fab	multilib	ded93e450747134a079e647d888aa80b	python	6bbd984910e27780e5d0ea543d83ef84	toolchain-funcs	3e30ef439a720915f8f4fd4fe75f704c
+_eclasses_=distutils	c2658824b3debc637c77b58e1d658fab	multilib	ded93e450747134a079e647d888aa80b	python	305197b0aa1194fa3ef67ca21f6faa7e	toolchain-funcs	3e30ef439a720915f8f4fd4fe75f704c
 _md5_=c48717fa0740714f8d7bc3586bc21ede
