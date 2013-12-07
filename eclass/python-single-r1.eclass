@@ -1,11 +1,10 @@
-# Copyright 1999-2012 Gentoo Foundation
+# Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/eclass/python-single-r1.eclass,v 1.6 2012/11/30 22:57:26 mgorny Exp $
+# $Header: /var/cvsroot/gentoo-x86/eclass/python-single-r1.eclass,v 1.25 2013/11/30 17:57:11 floppym Exp $
 
 # @ECLASS: python-single-r1
 # @MAINTAINER:
-# Michał Górny <mgorny@gentoo.org>
-# Python herd <python@gentoo.org>
+# Python team <python@gentoo.org>
 # @AUTHOR:
 # Author: Michał Górny <mgorny@gentoo.org>
 # Based on work of: Krzysztof Pawlik <nelchael@gentoo.org>
@@ -36,7 +35,7 @@ case "${EAPI:-0}" in
 		die "Unsupported EAPI=${EAPI:-0} (too old) for ${ECLASS}"
 		;;
 	4|5)
-		# EAPI=4 needed by python-r1
+		# EAPI=4 is required for USE default deps on USE_EXPAND flags
 		;;
 	*)
 		die "Unsupported EAPI=${EAPI} (unknown) for ${ECLASS}"
@@ -47,6 +46,8 @@ if [[ ! ${_PYTHON_SINGLE_R1} ]]; then
 
 if [[ ${_PYTHON_R1} ]]; then
 	die 'python-single-r1.eclass can not be used with python-r1.eclass.'
+elif [[ ${_PYTHON_ANY_R1} ]]; then
+	die 'python-single-r1.eclass can not be used with python-any-r1.eclass.'
 fi
 
 inherit python-utils-r1
@@ -80,6 +81,8 @@ fi
 # for all implementations in PYTHON_COMPAT, so it may be necessary to
 # use USE defaults.
 #
+# This should be set before calling `inherit'.
+#
 # Example:
 # @CODE
 # PYTHON_REQ_USE="gdbm,ncurses(-)?"
@@ -106,7 +109,7 @@ fi
 #
 # Example value:
 # @CODE
-# dev-python/python-exec
+# dev-lang/python-exec:=
 # python_single_target_python2_6? ( dev-lang/python:2.6[gdbm] )
 # python_single_target_python2_7? ( dev-lang/python:2.7[gdbm] )
 # @CODE
@@ -128,67 +131,177 @@ fi
 #
 # Example value:
 # @CODE
-# python_targets_python2_7?,python_single_target_python2_7(+)?
+# python_targets_python2_7(-)?,python_single_target_python2_7(+)?
+# @CODE
+
+# @ECLASS-VARIABLE: PYTHON_REQUIRED_USE
+# @DESCRIPTION:
+# This is an eclass-generated required-use expression which ensures the following:
+# 1. Exactly one PYTHON_SINGLE_TARGET value has been enabled.
+# 2. The selected PYTHON_SINGLE_TARGET value is enabled in PYTHON_TARGETS.
+#
+# This expression should be utilized in an ebuild by including it in
+# REQUIRED_USE, optionally behind a use flag.
+#
+# Example use:
+# @CODE
+# REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
+# @CODE
+#
+# Example value:
+# @CODE
+# python_single_target_python2_6? ( python_targets_python2_6 )
+# python_single_target_python2_7? ( python_targets_python2_7 )
+# ^^ ( python_single_target_python2_6 python_single_target_python2_7 )
 # @CODE
 
 _python_single_set_globals() {
-	local flags_mt=( "${PYTHON_COMPAT[@]/#/python_targets_}" )
-	local flags=( "${PYTHON_COMPAT[@]/#/python_single_target_}" )
-	local optflags=${flags_mt[@]/%/?}
+	local impls=()
+
+	PYTHON_DEPS=
+	local i PYTHON_PKG_DEP
+	for i in "${PYTHON_COMPAT[@]}"; do
+		_python_impl_supported "${i}" || continue
+
+		# The chosen targets need to be in PYTHON_TARGETS as well.
+		# This is in order to enforce correct dependencies on packages
+		# supporting multiple implementations.
+		PYTHON_REQUIRED_USE+=" python_single_target_${i}? ( python_targets_${i} )"
+
+		python_export "${i}" PYTHON_PKG_DEP
+		PYTHON_DEPS+="python_single_target_${i}? ( ${PYTHON_PKG_DEP} ) "
+
+		impls+=( "${i}" )
+	done
+
+	if [[ ${#impls[@]} -eq 0 ]]; then
+		die "No supported implementation in PYTHON_COMPAT."
+	fi
+
+	local flags_mt=( "${impls[@]/#/python_targets_}" )
+	local flags=( "${impls[@]/#/python_single_target_}" )
+
+	local optflags=${flags_mt[@]/%/(-)?}
 	optflags+=,${flags[@]/%/(+)?}
 
 	IUSE="${flags_mt[*]} ${flags[*]}"
-	REQUIRED_USE="|| ( ${flags_mt[*]} ) ^^ ( ${flags[*]} )"
+	PYTHON_REQUIRED_USE+=" ^^ ( ${flags[*]} )"
 	PYTHON_USEDEP=${optflags// /,}
-
-	local usestr
-	[[ ${PYTHON_REQ_USE} ]] && usestr="[${PYTHON_REQ_USE}]"
 
 	# 1) well, python-exec would suffice as an RDEP
 	# but no point in making this overcomplex, BDEP doesn't hurt anyone
 	# 2) python-exec should be built with all targets forced anyway
 	# but if new targets were added, we may need to force a rebuild
-	PYTHON_DEPS="dev-python/python-exec[${PYTHON_USEDEP}]"
-	local i
-	for i in "${PYTHON_COMPAT[@]}"; do
-		# The chosen targets need to be in PYTHON_TARGETS as well.
-		# This is in order to enforce correct dependencies on packages
-		# supporting multiple implementations.
-		REQUIRED_USE+=" python_single_target_${i}? ( python_targets_${i} )"
-
-		local d
-		case ${i} in
-			python*)
-				d='dev-lang/python';;
-			jython*)
-				d='dev-java/jython';;
-			pypy*)
-				d='dev-python/pypy';;
-			*)
-				die "Invalid implementation: ${i}"
-		esac
-
-		local v=${i##*[a-z]}
-		PYTHON_DEPS+=" python_single_target_${i}? ( ${d}:${v/_/.}${usestr} )"
-	done
+	# 3) use whichever python-exec slot installed in EAPI 5. For EAPI 4,
+	# just fix :2 since := deps are not supported.
+	if [[ ${_PYTHON_WANT_PYTHON_EXEC2} == 0 ]]; then
+		PYTHON_DEPS+="dev-lang/python-exec:0[${PYTHON_USEDEP}]"
+	elif [[ ${EAPI} != 4 ]]; then
+		PYTHON_DEPS+="dev-lang/python-exec:=[${PYTHON_USEDEP}]"
+	else
+		PYTHON_DEPS+="dev-lang/python-exec:2[${PYTHON_USEDEP}]"
+	fi
 }
 _python_single_set_globals
 
-# @FUNCTION: python-single-r1_pkg_setup
+# @FUNCTION: python_setup
 # @DESCRIPTION:
-# Determine what the selected Python implementation is and set EPYTHON
-# and PYTHON accordingly.
-python-single-r1_pkg_setup() {
+# Determine what the selected Python implementation is and set
+# the Python build environment up for it.
+python_setup() {
 	debug-print-function ${FUNCNAME} "${@}"
+
+	unset EPYTHON
 
 	local impl
 	for impl in "${_PYTHON_ALL_IMPLS[@]}"; do
 		if has "${impl}" "${PYTHON_COMPAT[@]}" \
 			&& use "python_single_target_${impl}"
 		then
+			if [[ ${EPYTHON} ]]; then
+				eerror "Your PYTHON_SINGLE_TARGET setting lists more than a single Python"
+				eerror "implementation. Please set it to just one value. If you need"
+				eerror "to override the value for a single package, please use package.env"
+				eerror "or an equivalent solution (man 5 portage)."
+				echo
+				die "More than one implementation in PYTHON_SINGLE_TARGET."
+			fi
+
+			if ! use "python_targets_${impl}"; then
+				eerror "The implementation chosen as PYTHON_SINGLE_TARGET must be added"
+				eerror "to PYTHON_TARGETS as well. This is in order to ensure that"
+				eerror "dependencies are satisfied correctly. We're sorry"
+				eerror "for the inconvenience."
+				echo
+				die "Build target (${impl}) not in PYTHON_TARGETS."
+			fi
+
 			python_export "${impl}" EPYTHON PYTHON
-			break
+			python_wrapper_setup
 		fi
+	done
+
+	if [[ ! ${EPYTHON} ]]; then
+		eerror "No Python implementation selected for the build. Please set"
+		eerror "the PYTHON_SINGLE_TARGET variable in your make.conf to one"
+		eerror "of the following values:"
+		eerror
+		eerror "${PYTHON_COMPAT[@]}"
+		echo
+		die "No supported Python implementation in PYTHON_SINGLE_TARGET."
+	fi
+}
+
+# @FUNCTION: python-single-r1_pkg_setup
+# @DESCRIPTION:
+# Runs python_setup.
+python-single-r1_pkg_setup() {
+	debug-print-function ${FUNCNAME} "${@}"
+
+	python_setup
+}
+
+# @FUNCTION: python_fix_shebang
+# @USAGE: <path>...
+# @DESCRIPTION:
+# Replace the shebang in Python scripts with the current Python
+# implementation (EPYTHON). If a directory is passed, works recursively
+# on all Python scripts.
+#
+# Only files having a 'python' shebang will be modified; other files
+# will be skipped. If a script has a complete shebang matching
+# the chosen interpreter version, it is left unmodified. If a script has
+# a complete shebang matching other version, the command dies.
+python_fix_shebang() {
+	debug-print-function ${FUNCNAME} "${@}"
+
+	[[ ${1} ]] || die "${FUNCNAME}: no paths given"
+	[[ ${EPYTHON} ]] || die "${FUNCNAME}: EPYTHON unset (pkg_setup not called?)"
+
+	local path f
+	for path; do
+		while IFS= read -r -d '' f; do
+			local shebang=$(head -n 1 "${f}")
+
+			case "${shebang}" in
+				'#!'*${EPYTHON}*)
+					debug-print "${FUNCNAME}: in file ${f#${D}}"
+					debug-print "${FUNCNAME}: shebang matches EPYTHON: ${shebang}"
+					;;
+				'#!'*python[23].[0123456789]*|'#!'*pypy-c*|'#!'*jython*)
+					debug-print "${FUNCNAME}: in file ${f#${D}}"
+					debug-print "${FUNCNAME}: incorrect specific shebang: ${shebang}"
+
+					die "${f#${D}} has a specific Python shebang not matching EPYTHON"
+					;;
+				'#!'*python*)
+					debug-print "${FUNCNAME}: in file ${f#${D}}"
+					debug-print "${FUNCNAME}: rewriting shebang: ${shebang}"
+
+					einfo "Fixing shebang in ${f#${D}}"
+					_python_rewrite_shebang "${f}"
+			esac
+		done < <(find "${path}" -type f -print0)
 	done
 }
 
