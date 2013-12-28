@@ -1,31 +1,42 @@
-# Copyright 1999-2011 Gentoo Foundation
+# Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-util/cmake/cmake-2.8.6-r4.ebuild,v 1.5 2011/12/14 00:20:03 ago Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-util/cmake/cmake-2.8.11.2.ebuild,v 1.6 2013/11/30 15:13:15 johu Exp $
 
-EAPI=4
+EAPI=5
 
 CMAKE_REMOVE_MODULES="no"
-inherit elisp-common toolchain-funcs eutils versionator flag-o-matic base cmake-utils virtualx
+inherit elisp-common toolchain-funcs eutils versionator cmake-utils virtualx
 
-MY_P="${PN}-$(replace_version_separator 3 - ${MY_PV})"
+MY_PV=${PV/_/-}
+MY_P=${PN}-${MY_PV}
 
 DESCRIPTION="Cross platform Make"
 HOMEPAGE="http://www.cmake.org/"
 SRC_URI="http://www.cmake.org/files/v$(get_version_component_range 1-2)/${MY_P}.tar.gz"
 
 LICENSE="CMake"
-KEYWORDS="alpha amd64 ~arm hppa ia64 mips ppc ppc64 s390 sh sparc x86 ~ppc-aix ~sparc-fbsd ~x86-fbsd ~hppa-hpux ~ia64-hpux ~x86-interix ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~sparc-solaris ~x64-solaris ~x86-solaris"
+KEYWORDS="alpha amd64 arm hppa ia64 mips ppc ppc64 s390 sh sparc x86 ~ppc-aix ~amd64-fbsd ~sparc-fbsd ~x86-fbsd ~hppa-hpux ~ia64-hpux ~x86-interix ~amd64-linux ~arm-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~sparc-solaris ~x64-solaris ~x86-solaris"
 SLOT="0"
-IUSE="emacs ncurses qt4 vim-syntax"
+IUSE="emacs ncurses qt4 qt5 vim-syntax"
+
+REQUIRED_USE="?? ( qt4 qt5 )"
 
 DEPEND="
-	>=app-arch/libarchive-2.8.0
-	>=net-misc/curl-7.20.0-r1[ssl]
+	>=app-arch/libarchive-2.8.0:=
 	>=dev-libs/expat-2.0.1
-	dev-util/pkgconfig
+	>=net-misc/curl-7.20.0-r1[ssl]
 	sys-libs/zlib
+	virtual/pkgconfig
 	ncurses? ( sys-libs/ncurses )
-	qt4? ( x11-libs/qt-gui:4 )
+	qt4? (
+		dev-qt/qtcore:4
+		dev-qt/qtgui:4
+	)
+	qt5? (
+		dev-qt/qtcore:5
+		dev-qt/qtgui:5
+		dev-qt/qtwidgets:5
+	)
 "
 RDEPEND="${DEPEND}
 	emacs? ( virtual/emacs )
@@ -37,36 +48,38 @@ RDEPEND="${DEPEND}
 	)
 "
 
+S="${WORKDIR}/${MY_P}"
+
 SITEFILE="50${PN}-gentoo.el"
 VIMFILE="${PN}.vim"
 
-S="${WORKDIR}/${MY_P}"
-
 CMAKE_BINARY="${S}/Bootstrap.cmk/cmake"
 
-# Fixme:
-# Boost patchset is foobared and should respect eselect / slotting
 PATCHES=(
-	"${FILESDIR}"/${PN}-2.6.3-darwin-bundle.patch
-	"${FILESDIR}"/${PN}-2.6.3-no-duplicates-in-rpath.patch
 	"${FILESDIR}"/${PN}-2.6.3-fix_broken_lfs_on_aix.patch
+	"${FILESDIR}"/${PN}-2.6.3-no-duplicates-in-rpath.patch
 	"${FILESDIR}"/${PN}-2.8.0-darwin-default-install_name.patch
-	"${FILESDIR}"/${PN}-2.8.1-libform.patch
-	"${FILESDIR}"/${PN}-2.8.4-FindPythonLibs.patch
-	"${FILESDIR}"/${PN}-2.8.3-more-no_host_paths.patch
-	"${FILESDIR}"/${PN}-2.8.3-ruby_libname.patch
-	"${FILESDIR}"/${PN}-2.8.4-FindBoost.patch
-	"${FILESDIR}"/${PN}-2.8.6-FindBLAS-2.patch
-	"${FILESDIR}"/${PN}-2.8.6-FindLAPACK-2.patch
-	"${FILESDIR}"/${PN}-2.8.6-CodeBlocks.patch
-	"${FILESDIR}"/${PN}-2.8.6-testsvn17.patch
+	"${FILESDIR}"/${PN}-2.8.7-FindLAPACK.patch
+	"${FILESDIR}"/${PN}-2.8.8-FindPkgConfig.patch
+	"${FILESDIR}"/${PN}-2.8.10-darwin-bundle.patch
+	"${FILESDIR}"/${PN}-2.8.10-darwin-isysroot.patch
+	"${FILESDIR}"/${PN}-2.8.10-desktop.patch
+	"${FILESDIR}"/${PN}-2.8.10-libform.patch
+	"${FILESDIR}"/${PN}-2.8.10.2-FindPythonInterp.patch
+	"${FILESDIR}"/${PN}-2.8.10.2-FindPythonLibs.patch
+	"${FILESDIR}"/${PN}-2.8.11-FindBLAS.patch
+	"${FILESDIR}"/${PN}-2.8.11-FindBoost-python.patch
+	"${FILESDIR}"/${PN}-2.8.11-FindImageMagick.patch
+	"${FILESDIR}"/${PN}-2.8.11-more-no_host_paths.patch
+	"${FILESDIR}"/${PN}-2.8.11.2-hppa-bootstrap.patch
 )
+
 cmake_src_bootstrap() {
 	# Cleanup args to extract only JOBS.
 	# Because bootstrap does not know anything else.
 	echo ${MAKEOPTS} | egrep -o '(\-j|\-\-jobs)(=?|[[:space:]]*)[[:digit:]]+' > /dev/null
 	if [ $? -eq 0 ]; then
-		par_arg=$(echo ${MAKEOPTS} | egrep -o '(\-j|\-\-jobs)(=?|[[:space:]]*)[[:digit:]]+' | egrep -o '[[:digit:]]+')
+		par_arg=$(echo ${MAKEOPTS} | egrep -o '(\-j|\-\-jobs)(=?|[[:space:]]*)[[:digit:]]+' | tail -n1 | egrep -o '[[:digit:]]+')
 		par_arg="--parallel=${par_arg}"
 	else
 		par_arg="--parallel=1"
@@ -74,16 +87,19 @@ cmake_src_bootstrap() {
 
 	tc-export CC CXX LD
 
-	./bootstrap \
+	# bootstrap script isn't exactly /bin/sh compatible
+	${CONFIG_SHELL:-sh} ./bootstrap \
 		--prefix="${T}/cmakestrap/" \
 		${par_arg} \
 		|| die "Bootstrap failed"
 }
 
 cmake_src_test() {
-	# fix OutDir test
-	# this is altered thanks to our eclass
-	sed -i -e 's:#IGNORE ::g' "${S}"/Tests/OutDir/CMakeLists.txt || die
+	# fix OutDir and SelectLibraryConfigurations tests
+	# these are altered thanks to our eclass
+	sed -i -e 's:#IGNORE ::g' \
+		"${S}"/Tests/{OutDir,CMakeOnly/SelectLibraryConfigurations}/CMakeLists.txt \
+		|| die
 
 	pushd "${CMAKE_BUILD_DIR}" > /dev/null
 
@@ -92,23 +108,23 @@ cmake_src_test() {
 
 	# Excluded tests:
 	#    BootstrapTest: we actualy bootstrap it every time so why test it.
-	#    SimpleCOnly_sdcc: sdcc choke on global cflags so just skip the test
-	#        as it was never intended to be used this way.
+	#    CTest.updatecvs, which fails to commit as root
+	#    Qt4Deploy, which tries to break sandbox and ignores prefix
+	#    TestUpload, which requires network access
 	"${CMAKE_BUILD_DIR}"/bin/ctest ${ctestargs} \
-		-E BootstrapTest SimpleCOnly_sdcc \
+		-E "(BootstrapTest|CTest.UpdateCVS|Qt4Deploy|TestUpload)" \
 		|| die "Tests failed"
 
 	popd > /dev/null
 }
 
 pkg_setup() {
-	einfo "Fixing java access violations ..."
 	# bug 387227
 	addpredict /proc/self/coredump_filter
 }
 
 src_prepare() {
-	base_src_prepare
+	cmake-utils_src_prepare
 
 	# disable running of cmake in boostrap command
 	sed -i \
@@ -137,8 +153,14 @@ src_configure() {
 		-DCMAKE_MAN_DIR=/share/man
 		-DCMAKE_DATA_DIR=/share/${PN}
 		$(cmake-utils_use_build ncurses CursesDialog)
-		$(cmake-utils_use_build qt4 QtDialog)
 	)
+
+	if use qt4 || use qt5 ; then
+		mycmakeargs+=(
+			-DBUILD_QtDialog=ON
+			$(cmake-utils_use_find_package qt5 Qt5Widgets)
+		)
+	fi
 	cmake-utils_src_configure
 }
 
