@@ -8,7 +8,7 @@ RESTRICT_PYTHON_ABIS="3.* *-jython"
 WANT_AUTOMAKE="none"
 MY_P="${P/_/-}"
 
-inherit autotools base bash-completion db-use depend.apache elisp-common flag-o-matic java-pkg-opt-2 libtool multilib perl-module python
+inherit autotools base bash-completion db-use depend.apache elisp-common flag-o-matic java-pkg-opt-2 libtool multilib perl-module python user
 
 DESCRIPTION="Advanced version control system"
 HOMEPAGE="http://subversion.apache.org/"

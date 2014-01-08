@@ -4,7 +4,7 @@
 
 EAPI=2
 
-inherit eutils multilib autotools
+inherit eutils multilib autotools user
 
 DESCRIPTION="Implements functions designed to lock the standard mailboxes"
 HOMEPAGE="http://www.debian.org/"
