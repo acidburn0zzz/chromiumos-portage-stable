@@ -18,7 +18,7 @@
 if [[ ${___ECLASS_ONCE_EUTILS} != "recur -_+^+_- spank" ]] ; then
 ___ECLASS_ONCE_EUTILS="recur -_+^+_- spank"
 
-inherit multilib toolchain-funcs user
+inherit multilib toolchain-funcs
 
 if has "${EAPI:-0}" 0 1 2; then
 
