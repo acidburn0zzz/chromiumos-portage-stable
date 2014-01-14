@@ -9,5 +9,5 @@ RDEPEND=>=dev-java/java-config-wrapper-0.15 dev-lang/python
 RESTRICT=test
 SLOT=2
 SRC_URI=mirror://gentoo/java-config-2.1.10.tar.bz2
-_eclasses_=distutils	c2658824b3debc637c77b58e1d658fab	eutils	d40dc948067bd3db1c8ebf7d51897313	fdo-mime	9c46e30acd923ff12e325dbe96bb98b9	gnome2-utils	794d2847b4af390a1e020924876c8297	multilib	ded93e450747134a079e647d888aa80b	python	305197b0aa1194fa3ef67ca21f6faa7e	toolchain-funcs	3e30ef439a720915f8f4fd4fe75f704c	user	9e552f935106ff0bc92af16da64b4b29
+_eclasses_=distutils	c2658824b3debc637c77b58e1d658fab	eutils	a108f00cccac414097bcbbbb5de01762	fdo-mime	9c46e30acd923ff12e325dbe96bb98b9	gnome2-utils	794d2847b4af390a1e020924876c8297	multilib	ded93e450747134a079e647d888aa80b	python	305197b0aa1194fa3ef67ca21f6faa7e	toolchain-funcs	3e30ef439a720915f8f4fd4fe75f704c
 _md5_=b73daf9f9f52fb71265752834c96996a

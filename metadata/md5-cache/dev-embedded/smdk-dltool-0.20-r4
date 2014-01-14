@@ -8,5 +8,5 @@ LICENSE=as-is
 RDEPEND=virtual/libusb:1
 SLOT=0
 SRC_URI=http://www.fluff.org/ben/smdk/tools/downloads/smdk-tools-v0.20.tar.gz
-_eclasses_=eutils	d40dc948067bd3db1c8ebf7d51897313	multilib	ded93e450747134a079e647d888aa80b	toolchain-funcs	3e30ef439a720915f8f4fd4fe75f704c	user	9e552f935106ff0bc92af16da64b4b29
+_eclasses_=eutils	a108f00cccac414097bcbbbb5de01762	multilib	ded93e450747134a079e647d888aa80b	toolchain-funcs	3e30ef439a720915f8f4fd4fe75f704c
 _md5_=ef724039e27beddffc84da8355e8da6a

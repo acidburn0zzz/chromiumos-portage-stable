@@ -9,5 +9,5 @@ LICENSE=GPL-2
 RDEPEND=!<sys-apps/openrc-0.9.9.3
 SLOT=0
 SRC_URI=mirror://gentoo/net-tools-1.60_p20120127084908.tar.xz mirror://gentoo/net-tools-1.60_p20120127084908-patches-1.tar.xz
-_eclasses_=eutils	d40dc948067bd3db1c8ebf7d51897313	flag-o-matic	c3131dc67d3bd39f044e92b8280505e4	multilib	ded93e450747134a079e647d888aa80b	toolchain-funcs	3e30ef439a720915f8f4fd4fe75f704c	user	9e552f935106ff0bc92af16da64b4b29
+_eclasses_=eutils	a108f00cccac414097bcbbbb5de01762	flag-o-matic	c3131dc67d3bd39f044e92b8280505e4	multilib	ded93e450747134a079e647d888aa80b	toolchain-funcs	3e30ef439a720915f8f4fd4fe75f704c
 _md5_=e82150cf64c959f631b3f91462ba230d
