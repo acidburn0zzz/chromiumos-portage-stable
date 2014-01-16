@@ -1,0 +1,13 @@
+DEFINED_PHASES=compile configure install prepare test
+DEPEND=doc? ( dev-python/sphinx ) test? ( dev-python/pytest[python_targets_python2_6(-)?,python_targets_python2_7(-)?,python_targets_python3_2(-)?,python_targets_python3_3(-)?,python_targets_pypy2_0(-)?,-python_single_target_python2_6(-),-python_single_target_python2_7(-),-python_single_target_python3_2(-),-python_single_target_python3_3(-),-python_single_target_pypy2_0(-)] ) python_targets_python2_6? ( >=dev-lang/python-2.6.8-r3:2.6 ) python_targets_python2_7? ( >=dev-lang/python-2.7.3-r2:2.7 ) python_targets_python3_2? ( >=dev-lang/python-3.2.5-r2:3.2 ) python_targets_python3_3? ( >=dev-lang/python-3.3.2-r2:3.3 ) python_targets_pypy2_0? ( >=virtual/pypy-2.0.2:2.0 ) dev-lang/python-exec:=[python_targets_python2_6(-)?,python_targets_python2_7(-)?,python_targets_python3_2(-)?,python_targets_python3_3(-)?,python_targets_pypy2_0(-)?,-python_single_target_python2_6(-),-python_single_target_python2_7(-),-python_single_target_python3_2(-),-python_single_target_python3_3(-),-python_single_target_pypy2_0(-)]
+DESCRIPTION=Python 2 and 3 compatibility library
+EAPI=5
+HOMEPAGE=https://bitbucket.org/gutworth/six http://pypi.python.org/pypi/six
+IUSE=doc test python_targets_python2_6 python_targets_python2_7 python_targets_python3_2 python_targets_python3_3 python_targets_pypy2_0
+KEYWORDS=alpha amd64 arm hppa ia64 mips ppc ppc64 sparc x86 ~amd64-fbsd ~x86-fbsd ~amd64-linux ~x86-linux ~x86-macos
+LICENSE=MIT
+RDEPEND=python_targets_python2_6? ( >=dev-lang/python-2.6.8-r3:2.6 ) python_targets_python2_7? ( >=dev-lang/python-2.7.3-r2:2.7 ) python_targets_python3_2? ( >=dev-lang/python-3.2.5-r2:3.2 ) python_targets_python3_3? ( >=dev-lang/python-3.3.2-r2:3.3 ) python_targets_pypy2_0? ( >=virtual/pypy-2.0.2:2.0 ) dev-lang/python-exec:=[python_targets_python2_6(-)?,python_targets_python2_7(-)?,python_targets_python3_2(-)?,python_targets_python3_3(-)?,python_targets_pypy2_0(-)?,-python_single_target_python2_6(-),-python_single_target_python2_7(-),-python_single_target_python3_2(-),-python_single_target_python3_3(-),-python_single_target_pypy2_0(-)]
+SLOT=0
+SRC_URI=mirror://pypi/s/six/six-1.3.0.tar.gz
+_eclasses_=distutils-r1	52a35bc5600044dfdf1a3f1fa258dc93	eutils	a108f00cccac414097bcbbbb5de01762	multibuild	c2f33b0eedd7bcfd5bc226baa8da7837	multilib	ded93e450747134a079e647d888aa80b	multiprocessing	1512bdfe7004902b8cd2c466fc3df772	python-r1	cd956d5a4bac2209a64d0f4851cc115d	python-utils-r1	4fc11614abf37ede29a4eb8aaae8a22a	toolchain-funcs	3e30ef439a720915f8f4fd4fe75f704c
+_md5_=576104df2f0a63f16350a1aa30b1dda4

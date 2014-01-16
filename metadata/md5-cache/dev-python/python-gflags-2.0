@@ -1,0 +1,13 @@
+DEFINED_PHASES=compile configure install prepare test
+DEPEND=dev-python/setuptools[python_targets_python2_6(-)?,python_targets_python2_7(-)?,python_targets_pypy2_0(-)?,-python_single_target_python2_6(-),-python_single_target_python2_7(-),-python_single_target_pypy2_0(-)] python_targets_python2_6? ( >=dev-lang/python-2.6.8-r3:2.6 ) python_targets_python2_7? ( >=dev-lang/python-2.7.3-r2:2.7 ) python_targets_pypy2_0? ( >=virtual/pypy-2.0.2:2.0 ) dev-lang/python-exec:=[python_targets_python2_6(-)?,python_targets_python2_7(-)?,python_targets_pypy2_0(-)?,-python_single_target_python2_6(-),-python_single_target_python2_7(-),-python_single_target_pypy2_0(-)]
+DESCRIPTION=Google's Python argument parsing library
+EAPI=5
+HOMEPAGE=http://code.google.com/p/python-gflags/
+IUSE=python_targets_python2_6 python_targets_python2_7 python_targets_pypy2_0
+KEYWORDS=amd64 x86
+LICENSE=BSD
+RDEPEND=python_targets_python2_6? ( >=dev-lang/python-2.6.8-r3:2.6 ) python_targets_python2_7? ( >=dev-lang/python-2.7.3-r2:2.7 ) python_targets_pypy2_0? ( >=virtual/pypy-2.0.2:2.0 ) dev-lang/python-exec:=[python_targets_python2_6(-)?,python_targets_python2_7(-)?,python_targets_pypy2_0(-)?,-python_single_target_python2_6(-),-python_single_target_python2_7(-),-python_single_target_pypy2_0(-)]
+SLOT=0
+SRC_URI=http://python-gflags.googlecode.com/files/python-gflags-2.0.tar.gz
+_eclasses_=distutils-r1	52a35bc5600044dfdf1a3f1fa258dc93	eutils	a108f00cccac414097bcbbbb5de01762	multibuild	c2f33b0eedd7bcfd5bc226baa8da7837	multilib	ded93e450747134a079e647d888aa80b	multiprocessing	1512bdfe7004902b8cd2c466fc3df772	python-r1	cd956d5a4bac2209a64d0f4851cc115d	python-utils-r1	4fc11614abf37ede29a4eb8aaae8a22a	toolchain-funcs	3e30ef439a720915f8f4fd4fe75f704c
+_md5_=9c14a38804878684fe97fb3c9c69eefa
