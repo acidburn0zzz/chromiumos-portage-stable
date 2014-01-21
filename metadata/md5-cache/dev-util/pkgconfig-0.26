@@ -9,5 +9,5 @@ LICENSE=GPL-2
 RDEPEND=dev-libs/glib:2 >=dev-libs/popt-1.15
 SLOT=0
 SRC_URI=http://pkgconfig.freedesktop.org/releases/pkg-config-0.26.tar.gz
-_eclasses_=eutils	a108f00cccac414097bcbbbb5de01762	flag-o-matic	c3131dc67d3bd39f044e92b8280505e4	multilib	ded93e450747134a079e647d888aa80b	toolchain-funcs	3e30ef439a720915f8f4fd4fe75f704c
+_eclasses_=eutils	a108f00cccac414097bcbbbb5de01762	flag-o-matic	c3131dc67d3bd39f044e92b8280505e4	multilib	fac675dcccf94392371a6abee62d909f	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
 _md5_=6190af3bcaa0d3062708c720bfa9c21b

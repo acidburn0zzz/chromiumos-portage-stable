@@ -10,5 +10,5 @@ RDEPEND=sane_backends_dc210? ( virtual/jpeg ) sane_backends_dc240? ( virtual/jpe
 REQUIRED_USE=sane_backends_mustek_usb2? ( threads ) sane_backends_kvs40xx? ( threads )
 SLOT=0
 SRC_URI=https://alioth.debian.org/frs/download.php/3752/sane-backends-1.0.23.tar.gz.1 https://alioth.debian.org/frs/download.php/3753/sane-backends-1.0.23.tar.gz.2 https://alioth.debian.org/frs/download.php/3754/sane-backends-1.0.23.tar.gz.3
-_eclasses_=eutils	a108f00cccac414097bcbbbb5de01762	flag-o-matic	c3131dc67d3bd39f044e92b8280505e4	multilib	ded93e450747134a079e647d888aa80b	toolchain-funcs	3e30ef439a720915f8f4fd4fe75f704c	udev	f7490675e06a5e4db55adf394f078b7b	user	9e552f935106ff0bc92af16da64b4b29
+_eclasses_=eutils	a108f00cccac414097bcbbbb5de01762	flag-o-matic	c3131dc67d3bd39f044e92b8280505e4	multilib	fac675dcccf94392371a6abee62d909f	toolchain-funcs	48b38a216afb92db6314d6c3187abea3	udev	f7490675e06a5e4db55adf394f078b7b	user	9e552f935106ff0bc92af16da64b4b29
 _md5_=01924f4d69323cf2bd235bc067640ac6

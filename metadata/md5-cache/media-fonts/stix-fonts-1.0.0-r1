@@ -8,5 +8,5 @@ LICENSE=OFL-1.1
 RESTRICT=strip binchecks
 SLOT=0
 SRC_URI=mirror://gentoo/STIXv1.0.0.zip
-_eclasses_=eutils	a108f00cccac414097bcbbbb5de01762	font	bc3df4ed373e09f86a90e8fad39034d6	multilib	ded93e450747134a079e647d888aa80b	toolchain-funcs	3e30ef439a720915f8f4fd4fe75f704c
+_eclasses_=eutils	a108f00cccac414097bcbbbb5de01762	font	bc3df4ed373e09f86a90e8fad39034d6	multilib	fac675dcccf94392371a6abee62d909f	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
 _md5_=54f9c2aa226863a1bc1e8866b868783d
