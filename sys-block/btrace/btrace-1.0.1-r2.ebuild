@@ -13,7 +13,7 @@ MY_P="${MY_PN}-${PV}"
 SRC_URI="http://brick.kernel.dk/snaps/${MY_P}.tar.bz2"
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="amd64 arm ppc x86"
+KEYWORDS="*"
 IUSE="doc"
 RDEPEND=""
 # This is a Linux specific app!

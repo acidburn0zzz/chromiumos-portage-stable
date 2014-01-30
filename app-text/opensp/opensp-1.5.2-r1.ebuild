@@ -12,7 +12,7 @@ SRC_URI="mirror://sourceforge/openjade/${MY_P}.tar.gz"
 
 LICENSE="JamesClark"
 SLOT="0"
-KEYWORDS="alpha amd64 arm hppa ia64 m68k mips ppc ppc64 s390 sh sparc ~sparc-fbsd x86 ~x86-fbsd"
+KEYWORDS="*"
 IUSE="doc nls"
 
 DEPEND="nls? ( >=sys-devel/gettext-0.14.5 )

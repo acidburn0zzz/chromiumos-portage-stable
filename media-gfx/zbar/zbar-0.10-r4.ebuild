@@ -13,7 +13,7 @@ SRC_URI="mirror://sourceforge/zbar/${P}.tar.bz2"
 
 LICENSE="LGPL-2.1"
 SLOT="0"
-KEYWORDS="amd64 arm x86"
+KEYWORDS="*"
 IUSE="gtk imagemagick jpeg python qt4 static-libs +threads v4l X xv"
 
 RDEPEND="gtk? ( dev-libs/glib:2 x11-libs/gtk+:2 )

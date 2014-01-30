@@ -13,7 +13,7 @@ SRC_URI="http://zlib.net/${P}.tar.gz
 
 LICENSE="ZLIB"
 SLOT="0"
-KEYWORDS="alpha amd64 arm hppa ia64 m68k mips ppc ppc64 s390 sh sparc x86 ~amd64-fbsd ~sparc-fbsd ~x86-fbsd"
+KEYWORDS="*"
 IUSE="minizip static-libs"
 
 DEPEND="minizip? ( ${AUTOTOOLS_DEPEND} )"

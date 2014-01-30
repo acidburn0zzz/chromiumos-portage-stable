@@ -15,7 +15,7 @@ SRC_URI="http://pylockfile.googlecode.com/files/${P}.tar.gz"
 
 LICENSE="MIT"
 SLOT="0"
-KEYWORDS="amd64 arm ppc x86"
+KEYWORDS="*"
 IUSE="doc"
 
 DEPEND="doc? ( dev-python/sphinx )"

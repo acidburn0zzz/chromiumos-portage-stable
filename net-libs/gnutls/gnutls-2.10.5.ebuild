@@ -26,7 +26,7 @@ fi
 # GPL-3 for the gnutls-extras library and LGPL for the gnutls library.
 LICENSE="LGPL-2.1 GPL-3"
 SLOT="0"
-KEYWORDS="alpha amd64 arm hppa ia64 m68k mips ppc ppc64 s390 sh sparc x86 ~sparc-fbsd ~x86-fbsd"
+KEYWORDS="*"
 IUSE="bindist +cxx doc examples guile lzo nls test zlib"
 
 RDEPEND=">=dev-libs/libgcrypt-1.4.0

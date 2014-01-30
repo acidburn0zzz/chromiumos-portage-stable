@@ -11,7 +11,7 @@ if [[ ${PV} == "9999" ]] ; then
 	SRC_URI=""
 else
 	SRC_URI="https://01.org/powertop/sites/default/files/downloads/${P}.tar.gz"
-	KEYWORDS="amd64 arm ppc sparc x86 ~amd64-linux ~x86-linux"
+	KEYWORDS="*"
 fi
 
 DESCRIPTION="tool that helps you find what software is using the most power"

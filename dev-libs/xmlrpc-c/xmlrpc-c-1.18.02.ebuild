@@ -10,7 +10,7 @@ DESCRIPTION="A lightweigt RPC library based on XML and HTTP"
 SRC_URI="mirror://gentoo/${PN}/${P}.tar.bz2"
 HOMEPAGE="http://xmlrpc-c.sourceforge.net/"
 
-KEYWORDS="alpha amd64 arm hppa ia64 mips ppc ppc64 s390 sh sparc x86"
+KEYWORDS="*"
 IUSE="+curl +cxx tools +cgi abyss threads"
 LICENSE="BSD"
 SLOT="0"

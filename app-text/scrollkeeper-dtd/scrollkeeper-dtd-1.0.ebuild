@@ -10,7 +10,7 @@ SRC_URI="http://scrollkeeper.sourceforge.net/dtds/scrollkeeper-omf-1.0/${DTD_FIL
 
 LICENSE="FDL-1.1"
 SLOT="1.0"
-KEYWORDS="alpha amd64 arm hppa ia64 m68k mips ppc ppc64 s390 sh sparc ~sparc-fbsd x86 ~x86-fbsd"
+KEYWORDS="*"
 IUSE=""
 
 RDEPEND=">=dev-libs/libxml2-2.4.19"

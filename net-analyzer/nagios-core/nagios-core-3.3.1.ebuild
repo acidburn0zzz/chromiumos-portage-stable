@@ -13,7 +13,7 @@ SRC_URI="mirror://sourceforge/nagios/${MY_P}.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="alpha amd64 arm hppa ppc ppc64 sparc x86"
+KEYWORDS="*"
 IUSE="debug lighttpd perl +web vim-syntax"
 DEPEND="virtual/mailx
 	web? (

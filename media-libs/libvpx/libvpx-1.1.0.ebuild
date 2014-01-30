@@ -11,10 +11,10 @@ if [[ ${PV} == *9999* ]]; then
 	KEYWORDS=""
 elif [[ ${PV} == *pre* ]]; then
 	SRC_URI="mirror://gentoo/${P}.tar.bz2"
-	KEYWORDS="alpha amd64 arm ia64 ppc ppc64 x86 ~amd64-fbsd ~x86-fbsd ~amd64-linux ~x86-linux"
+	KEYWORDS="*"
 else
 	SRC_URI="http://webm.googlecode.com/files/${PN}-v${PV}.tar.bz2"
-	KEYWORDS="alpha amd64 arm ia64 ppc ppc64 x86 ~amd64-fbsd ~x86-fbsd ~amd64-linux ~x86-linux"
+	KEYWORDS="*"
 	S="${WORKDIR}/${PN}-v${PV}"
 fi
 

@@ -10,7 +10,7 @@ SRC_URI="mirror://kernel/linux/network/nfc/${P}.tar.xz"
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="amd64 arm x86"
+KEYWORDS="*"
 IUSE="tools"
 
 RDEPEND=">=dev-libs/glib-2.28:2

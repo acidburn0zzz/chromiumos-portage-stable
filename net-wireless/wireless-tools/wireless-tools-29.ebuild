@@ -14,7 +14,7 @@ SRC_URI="http://www.hpl.hp.com/personal/Jean_Tourrilhes/Linux/${MY_P}.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="alpha amd64 arm hppa ia64 mips ppc ppc64 sh sparc x86"
+KEYWORDS="*"
 IUSE="multicall nls"
 
 DEPEND="sys-apps/sed"

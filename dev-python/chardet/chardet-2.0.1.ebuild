@@ -14,7 +14,7 @@ SRC_URI="http://chardet.feedparser.org/download/python2-${P}.tgz
 	http://chardet.feedparser.org/download/python3-${P}.tgz"
 LICENSE="LGPL-2.1"
 SLOT="0"
-KEYWORDS="amd64 ~arm hppa ppc ppc64 sparc x86 ~x86-fbsd ~x86-freebsd ~amd64-linux ~x86-linux ~x86-macos"
+KEYWORDS="*"
 IUSE=""
 
 DEPEND=""

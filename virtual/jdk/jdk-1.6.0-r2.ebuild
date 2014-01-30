@@ -10,7 +10,7 @@ SRC_URI=""
 
 LICENSE=""
 SLOT="1.6"
-KEYWORDS="amd64 arm ia64 ppc ppc64 x86 ~ppc-aix ~amd64-fbsd ~x86-fbsd ~x64-freebsd ~hppa-hpux ~ia64-hpux ~amd64-linux ~x86-linux ~x64-macos ~x86-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris ~x86-winnt"
+KEYWORDS="*"
 IUSE=""
 
 # The keyword voodoo below is needed to work around confilcting masking types

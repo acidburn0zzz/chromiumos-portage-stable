@@ -15,7 +15,7 @@ SRC_URI="http://${PN}.googlecode.com/files/${P}.tar.gz"
 
 LICENSE="BSD"
 SLOT="0"
-KEYWORDS="amd64 x86 arm"
+KEYWORDS="*"
 IUSE="examples"
 
 DEPEND=""

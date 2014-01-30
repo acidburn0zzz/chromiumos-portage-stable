@@ -11,7 +11,7 @@ SRC_URI="${HOMEPAGE}${P}.tar.bz2"
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="alpha amd64 arm hppa mips ppc ppc64 sparc x86"
+KEYWORDS="*"
 IUSE="cron debug +doc isag nls lm_sensors"
 
 RDEPEND="

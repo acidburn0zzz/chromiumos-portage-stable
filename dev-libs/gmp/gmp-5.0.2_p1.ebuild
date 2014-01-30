@@ -14,7 +14,7 @@ SRC_URI="mirror://gnu/${PN}/${MY_P}.tar.bz2
 
 LICENSE="LGPL-3"
 SLOT="0"
-KEYWORDS="alpha amd64 arm hppa ia64 m68k mips ppc ppc64 s390 sh sparc x86 ~sparc-fbsd ~x86-fbsd"
+KEYWORDS="*"
 IUSE="doc cxx static-libs"
 
 DEPEND="sys-devel/m4"

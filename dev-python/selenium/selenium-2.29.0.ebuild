@@ -11,7 +11,7 @@ DESCRIPTION="a Python language binding for Selenium Remote Control (version 1.0 
 HOMEPAGE="http://pypi.python.org/pypi/selenium/"
 SRC_URI="mirror://pypi/${PN:0:1}/${PN}/${P}.tar.gz"
 
-KEYWORDS="amd64 arm x86"
+KEYWORDS="*"
 IUSE="doc"
 LICENSE="Apache-2.0"
 SLOT="0"

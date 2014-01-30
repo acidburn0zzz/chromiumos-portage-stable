@@ -7,7 +7,7 @@ EAPI=3
 inherit xorg-2
 
 DESCRIPTION="list interned atoms defined on server"
-KEYWORDS="alpha amd64 arm hppa ia64 mips ppc ppc64 s390 sh sparc x86 ~x86-fbsd"
+KEYWORDS="*"
 IUSE=""
 
 RDEPEND="x11-libs/libxcb"

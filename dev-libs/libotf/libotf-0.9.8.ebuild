@@ -13,7 +13,7 @@ SRC_URI="http://www.m17n.org/libotf/${P}.tar.gz"
 
 LICENSE="LGPL-2.1"
 SLOT="0"
-KEYWORDS="alpha amd64 arm hppa ia64 ppc ppc64 sh sparc x86"
+KEYWORDS="*"
 IUSE="X"
 
 RDEPEND=">=media-libs/freetype-2.1

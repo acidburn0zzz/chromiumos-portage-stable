@@ -15,7 +15,7 @@ SRC_URI="http://people.redhat.com/sgrubb/audit/${P}.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="alpha amd64 hppa ia64 mips ppc ppc64 sparc x86"
+KEYWORDS="*"
 IUSE="ldap prelude python"
 # Testcases are pretty useless as they are built for RedHat users/groups and
 # kernels.

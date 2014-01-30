@@ -12,7 +12,7 @@ SRC_URI="http://www.opensc-project.org/files/${PN}/${P}.tar.gz"
 
 LICENSE="LGPL-2.1"
 SLOT="0"
-KEYWORDS="alpha amd64 arm hppa ia64 m68k ppc ppc64 s390 sh sparc x86"
+KEYWORDS="*"
 IUSE="doc libtool +pcsc-lite openct readline ssl zlib"
 
 RDEPEND="libtool? ( sys-devel/libtool )

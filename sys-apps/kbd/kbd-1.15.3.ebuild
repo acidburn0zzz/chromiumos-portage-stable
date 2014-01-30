@@ -8,7 +8,7 @@ SRC_URI="ftp://ftp.altlinux.org/pub/people/legion/kbd/${P}.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="alpha amd64 arm hppa ia64 m68k mips ppc ppc64 s390 sh sparc x86"
+KEYWORDS="*"
 IUSE="nls"
 
 RDEPEND=""

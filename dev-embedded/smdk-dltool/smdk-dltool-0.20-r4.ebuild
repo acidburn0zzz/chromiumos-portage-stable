@@ -13,7 +13,7 @@ SRC_URI="http://www.fluff.org/ben/smdk/tools/downloads/smdk-tools-v${PV}.tar.gz"
 # Email sent to author on 2012-01-18 querying about license
 LICENSE="as-is"
 SLOT="0"
-KEYWORDS="amd64 x86"
+KEYWORDS="*"
 IUSE=""
 
 RDEPEND="virtual/libusb:1"

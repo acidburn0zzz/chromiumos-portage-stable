@@ -14,7 +14,7 @@ SRC_URI="https://alioth.debian.org/frs/download.php/${MY_CODE}/${P/-/_}.orig.tar
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="amd64 arm mips ppc ppc64 s390 sh x86"
+KEYWORDS="*"
 IUSE=""
 
 DEPEND="x11-libs/libX11"

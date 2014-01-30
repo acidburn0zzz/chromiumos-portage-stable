@@ -13,7 +13,7 @@ SRC_URI="http://googletest.googlecode.com/files/${P}.zip"
 
 LICENSE="BSD"
 SLOT="0"
-KEYWORDS="alpha amd64 arm hppa ia64 m68k mips ppc ppc64 s390 sh sparc x86 ~amd64-fbsd ~x86-fbsd ~ppc-macos"
+KEYWORDS="*"
 IUSE="examples static-libs"
 
 DEPEND="app-arch/unzip"

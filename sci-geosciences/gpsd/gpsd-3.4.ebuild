@@ -16,7 +16,7 @@ if [[ ${PV} == "9999" ]] ; then
 	inherit git-2
 else
 	SRC_URI="mirror://nongnu/${PN}/${P}.tar.gz"
-	KEYWORDS="amd64 arm ppc ppc64 x86"
+	KEYWORDS="*"
 fi
 
 DESCRIPTION="GPS daemon and library to support USB/serial GPS devices and various GPS/mapping clients"

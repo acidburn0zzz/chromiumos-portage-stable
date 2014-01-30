@@ -11,7 +11,7 @@ SRC_URI="mirror://gnu/uucp/uucp-${PV}.tar.gz"
 IUSE=""
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="alpha amd64 ~arm ia64 ppc sparc x86"
+KEYWORDS="*"
 
 DEPEND=">=sys-apps/sed-4"
 RDEPEND=""

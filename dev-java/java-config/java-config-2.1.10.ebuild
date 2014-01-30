@@ -13,7 +13,7 @@ SRC_URI="mirror://gentoo/${P}.tar.bz2"
 
 LICENSE="GPL-2"
 SLOT="2"
-KEYWORDS="alpha amd64 arm ia64 ppc ppc64 x86 ~x86-fbsd"
+KEYWORDS="*"
 IUSE=""
 
 DEPEND=">=dev-lang/python-2.4"

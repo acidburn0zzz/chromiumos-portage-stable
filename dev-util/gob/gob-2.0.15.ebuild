@@ -15,7 +15,7 @@ SRC_URI="mirror://gnome/sources/${MY_PN}/${PVP[0]}.${PVP[1]}/${MY_P}.tar.bz2"
 
 LICENSE="GPL-2"
 SLOT="2"
-KEYWORDS="alpha amd64 arm hppa ia64 ppc ppc64 sh sparc x86"
+KEYWORDS="*"
 IUSE=""
 
 RDEPEND=">=dev-libs/glib-2"

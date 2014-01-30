@@ -17,7 +17,7 @@ fi
 
 LICENSE="LGPL-2.1"
 SLOT="0"
-KEYWORDS="alpha amd64 arm hppa ia64 ppc ppc64 sparc x86"
+KEYWORDS="*"
 IUSE="doc"
 
 RDEPEND="dev-libs/openssl"

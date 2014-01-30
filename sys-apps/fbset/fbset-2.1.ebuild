@@ -10,7 +10,7 @@ SRC_URI="http://users.telenet.be/geertu/Linux/fbdev/${P}.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="alpha amd64 arm hppa ia64 ppc ppc64 s390 sh sparc x86"
+KEYWORDS="*"
 IUSE="static"
 
 DEPEND="sys-devel/bison

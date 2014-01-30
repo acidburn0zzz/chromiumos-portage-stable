@@ -16,7 +16,7 @@ SRC_URI="http://www.makotemplates.org/downloads/${MY_P}.tar.gz"
 
 LICENSE="MIT"
 SLOT="0"
-KEYWORDS="amd64 arm hppa ppc sparc x86 ~amd64-linux ~x86-linux ~x64-macos ~x86-macos"
+KEYWORDS="*"
 IUSE="doc"
 
 RDEPEND=">=dev-python/beaker-1.1

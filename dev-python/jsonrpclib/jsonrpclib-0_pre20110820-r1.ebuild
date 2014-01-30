@@ -13,7 +13,7 @@ if [[ ${PV} == "9999" ]] ; then
 	inherit git-2
 else
 	SRC_URI="mirror://gentoo/${P}.tar.bz2"
-	KEYWORDS="amd64 arm x86"
+	KEYWORDS="*"
 fi
 
 DESCRIPTION="python implementation of the JSON-RPC spec (1.0 and 2.0)"

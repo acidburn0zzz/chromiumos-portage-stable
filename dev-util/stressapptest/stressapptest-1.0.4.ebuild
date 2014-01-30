@@ -13,7 +13,7 @@ SRC_URI="http://stressapptest.googlecode.com/files/${MY_P}.tar.gz"
 
 LICENSE="Apache-2.0"
 SLOT="0"
-KEYWORDS="amd64 arm x86"
+KEYWORDS="*"
 IUSE="debug"
 
 RDEPEND="dev-libs/libaio"

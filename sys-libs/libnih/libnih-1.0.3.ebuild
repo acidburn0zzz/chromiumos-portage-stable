@@ -12,7 +12,7 @@ SRC_URI="http://launchpad.net/${PN}/$(get_version_component_range 1-2)/${PV}/+do
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="alpha amd64 arm hppa ia64 m68k mips ppc ppc64 s390 sh sparc x86"
+KEYWORDS="*"
 IUSE="+dbus nls static-libs test +threads"
 
 RDEPEND="dbus? ( dev-libs/expat >=sys-apps/dbus-1.2.16 )"

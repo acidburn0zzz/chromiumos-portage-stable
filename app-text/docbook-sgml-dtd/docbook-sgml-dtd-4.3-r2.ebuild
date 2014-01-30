@@ -11,7 +11,7 @@ SRC_URI="http://www.docbook.org/sgml/${PV}/${MY_P}.zip"
 
 LICENSE="as-is"
 SLOT="4.3"
-KEYWORDS="alpha amd64 arm hppa ia64 m68k mips ppc ppc64 s390 sh sparc x86 ~x86-interix ~amd64-linux ~x86-linux ~ppc-macos ~x86-macos ~sparc-solaris ~x64-solaris"
+KEYWORDS="*"
 IUSE=""
 
 DEPEND=">=app-arch/unzip-5.41"

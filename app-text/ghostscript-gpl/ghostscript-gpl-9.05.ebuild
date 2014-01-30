@@ -19,7 +19,7 @@ SRC_URI="
 
 LICENSE="GPL-3 CPL-1.0"
 SLOT="0"
-KEYWORDS="alpha amd64 arm hppa ia64 mips ppc ppc64 s390 sh sparc x86 ~sparc-fbsd ~x86-fbsd"
+KEYWORDS="*"
 IUSE="bindist cups dbus djvu gtk idn jpeg2k static-libs X"
 
 COMMON_DEPEND="

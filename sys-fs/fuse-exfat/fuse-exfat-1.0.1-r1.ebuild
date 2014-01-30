@@ -11,7 +11,7 @@ SRC_URI="http://exfat.googlecode.com/files/${P}.tar.gz"
 
 LICENSE="GPL-3"
 SLOT="0"
-KEYWORDS="alpha amd64 arm hppa ia64 m68k mips ppc64 s390 sh sparc x86 arm-linux x86-linux"
+KEYWORDS="*"
 IUSE=""
 
 RDEPEND="sys-fs/fuse"

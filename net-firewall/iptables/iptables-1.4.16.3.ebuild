@@ -15,7 +15,7 @@ SRC_URI="http://iptables.org/projects/iptables/files/${P}.tar.bz2"
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="alpha amd64 arm hppa ia64 m68k mips ppc ppc64 s390 sh sparc x86"
+KEYWORDS="*"
 IUSE="ipv6 netlink static-libs"
 
 RDEPEND="

@@ -15,7 +15,7 @@ SRC_URI="http://dl.lm-sensors.org/i2c-tools/releases/${P}.tar.bz2"
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="alpha amd64 arm hppa ia64 m68k mips ppc ppc64 s390 sh sparc x86"
+KEYWORDS="*"
 IUSE="python"
 
 DEPEND="!<sys-apps/lm_sensors-3"

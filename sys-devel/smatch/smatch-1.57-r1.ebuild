@@ -22,7 +22,7 @@ else
 	# so we have to cache our own copy of the snapshot.
 	#SRC_URI="http://repo.or.cz/w/smatch.git/snapshot/${PV}.tar.gz -> ${P}.tar.gz"
 	SRC_URI="mirror://gentoo/${P}.tar.gz"
-	KEYWORDS="amd64 ~arm hppa ia64 ppc ppc64 s390 sh sparc ~x86"
+	KEYWORDS="*"
 fi
 
 LICENSE="OSL-1.1"

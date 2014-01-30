@@ -11,7 +11,7 @@ HOMEPAGE="http://ndevilla.free.fr/iniparser/"
 SRC_URI="http://ndevilla.free.fr/iniparser/${MY_P}.tar.gz"
 LICENSE="MIT"
 SLOT="0"
-KEYWORDS="alpha amd64 arm hppa ia64 ppc ppc64 s390 sh sparc x86 ~x86-fbsd"
+KEYWORDS="*"
 IUSE=""
 
 DEPEND=""

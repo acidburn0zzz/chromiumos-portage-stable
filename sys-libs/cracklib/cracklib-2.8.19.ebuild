@@ -16,7 +16,7 @@ SRC_URI="mirror://sourceforge/cracklib/${MY_P}.tar.gz"
 
 LICENSE="LGPL-2.1"
 SLOT="0"
-KEYWORDS="alpha amd64 arm hppa ia64 m68k mips ppc ppc64 s390 sh sparc x86 ~x86-fbsd ~x86-interix ~amd64-linux ~ia64-linux ~x86-linux ~ppc-macos ~x86-macos ~m68k-mint"
+KEYWORDS="*"
 IUSE="build nls python static-libs zlib"
 
 RDEPEND="zlib? ( sys-libs/zlib )"

@@ -19,7 +19,7 @@ if [[ ${PV} == "9999" ]] ; then
 else
 	inherit vcs-snapshot
 	SRC_URI="https://github.com/Lawouach/WebSocket-for-Python/tarball/v${PV} -> ${P}-src.tar.gz"
-	KEYWORDS="amd64 arm x86"
+	KEYWORDS="*"
 fi
 
 DESCRIPTION="WebSocket support for Python"

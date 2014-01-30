@@ -9,7 +9,7 @@ HOMEPAGE="http://www.nagios.org"
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="alpha amd64 arm hppa ppc ppc64 sparc x86"
+KEYWORDS="*"
 IUSE=""
 
 RDEPEND="~net-analyzer/nagios-core-${PV}

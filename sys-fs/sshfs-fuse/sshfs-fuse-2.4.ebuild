@@ -9,7 +9,7 @@ SRC_URI="mirror://sourceforge/fuse/${P}.tar.gz"
 HOMEPAGE="http://fuse.sourceforge.net/sshfs.html"
 
 LICENSE="GPL-2"
-KEYWORDS="amd64 arm hppa ppc ppc64 x86 ~x86-fbsd ~x86-linux"
+KEYWORDS="*"
 SLOT="0"
 IUSE=""
 

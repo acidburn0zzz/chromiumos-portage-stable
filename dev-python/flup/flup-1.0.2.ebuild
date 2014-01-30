@@ -13,7 +13,7 @@ SRC_URI="http://www.saddi.com/software/${PN}/dist/${P}.tar.gz"
 
 LICENSE="BSD"
 SLOT="0"
-KEYWORDS="amd64 ~arm ia64 ppc ppc64 sparc x86 ~x86-fbsd ~amd64-linux ~ia64-linux ~x86-linux ~x86-macos"
+KEYWORDS="*"
 IUSE=""
 
 DEPEND="dev-python/setuptools"

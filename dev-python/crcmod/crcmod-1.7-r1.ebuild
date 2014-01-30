@@ -20,7 +20,7 @@ SRC_URI="mirror://sourceforge/crcmod/${P}.tar.gz"
 
 LICENSE="MIT"
 SLOT="0"
-KEYWORDS="amd64 ~x86"
+KEYWORDS="*"
 IUSE=""
 
 DOCS="changelog test/examples.py"

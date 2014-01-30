@@ -14,7 +14,7 @@ SRC_URI="mirror://sourceforge/${PN}/${P}.tar.gz"
 
 LICENSE="LGPL-2"
 SLOT="0"
-KEYWORDS="amd64 arm x86"
+KEYWORDS="*"
 IUSE="static-libs"
 
 src_prepare() {

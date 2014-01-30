@@ -12,7 +12,7 @@ SRC_URI="http://google-ctemplate.googlecode.com/files/${P}.tar.gz"
 
 LICENSE="BSD"
 SLOT="0"
-KEYWORDS="amd64 arm ppc x86 ~amd64-linux ~x86-linux"
+KEYWORDS="*"
 IUSE="doc emacs vim-syntax static-libs test"
 
 DEPEND="test? ( =dev-lang/python-2* )"

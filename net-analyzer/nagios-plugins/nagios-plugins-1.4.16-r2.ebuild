@@ -15,7 +15,7 @@ SRC_URI="mirror://sourceforge/nagiosplug/${P}.tar.gz
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="alpha amd64 arm hppa ppc ppc64 sparc x86"
+KEYWORDS="*"
 IUSE="+ssl samba mysql postgres ldap snmp nagios-dns nagios-ntp nagios-ping nagios-ssh nagios-game ups ipv6 radius +suid jabber gnutls sudo smart"
 
 DEPEND="ldap? ( >=net-nds/openldap-2.0.25 )

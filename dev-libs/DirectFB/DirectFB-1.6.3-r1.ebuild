@@ -31,7 +31,7 @@ SRC_URI="http://directfb.org/downloads/Core/${PN}-${PV:0:3}/${P}.tar.gz
 
 LICENSE="LGPL-2.1"
 SLOT="0"
-KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 -mips ~ppc ~ppc64 ~sh -sparc ~x86"
+KEYWORDS="*"
 IUSE="bmp debug dynload doc fbcon gif gles2 imlib2 input_hub jpeg jpeg2k mmx mng mpeg2 multicore opengl png pnm sdl sse static-libs svg truetype v4l vdpau X zlib ${IUV} ${IUD}"
 REQUIRED_USE="gles2? ( opengl )"
 

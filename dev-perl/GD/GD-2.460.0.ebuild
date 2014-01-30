@@ -12,7 +12,7 @@ DESCRIPTION="interface to Thomas Boutell's gd library"
 
 LICENSE="|| ( Artistic-2 GPL-1 GPL-2 GPL-3 )" # Artistic-2 or GPL1+
 SLOT="0"
-KEYWORDS="alpha amd64 ~arm hppa ia64 mips ppc ppc64 sparc x86 ~x86-fbsd ~x86-solaris"
+KEYWORDS="*"
 IUSE="animgif gif jpeg png truetype xpm"
 
 RDEPEND=">=media-libs/gd-2.0.33

@@ -16,7 +16,7 @@ SRC_URI="http://alastairs-place.net/projects/${PN}/${P}.tar.gz"
 
 LICENSE="MIT"
 SLOT="0"
-KEYWORDS="amd64 arm x86"
+KEYWORDS="*"
 IUSE=""
 
 DEPEND="dev-python/setuptools"

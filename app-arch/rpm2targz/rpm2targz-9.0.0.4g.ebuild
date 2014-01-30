@@ -10,7 +10,7 @@ SRC_URI="mirror://gentoo/${P}.tar.lzma"
 
 LICENSE="as-is"
 SLOT="0"
-KEYWORDS="alpha amd64 arm hppa ia64 m68k mips ppc ppc64 s390 sh sparc x86 ~sparc-fbsd ~x86-fbsd"
+KEYWORDS="*"
 IUSE=""
 
 RDEPEND="app-arch/cpio"

@@ -13,7 +13,7 @@ SRC_URI="https://fedorahosted.org/releases/n/e/newt/${P}.tar.gz"
 
 LICENSE="LGPL-2"
 SLOT="0"
-KEYWORDS="alpha amd64 arm hppa ia64 ppc ppc64 sparc x86"
+KEYWORDS="*"
 IUSE="gpm tcl nls"
 
 RDEPEND="=sys-libs/slang-2*

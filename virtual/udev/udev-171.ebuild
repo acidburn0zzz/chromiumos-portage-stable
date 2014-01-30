@@ -10,7 +10,7 @@ SRC_URI=""
 
 LICENSE=""
 SLOT="0"
-KEYWORDS="alpha amd64 arm hppa ia64 m68k mips ppc ppc64 s390 sh sparc x86"
+KEYWORDS="*"
 # USE flags kmod and static-libs are here dummy in purpose
 IUSE="gudev hwdb introspection keymap +kmod selinux static-libs"
 
