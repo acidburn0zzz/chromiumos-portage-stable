@@ -10,7 +10,7 @@ DESCRIPTION="Parallel bzip2 (de)compressor using libbz2"
 HOMEPAGE="http://compression.ca/pbzip2/"
 SRC_URI="http://compression.ca/${PN}/${P}.tar.gz"
 
-LICENSE="PBZIP2"
+LICENSE="BZIP2"
 SLOT="0"
 KEYWORDS="*"
 IUSE="static symlink"
