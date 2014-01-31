@@ -4,10 +4,10 @@ DESCRIPTION=Toolkit for SSL v2/v3 and TLS v1
 EAPI=2
 HOMEPAGE=http://www.openssl.org/
 IUSE=bindist gmp kerberos sse2 test zlib
-KEYWORDS=alpha amd64 arm hppa ia64 m68k mips ppc ppc64 s390 sh sparc x86 ~sparc-fbsd ~x86-fbsd
+KEYWORDS=*
 LICENSE=openssl
 RDEPEND=gmp? ( dev-libs/gmp ) zlib? ( sys-libs/zlib ) kerberos? ( app-crypt/mit-krb5 ) !=dev-libs/openssl-0.9.8*:0
 SLOT=0.9.8
 SRC_URI=mirror://openssl/source/openssl-0.9.8x.tar.gz
 _eclasses_=eutils	a108f00cccac414097bcbbbb5de01762	flag-o-matic	c3131dc67d3bd39f044e92b8280505e4	multilib	fac675dcccf94392371a6abee62d909f	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
-_md5_=70790b543663d8e4d031d4416646997c
+_md5_=15aa08c1dbc6b7376cf986352194a8a6

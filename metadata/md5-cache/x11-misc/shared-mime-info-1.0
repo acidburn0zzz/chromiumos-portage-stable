@@ -3,10 +3,10 @@ DEPEND=>=dev-libs/glib-2 dev-libs/libxml2 app-arch/xz-utils dev-util/intltool vi
 DESCRIPTION=The Shared MIME-info Database specification
 EAPI=4
 HOMEPAGE=http://freedesktop.org/wiki/Software/shared-mime-info
-KEYWORDS=alpha amd64 arm hppa ia64 m68k mips ppc ppc64 s390 sh sparc x86 ~amd64-fbsd ~x86-fbsd ~x64-freebsd ~x86-freebsd ~x86-interix ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~m68k-mint ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris
+KEYWORDS=*
 LICENSE=GPL-2
 RDEPEND=>=dev-libs/glib-2 dev-libs/libxml2
 SLOT=0
 SRC_URI=http://people.freedesktop.org/~hadess/shared-mime-info-1.0.tar.xz
 _eclasses_=fdo-mime	9c46e30acd923ff12e325dbe96bb98b9
-_md5_=bb5066d3576f82f03be195446d849150
+_md5_=07d3fad85b5b6a586041f765826d986d

@@ -4,9 +4,9 @@ DESCRIPTION=Near Field Communication (NFC) management daemon
 EAPI=5
 HOMEPAGE=https://01.org/linux-nfc/
 IUSE=tools
-KEYWORDS=amd64 arm x86
+KEYWORDS=*
 LICENSE=GPL-2
 RDEPEND=>=dev-libs/glib-2.28:2 dev-libs/libnl >=sys-apps/dbus-1.2.24
 SLOT=0
 SRC_URI=mirror://kernel/linux/network/nfc/neard-0.13.tar.xz
-_md5_=e898f8a31739d2f92f316b5209aa6c90
+_md5_=e142d689041062b1db74f92c47f5fc47

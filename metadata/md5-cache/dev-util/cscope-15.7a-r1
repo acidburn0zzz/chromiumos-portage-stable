@@ -4,10 +4,10 @@ DESCRIPTION=Interactively examine a C program
 EAPI=4
 HOMEPAGE=http://cscope.sourceforge.net/
 IUSE=emacs
-KEYWORDS=alpha amd64 arm hppa ia64 m68k mips ppc ppc64 s390 sh sparc x86 ~amd64-fbsd ~sparc-fbsd ~x86-fbsd
+KEYWORDS=*
 LICENSE=BSD GPL-2
 RDEPEND=>=sys-libs/ncurses-5.2 emacs? ( virtual/emacs )
 SLOT=0
 SRC_URI=mirror://sourceforge/cscope/cscope-15.7a.tar.bz2
 _eclasses_=elisp-common	3322f14f031ddc95feccd9089c9adc59	eutils	a108f00cccac414097bcbbbb5de01762	multilib	fac675dcccf94392371a6abee62d909f	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
-_md5_=49f9d39fa2fd2dda8dce10adec944f6b
+_md5_=c1d8de2dddf74ab6f302c10affa1737c

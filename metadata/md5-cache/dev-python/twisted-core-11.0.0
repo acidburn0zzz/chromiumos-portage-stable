@@ -4,10 +4,10 @@ DESCRIPTION=An asynchronous networking framework written in Python
 EAPI=3
 HOMEPAGE=http://www.twistedmatrix.com/ http://pypi.python.org/pypi/Twisted
 IUSE=crypt gtk serial
-KEYWORDS=alpha amd64 arm hppa ia64 mips ppc ppc64 s390 sh sparc x86 ~x86-fbsd ~ia64-hpux ~x86-interix ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris
+KEYWORDS=*
 LICENSE=MIT
 RDEPEND=>=net-zope/zope-interface-3.0.1 crypt? ( >=dev-python/pyopenssl-0.5.1 ) gtk? ( >=dev-python/pygtk-1.99 ) serial? ( dev-python/pyserial ) =dev-lang/python-2*
 SLOT=0
 SRC_URI=http://tmrc.mit.edu/mirror/twisted/Core/11.0/TwistedCore-11.0.0.tar.bz2
 _eclasses_=distutils	c2658824b3debc637c77b58e1d658fab	eutils	a108f00cccac414097bcbbbb5de01762	multilib	fac675dcccf94392371a6abee62d909f	python	305197b0aa1194fa3ef67ca21f6faa7e	toolchain-funcs	48b38a216afb92db6314d6c3187abea3	twisted	b8ba94e8ee03d301a1eebc496249b8f3	versionator	865bc8b2fc9fcfb6d520bdf5a110f5ed
-_md5_=bbce9f7a87d8e056885601f2cc191168
+_md5_=3f13215e88ed1c424ec0c7a66adc585a

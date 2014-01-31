@@ -4,10 +4,10 @@ DESCRIPTION=tool for automating interactive applications
 EAPI=3
 HOMEPAGE=http://expect.nist.gov/
 IUSE=debug doc threads X
-KEYWORDS=alpha amd64 arm hppa ia64 m68k mips ppc ppc64 s390 sh sparc x86 ~x86-fbsd ~x86-freebsd ~amd64-linux ~x86-linux ~x86-macos ~x86-solaris
+KEYWORDS=*
 LICENSE=BSD
 RDEPEND=>=dev-lang/tcl-8.2[threads?] X? ( >=dev-lang/tk-8.2[threads?] )
 SLOT=0
 SRC_URI=mirror://sourceforge/expect/expect-5.44.1.15.tar.bz2
 _eclasses_=autotools	1b0fa473be98091220edff9f51d06153	eutils	a108f00cccac414097bcbbbb5de01762	libtool	eba09ed440f2692f73024ff3621a1f4b	multilib	fac675dcccf94392371a6abee62d909f	multiprocessing	1512bdfe7004902b8cd2c466fc3df772	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
-_md5_=d2a11fc33ff16e4e94718cbd260cb278
+_md5_=a67316e64b13574a4d6eee632a3af9f5

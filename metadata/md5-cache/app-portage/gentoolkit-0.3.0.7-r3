@@ -3,10 +3,10 @@ DEPEND=sys-apps/portage dev-lang/python[xml] dev-lang/python
 DESCRIPTION=Collection of administration scripts for Gentoo
 EAPI=3
 HOMEPAGE=http://www.gentoo.org/proj/en/portage/tools/index.xml
-KEYWORDS=alpha amd64 arm hppa ia64 m68k mips ppc ppc64 s390 sh sparc x86 ~ppc-aix ~amd64-fbsd ~x86-fbsd ~x64-freebsd ~hppa-hpux ~ia64-hpux ~x86-interix ~amd64-linux ~arm-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~m68k-mint ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris
+KEYWORDS=*
 LICENSE=GPL-2
 RDEPEND=sys-apps/portage >=dev-lang/python-2.6[xml] !>=dev-lang/python-2.6[-xml] !<=app-portage/gentoolkit-dev-0.2.7 || ( >=sys-apps/coreutils-8.15 app-misc/realpath sys-freebsd/freebsd-bin ) sys-apps/gawk sys-apps/grep virtual/python-argparse dev-lang/python[xml] dev-lang/python
 SLOT=0
 SRC_URI=mirror://gentoo/gentoolkit-0.3.0.7.tar.gz
 _eclasses_=distutils	c2658824b3debc637c77b58e1d658fab	eutils	a108f00cccac414097bcbbbb5de01762	multilib	fac675dcccf94392371a6abee62d909f	python	305197b0aa1194fa3ef67ca21f6faa7e	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
-_md5_=853d8389c954d23181f78f754e0dab38
+_md5_=639c884d1d52e038043a1df3ecb65f32

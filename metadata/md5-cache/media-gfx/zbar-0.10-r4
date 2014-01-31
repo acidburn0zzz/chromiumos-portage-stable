@@ -4,10 +4,10 @@ DESCRIPTION=Library and tools for reading barcodes from images or video
 EAPI=5
 HOMEPAGE=http://zbar.sourceforge.net/
 IUSE=gtk imagemagick jpeg python qt4 static-libs +threads v4l X xv
-KEYWORDS=amd64 arm x86
+KEYWORDS=*
 LICENSE=LGPL-2.1
 RDEPEND=gtk? ( dev-libs/glib:2 x11-libs/gtk+:2 ) imagemagick? ( || ( media-gfx/imagemagick media-gfx/graphicsmagick[imagemagick] ) ) jpeg? ( virtual/jpeg ) python? ( gtk? ( >=dev-python/pygtk-2 ) ) qt4? ( dev-qt/qtcore:4 dev-qt/qtgui:4 ) X? ( x11-libs/libXext xv? ( x11-libs/libXv ) ) || ( =dev-lang/python-2.7* =dev-lang/python-2.6* )
 SLOT=0
 SRC_URI=mirror://sourceforge/zbar/zbar-0.10.tar.bz2
 _eclasses_=autotools	1b0fa473be98091220edff9f51d06153	eutils	a108f00cccac414097bcbbbb5de01762	flag-o-matic	c3131dc67d3bd39f044e92b8280505e4	libtool	eba09ed440f2692f73024ff3621a1f4b	multilib	fac675dcccf94392371a6abee62d909f	multiprocessing	1512bdfe7004902b8cd2c466fc3df772	python	305197b0aa1194fa3ef67ca21f6faa7e	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
-_md5_=fb047614c6c2e633973280a73681c036
+_md5_=f584225a4cd592a636a5ad96ed1b04bf

@@ -4,10 +4,10 @@ DESCRIPTION=library for multiple-precision floating-point computations with exac
 EAPI=3
 HOMEPAGE=http://www.mpfr.org/
 IUSE=static-libs
-KEYWORDS=alpha amd64 arm hppa ia64 m68k mips ppc ppc64 s390 sh sparc x86 ~ppc-aix ~amd64-fbsd ~sparc-fbsd ~x86-fbsd ~x64-freebsd ~x86-freebsd ~hppa-hpux ~ia64-hpux ~x86-interix ~amd64-linux ~arm-linux ~ia64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~m68k-mint ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris
+KEYWORDS=*
 LICENSE=LGPL-2.1
 RDEPEND=>=dev-libs/gmp-4.1.4-r2[static-libs?]
 SLOT=0
 SRC_URI=http://www.mpfr.org/mpfr-3.1.2/mpfr-3.1.2.tar.xz
 _eclasses_=eutils	a108f00cccac414097bcbbbb5de01762	libtool	eba09ed440f2692f73024ff3621a1f4b	multilib	fac675dcccf94392371a6abee62d909f	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
-_md5_=72a0c668e4f6b42b7a506b3b03acd4e7
+_md5_=d8d83dc1994d6fe007231688810e2442

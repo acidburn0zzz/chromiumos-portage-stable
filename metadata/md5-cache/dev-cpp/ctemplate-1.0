@@ -4,10 +4,10 @@ DESCRIPTION=A simple but powerful template language for C++
 EAPI=4
 HOMEPAGE=http://code.google.com/p/google-ctemplate/
 IUSE=doc emacs vim-syntax static-libs test
-KEYWORDS=amd64 arm ppc x86 ~amd64-linux ~x86-linux
+KEYWORDS=*
 LICENSE=BSD
 RDEPEND=vim-syntax? ( >=app-editors/vim-core-7 ) emacs? ( virtual/emacs )
 SLOT=0
 SRC_URI=http://google-ctemplate.googlecode.com/files/ctemplate-1.0.tar.gz
 _eclasses_=elisp-common	3322f14f031ddc95feccd9089c9adc59	eutils	a108f00cccac414097bcbbbb5de01762	multilib	fac675dcccf94392371a6abee62d909f	python	305197b0aa1194fa3ef67ca21f6faa7e	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
-_md5_=b732cdee18a3353141d4ec9c0b9a53ae
+_md5_=9918739c014e694b708d5997bf60257f

@@ -4,10 +4,10 @@ DESCRIPTION=interface to Thomas Boutell's gd library
 EAPI=4
 HOMEPAGE=http://search.cpan.org/dist/GD/
 IUSE=animgif gif jpeg png truetype xpm
-KEYWORDS=alpha amd64 ~arm hppa ia64 mips ppc ppc64 sparc x86 ~x86-fbsd ~x86-solaris
+KEYWORDS=*
 LICENSE=|| ( Artistic-2 GPL-1 GPL-2 GPL-3 )
 RDEPEND=>=media-libs/gd-2.0.33 png? ( media-libs/gd[png] media-libs/libpng sys-libs/zlib ) jpeg? ( media-libs/gd[jpeg] virtual/jpeg ) truetype? ( media-libs/gd[truetype] media-libs/freetype:2 ) xpm? ( media-libs/gd[xpm] x11-libs/libXpm ) gif? ( media-libs/giflib ) || ( >=dev-lang/perl-5.16 <dev-lang/perl-5.16[-build] )
 SLOT=0
 SRC_URI=mirror://cpan/authors/id/L/LD/LDS/GD-2.46.tar.gz
 _eclasses_=base	fc89786f3f7e7bcf03334359bd5b639b	eutils	a108f00cccac414097bcbbbb5de01762	multilib	fac675dcccf94392371a6abee62d909f	multiprocessing	1512bdfe7004902b8cd2c466fc3df772	perl-module	d93571ca1c77e98760e5aa406388b02d	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
-_md5_=56f66c089ca8d8b34078ce11d2ba57d8
+_md5_=8c283e30ecaf2f7879ba34cf1a6732ba

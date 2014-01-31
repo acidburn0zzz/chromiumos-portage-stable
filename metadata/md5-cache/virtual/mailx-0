@@ -1,7 +1,7 @@
 DEFINED_PHASES=-
 DESCRIPTION=Virtual for mail implementations
 EAPI=3
-KEYWORDS=alpha amd64 arm hppa ia64 mips ppc ppc64 s390 sh sparc x86 ~x86-freebsd ~x86-interix ~amd64-linux ~arm-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos
+KEYWORDS=*
 RDEPEND=|| ( mail-client/mailx mail-client/nail net-mail/mailutils )
 SLOT=0
-_md5_=64a1339b97391be98f792bb5743873f5
+_md5_=a0ea6bc4c19744f8735615e273d12e12

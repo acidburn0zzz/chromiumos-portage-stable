@@ -4,10 +4,10 @@ DESCRIPTION=Various utilities dealing with the PCI bus
 EAPI=4
 HOMEPAGE=http://mj.ucw.cz/sw/pciutils/ http://git.kernel.org/?p=utils/pciutils/pciutils.git
 IUSE=static-libs zlib
-KEYWORDS=alpha amd64 arm hppa ia64 m68k mips ppc ppc64 s390 sh sparc x86 ~amd64-fbsd ~x86-fbsd ~amd64-linux ~x86-linux
+KEYWORDS=*
 LICENSE=GPL-2
 RDEPEND=static-libs? ( zlib? ( sys-libs/zlib[static-libs(+)] ) ) !static-libs? ( zlib? ( sys-libs/zlib ) ) sys-apps/hwids
 SLOT=0
 SRC_URI=ftp://atrey.karlin.mff.cuni.cz/pub/linux/pci/pciutils-3.1.10.tar.gz
 _eclasses_=eutils	a108f00cccac414097bcbbbb5de01762	multilib	fac675dcccf94392371a6abee62d909f	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
-_md5_=799979f94a26002e1ab21a74a6c09741
+_md5_=38c76228342dfd0be4bf891bd1ed99d4

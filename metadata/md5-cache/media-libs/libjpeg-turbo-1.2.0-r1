@@ -4,10 +4,10 @@ DESCRIPTION=MMX, SSE, and SSE2 SIMD accelerated JPEG library
 EAPI=4
 HOMEPAGE=http://libjpeg-turbo.virtualgl.org/ http://sourceforge.net/projects/libjpeg-turbo/
 IUSE=java static-libs elibc_FreeBSD java
-KEYWORDS=amd64 arm hppa mips ppc ppc64 x86 ~x86-fbsd ~amd64-linux ~x86-linux
+KEYWORDS=*
 LICENSE=BSD
 RDEPEND=!media-libs/jpeg:0 java? ( >=virtual/jre-1.5 ) java? ( >=dev-java/java-config-2.1.9-r1 )
 SLOT=0
 SRC_URI=mirror://sourceforge/libjpeg-turbo/libjpeg-turbo-1.2.0.tar.gz mirror://debian/pool/main/libj/libjpeg8/libjpeg8_8d-1.debian.tar.gz
 _eclasses_=eutils	a108f00cccac414097bcbbbb5de01762	java-pkg-opt-2	31a1663247652448431dcc8c194e2752	java-utils-2	6beafc7c3d1dbae83a4478182b158f66	libtool	eba09ed440f2692f73024ff3621a1f4b	multilib	fac675dcccf94392371a6abee62d909f	toolchain-funcs	48b38a216afb92db6314d6c3187abea3	versionator	865bc8b2fc9fcfb6d520bdf5a110f5ed
-_md5_=e665e507185de122d1848ba31d88de95
+_md5_=24f71414959e64ff8c1a1c1b2e1c1594

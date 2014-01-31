@@ -4,10 +4,10 @@ DESCRIPTION=Package config system that manages compile/link flags
 EAPI=4
 HOMEPAGE=http://pkgconfig.freedesktop.org/wiki/
 IUSE=elibc_FreeBSD hardened
-KEYWORDS=alpha amd64 arm hppa ia64 m68k mips ppc ppc64 s390 sh sparc x86 ~sparc-fbsd ~x86-fbsd
+KEYWORDS=*
 LICENSE=GPL-2
 RDEPEND=dev-libs/glib:2 >=dev-libs/popt-1.15
 SLOT=0
 SRC_URI=http://pkgconfig.freedesktop.org/releases/pkg-config-0.26.tar.gz
 _eclasses_=eutils	a108f00cccac414097bcbbbb5de01762	flag-o-matic	c3131dc67d3bd39f044e92b8280505e4	multilib	fac675dcccf94392371a6abee62d909f	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
-_md5_=6190af3bcaa0d3062708c720bfa9c21b
+_md5_=4b174df2400e33c0e620a99556874e8c

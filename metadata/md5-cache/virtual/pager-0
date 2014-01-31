@@ -1,6 +1,6 @@
 DEFINED_PHASES=-
 DESCRIPTION=Virtual for command-line pagers
-KEYWORDS=alpha amd64 arm hppa ia64 m68k mips ppc ppc64 s390 sh sparc x86 ~ppc-aix ~sparc-fbsd ~x86-fbsd ~x64-freebsd ~x86-freebsd ~hppa-hpux ~ia64-hpux ~x86-interix ~amd64-linux ~ia64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~m68k-mint ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris
+KEYWORDS=*
 RDEPEND=|| ( sys-apps/less sys-apps/more sys-apps/most sys-apps/util-linux app-text/lv )
 SLOT=0
-_md5_=2edb3a8b8aa14f5b6ed2397256eb1423
+_md5_=0d6cbf94f04025b78fa3978b3e66823e

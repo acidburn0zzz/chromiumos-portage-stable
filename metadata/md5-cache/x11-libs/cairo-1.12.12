@@ -4,7 +4,7 @@ DESCRIPTION=A vector graphics library with cross-device output support
 EAPI=4
 HOMEPAGE=http://cairographics.org/
 IUSE=X aqua debug directfb doc drm gallium +glib legacy-drivers opengl openvg qt4 static-libs +svg xcb
-KEYWORDS=alpha amd64 arm hppa ia64 mips ppc ppc64 s390 sh sparc x86 ~amd64-fbsd ~x86-fbsd ~x86-freebsd ~x86-interix ~amd64-linux ~arm-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris
+KEYWORDS=*
 LICENSE=|| ( LGPL-2.1 MPL-1.1 )
 RDEPEND=media-libs/fontconfig media-libs/freetype:2 media-libs/libpng:0 sys-libs/zlib >=x11-libs/pixman-0.28.0 directfb? ( dev-libs/DirectFB ) glib? ( >=dev-libs/glib-2.28.6:2 ) opengl? ( || ( media-libs/mesa[egl] media-libs/opengl-apple ) ) openvg? ( media-libs/mesa[openvg] ) qt4? ( >=dev-qt/qtgui-4.8:4 ) X? ( >=x11-libs/libXrender-0.6 x11-libs/libXext x11-libs/libX11 drm? ( >=virtual/udev-136 gallium? ( media-libs/mesa[gallium] ) ) ) xcb? ( x11-libs/libxcb x11-libs/xcb-util )
 REQUIRED_USE=drm? ( X ) gallium? ( drm )
@@ -12,4 +12,4 @@ RESTRICT=test
 SLOT=0
 SRC_URI=http://cairographics.org/releases/cairo-1.12.12.tar.xz
 _eclasses_=autotools	1b0fa473be98091220edff9f51d06153	eutils	a108f00cccac414097bcbbbb5de01762	flag-o-matic	c3131dc67d3bd39f044e92b8280505e4	libtool	eba09ed440f2692f73024ff3621a1f4b	multilib	fac675dcccf94392371a6abee62d909f	multiprocessing	1512bdfe7004902b8cd2c466fc3df772	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
-_md5_=1c8e7e8d0ce956db492375869f08987e
+_md5_=b7bed32ef4912b1261011f8d74189667
