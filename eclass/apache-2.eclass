@@ -1,8 +1,6 @@
-# Copyright 1999-2007 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/eclass/apache-2.eclass,v 1.20 2010/03/05 09:01:07 hollow Exp $
-
-EAPI="2"
+# $Header: /var/cvsroot/gentoo-x86/eclass/apache-2.eclass,v 1.34 2014/01/31 08:29:39 vapier Exp $
 
 # @ECLASS: apache-2.eclass
 # @MAINTAINER:
@@ -12,7 +10,7 @@ EAPI="2"
 # This eclass handles apache-2.x ebuild functions such as LoadModule generation
 # and inter-module dependency checking.
 
-inherit autotools eutils flag-o-matic multilib ssl-cert
+inherit autotools eutils flag-o-matic multilib ssl-cert user toolchain-funcs
 
 # ==============================================================================
 # INTERNAL VARIABLES
@@ -173,7 +171,6 @@ check_module_critical() {
 		ewarn "Although this is not an error, please be"
 		ewarn "aware that this setup is UNSUPPORTED."
 		ewarn
-		ebeep 10
 	fi
 }
 
@@ -243,14 +240,6 @@ setup_modules() {
 		MY_MODS="${MY_MODS} ssl"
 	else
 		MY_CONF="${MY_CONF} --without-ssl --disable-ssl"
-	fi
-
-	if use threads || has ${MY_MPM} ${IUSE_MPMS_THREAD} ; then
-		MY_CONF="${MY_CONF} --enable-cgid=${mod_type}"
-		MY_MODS="${MY_MODS} cgid"
-	else
-		MY_CONF="${MY_CONF} --enable-cgi=${mod_type}"
-		MY_MODS="${MY_MODS} cgi"
 	fi
 
 	if use suexec ; then
@@ -434,7 +423,15 @@ apache-2_src_prepare() {
 
 	# patched-in MPMs need the build environment rebuilt
 	sed -i -e '/sinclude/d' configure.in
-	AT_GNUCONF_UPDATE=yes AT_M4DIR=build eautoreconf
+	AT_M4DIR=build eautoreconf
+
+	# This package really should upgrade to using pcre's .pc file.
+	cat <<-\EOF >"${T}"/pcre-config
+	#!/bin/sh
+	[ "${flag}" = "--version" ] && set -- --modversion
+	exec ${PKG_CONFIG} libpcre "$@"
+	EOF
+	chmod a+x "${T}"/pcre-config
 }
 
 # @FUNCTION: apache-2_src_configure
@@ -442,6 +439,8 @@ apache-2_src_prepare() {
 # This function adds compiler flags and runs econf and emake based on MY_MPM and
 # MY_CONF
 apache-2_src_configure() {
+	tc-export PKG_CONFIG
+
 	# Instead of filtering --as-needed (bug #128505), append --no-as-needed
 	# Thanks to Harald van Dijk
 	append-ldflags $(no-as-needed)
@@ -453,6 +452,7 @@ apache-2_src_configure() {
 
 	# econf overwrites the stuff from config.layout, so we have to put them into
 	# our myconf line too
+	ac_cv_path_PKGCONFIG=${PKG_CONFIG} \
 	econf \
 		--includedir=/usr/include/apache2 \
 		--libexecdir=/usr/$(get_libdir)/apache2/modules \
@@ -460,9 +460,9 @@ apache-2_src_configure() {
 		--sysconfdir=/etc/apache2 \
 		--localstatedir=/var \
 		--with-mpm=${MY_MPM} \
-		--with-apr=/usr \
-		--with-apr-util=/usr \
-		--with-pcre=/usr \
+		--with-apr="${SYSROOT}"/usr \
+		--with-apr-util="${SYSROOT}"/usr \
+		--with-pcre="${T}"/pcre-config \
 		--with-z=/usr \
 		--with-port=80 \
 		--with-program-name=apache2 \
@@ -477,7 +477,7 @@ apache-2_src_configure() {
 # This function runs `emake install' and generates, installs and adapts the gentoo
 # specific configuration files found in the tarball
 apache-2_src_install() {
-	make DESTDIR="${D}" install || die "make install failed"
+	emake DESTDIR="${D}" MKINSTALLDIRS="mkdir -p" install || die "make install failed"
 
 	# install our configuration files
 	keepdir /etc/apache2/vhosts.d
@@ -496,7 +496,7 @@ apache-2_src_install() {
 	use doc && APACHE2_OPTS="${APACHE2_OPTS} -D MANUAL"
 	use ssl && APACHE2_OPTS="${APACHE2_OPTS} -D SSL -D SSL_DEFAULT_VHOST"
 	use suexec && APACHE2_OPTS="${APACHE2_OPTS} -D SUEXEC"
-	if hasq negotiation ${APACHE2_MODULES} && use apache2_modules_negotiation; then
+	if has negotiation ${APACHE2_MODULES} && use apache2_modules_negotiation; then
 		APACHE2_OPTS="${APACHE2_OPTS} -D LANGUAGE"
 	fi
 
@@ -549,7 +549,7 @@ apache-2_src_install() {
 	for i in /var/lib/dav /var/log/apache2 /var/cache/apache2 ; do
 		keepdir ${i}
 		fowners apache:apache ${i}
-		fperms 0755 ${i}
+		fperms 0750 ${i}
 	done
 }
 
@@ -576,6 +576,13 @@ apache-2_pkg_postinst() {
 		mkdir -p "${ROOT}/var/www/localhost/htdocs"
 		echo "<html><body><h1>It works!</h1></body></html>" > "${ROOT}/var/www/localhost/htdocs/index.html"
 	fi
+
+	echo
+	elog "Attention: cgi and cgid modules are now handled via APACHE2_MODULES flags"
+	elog "in make.conf. Make sure to enable those in order to compile them."
+	elog "In general, you should use 'cgid' with threaded MPMs and 'cgi' otherwise."
+	echo
+
 }
 
 EXPORT_FUNCTIONS pkg_setup src_prepare src_configure src_install pkg_postinst

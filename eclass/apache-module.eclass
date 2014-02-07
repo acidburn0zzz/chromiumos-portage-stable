@@ -1,6 +1,6 @@
-# Copyright 1999-2007 Gentoo Foundation
+# Copyright 1999-2011 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/eclass/apache-module.eclass,v 1.23 2008/03/23 12:11:52 hollow Exp $
+# $Header: /var/cvsroot/gentoo-x86/eclass/apache-module.eclass,v 1.26 2013/06/22 00:06:53 vapier Exp $
 
 # @ECLASS: apache-module.eclass
 # @MAINTAINER:
@@ -176,7 +176,7 @@ apache-module_src_install() {
 	debug-print-function $FUNCNAME $*
 
 	local CD_DIR=$(apache_cd_dir)
-	cd "${CD_DIR}" || die "cd ${CD_DIR} failed"
+	pushd "${CD_DIR}" >/dev/null || die "cd ${CD_DIR} failed"
 
 	local MOD_FILE=$(apache_mod_file)
 
@@ -207,6 +207,8 @@ apache-module_src_install() {
 		[[ -n "${OTHER_DOCS}" ]] && dodoc ${OTHER_DOCS}
 		[[ -n "${HTML_DOCS}" ]] && dohtml ${HTML_DOCS}
 	fi
+
+	popd >/dev/null
 }
 
 # @FUNCTION: apache-module_pkg_postinst
@@ -228,7 +230,7 @@ apache-module_pkg_postinst() {
 		set -- ${APACHE2_MOD_CONF}
 		einfo
 		einfo "Configuration file installed as"
-		einfo "    ${APACHE_MODULES_CONFDIR}/$(basename $1).conf"
+		einfo "    ${APACHE_MODULES_CONFDIR}/$(basename ${2:-$1}).conf"
 		einfo "You may want to edit it before turning the module on in /etc/conf.d/apache2"
 		einfo
 	fi
