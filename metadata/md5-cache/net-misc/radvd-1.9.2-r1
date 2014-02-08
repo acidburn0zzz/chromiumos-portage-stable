@@ -1,13 +1,13 @@
 DEFINED_PHASES=configure install postinst prepare setup
-DEPEND=dev-libs/libdaemon selinux? ( sec-policy/selinux-radvd ) sys-devel/bison sys-devel/flex virtual/pkgconfig virtual/pkgconfig || ( >=sys-devel/automake-1.11.1:1.11 >=sys-devel/automake-1.12:1.12 ) >=sys-devel/autoconf-2.68 sys-devel/libtool
+DEPEND=dev-libs/libdaemon selinux? ( sec-policy/selinux-radvd ) sys-devel/bison sys-devel/flex virtual/pkgconfig virtual/pkgconfig sys-apps/baselayout || ( >=sys-devel/automake-1.11.1:1.11 >=sys-devel/automake-1.12:1.12 ) >=sys-devel/autoconf-2.68 sys-devel/libtool
 DESCRIPTION=Linux IPv6 Router Advertisement Daemon
 EAPI=4
 HOMEPAGE=http://v6web.litech.org/radvd/
 IUSE=kernel_FreeBSD selinux
 KEYWORDS=*
 LICENSE=BSD
-RDEPEND=dev-libs/libdaemon selinux? ( sec-policy/selinux-radvd )
+RDEPEND=dev-libs/libdaemon selinux? ( sec-policy/selinux-radvd ) sys-apps/baselayout
 SLOT=0
 SRC_URI=http://v6web.litech.org/radvd/dist/radvd-1.9.2.tar.gz
-_eclasses_=autotools	1b0fa473be98091220edff9f51d06153	eutils	a108f00cccac414097bcbbbb5de01762	libtool	eba09ed440f2692f73024ff3621a1f4b	multilib	fac675dcccf94392371a6abee62d909f	multiprocessing	1512bdfe7004902b8cd2c466fc3df772	systemd	9f063b2cc19c5e8030911372aa246c4e	toolchain-funcs	48b38a216afb92db6314d6c3187abea3	user	9e552f935106ff0bc92af16da64b4b29
+_eclasses_=autotools	1b0fa473be98091220edff9f51d06153	eutils	a108f00cccac414097bcbbbb5de01762	libtool	eba09ed440f2692f73024ff3621a1f4b	multilib	fac675dcccf94392371a6abee62d909f	multiprocessing	1512bdfe7004902b8cd2c466fc3df772	systemd	9f063b2cc19c5e8030911372aa246c4e	toolchain-funcs	48b38a216afb92db6314d6c3187abea3	user	425eaf29b1adfc8670fb308ea86d2b82
 _md5_=51c64e34be5ccfb694b3f88c6863d2b8
