@@ -1,8 +1,8 @@
-# Copyright 1999-2010 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/app-arch/cpio/cpio-2.11.ebuild,v 1.8 2010/10/10 00:04:57 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/app-arch/cpio/cpio-2.11-r1.ebuild,v 1.3 2014/01/18 01:18:03 vapier Exp $
 
-EAPI="2"
+EAPI="4"
 
 inherit eutils
 
@@ -17,18 +17,19 @@ IUSE="nls"
 
 src_prepare() {
 	epatch "${FILESDIR}"/${P}-stat.patch #328531
+	epatch "${FILESDIR}"/${P}-no-gets.patch #424974
+	epatch "${FILESDIR}"/${P}-non-gnu-compilers.patch #275295
 }
 
 src_configure() {
 	econf \
 		$(use_enable nls) \
-		--bindir=/bin \
-		--with-rmt=/usr/sbin/rmt
+		--bindir="${EPREFIX}"/bin \
+		--with-rmt="${EPREFIX}"/usr/sbin/rmt
 }
 
 src_install() {
-	emake install DESTDIR="${D}" || die
-	dodoc ChangeLog NEWS README
-	rm "${D}"/usr/share/man/man1/mt.1 || die
-	rmdir "${D}"/usr/libexec || die
+	default
+	rm "${ED}"/usr/share/man/man1/mt.1 || die
+	rmdir "${ED}"/usr/libexec || die
 }
