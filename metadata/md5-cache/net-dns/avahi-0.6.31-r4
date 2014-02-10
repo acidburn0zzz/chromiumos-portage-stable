@@ -1,0 +1,14 @@
+DEFINED_PHASES=compile configure install postinst preinst prepare setup
+DEPEND=dev-libs/libdaemon dev-libs/expat dev-libs/glib:2 gdbm? ( sys-libs/gdbm ) qt4? ( dev-qt/qtcore:4 ) gtk? ( x11-libs/gtk+:2 ) gtk3? ( x11-libs/gtk+:3 ) dbus? ( sys-apps/dbus ) kernel_linux? ( sys-libs/libcap ) introspection? ( dev-libs/gobject-introspection ) mono? ( dev-lang/mono gtk? ( dev-dotnet/gtk-sharp ) ) python? ( python_targets_python2_6? ( >=dev-lang/python-2.6.8-r3:2.6[gdbm] ) python_targets_python2_7? ( >=dev-lang/python-2.7.3-r2:2.7[gdbm] ) dev-lang/python-exec:=[python_targets_python2_6(-)?,python_targets_python2_7(-)?,-python_single_target_python2_6(-),-python_single_target_python2_7(-)] gtk? ( dev-python/pygtk ) dbus? ( dev-python/dbus-python ) ) bookmarks? ( dev-python/twisted-core dev-python/twisted-web ) dev-util/intltool virtual/pkgconfig doc? ( app-doc/doxygen ) =sys-devel/automake-1.11* >=sys-devel/autoconf-2.68 sys-devel/libtool virtual/pkgconfig sys-apps/baselayout
+DESCRIPTION=System which facilitates service discovery on a local network
+EAPI=5
+HOMEPAGE=http://avahi.org/
+IUSE=autoipd bookmarks dbus doc gdbm gtk gtk3 howl-compat +introspection ipv6 kernel_linux mdnsresponder-compat mono nls python qt4 test utils python_targets_python2_6 python_targets_python2_7
+KEYWORDS=*
+LICENSE=LGPL-2.1
+RDEPEND=dev-libs/libdaemon dev-libs/expat dev-libs/glib:2 gdbm? ( sys-libs/gdbm ) qt4? ( dev-qt/qtcore:4 ) gtk? ( x11-libs/gtk+:2 ) gtk3? ( x11-libs/gtk+:3 ) dbus? ( sys-apps/dbus ) kernel_linux? ( sys-libs/libcap ) introspection? ( dev-libs/gobject-introspection ) mono? ( dev-lang/mono gtk? ( dev-dotnet/gtk-sharp ) ) python? ( python_targets_python2_6? ( >=dev-lang/python-2.6.8-r3:2.6[gdbm] ) python_targets_python2_7? ( >=dev-lang/python-2.7.3-r2:2.7[gdbm] ) dev-lang/python-exec:=[python_targets_python2_6(-)?,python_targets_python2_7(-)?,-python_single_target_python2_6(-),-python_single_target_python2_7(-)] gtk? ( dev-python/pygtk ) dbus? ( dev-python/dbus-python ) ) bookmarks? ( dev-python/twisted-core dev-python/twisted-web ) howl-compat? ( !net-misc/howl ) mdnsresponder-compat? ( !net-misc/mDNSResponder ) sys-apps/baselayout
+REQUIRED_USE=utils? ( || ( gtk gtk3 ) ) python? ( dbus gdbm ) mono? ( dbus ) howl-compat? ( dbus ) mdnsresponder-compat? ( dbus )
+SLOT=0
+SRC_URI=http://avahi.org/download/avahi-0.6.31.tar.gz
+_eclasses_=autotools	1b0fa473be98091220edff9f51d06153	eutils	a108f00cccac414097bcbbbb5de01762	flag-o-matic	c3131dc67d3bd39f044e92b8280505e4	libtool	eba09ed440f2692f73024ff3621a1f4b	mono-env	59ca1177366cc9e14521d3501e9bb281	multibuild	c2f33b0eedd7bcfd5bc226baa8da7837	multilib	fac675dcccf94392371a6abee62d909f	multiprocessing	1512bdfe7004902b8cd2c466fc3df772	python-r1	cd956d5a4bac2209a64d0f4851cc115d	python-utils-r1	4fc11614abf37ede29a4eb8aaae8a22a	systemd	9f063b2cc19c5e8030911372aa246c4e	toolchain-funcs	48b38a216afb92db6314d6c3187abea3	user	425eaf29b1adfc8670fb308ea86d2b82
+_md5_=754b4debca8050ef53f8390715c987b7
