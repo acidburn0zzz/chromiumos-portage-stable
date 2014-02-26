@@ -1,10 +1,10 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/net-misc/radvd/radvd-1.9.2-r1.ebuild,v 1.8 2013/03/14 14:23:43 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/net-misc/radvd/radvd-1.9.8.ebuild,v 1.1 2014/01/15 17:39:16 prometheanfire Exp $
 
 EAPI=4
 
-inherit systemd user eutils autotools
+inherit systemd user eutils
 
 DESCRIPTION="Linux IPv6 Router Advertisement Daemon"
 HOMEPAGE="http://v6web.litech.org/radvd/"
@@ -30,11 +30,6 @@ pkg_setup() {
 
 	# force ownership of radvd user and group (bug #19647)
 	[[ -d ${ROOT}/var/run/radvd ]] && chown radvd:radvd "${ROOT}"/var/run/radvd
-}
-
-src_prepare() {
-	epatch "${FILESDIR}"/${PN}-1.9.2-sysctl.patch
-	eautoreconf
 }
 
 src_configure() {

@@ -1,0 +1,13 @@
+DEFINED_PHASES=configure install postinst setup
+DEPEND=dev-libs/libdaemon selinux? ( sec-policy/selinux-radvd ) sys-devel/bison sys-devel/flex virtual/pkgconfig virtual/pkgconfig sys-apps/baselayout
+DESCRIPTION=Linux IPv6 Router Advertisement Daemon
+EAPI=4
+HOMEPAGE=http://v6web.litech.org/radvd/
+IUSE=kernel_FreeBSD selinux
+KEYWORDS=*
+LICENSE=BSD
+RDEPEND=dev-libs/libdaemon selinux? ( sec-policy/selinux-radvd ) sys-apps/baselayout
+SLOT=0
+SRC_URI=http://v6web.litech.org/radvd/dist/radvd-1.9.8.tar.gz
+_eclasses_=eutils	a108f00cccac414097bcbbbb5de01762	multilib	fac675dcccf94392371a6abee62d909f	systemd	9f063b2cc19c5e8030911372aa246c4e	toolchain-funcs	48b38a216afb92db6314d6c3187abea3	user	fb730612667e1c5868315a109a22365a
+_md5_=d51029e3cb3e31e4430322138030bed2
