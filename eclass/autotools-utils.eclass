@@ -1,6 +1,6 @@
-# Copyright 1999-2012 Gentoo Foundation
+# Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/eclass/autotools-utils.eclass,v 1.57 2012/09/27 16:35:41 axs Exp $
+# $Header: /var/cvsroot/gentoo-x86/eclass/autotools-utils.eclass,v 1.72 2013/11/24 10:53:13 mgorny Exp $
 
 # @ECLASS: autotools-utils.eclass
 # @MAINTAINER:
@@ -37,8 +37,8 @@
 # CDEPEND="
 # 	media-libs/libpng:0
 # 	qt4? (
-# 		x11-libs/qt-core:4
-# 		x11-libs/qt-gui:4
+# 		dev-qt/qtcore:4
+# 		dev-qt/qtgui:4
 # 	)
 # 	tiff? ( media-libs/tiff:0 )
 # "
@@ -76,10 +76,10 @@
 # }
 #
 # src_install() {
-# 	use doc && HTML_DOCS=("${AUTOTOOLS_BUILD_DIR}/apidocs/html/")
+# 	use doc && HTML_DOCS=("${BUILD_DIR}/apidocs/html/")
 # 	autotools-utils_src_install
 # 	if use examples; then
-# 		dobin "${AUTOTOOLS_BUILD_DIR}"/foo_example{1,2,3} \\
+# 		dobin "${BUILD_DIR}"/foo_example{1,2,3} \\
 # 			|| die 'dobin examples failed'
 # 	fi
 # }
@@ -117,11 +117,14 @@ inherit autotools eutils libtool
 
 EXPORT_FUNCTIONS src_prepare src_configure src_compile src_install src_test
 
-# @ECLASS-VARIABLE: AUTOTOOLS_BUILD_DIR
+# @ECLASS-VARIABLE: BUILD_DIR
 # @DEFAULT_UNSET
 # @DESCRIPTION:
 # Build directory, location where all autotools generated files should be
 # placed. For out of source builds it defaults to ${WORKDIR}/${P}_build.
+#
+# This variable has been called AUTOTOOLS_BUILD_DIR formerly.
+# It is set under that name for compatibility.
 
 # @ECLASS-VARIABLE: AUTOTOOLS_IN_SOURCE_BUILD
 # @DEFAULT_UNSET
@@ -133,26 +136,12 @@ EXPORT_FUNCTIONS src_prepare src_configure src_compile src_install src_test
 # @DESCRIPTION:
 # Specify location of autotools' configure script. By default it uses ${S}.
 
-# @ECLASS-VARIABLE: myeconfargs
-# @DEFAULT_UNSET
-# @DESCRIPTION:
-# Optional econf arguments as Bash array. Should be defined before calling src_configure.
-# @CODE
-# src_configure() {
-# 	local myeconfargs=(
-# 		--disable-readline
-# 		--with-confdir="/etc/nasty foo confdir/"
-# 		$(use_enable debug cnddebug)
-# 		$(use_enable threads multithreading)
-# 	)
-# 	autotools-utils_src_configure
-# }
-# @CODE
-
 # @ECLASS-VARIABLE: DOCS
 # @DEFAULT_UNSET
 # @DESCRIPTION:
 # Array containing documents passed to dodoc command.
+#
+# In EAPIs 4+, can list directories as well.
 #
 # Example:
 # @CODE
@@ -179,15 +168,53 @@ EXPORT_FUNCTIONS src_prepare src_configure src_compile src_install src_test
 # PATCHES=( "${FILESDIR}"/${P}-mypatch.patch )
 # @CODE
 
+# @ECLASS-VARIABLE: AUTOTOOLS_PRUNE_LIBTOOL_FILES
+# @DEFAULT_UNSET
+# @DESCRIPTION:
+# Sets the mode of pruning libtool files. The values correspond to
+# prune_libtool_files parameters, with leading dashes stripped.
+#
+# Defaults to pruning the libtool files when static libraries are not
+# installed or can be linked properly without them. Libtool files
+# for modules (plugins) will be kept in case plugin loader needs them.
+#
+# If set to 'modules', the .la files for modules will be removed
+# as well. This is often the preferred option.
+#
+# If set to 'all', all .la files will be removed unconditionally. This
+# option is discouraged and shall be used only if 'modules' does not
+# remove the files.
+#
+# If set to 'none', no .la files will be pruned ever. Use in corner
+# cases only.
+
 # Determine using IN or OUT source build
 _check_build_dir() {
 	: ${ECONF_SOURCE:=${S}}
-	if [[ -n ${AUTOTOOLS_IN_SOURCE_BUILD} ]]; then
-		AUTOTOOLS_BUILD_DIR="${ECONF_SOURCE}"
-	else
-		: ${AUTOTOOLS_BUILD_DIR:=${WORKDIR}/${P}_build}
+	# Respect both the old variable and the new one, depending
+	# on which one was set by the ebuild.
+	if [[ ! ${BUILD_DIR} && ${AUTOTOOLS_BUILD_DIR} ]]; then
+		eqawarn "The AUTOTOOLS_BUILD_DIR variable has been renamed to BUILD_DIR."
+		eqawarn "Please migrate the ebuild to use the new one."
+
+		# In the next call, both variables will be set already
+		# and we'd have to know which one takes precedence.
+		_RESPECT_AUTOTOOLS_BUILD_DIR=1
 	fi
-	echo ">>> Working in BUILD_DIR: \"$AUTOTOOLS_BUILD_DIR\""
+
+	if [[ ${_RESPECT_AUTOTOOLS_BUILD_DIR} ]]; then
+		BUILD_DIR=${AUTOTOOLS_BUILD_DIR:-${WORKDIR}/${P}_build}
+	else
+		if [[ -n ${AUTOTOOLS_IN_SOURCE_BUILD} ]]; then
+			: ${BUILD_DIR:=${ECONF_SOURCE}}
+		else
+			: ${BUILD_DIR:=${WORKDIR}/${P}_build}
+		fi
+	fi
+
+	# Backwards compatibility for getting the value.
+	AUTOTOOLS_BUILD_DIR=${BUILD_DIR}
+	echo ">>> Working in BUILD_DIR: \"${BUILD_DIR}\""
 }
 
 # @FUNCTION: remove_libtool_files
@@ -265,84 +292,6 @@ remove_libtool_files() {
 	done
 }
 
-# @FUNCTION: autotools-utils_autoreconf
-# @DESCRIPTION:
-# Reconfigure the sources (like gnome-autogen.sh or eautoreconf).
-autotools-utils_autoreconf() {
-	debug-print-function ${FUNCNAME} "$@"
-
-	eqawarn "The autotools-utils_autoreconf() function was deprecated."
-	eqawarn "Please call autotools-utils_src_prepare()"
-	eqawarn "with AUTOTOOLS_AUTORECONF set instead."
-
-	# Override this func to not require unnecessary eaclocal calls.
-	autotools_check_macro() {
-		local x
-
-		# Add a few additional variants as we don't get expansions.
-		[[ ${1} = AC_CONFIG_HEADERS ]] && set -- "${@}" \
-			AC_CONFIG_HEADER AM_CONFIG_HEADER
-
-		for x; do
-			grep -h "^${x}" configure.{ac,in} 2>/dev/null
-		done
-	}
-
-	einfo "Autoreconfiguring '${PWD}' ..."
-
-	local auxdir=$(sed -n -e 's/^AC_CONFIG_AUX_DIR(\(.*\))$/\1/p' \
-			configure.{ac,in} 2>/dev/null)
-	if [[ ${auxdir} ]]; then
-		auxdir=${auxdir%%]}
-		mkdir -p ${auxdir##[}
-	fi
-
-	# Support running additional tools like gnome-autogen.sh.
-	# Note: you need to add additional depends to the ebuild.
-
-	# gettext
-	if [[ $(autotools_check_macro AM_GLIB_GNU_GETTEXT) ]]; then
-		echo 'no' | autotools_run_tool glib-gettextize --copy --force
-	elif [[ $(autotools_check_macro AM_GNU_GETTEXT) ]]; then
-		eautopoint --force
-	fi
-
-	# intltool
-	if [[ $(autotools_check_macro AC_PROG_INTLTOOL IT_PROG_INTLTOOL) ]]
-	then
-		autotools_run_tool intltoolize --copy --automake --force
-	fi
-
-	# gtk-doc
-	if [[ $(autotools_check_macro GTK_DOC_CHECK) ]]; then
-		autotools_run_tool gtkdocize --copy
-	fi
-
-	# gnome-doc
-	if [[ $(autotools_check_macro GNOME_DOC_INIT) ]]; then
-		autotools_run_tool gnome-doc-prepare --copy --force
-	fi
-
-	if [[ $(autotools_check_macro AC_PROG_LIBTOOL AM_PROG_LIBTOOL LT_INIT) ]]
-	then
-		_elibtoolize --copy --force --install
-	fi
-
-	eaclocal
-	eautoconf
-	eautoheader
-	FROM_EAUTORECONF=sure eautomake
-
-	local x
-	for x in $(autotools_check_macro_val AC_CONFIG_SUBDIRS); do
-		if [[ -d ${x} ]] ; then
-			pushd "${x}" >/dev/null || die
-			autotools-utils_autoreconf
-			popd >/dev/null || die
-		fi
-	done
-}
-
 # @FUNCTION: autotools-utils_src_prepare
 # @DESCRIPTION:
 # The src_prepare function.
@@ -384,6 +333,22 @@ autotools-utils_src_prepare() {
 #
 # IUSE="static-libs" passes --enable-shared and either --disable-static/--enable-static
 # to econf respectively.
+
+# @VARIABLE: myeconfargs
+# @DEFAULT_UNSET
+# @DESCRIPTION:
+# Optional econf arguments as Bash array. Should be defined before calling src_configure.
+# @CODE
+# src_configure() {
+# 	local myeconfargs=(
+# 		--disable-readline
+# 		--with-confdir="/etc/nasty foo confdir/"
+# 		$(use_enable debug cnddebug)
+# 		$(use_enable threads multithreading)
+# 	)
+# 	autotools-utils_src_configure
+# }
+# @CODE
 autotools-utils_src_configure() {
 	debug-print-function ${FUNCNAME} "$@"
 
@@ -413,20 +378,20 @@ autotools-utils_src_configure() {
 	# Append user args
 	econfargs+=("${myeconfargs[@]}")
 
-	mkdir -p "${AUTOTOOLS_BUILD_DIR}" || die "mkdir '${AUTOTOOLS_BUILD_DIR}' failed"
-	pushd "${AUTOTOOLS_BUILD_DIR}" > /dev/null || die
+	mkdir -p "${BUILD_DIR}" || die
+	pushd "${BUILD_DIR}" > /dev/null || die
 	econf "${econfargs[@]}" "$@"
 	popd > /dev/null || die
 }
 
 # @FUNCTION: autotools-utils_src_compile
 # @DESCRIPTION:
-# The autotools src_compile function, invokes emake in specified AUTOTOOLS_BUILD_DIR.
+# The autotools src_compile function, invokes emake in specified BUILD_DIR.
 autotools-utils_src_compile() {
 	debug-print-function ${FUNCNAME} "$@"
 
 	_check_build_dir
-	pushd "${AUTOTOOLS_BUILD_DIR}" > /dev/null || die
+	pushd "${BUILD_DIR}" > /dev/null || die
 	emake "$@" || die 'emake failed'
 	popd > /dev/null || die
 }
@@ -443,7 +408,7 @@ autotools-utils_src_install() {
 	debug-print-function ${FUNCNAME} "$@"
 
 	_check_build_dir
-	pushd "${AUTOTOOLS_BUILD_DIR}" > /dev/null || die
+	pushd "${BUILD_DIR}" > /dev/null || die
 	emake DESTDIR="${D}" "$@" install || die "emake install failed"
 	popd > /dev/null || die
 
@@ -463,8 +428,16 @@ autotools-utils_src_install() {
 	fi
 
 	# XXX: support installing them from builddir as well?
-	if [[ ${DOCS} ]]; then
-		dodoc "${DOCS[@]}" || die "dodoc failed"
+	if declare -p DOCS &>/dev/null; then
+		# an empty list == don't install anything
+		if [[ ${DOCS[@]} ]]; then
+			if [[ ${EAPI} == [23] ]]; then
+				dodoc "${DOCS[@]}" || die
+			else
+				# dies by itself
+				dodoc -r "${DOCS[@]}"
+			fi
+		fi
 	else
 		local f
 		# same list as in PMS
@@ -480,7 +453,10 @@ autotools-utils_src_install() {
 	fi
 
 	# Remove libtool files and unnecessary static libs
-	prune_libtool_files
+	local prune_ltfiles=${AUTOTOOLS_PRUNE_LIBTOOL_FILES}
+	if [[ ${prune_ltfiles} != none ]]; then
+		prune_libtool_files ${prune_ltfiles:+--${prune_ltfiles}}
+	fi
 }
 
 # @FUNCTION: autotools-utils_src_test
@@ -490,8 +466,13 @@ autotools-utils_src_test() {
 	debug-print-function ${FUNCNAME} "$@"
 
 	_check_build_dir
-	pushd "${AUTOTOOLS_BUILD_DIR}" > /dev/null || die
-	# Run default src_test as defined in ebuild.sh
-	default_src_test
+	pushd "${BUILD_DIR}" > /dev/null || die
+
+	if make -n check "${@}" &>/dev/null; then
+		emake check "${@}" || die 'emake check failed.'
+	elif make -n test "${@}" &>/dev/null; then
+		emake test "${@}" || die 'emake test failed.'
+	fi
+
 	popd > /dev/null || die
 }
