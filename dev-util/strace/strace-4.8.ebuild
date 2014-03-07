@@ -1,6 +1,6 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-util/strace/strace-4.7.ebuild,v 1.12 2013/02/19 01:41:17 zmedico Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-util/strace/strace-4.8.ebuild,v 1.7 2014/03/02 22:48:20 pacho Exp $
 
 EAPI="4"
 
@@ -19,7 +19,7 @@ HOMEPAGE="http://sourceforge.net/projects/strace/"
 
 LICENSE="BSD"
 SLOT="0"
-IUSE="static aio"
+IUSE="aio +perl static"
 
 # strace only uses the header from libaio to decode structs
 DEPEND="aio? ( >=dev-libs/libaio-0.3.106 )
@@ -27,14 +27,11 @@ DEPEND="aio? ( >=dev-libs/libaio-0.3.106 )
 RDEPEND=""
 
 src_prepare() {
-	if [[ ! -e configure ]] ; then
+	if epatch_user || [[ ! -e configure ]] ; then
 		# git generation
 		eautoreconf
 		[[ ! -e CREDITS ]] && cp CREDITS{.in,}
 	fi
-
-	epatch "${FILESDIR}"/${P}-glibc-2.15.patch #414637
-	epatch "${FILESDIR}"/${P}-x32.patch
 
 	filter-lfs-flags # configure handles this sanely
 	use static && append-ldflags -static
@@ -44,5 +41,6 @@ src_prepare() {
 
 src_install() {
 	default
+	use perl || rm "${ED}"/usr/bin/strace-graph
 	dodoc CREDITS
 }
