@@ -1,6 +1,6 @@
-# Copyright 1999-2012 Gentoo Foundation
+# Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-util/valgrind/valgrind-3.8.1.ebuild,v 1.1 2012/09/20 20:49:50 blueness Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-util/valgrind/valgrind-3.9.0.ebuild,v 1.1 2013/11/02 23:59:17 blueness Exp $
 
 EAPI="4"
 inherit autotools eutils flag-o-matic toolchain-funcs multilib pax-utils
@@ -11,7 +11,7 @@ SRC_URI="http://www.valgrind.org/downloads/${P}.tar.bz2"
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="-* amd64 arm ppc ppc64 x86 ~amd64-linux ~x86-linux ~x86-macos ~x64-macos"
+KEYWORDS="*"
 IUSE="mpi"
 
 DEPEND="mpi? ( virtual/mpi )"
@@ -35,7 +35,7 @@ src_prepare() {
 
 	# Don't build in empty assembly files for other platforms or we'll get a QA
 	# warning about executable stacks.
-	epatch "${FILESDIR}"/${PN}-3.8.0-non-exec-stack.patch
+	epatch "${FILESDIR}"/${PN}-3.9.0-non-exec-stack.patch
 
 	# Regenerate autotools files
 	eautoreconf
@@ -43,6 +43,9 @@ src_prepare() {
 
 src_configure() {
 	local myconf
+
+	# Respect ar, bug #468114
+	tc-export AR
 
 	# -fomit-frame-pointer	"Assembler messages: Error: junk `8' after expression"
 	#                       while compiling insn_sse.c in none/tests/x86
@@ -91,10 +94,10 @@ src_install() {
 }
 
 pkg_postinst() {
-	ewarn "Valgrind will not work if glibc does not have debug symbols."
-	ewarn "To fix this you can add splitdebug to FEATURES in make.conf"
-	ewarn "and remerge glibc.  See:"
-	ewarn "https://bugs.gentoo.org/show_bug.cgi?id=214065"
-	ewarn "https://bugs.gentoo.org/show_bug.cgi?id=274771"
-	ewarn "https://bugs.gentoo.org/show_bug.cgi?id=388703"
+	elog "Valgrind will not work if glibc does not have debug symbols."
+	elog "To fix this you can add splitdebug to FEATURES in make.conf"
+	elog "and remerge glibc.  See:"
+	elog "https://bugs.gentoo.org/show_bug.cgi?id=214065"
+	elog "https://bugs.gentoo.org/show_bug.cgi?id=274771"
+	elog "https://bugs.gentoo.org/show_bug.cgi?id=388703"
 }
