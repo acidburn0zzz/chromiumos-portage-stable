@@ -1,8 +1,8 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/app-editors/nano/nano-2.3.2.ebuild,v 1.14 2013/08/15 17:04:26 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/app-editors/nano/nano-2.3.2-r1.ebuild,v 1.3 2014/02/17 19:32:49 vapier Exp $
 
-EAPI="3"
+EAPI="4"
 
 inherit eutils autotools
 if [[ ${PV} == "9999" ]] ; then
@@ -19,7 +19,7 @@ HOMEPAGE="http://www.nano-editor.org/ http://www.gentoo.org/doc/en/nano-basics-g
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="*"
-IUSE="debug justify +magic minimal ncurses nls slang spell unicode"
+IUSE="debug justify +magic minimal ncurses nls slang +spell unicode"
 
 RDEPEND=">=sys-libs/ncurses-5.9-r1[unicode?]
 	magic? ( sys-apps/file )
@@ -33,6 +33,7 @@ src_prepare() {
 	epatch "${FILESDIR}"/${PN}-2.3.1-ncurses-pkg-config.patch
 	epatch "${FILESDIR}"/${PN}-2.3.2-bind-unbind-docs.patch
 	epatch "${FILESDIR}"/${PN}-2.3.1-{shell,gentoo}-nanorc.patch
+	epatch_user
 	eautoreconf
 }
 
@@ -59,13 +60,19 @@ src_configure() {
 }
 
 src_install() {
-	emake DESTDIR="${D}" install || die
+	default
 	rm -rf "${ED}"/usr/share/nano/man-html
 
 	dodoc ChangeLog README doc/nanorc.sample AUTHORS BUGS NEWS TODO
 	dohtml doc/faq.html
 	insinto /etc
 	newins doc/nanorc.sample nanorc
+	if ! use minimal ; then
+		# Enable colorization by default.
+		sed -i \
+			-e '/^# include /s:# *::' \
+			"${ED}"/etc/nanorc || die
+	fi
 
 	dodir /usr/bin
 	dosym /bin/nano /usr/bin/nano
