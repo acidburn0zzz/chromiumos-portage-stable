@@ -6,5 +6,5 @@ KEYWORDS=*
 LICENSE=as-is
 SLOT=4.1.2
 SRC_URI=http://www.docbook.org/xml/4.1.2/docbkx412.zip
-_eclasses_=base	fc89786f3f7e7bcf03334359bd5b639b	eutils	a108f00cccac414097bcbbbb5de01762	multilib	fac675dcccf94392371a6abee62d909f	sgml-catalog	a4d9b97f60f3331317a2d4279eecbe7d	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
+_eclasses_=base	ec46b36a6f6fd1d0b505a33e0b74e413	eutils	a108f00cccac414097bcbbbb5de01762	multilib	fac675dcccf94392371a6abee62d909f	sgml-catalog	a4d9b97f60f3331317a2d4279eecbe7d	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
 _md5_=7f21446887fc2b67a752f062678ab0ac
