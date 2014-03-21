@@ -1,6 +1,8 @@
-# Copyright 1999-2012 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/app-misc/pax-utils/pax-utils-0.4.ebuild,v 1.8 2012/07/10 18:05:58 ranger Exp $
+# $Header: /var/cvsroot/gentoo-x86/app-misc/pax-utils/pax-utils-0.7.ebuild,v 1.10 2014/01/18 03:18:03 vapier Exp $
+
+EAPI=4
 
 inherit eutils toolchain-funcs unpacker
 
@@ -13,18 +15,29 @@ SRC_URI="mirror://gentoo/pax-utils-${PV}.tar.xz
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="*"
-IUSE="caps"
+IUSE="caps python"
 #RESTRICT="mirror"
 
-RDEPEND="caps? ( sys-libs/libcap )"
+RDEPEND="caps? ( sys-libs/libcap )
+	python? ( dev-python/pyelftools )"
 DEPEND="${RDEPEND}
 	app-arch/xz-utils"
 
+_emake() {
+	emake \
+		USE_CAP=$(usex caps) \
+		USE_PYTHON=$(usex python) \
+		"$@"
+}
+
 src_compile() {
-	emake CC="$(tc-getCC)" USE_CAP=$(usex caps) || die
+	_emake CC="$(tc-getCC)"
+}
+
+src_test() {
+	_emake check
 }
 
 src_install() {
-	emake DESTDIR="${D}" PKGDOCDIR='$(DOCDIR)'/${PF} install || die
-	prepalldocs
+	_emake DESTDIR="${ED}" PKGDOCDIR='$(DOCDIR)'/${PF} install
 }
