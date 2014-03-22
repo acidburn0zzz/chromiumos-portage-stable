@@ -1,27 +1,22 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/app-portage/portage-utils/portage-utils-0.52.ebuild,v 1.1 2014/03/15 06:12:38 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/app-portage/portage-utils/portage-utils-0.41.ebuild,v 1.1 2013/10/31 02:47:52 vapier Exp $
 
-EAPI="4"
+EAPI="3"
 
-inherit flag-o-matic toolchain-funcs eutils
+inherit flag-o-matic toolchain-funcs
 
 DESCRIPTION="small and fast portage helper tools written in C"
 HOMEPAGE="http://www.gentoo.org/doc/en/portage-utils.xml"
-SRC_URI="mirror://gentoo/${P}.tar.xz
-	http://dev.gentoo.org/~vapier/dist/${P}.tar.xz"
+SRC_URI="mirror://gentoo/${P}.tar.xz"
 
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="*"
-IUSE="nls static"
+IUSE="static"
 
 DEPEND="app-arch/xz-utils"
 RDEPEND=""
-
-src_prepare() {
-	epatch_user
-}
 
 src_configure() {
 	use static && append-ldflags -static
@@ -36,17 +31,14 @@ src_configure() {
 	fi
 }
 
-src_compile() {
-	emake NLS=$(usex nls)
-}
-
 src_install() {
-	default
+	emake install DESTDIR="${D}" || die
+	prepalldocs
 
 	exeinto /etc/portage/bin
-	doexe "${FILESDIR}"/post_sync
+	doexe "${FILESDIR}"/post_sync || die
 	insinto /etc/portage/postsync.d
-	doins "${FILESDIR}"/q-reinitialize
+	doins "${FILESDIR}"/q-reinitialize || die
 
 	# Portage fixes shebangs, we just need to fix the paths in the files
 	sed -i \
