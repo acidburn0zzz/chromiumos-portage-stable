@@ -1,10 +1,10 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/media-gfx/sane-backends/sane-backends-1.0.23-r1.ebuild,v 1.3 2013/05/08 19:35:31 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/media-gfx/sane-backends/sane-backends-1.0.24-r3.ebuild,v 1.2 2014/03/25 22:15:48 vapier Exp $
 
-EAPI="4"
- 
-inherit eutils flag-o-matic multilib udev user toolchain-funcs
+EAPI="5"
+
+inherit autotools eutils flag-o-matic multilib udev user toolchain-funcs
 
 # gphoto and v4l are handled by their usual USE flags.
 # The pint backend was disabled because I could not get it to compile.
@@ -94,16 +94,21 @@ IUSE_SANE_BACKENDS="
 	umax_pp
 	xerox_mfp"
 
-IUSE="avahi doc gphoto2 ipv6 threads usb v4l xinetd snmp"
+IUSE="avahi doc gphoto2 ipv6 threads usb v4l xinetd snmp systemd"
 
 for backend in ${IUSE_SANE_BACKENDS}; do
-	if [ ${backend} = pnm ]; then
-		IUSE="${IUSE} -sane_backends_pnm"
-	elif [ ${backend} = mustek_usb2 -o ${backend} = kvs40xx ]; then
-		IUSE="${IUSE} sane_backends_${backend}"
-	else
-		IUSE="${IUSE} +sane_backends_${backend}"
-	fi
+	case ${backend} in
+	# Disable backends that require parallel ports as no one has those anymore.
+	canon_pp|hpsj5s|mustek_pp|\
+	pnm)
+		IUSE+=" -sane_backends_${backend}"
+		;;
+	mustek_usb2|kvs40xx)
+		IUSE+=" sane_backends_${backend}"
+		;;
+	*)
+		IUSE+=" +sane_backends_${backend}"
+	esac
 done
 
 REQUIRED_USE="
@@ -113,6 +118,11 @@ REQUIRED_USE="
 
 DESCRIPTION="Scanner Access Now Easy - Backends"
 HOMEPAGE="http://www.sane-project.org/"
+SRC_URI="https://alioth.debian.org/frs/download.php/file/3958/${P}.tar.gz"
+
+LICENSE="GPL-2 public-domain"
+SLOT="0"
+KEYWORDS="*"
 
 RDEPEND="
 	sane_backends_dc210? ( virtual/jpeg )
@@ -123,14 +133,15 @@ RDEPEND="
 	sane_backends_canon_pp? ( sys-libs/libieee1284 )
 	sane_backends_hpsj5s? ( sys-libs/libieee1284 )
 	sane_backends_mustek_pp? ( sys-libs/libieee1284 )
-	usb? ( virtual/libusb:0 )
+	usb? ( virtual/libusb:1 )
 	gphoto2? (
-		media-libs/libgphoto2
+		media-libs/libgphoto2:=
 		virtual/jpeg
 	)
 	v4l? ( media-libs/libv4l )
 	xinetd? ( sys-apps/xinetd )
 	snmp? ( net-analyzer/net-snmp )
+	systemd? ( sys-apps/systemd )
 "
 
 DEPEND="${RDEPEND}
@@ -147,24 +158,9 @@ DEPEND="${RDEPEND}
 RDEPEND="${RDEPEND}
 	!<sys-fs/udev-114"
 
-SRC_URI="https://alioth.debian.org/frs/download.php/3752/sane-backends-1.0.23.tar.gz.1
-	https://alioth.debian.org/frs/download.php/3753/sane-backends-1.0.23.tar.gz.2
-	https://alioth.debian.org/frs/download.php/3754/sane-backends-1.0.23.tar.gz.3"
-SLOT="0"
-LICENSE="GPL-2 public-domain"
-KEYWORDS="*"
-
 pkg_setup() {
 	enewgroup scanner
 	enewuser saned -1 -1 -1 scanner
-}
-
-src_unpack() {
-	rm -f "${P}.tar.gz"
-	for file in ${A}; do
-		cat "${DISTDIR}/${file}" >> "${P}.tar.gz"
-	done
-	tar xzf "${P}.tar.gz"
 }
 
 src_prepare() {
@@ -175,8 +171,14 @@ src_prepare() {
 	epkowa
 	EOF
 	epatch "${FILESDIR}"/niash_array_index.patch \
-		"${FILESDIR}"/${PN}-1.0.23-saned_pidfile_location.patch \
-		"${FILESDIR}"/kodakaio-fixes.patch
+		"${FILESDIR}"/${P}-unused-cups.patch \
+		"${FILESDIR}"/${P}-automagic_systemd.patch \
+		"${FILESDIR}"/${P}-systemd_pkgconfig.patch \
+		"${FILESDIR}"/${P}-kodakaio_avahi.patch \
+		"${FILESDIR}"/${P}-saned_pidfile_location.patch
+	# Fix for "make check".
+	sed -i -e 's/sane-backends 1.0.24git/sane-backends 1.0.24/' testsuite/tools/data/html*
+	AT_NOELIBTOOLIZE=yes eautoreconf
 }
 
 src_configure() {
@@ -193,7 +195,7 @@ src_configure() {
 		fi
 	done
 
-	local myconf="$(use_enable usb libusb) $(use_with snmp)"
+	local myconf="$(use_enable usb libusb_1_0) $(use_with snmp)"
 	# you can only enable this backend, not disable it...
 	if use sane_backends_pnm; then
 		myconf="${myconf} --enable-pnm-backend"
@@ -219,6 +221,8 @@ src_configure() {
 	SANEI_JPEG="sanei_jpeg.o" SANEI_JPEG_LO="sanei_jpeg.lo" \
 	BACKENDS="${BACKENDS}" econf \
 		$(use_with gphoto2) \
+		$(use_with systemd) \
+		$(use_with v4l) \
 		$(use_enable avahi) \
 		$(use_enable ipv6) \
 		$(use_enable threads pthread) \
@@ -290,6 +294,6 @@ pkg_postinst() {
 		elog "/etc/sane.d/saned.conf and /etc/hosts.allow"
 	fi
 
-	elog "If you are using an USB scanner, add all users who want"
+	elog "If you are using a USB scanner, add all users who want"
 	elog "to access your scanner to the \"scanner\" group."
 }
