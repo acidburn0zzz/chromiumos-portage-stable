@@ -10,7 +10,7 @@ DESCRIPTION="Network performance benchmark including tests for TCP, UDP, sockets
 #SRC_URI="ftp://ftp.netperf.org/netperf/experimental/${MY_P}.tar.gz"
 SRC_URI="ftp://ftp.netperf.org/netperf/${MY_P}.tar.gz
 		mirror://gentoo/netperf-2.4.4-svn_trunk_20071205.patch.bz2"
-KEYWORDS="alpha amd64 ia64 ppc ppc64 sparc x86"
+KEYWORDS="*"
 
 HOMEPAGE="http://www.netperf.org/"
 LICENSE="netperf"
