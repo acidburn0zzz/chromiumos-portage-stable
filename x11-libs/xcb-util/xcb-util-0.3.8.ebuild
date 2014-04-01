@@ -12,6 +12,11 @@ inherit xorg-2
 EGIT_REPO_URI="git://anongit.freedesktop.org/git/xcb/util"
 EGIT_HAS_SUBMODULES=yes
 
+# This package uses the MIT license inherited from Xorg but fails to provide
+# any license file in its source, so we add X as a license, which lists all
+# the Xorg copyright holders and allows license generation to pick them up.
+LICENSE="|| ( MIT X )"
+
 DESCRIPTION="X C-language Bindings sample implementations"
 HOMEPAGE="http://xcb.freedesktop.org/"
 
