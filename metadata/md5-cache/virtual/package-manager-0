@@ -1,0 +1,7 @@
+DEFINED_PHASES=-
+DESCRIPTION=Virtual for the package manager
+EAPI=5
+KEYWORDS=*
+RDEPEND=|| ( sys-apps/portage sys-apps/paludis sys-apps/pkgcore )
+SLOT=0
+_md5_=8600471cfb817da67d64ea19cb63dc64
