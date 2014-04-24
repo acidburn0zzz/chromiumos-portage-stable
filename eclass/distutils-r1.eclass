@@ -1,11 +1,10 @@
-# Copyright 1999-2012 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/eclass/distutils-r1.eclass,v 1.20 2012/11/26 10:05:11 mgorny Exp $
+# $Header: /var/cvsroot/gentoo-x86/eclass/distutils-r1.eclass,v 1.94 2014/01/18 15:06:56 floppym Exp $
 
 # @ECLASS: distutils-r1
 # @MAINTAINER:
-# Michał Górny <mgorny@gentoo.org>
-# Python herd <python@gentoo.org>
+# Python team <python@gentoo.org>
 # @AUTHOR:
 # Author: Michał Górny <mgorny@gentoo.org>
 # Based on the work of: Krzysztof Pawlik <nelchael@gentoo.org>
@@ -55,18 +54,52 @@ case "${EAPI:-0}" in
 		;;
 esac
 
+# @ECLASS-VARIABLE: DISTUTILS_OPTIONAL
+# @DEFAULT_UNSET
+# @DESCRIPTION:
+# If set to a non-null value, distutils part in the ebuild will
+# be considered optional. No dependencies will be added and no phase
+# functions will be exported.
+#
+# If you enable DISTUTILS_OPTIONAL, you have to set proper dependencies
+# for your package (using ${PYTHON_DEPS}) and to either call
+# distutils-r1 default phase functions or call the build system
+# manually.
+
+# @ECLASS-VARIABLE: DISTUTILS_SINGLE_IMPL
+# @DEFAULT_UNSET
+# @DESCRIPTION:
+# If set to a non-null value, the ebuild will support setting a single
+# Python implementation only. It will effectively replace the python-r1
+# eclass inherit with python-single-r1.
+#
+# Note that inheriting python-single-r1 will cause pkg_setup()
+# to be exported. It must be run in order for the eclass functions
+# to function properly.
+
 if [[ ! ${_DISTUTILS_R1} ]]; then
 
-inherit eutils python-r1
+inherit eutils
+
+if [[ ! ${DISTUTILS_SINGLE_IMPL} ]]; then
+	inherit multiprocessing python-r1
+else
+	inherit python-single-r1
+fi
 
 fi
 
-EXPORT_FUNCTIONS src_prepare src_configure src_compile src_test src_install
+if [[ ! ${DISTUTILS_OPTIONAL} ]]; then
+	EXPORT_FUNCTIONS src_prepare src_configure src_compile src_test src_install
+fi
 
 if [[ ! ${_DISTUTILS_R1} ]]; then
 
-RDEPEND=${PYTHON_DEPS}
-DEPEND=${PYTHON_DEPS}
+if [[ ! ${DISTUTILS_OPTIONAL} ]]; then
+	RDEPEND=${PYTHON_DEPS}
+	DEPEND=${PYTHON_DEPS}
+	REQUIRED_USE=${PYTHON_REQUIRED_USE}
+fi
 
 # @ECLASS-VARIABLE: PATCHES
 # @DEFAULT_UNSET
@@ -111,7 +144,25 @@ DEPEND=${PYTHON_DEPS}
 #
 # Example:
 # @CODE
-# HTML_DOCS=( doc/html/ )
+# HTML_DOCS=( doc/html/. )
+# @CODE
+
+# @ECLASS-VARIABLE: EXAMPLES
+# @DEFAULT_UNSET
+# @DESCRIPTION:
+# An array containing examples installed into 'examples' doc
+# subdirectory. The files and directories listed there must exist
+# in the directory from which distutils-r1_python_install_all() is run
+# (${S} by default).
+#
+# The 'examples' subdirectory will be marked not to be compressed
+# automatically.
+#
+# If unset, no examples will be installed.
+#
+# Example:
+# @CODE
+# EXAMPLES=( examples/. demos/. )
 # @CODE
 
 # @ECLASS-VARIABLE: DISTUTILS_IN_SOURCE_BUILD
@@ -130,6 +181,20 @@ DEPEND=${PYTHON_DEPS}
 # 'build --build-base ${BUILD_DIR}' to enforce keeping & using built
 # files in the specific root.
 
+# @ECLASS-VARIABLE: DISTUTILS_NO_PARALLEL_BUILD
+# @DEFAULT_UNSET
+# @DESCRIPTION:
+# If set to a non-null value, the parallel build feature will
+# be disabled.
+#
+# When parallel builds are used, the implementation-specific sub-phases
+# for selected Python implementation will be run in parallel. This will
+# increase build efficiency with distutils which does not do parallel
+# builds.
+#
+# This variable can be used to disable the afore-mentioned feature
+# in case it causes issues with the package.
+
 # @ECLASS-VARIABLE: mydistutilsargs
 # @DEFAULT_UNSET
 # @DESCRIPTION:
@@ -145,34 +210,77 @@ DEPEND=${PYTHON_DEPS}
 # @FUNCTION: esetup.py
 # @USAGE: [<args>...]
 # @DESCRIPTION:
-# Run the setup.py using currently selected Python interpreter
-# (if ${PYTHON} is set; fallback 'python' otherwise). The setup.py will
-# be passed default command-line arguments, then ${mydistutilsargs[@]},
-# then any parameters passed to this command.
+# Run setup.py using currently selected Python interpreter
+# (if ${PYTHON} is set; fallback 'python' otherwise).
+#
+# setup.py will be passed the following, in order:
+# 1. ${mydistutilsargs[@]}
+# 2. additional arguments passed to the esetup.py function.
 #
 # This command dies on failure.
 esetup.py() {
 	debug-print-function ${FUNCNAME} "${@}"
 
-	local args=()
-	if [[ ! ${DISTUTILS_IN_SOURCE_BUILD} ]]; then
-		if [[ ! ${BUILD_DIR} ]]; then
-			die 'Out-of-source build requested, yet BUILD_DIR unset.'
-		fi
-
-		args+=(
-			build
-			--build-base "${BUILD_DIR}"
-			# using a single directory for them helps us export ${PYTHONPATH}
-			--build-lib "${BUILD_DIR}/lib"
-		)
-	fi
-
-	set -- "${PYTHON:-python}" setup.py \
-		"${args[@]}" "${mydistutilsargs[@]}" "${@}"
+	set -- "${PYTHON:-python}" setup.py "${mydistutilsargs[@]}" "${@}"
 
 	echo "${@}" >&2
 	"${@}" || die
+}
+
+# @FUNCTION: distutils_install_for_testing
+# @USAGE: [<args>...]
+# @DESCRIPTION:
+# Install the package into a temporary location for running tests.
+# Update PYTHONPATH appropriately and set TEST_DIR to the test
+# installation root. The Python packages will be installed in 'lib'
+# subdir, and scripts in 'scripts' subdir (like in BUILD_DIR).
+#
+# Please note that this function should be only used if package uses
+# namespaces (and therefore proper install needs to be done to enforce
+# PYTHONPATH) or tests rely on the results of install command.
+# For most of the packages, tests built in BUILD_DIR are good enough.
+distutils_install_for_testing() {
+	debug-print-function ${FUNCNAME} "${@}"
+
+	# A few notes:
+	# 1) because of namespaces, we can't use 'install --root',
+	# 2) 'install --home' is terribly broken on pypy, so we need
+	#    to override --install-lib and --install-scripts,
+	# 3) non-root 'install' complains about PYTHONPATH and missing dirs,
+	#    so we need to set it properly and mkdir them,
+	# 4) it runs a bunch of commands which write random files to cwd,
+	#    in order to avoid that, we add the necessary path overrides
+	#    in _distutils-r1_create_setup_cfg.
+
+	TEST_DIR=${BUILD_DIR}/test
+	local bindir=${TEST_DIR}/scripts
+	local libdir=${TEST_DIR}/lib
+	PYTHONPATH=${libdir}:${PYTHONPATH}
+
+	local add_args=(
+		install
+			--home="${TEST_DIR}"
+			--install-lib="${libdir}"
+			--install-scripts="${bindir}"
+	)
+
+	mkdir -p "${libdir}" || die
+	esetup.py "${add_args[@]}" "${@}"
+}
+
+# @FUNCTION: _distutils-r1_disable_ez_setup
+# @INTERNAL
+# @DESCRIPTION:
+# Stub out ez_setup.py and distribute_setup.py to prevent packages
+# from trying to download a local copy of setuptools.
+_distutils-r1_disable_ez_setup() {
+	local stub="def use_setuptools(*args, **kwargs): pass"
+	if [[ -f ez_setup.py ]]; then
+		echo "${stub}" > ez_setup.py || die
+	fi
+	if [[ -f distribute_setup.py ]]; then
+		echo "${stub}" > distribute_setup.py || die
+	fi
 }
 
 # @FUNCTION: distutils-r1_python_prepare_all
@@ -197,17 +305,20 @@ distutils-r1_python_prepare_all() {
 		fi
 	fi
 
-	if [[ ${DISTUTILS_IN_SOURCE_BUILD} ]]; then
+	_distutils-r1_disable_ez_setup
+
+	if [[ ${DISTUTILS_IN_SOURCE_BUILD} && ! ${DISTUTILS_SINGLE_IMPL} ]]
+	then
 		# create source copies for each implementation
 		python_copy_sources
 	fi
+
+	_DISTUTILS_DEFAULT_CALLED=1
 }
 
 # @FUNCTION: distutils-r1_python_prepare
 # @DESCRIPTION:
-# The default python_prepare(). Currently it is a no-op
-# but in the future it may apply implementation-specific quirks
-# to the build system.
+# The default python_prepare(). A no-op.
 distutils-r1_python_prepare() {
 	debug-print-function ${FUNCNAME} "${@}"
 
@@ -216,69 +327,144 @@ distutils-r1_python_prepare() {
 
 # @FUNCTION: distutils-r1_python_configure
 # @DESCRIPTION:
-# The default python_configure(). Currently a no-op.
+# The default python_configure(). A no-op.
 distutils-r1_python_configure() {
 	debug-print-function ${FUNCNAME} "${@}"
 
 	:
 }
 
+# @FUNCTION: _distutils-r1_create_setup_cfg
+# @INTERNAL
+# @DESCRIPTION:
+# Create implementation-specific configuration file for distutils,
+# setting proper build-dir paths.
+_distutils-r1_create_setup_cfg() {
+	cat > "${HOME}"/.pydistutils.cfg <<-_EOF_ || die
+		[build]
+		build-base = ${BUILD_DIR}
+
+		# using a single directory for them helps us export
+		# ${PYTHONPATH} and ebuilds find the sources independently
+		# of whether the package installs extensions or not
+		#
+		# note: due to some packages (wxpython) relying on separate
+		# platlib & purelib dirs, we do not set --build-lib (which
+		# can not be overriden with --build-*lib)
+		build-platlib = %(build-base)s/lib
+		build-purelib = %(build-base)s/lib
+
+		# make the ebuild writer lives easier
+		build-scripts = %(build-base)s/scripts
+
+		[egg_info]
+		egg-base = ${BUILD_DIR}
+
+		# this is needed by distutils_install_for_testing since
+		# setuptools like to create .egg files for install --home.
+		[bdist_egg]
+		dist-dir = ${BUILD_DIR}/dist
+	_EOF_
+}
+
+# @FUNCTION: _distutils-r1_copy_egg_info
+# @INTERNAL
+# @DESCRIPTION:
+# Copy egg-info files to the ${BUILD_DIR} (that's going to become
+# egg-base in esetup.py). This way, we respect whatever's in upstream
+# egg-info.
+_distutils-r1_copy_egg_info() {
+	mkdir -p "${BUILD_DIR}" || die
+	# stupid freebsd can't do 'cp -t ${BUILD_DIR} {} +'
+	find -name '*.egg-info' -type d -exec cp -pr {} "${BUILD_DIR}"/ ';' || die
+}
+
 # @FUNCTION: distutils-r1_python_compile
 # @USAGE: [additional-args...]
 # @DESCRIPTION:
 # The default python_compile(). Runs 'esetup.py build'. Any parameters
-# passed to this function will be passed to setup.py.
+# passed to this function will be appended to setup.py invocation,
+# i.e. passed as options to the 'build' command.
 distutils-r1_python_compile() {
 	debug-print-function ${FUNCNAME} "${@}"
+
+	_distutils-r1_create_setup_cfg
+	_distutils-r1_copy_egg_info
 
 	esetup.py build "${@}"
 }
 
-# @FUNCTION: distutils-r1_python_test
+# @FUNCTION: _distutils-r1_wrap_scripts
+# @USAGE: <path> <bindir>
+# @INTERNAL
 # @DESCRIPTION:
-# The default python_test(). Currently a no-op.
-distutils-r1_python_test() {
+# Moves and wraps all installed scripts/executables as necessary.
+_distutils-r1_wrap_scripts() {
 	debug-print-function ${FUNCNAME} "${@}"
 
-	:
-}
+	[[ ${#} -eq 2 ]] || die "usage: ${FUNCNAME} <path> <bindir>"
+	local path=${1}
+	local bindir=${2}
 
-# @FUNCTION: distutils-r1_rename_scripts
-# @DESCRIPTION:
-# Renames installed Python scripts to be implementation-suffixed.
-# ${PYTHON} has to be set to the expected Python executable (which
-# hashbang will be grepped for), and ${EPYTHON} to the implementation
-# name (for new name).
-distutils-r1_rename_scripts() {
-	debug-print-function ${FUNCNAME} "${@}"
+	if ! _python_want_python_exec2; then
+		local PYTHON_SCRIPTDIR=${bindir}
+	fi
 
-	local f
-	# XXX: change this if we ever allow directories in bin/sbin
-	for f in "${D}"/{bin,sbin,usr/bin,usr/sbin}/*; do
-		if [[ -x ${f} ]]; then
-			debug-print "${FUNCNAME}: found executable at ${f#${D}/}"
+	local f python_files=() non_python_files=()
 
-			if [[ "$(head -n 1 "${f}")" == '#!'*${EPYTHON}* ]]
-			then
-				debug-print "${FUNCNAME}: matching shebang: $(head -n 1 "${f}")"
+	if [[ -d ${path}${PYTHON_SCRIPTDIR} ]]; then
+		for f in "${path}${PYTHON_SCRIPTDIR}"/*; do
+			[[ -d ${f} ]] && die "Unexpected directory: ${f}"
+			debug-print "${FUNCNAME}: found executable at ${f#${path}/}"
 
-				local newf=${f}-${EPYTHON}
-				debug-print "${FUNCNAME}: renamed to ${newf#${D}/}"
+			local shebang
+			read -r shebang < "${f}"
+			if [[ ${shebang} == '#!'*${EPYTHON}* ]]; then
+				debug-print "${FUNCNAME}: matching shebang: ${shebang}"
+				python_files+=( "${f}" )
+			elif _python_want_python_exec2; then
+				debug-print "${FUNCNAME}: non-matching shebang: ${shebang}"
+				non_python_files+=( "${f}" )
+			fi
+
+			mkdir -p "${path}${bindir}" || die
+		done
+
+		for f in "${python_files[@]}"; do
+			local basename=${f##*/}
+
+			if ! _python_want_python_exec2; then
+				local newf=${f%/*}/${basename}-${EPYTHON}
+				debug-print "${FUNCNAME}: renaming ${f#${path}/} to ${newf#${path}/}"
 				mv "${f}" "${newf}" || die
 			fi
-		fi
-	done
+
+			debug-print "${FUNCNAME}: installing wrapper at ${bindir}/${basename}"
+			_python_ln_rel "${path}${EPREFIX}"$(_python_get_wrapper_path) \
+				"${path}${bindir}/${basename}" || die
+		done
+
+		# (non-empty only with python-exec:2)
+		for f in "${non_python_files[@]}"; do
+			local basename=${f##*/}
+
+			debug-print "${FUNCNAME}: moving ${f#${path}/} to ${bindir}/${basename}"
+			mv "${f}" "${path}${bindir}/${basename}" || die
+		done
+	fi
 }
 
 # @FUNCTION: distutils-r1_python_install
 # @USAGE: [additional-args...]
 # @DESCRIPTION:
 # The default python_install(). Runs 'esetup.py install', appending
-# the optimization flags. Then calls distutils-r1_rename_scripts.
-# Any parameters passed to this function will be passed to setup.py.
+# the optimization flags. Then renames the installed scripts.
+# Any parameters passed to this function will be appended
+# to the setup.py invocation (i.e. as options to the 'install' command).
 distutils-r1_python_install() {
 	debug-print-function ${FUNCNAME} "${@}"
 
+	local args=( "${@}" )
 	local flags
 
 	case "${EPYTHON}" in
@@ -290,52 +476,90 @@ distutils-r1_python_install() {
 	debug-print "${FUNCNAME}: [${EPYTHON}] flags: ${flags}"
 
 	# enable compilation for the install phase.
-	local PYTHONDONTWRITEBYTECODE
-	export PYTHONDONTWRITEBYTECODE
+	local -x PYTHONDONTWRITEBYTECODE
 
-	esetup.py install "${flags[@]}" --root="${D}" "${@}"
+	# python likes to compile any module it sees, which triggers sandbox
+	# failures if some packages haven't compiled their modules yet.
+	addpredict "$(python_get_sitedir)"
+	addpredict /usr/lib/portage/pym
+	addpredict /usr/local # bug 498232
 
-	distutils-r1_rename_scripts
+	local root=${D}/_${EPYTHON}
+	[[ ${DISTUTILS_SINGLE_IMPL} ]] && root=${D}
+	flags+=( --root="${root}" )
+
+	if [[ ! ${DISTUTILS_SINGLE_IMPL} ]]; then
+		# user may override --install-scripts
+		# note: this is poor but distutils argv parsing is dumb
+		local mydistutilsargs=( "${mydistutilsargs[@]}" )
+		local scriptdir=${EPREFIX}/usr/bin
+
+		# construct a list of mydistutilsargs[0] args[0] args[1]...
+		local arg arg_vars
+		[[ ${mydistutilsargs[@]} ]] && eval arg_vars+=(
+			'mydistutilsargs['{0..$(( ${#mydistutilsargs[@]} - 1 ))}']'
+		)
+		[[ ${args[@]} ]] && eval arg_vars+=(
+			'args['{0..$(( ${#args[@]} - 1 ))}']'
+		)
+
+		set -- "${arg_vars[@]}"
+		while [[ ${@} ]]; do
+			local arg_var=${1}
+			shift
+			local a=${!arg_var}
+
+			case "${a}" in
+				--install-scripts=*)
+					scriptdir=${a#--install-scripts=}
+					if _python_want_python_exec2; then
+						unset "${arg_var}"
+					fi
+					;;
+				--install-scripts)
+					scriptdir=${!1}
+					if _python_want_python_exec2; then
+						unset "${arg_var}" "${1}"
+					fi
+					shift
+					;;
+			esac
+		done
+
+		if _python_want_python_exec2; then
+			local PYTHON_SCRIPTDIR
+			python_export PYTHON_SCRIPTDIR
+			flags+=( --install-scripts="${PYTHON_SCRIPTDIR}" )
+		fi
+	fi
+
+	esetup.py install "${flags[@]}" "${args[@]}"
+
+	if [[ -d ${root}$(python_get_sitedir)/tests ]]; then
+		die "Package installs 'tests' package, file collisions likely."
+	fi
+
+	if [[ ! ${DISTUTILS_SINGLE_IMPL} ]]; then
+		_distutils-r1_wrap_scripts "${root}" "${scriptdir}"
+		multibuild_merge_root "${root}" "${D}"
+	fi
 }
 
 # @FUNCTION: distutils-r1_python_install_all
 # @DESCRIPTION:
-# The default python_install_all(). It symlinks wrappers
-# for the implementation-suffixed executables and installs
-# documentation.
+# The default python_install_all(). It installs the documentation.
 distutils-r1_python_install_all() {
 	debug-print-function ${FUNCNAME} "${@}"
 
-	if declare -p DOCS &>/dev/null; then
-		dodoc "${DOCS[@]}" || die "dodoc failed"
-	else
-		local f
-		# same list as in PMS
-		for f in README* ChangeLog AUTHORS NEWS TODO CHANGES \
-				THANKS BUGS FAQ CREDITS CHANGELOG; do
-			if [[ -s ${f} ]]; then
-				dodoc "${f}" || die "(default) dodoc ${f} failed"
-			fi
-		done
+	einstalldocs
+
+	if declare -p EXAMPLES &>/dev/null; then
+		local INSDESTTREE=/usr/share/doc/${PF}/examples
+		doins -r "${EXAMPLES[@]}"
+		docompress -x "${INSDESTTREE}"
 	fi
 
-	if declare -p HTML_DOCS &>/dev/null; then
-		dohtml -r "${HTML_DOCS[@]}" || die "dohtml failed"
-	fi
-
-	# note: keep in sync with ...rename_scripts()
-	# also, we assume that each script is installed for all impls
-	local EPYTHON
-	python_export_best EPYTHON
-
-	local f
-	while IFS= read -r -d '' f; do
-		debug-print "${FUNCNAME}: found executable at ${f#${D}/}"
-
-		local wrapf=${f%-${EPYTHON}}
-
-		_python_ln_rel "${ED}"/usr/bin/python-exec "${wrapf}" || die
-	done < <(find "${D}" -type f -executable -name "*-${EPYTHON}" -print0)
+	_DISTUTILS_DEFAULT_CALLED=1
 }
 
 # @FUNCTION: distutils-r1_run_phase
@@ -348,27 +572,90 @@ distutils-r1_python_install_all() {
 # directory, with BUILD_DIR pointing at the build directory
 # and PYTHONPATH having an entry for the module build directory.
 #
-# If in-source builds are used, the command is executed in the BUILD_DIR
-# (the directory holding per-implementation copy of sources).
+# If in-source builds are used, the command is executed in the directory
+# holding the per-implementation copy of sources. BUILD_DIR points
+# to the 'build' subdirectory.
 distutils-r1_run_phase() {
 	debug-print-function ${FUNCNAME} "${@}"
 
 	if [[ ${DISTUTILS_IN_SOURCE_BUILD} ]]; then
-		pushd "${BUILD_DIR}" &>/dev/null || die
-	else
-		local PYTHONPATH="${BUILD_DIR}/lib:${PYTHONPATH}"
-		export PYTHONPATH
+		if [[ ! ${DISTUTILS_SINGLE_IMPL} ]]; then
+			pushd "${BUILD_DIR}" >/dev/null || die
+		fi
+		local BUILD_DIR=${BUILD_DIR}/build
+	fi
+	local -x PYTHONPATH="${BUILD_DIR}/lib:${PYTHONPATH}"
+
+	if [[ ! ${DISTUTILS_SINGLE_IMPL} ]]; then
+		local -x TMPDIR=${T}/${EPYTHON}
+		local -x HOME=${TMPDIR}/home
+
+		mkdir -p "${TMPDIR}" "${HOME}" || die
 	fi
 
-	"${@}" || die "${1} failed."
+	"${@}"
 
-	if [[ ${DISTUTILS_IN_SOURCE_BUILD} ]]; then
-		popd &>/dev/null || die
+	if [[ ${DISTUTILS_IN_SOURCE_BUILD} && ! ${DISTUTILS_SINGLE_IMPL} ]]
+	then
+		popd >/dev/null || die
+	fi
+}
+
+# @FUNCTION: _distutils-r1_run_common_phase
+# @USAGE: [<argv>...]
+# @INTERNAL
+# @DESCRIPTION:
+# Run the given command, restoring the best-implementation state.
+#
+# If in-source build is used, the command will be run in the copy
+# of sources made for the best Python interpreter.
+_distutils-r1_run_common_phase() {
+	local DISTUTILS_ORIG_BUILD_DIR=${BUILD_DIR}
+
+	if [[ ! ${DISTUTILS_SINGLE_IMPL} ]]; then
+		local MULTIBUILD_VARIANTS
+		_python_obtain_impls
+
+		multibuild_for_best_variant _python_multibuild_wrapper \
+			distutils-r1_run_phase "${@}"
+	else
+		# semi-hack, be careful.
+		_distutils-r1_run_foreach_impl "${@}"
+	fi
+}
+
+# @FUNCTION: _distutils-r1_run_foreach_impl
+# @INTERNAL
+# @DESCRIPTION:
+# Run the given phase for each implementation if multiple implementations
+# are enabled, once otherwise.
+_distutils-r1_run_foreach_impl() {
+	debug-print-function ${FUNCNAME} "${@}"
+
+	set -- distutils-r1_run_phase "${@}"
+
+	if [[ ! ${DISTUTILS_SINGLE_IMPL} ]]; then
+		if [[ ${DISTUTILS_NO_PARALLEL_BUILD} || ${DISTUTILS_SINGLE_IMPL} ]]
+		then
+			python_foreach_impl "${@}"
+		else
+			python_parallel_foreach_impl "${@}"
+		fi
+	else
+		if [[ ! ${EPYTHON} ]]; then
+			die "EPYTHON unset, python-single-r1_pkg_setup not called?!"
+		fi
+		local BUILD_DIR=${BUILD_DIR:-${S}}
+		BUILD_DIR=${BUILD_DIR%%/}_${EPYTHON}
+
+		"${@}"
 	fi
 }
 
 distutils-r1_src_prepare() {
 	debug-print-function ${FUNCNAME} "${@}"
+
+	local _DISTUTILS_DEFAULT_CALLED
 
 	# common preparations
 	if declare -f python_prepare_all >/dev/null; then
@@ -377,22 +664,22 @@ distutils-r1_src_prepare() {
 		distutils-r1_python_prepare_all
 	fi
 
+	if [[ ! ${_DISTUTILS_DEFAULT_CALLED} ]]; then
+		eqawarn "QA warning: python_prepare_all() didn't call distutils-r1_python_prepare_all"
+	fi
+
 	if declare -f python_prepare >/dev/null; then
-		python_foreach_impl distutils-r1_run_phase python_prepare
-	else
-		python_foreach_impl distutils-r1_run_phase distutils-r1_python_prepare
+		_distutils-r1_run_foreach_impl python_prepare
 	fi
 }
 
 distutils-r1_src_configure() {
 	if declare -f python_configure >/dev/null; then
-		python_foreach_impl distutils-r1_run_phase python_configure
-	else
-		python_foreach_impl distutils-r1_run_phase distutils-r1_python_configure
+		_distutils-r1_run_foreach_impl python_configure
 	fi
 
 	if declare -f python_configure_all >/dev/null; then
-		python_configure_all
+		_distutils-r1_run_common_phase python_configure_all
 	fi
 }
 
@@ -400,13 +687,13 @@ distutils-r1_src_compile() {
 	debug-print-function ${FUNCNAME} "${@}"
 
 	if declare -f python_compile >/dev/null; then
-		python_foreach_impl distutils-r1_run_phase python_compile
+		_distutils-r1_run_foreach_impl python_compile
 	else
-		python_foreach_impl distutils-r1_run_phase distutils-r1_python_compile
+		_distutils-r1_run_foreach_impl distutils-r1_python_compile
 	fi
 
 	if declare -f python_compile_all >/dev/null; then
-		python_compile_all
+		_distutils-r1_run_common_phase python_compile_all
 	fi
 }
 
@@ -414,13 +701,11 @@ distutils-r1_src_test() {
 	debug-print-function ${FUNCNAME} "${@}"
 
 	if declare -f python_test >/dev/null; then
-		python_foreach_impl distutils-r1_run_phase python_test
-	else
-		python_foreach_impl distutils-r1_run_phase distutils-r1_python_test
+		_distutils-r1_run_foreach_impl python_test
 	fi
 
 	if declare -f python_test_all >/dev/null; then
-		python_test_all
+		_distutils-r1_run_common_phase python_test_all
 	fi
 }
 
@@ -428,15 +713,21 @@ distutils-r1_src_install() {
 	debug-print-function ${FUNCNAME} "${@}"
 
 	if declare -f python_install >/dev/null; then
-		python_foreach_impl distutils-r1_run_phase python_install
+		_distutils-r1_run_foreach_impl python_install
 	else
-		python_foreach_impl distutils-r1_run_phase distutils-r1_python_install
+		_distutils-r1_run_foreach_impl distutils-r1_python_install
 	fi
 
+	local _DISTUTILS_DEFAULT_CALLED
+
 	if declare -f python_install_all >/dev/null; then
-		python_install_all
+		_distutils-r1_run_common_phase python_install_all
 	else
-		distutils-r1_python_install_all
+		_distutils-r1_run_common_phase distutils-r1_python_install_all
+	fi
+
+	if [[ ! ${_DISTUTILS_DEFAULT_CALLED} ]]; then
+		eqawarn "QA warning: python_install_all() didn't call distutils-r1_python_install_all"
 	fi
 }
 
