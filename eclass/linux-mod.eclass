@@ -1,16 +1,13 @@
-# Copyright 1999-2004 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/eclass/linux-mod.eclass,v 1.98 2010/01/17 04:00:07 robbat2 Exp $
-
-# Author(s): John Mylchreest <johnm@gentoo.org>,
-#            Stefan Schweizer <genstef@gentoo.org>
-# Maintainer: kernel-misc@gentoo.org
-#
-# Please direct your bugs to the current eclass maintainer :)
+# $Header: /var/cvsroot/gentoo-x86/eclass/linux-mod.eclass,v 1.116 2014/01/14 20:50:23 mpagano Exp $
 
 # @ECLASS: linux-mod.eclass
 # @MAINTAINER:
 # kernel-misc@gentoo.org
+# @AUTHOR:
+# John Mylchreest <johnm@gentoo.org>,
+# Stefan Schweizer <genstef@gentoo.org>
 # @BLURB: It provides the functionality required to install external modules against a kernel source tree.
 # @DESCRIPTION:
 # This eclass is used to interface with linux-info.eclass in such a way
@@ -20,6 +17,11 @@
 
 # A Couple of env vars are available to effect usage of this eclass
 # These are as follows:
+
+# @ECLASS-VARIABLE: MODULES_OPTIONAL_USE
+# @DESCRIPTION:
+# A string containing the USE flag to use for making this eclass optional
+# The recommended non-empty value is 'modules'
 
 # @ECLASS-VARIABLE: KERNEL_DIR
 # @DESCRIPTION:
@@ -37,7 +39,7 @@
 
 # @ECLASS-VARIABLE: BUILD_TARGETS
 # @DESCRIPTION:
-# It's a string with the build targets to pass to make. The default value is "clean modules"
+# It's a string with the build targets to pass to make. The default value is "clean module"
 
 # @ECLASS-VARIABLE: MODULE_NAMES
 # @DESCRIPTION:
@@ -57,7 +59,7 @@
 #
 # To get an idea of how these variables are used, here's a few lines
 # of code from around line 540 in this eclass:
-#		
+#
 #	einfo "Installing ${modulename} module"
 #	cd ${objdir} || die "${objdir} does not exist"
 #	insinto /lib/modules/${KV_FULL}/${libdir}
@@ -80,12 +82,12 @@
 #   insinto /lib/modules/${KV_FULL}/usb
 #   doins module_usb.${KV_OBJ}
 
-# There is also support for automated modprobe.d/modules.d(2.4) file generation.
+# There is also support for automated modprobe.d file generation.
 # This can be explicitly enabled by setting any of the following variables.
 
 # @ECLASS-VARIABLE: MODULESD_<modulename>_ENABLED
 # @DESCRIPTION:
-# This is used to disable the modprobe.d/modules.d file generation otherwise the file will be
+# This is used to disable the modprobe.d file generation otherwise the file will be
 # always generated (unless no MODULESD_<modulename>_* variable is provided). Set to "no" to disable
 # the generation of the file and the installation of the documentation.
 
@@ -94,7 +96,7 @@
 # This is a bash array containing a list of examples which should
 # be used. If you want us to try and take a guess set this to "guess".
 #
-# For each array_component it's added an options line in the modprobe.d/modules.d file
+# For each array_component it's added an options line in the modprobe.d file
 #
 #   options array_component
 #
@@ -104,7 +106,7 @@
 # @DESCRIPTION:
 # This is a bash array containing a list of associated aliases.
 #
-# For each array_component it's added an alias line in the modprobe.d/modules.d file
+# For each array_component it's added an alias line in the modprobe.d file
 #
 #   alias array_component
 #
@@ -125,21 +127,17 @@
 # @DESCRIPTION:
 # It's a read-only variable. It contains the extension of the kernel modules.
 
-# The order of these is important as both of linux-info and eutils contain
-# set_arch_to_kernel and set_arch_to_portage functions and the ones in eutils
-# are deprecated in favor of the ones in linux-info.
-# See http://bugs.gentoo.org/show_bug.cgi?id=127506
-
 inherit eutils linux-info multilib
 EXPORT_FUNCTIONS pkg_setup pkg_preinst pkg_postinst src_install src_compile pkg_postrm
 
-IUSE="kernel_linux"
+IUSE="kernel_linux ${MODULES_OPTIONAL_USE}"
 SLOT="0"
-DESCRIPTION="Based on the $ECLASS eclass"
-RDEPEND="kernel_linux? ( virtual/modutils )"
+RDEPEND="${MODULES_OPTIONAL_USE}${MODULES_OPTIONAL_USE:+? (} kernel_linux? ( virtual/modutils ) ${MODULES_OPTIONAL_USE:+)}"
 DEPEND="${RDEPEND}
+    ${MODULES_OPTIONAL_USE}${MODULES_OPTIONAL_USE:+? (} 
 	sys-apps/sed
-	kernel_linux? ( virtual/linux-sources )"
+	kernel_linux? ( virtual/linux-sources )
+	${MODULES_OPTIONAL_USE:+)}"
 
 # eclass utilities
 # ----------------------------------
@@ -149,6 +147,7 @@ check_vermagic() {
 
 	local curr_gcc_ver=$(gcc -dumpversion)
 	local tmpfile old_chost old_gcc_ver result=0
+	[ -n "${MODULES_OPTIONAL_USE}" ] && use !${MODULES_OPTIONAL_USE} && return
 
 	tmpfile=`find "${KV_DIR}/" -iname "*.o.cmd" -exec grep usr/lib/gcc {} \; -quit`
 	tmpfile=${tmpfile//*usr/lib}
@@ -195,6 +194,7 @@ use_m() {
 
 	# if the kernel version is greater than 2.6.6 then we should use
 	# M= instead of SUBDIRS=
+	[ ${KV_MAJOR} -eq 3 ] && return 0
 	[ ${KV_MAJOR} -eq 2 -a ${KV_MINOR} -gt 5 -a ${KV_PATCH} -gt 5 ] && \
 		return 0 || return 1
 }
@@ -230,7 +230,7 @@ update_depmod() {
 	ebegin "Updating module dependencies for ${KV_FULL}"
 	if [ -r "${KV_OUT_DIR}"/System.map ]
 	then
-		depmod -ae -F "${KV_OUT_DIR}"/System.map -b "${ROOT}" -r ${KV_FULL}
+		depmod -ae -F "${KV_OUT_DIR}"/System.map -b "${ROOT}" ${KV_FULL}
 		eend $?
 	else
 		ewarn
@@ -238,27 +238,6 @@ update_depmod() {
 		ewarn "You must manually update the kernel module dependencies using depmod."
 		eend 1
 		ewarn
-	fi
-}
-
-# internal function
-#
-# FUNCTION: update_modules
-# DESCRIPTION:
-# It calls the update-modules utility.
-update_modules() {
-	debug-print-function ${FUNCNAME} $*
-
-	if [ -x /sbin/update-modules ] && \
-		grep -v -e "^#" -e "^$" "${D}"/etc/modules.d/* >/dev/null 2>&1; then
-		ebegin "Updating modules.conf"
-		/sbin/update-modules
-		eend $?
-	elif [ -x /sbin/update-modules ] && \
-		grep -v -e "^#" -e "^$" "${D}"/etc/modules.d/* >/dev/null 2>&1; then
-		ebegin "Updating modules.conf"
-		/sbin/update-modules
-		eend $?
 	fi
 }
 
@@ -328,7 +307,7 @@ remove_moduledb() {
 set_kvobj() {
 	debug-print-function ${FUNCNAME} $*
 
-	if kernel_is 2 6
+	if kernel_is ge 2 6
 	then
 		KV_OBJ="ko"
 	else
@@ -363,9 +342,9 @@ get-KERNEL_CC() {
 #
 # FUNCTION:
 # USAGE: /path/to/the/modulename_without_extension
-# RETURN: A file in /etc/modules.d/ (kernel < 2.6) or /etc/modprobe.d/ (kernel >= 2.6)
+# RETURN: A file in /etc/modprobe.d
 # DESCRIPTION:
-# This function will generate and install the neccessary modprobe.d/modules.d file from the
+# This function will generate and install the neccessary modprobe.d file from the
 # information contained in the modules exported parms.
 # (see the variables MODULESD_<modulename>_ENABLED, MODULESD_<modulename>_EXAMPLES,
 # MODULESD_<modulename>_ALIASES, MODULESD_<modulename>_ADDITION and MODULESD_<modulename>_DOCS).
@@ -373,6 +352,7 @@ get-KERNEL_CC() {
 # At the end the documentation specified with MODULESD_<modulename>_DOCS is installed.
 generate_modulesd() {
 	debug-print-function ${FUNCNAME} $*
+	[ -n "${MODULES_OPTIONAL_USE}" ] && use !${MODULES_OPTIONAL_USE} && return
 
 	local 	currm_path currm currm_t t myIFS myVAR
 	local 	module_docs module_enabled module_aliases \
@@ -410,13 +390,13 @@ generate_modulesd() {
 		[[ -z ${!module_*} ]] && return 0
 
 		# OK so now if we have got this far, then we know we want to continue
-		# and generate the modules.d file.
+		# and generate the modprobe.d file.
 		module_modinfo="$(modinfo -p ${currm_path}.${KV_OBJ})"
 		module_config="${T}/modulesd-${currm}"
 
-		ebegin "Preparing file for modules.d"
+		ebegin "Preparing file for modprobe.d"
 		#-----------------------------------------------------------------------
-		echo "# modules.d configuration file for ${currm}" >> "${module_config}"
+		echo "# modprobe.d configuration file for ${currm}" >> "${module_config}"
 		#-----------------------------------------------------------------------
 		[[ -n ${module_docs} ]] && \
 			echo "# For more information please read:" >> "${module_config}"
@@ -451,7 +431,7 @@ generate_modulesd() {
 
 			for t in ${module_modinfo}
 			do
-				myVAR="$(echo ${t#*:} | grep -e " [0-9][ =]" | sed "s:.*\([01][= ]\).*:\1:")"
+				myVAR="$(echo ${t#*:}  | grep -o "[^ ]*[0-9][ =][^ ]*" | tail -1  | grep -o "[0-9]")"
 				if [[ -n ${myVAR} ]]
 				then
 					module_opts="${module_opts} ${t%%:*}:${myVAR}"
@@ -502,11 +482,7 @@ generate_modulesd() {
 		#-----------------------------------------------------------------------
 
 		# then we install it
-		if kernel_is ge 2 6; then
-			insinto /etc/modprobe.d
-		else
-			insinto /etc/modules.d
-		fi
+		insinto /etc/modprobe.d
 		newins "${module_config}" "${currm_path//*\/}.conf"
 
 		# and install any documentation we might have.
@@ -575,9 +551,17 @@ find_module_params() {
 # in the kernel and sets the object extension KV_OBJ.
 linux-mod_pkg_setup() {
 	debug-print-function ${FUNCNAME} $*
+	[ -n "${MODULES_OPTIONAL_USE}" ] && use !${MODULES_OPTIONAL_USE} && return
+
+	local is_bin="${MERGE_TYPE}"
 
 	# If we are installing a binpkg, take a different path.
-	if [[ $EMERGE_FROM == binary ]]; then
+	# use MERGE_TYPE if available (eapi>=4); else use non-PMS EMERGE_FROM (eapi<4)
+	if has ${EAPI} 0 1 2 3; then
+		is_bin=${EMERGE_FROM}
+	fi
+
+	if [[ ${is_bin} == binary ]]; then
 		linux-mod_pkg_setup_binary
 		return
 	fi
@@ -602,11 +586,10 @@ linux-mod_pkg_setup() {
 linux-mod_pkg_setup_binary() {
 	debug-print-function ${FUNCNAME} $*
 	local new_CONFIG_CHECK
+	# ~ needs always to be quoted, else bash expands it.
 	for config in $CONFIG_CHECK ; do
-		case ${config:0:1} in
-			~) optional="" ;;
-			*) optional="~" ;;
-		esac
+		optional='~'
+		[[ ${config:0:1} == "~" ]] && optional=''
 		new_CONFIG_CHECK="${new_CONFIG_CHECK} ${optional}${config}"
 	done
 	export CONFIG_CHECK="${new_CONFIG_CHECK}"
@@ -632,6 +615,7 @@ strip_modulenames() {
 # Look at the description of these variables for more details.
 linux-mod_src_compile() {
 	debug-print-function ${FUNCNAME} $*
+	[ -n "${MODULES_OPTIONAL_USE}" ] && use !${MODULES_OPTIONAL_USE} && return
 
 	local modulename libdir srcdir objdir i n myABI="${ABI}"
 	set_arch_to_kernel
@@ -689,7 +673,7 @@ linux-mod_src_compile() {
 # It install the modules specified in MODULES_NAME. The modules should be inside the ${objdir}
 # directory and they are installed inside /lib/modules/${KV_FULL}/${libdir}.
 #
-# The modprobe.d/modules.d configuration file is automatically generated if the
+# The modprobe.d configuration file is automatically generated if the
 # MODULESD_<modulename>_* variables are defined. The only way to stop this process is by
 # setting MODULESD_<modulename>_ENABLED=no. At the end the documentation specified via
 # MODULESD_<modulename>_DOCS is also installed.
@@ -697,6 +681,7 @@ linux-mod_src_compile() {
 # Look at the description of these variables for more details.
 linux-mod_src_install() {
 	debug-print-function ${FUNCNAME} $*
+	[ -n "${MODULES_OPTIONAL_USE}" ] && use !${MODULES_OPTIONAL_USE} && return
 
 	local modulename libdir srcdir objdir i n
 
@@ -727,30 +712,30 @@ linux-mod_src_install() {
 # It checks what to do after having merged the package.
 linux-mod_pkg_preinst() {
 	debug-print-function ${FUNCNAME} $*
+	[ -n "${MODULES_OPTIONAL_USE}" ] && use !${MODULES_OPTIONAL_USE} && return
 
 	[ -d "${D}lib/modules" ] && UPDATE_DEPMOD=true || UPDATE_DEPMOD=false
-	[ -d "${D}etc/modules.d" ] && UPDATE_MODULES=true || UPDATE_MODULES=false
 	[ -d "${D}lib/modules" ] && UPDATE_MODULEDB=true || UPDATE_MODULEDB=false
 }
 
 # @FUNCTION: linux-mod_pkg_postinst
 # @DESCRIPTION:
 # It executes /sbin/depmod and adds the package to the /var/lib/module-rebuild/moduledb
-# database (if ${D}/lib/modules is created) and it runs /sbin/update-modules
-# (if ${D}/etc/modules.d is created).
+# database (if ${D}/lib/modules is created)"
 linux-mod_pkg_postinst() {
 	debug-print-function ${FUNCNAME} $*
+	[ -n "${MODULES_OPTIONAL_USE}" ] && use !${MODULES_OPTIONAL_USE} && return
 
 	${UPDATE_DEPMOD} && update_depmod;
-	${UPDATE_MODULES} && update_modules;
 	${UPDATE_MODULEDB} && update_moduledb;
 }
 
 # @FUNCTION: linux-mod_pkg_postrm
 # @DESCRIPTION:
 # It removes the package from the /var/lib/module-rebuild/moduledb database but it doens't
-# call /sbin/depmod and /sbin/update-modules because the modules are still installed.
+# call /sbin/depmod because the modules are still installed.
 linux-mod_pkg_postrm() {
 	debug-print-function ${FUNCNAME} $*
+	[ -n "${MODULES_OPTIONAL_USE}" ] && use !${MODULES_OPTIONAL_USE} && return
 	remove_moduledb;
 }
