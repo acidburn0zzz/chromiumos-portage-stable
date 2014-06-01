@@ -9,5 +9,5 @@ LICENSE=GPL-2
 RDEPEND=>=sys-libs/ncurses-5.2 pam? ( virtual/pam ) selinux? ( sec-policy/selinux-screen ) sys-apps/baselayout
 SLOT=0
 SRC_URI=ftp://ftp.uni-erlangen.de/pub/utilities/screen/screen-4.0.3.tar.gz
-_eclasses_=autotools	1b0fa473be98091220edff9f51d06153	eutils	a108f00cccac414097bcbbbb5de01762	flag-o-matic	c3131dc67d3bd39f044e92b8280505e4	libtool	eba09ed440f2692f73024ff3621a1f4b	multilib	fac675dcccf94392371a6abee62d909f	multiprocessing	1512bdfe7004902b8cd2c466fc3df772	pam	3f746974e1cc47cabe3bd488c08cdc8e	toolchain-funcs	48b38a216afb92db6314d6c3187abea3	user	3d0b29638b4b219d3a53da28f58d87dd
+_eclasses_=autotools	1b0fa473be98091220edff9f51d06153	eutils	a108f00cccac414097bcbbbb5de01762	flag-o-matic	c3131dc67d3bd39f044e92b8280505e4	libtool	eba09ed440f2692f73024ff3621a1f4b	multilib	fac675dcccf94392371a6abee62d909f	multiprocessing	1512bdfe7004902b8cd2c466fc3df772	pam	3f746974e1cc47cabe3bd488c08cdc8e	toolchain-funcs	48b38a216afb92db6314d6c3187abea3	user	428413d4784b5a07274949c8354647d8
 _md5_=6e5b6a7d42f6a29af575ab1d84676cc3
