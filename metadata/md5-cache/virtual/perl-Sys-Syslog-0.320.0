@@ -1,0 +1,6 @@
+DEFINED_PHASES=-
+DESCRIPTION=Virtual for Sys-Syslog
+KEYWORDS=*
+RDEPEND=~perl-core/Sys-Syslog-0.320.0
+SLOT=0
+_md5_=382e8411cbe0643cae0ac4cdf4af9976
