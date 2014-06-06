@@ -1,0 +1,6 @@
+DEFINED_PHASES=-
+DESCRIPTION=Virtual for Getopt-Long
+KEYWORDS=*
+RDEPEND=|| ( =dev-lang/perl-5.16* =dev-lang/perl-5.14* ~dev-lang/perl-5.12.4 ~dev-lang/perl-5.12.3 ~dev-lang/perl-5.12.2 ~perl-core/Getopt-Long-2.380.0 )
+SLOT=0
+_md5_=c36accc7d7372492df4871a17577fb73
