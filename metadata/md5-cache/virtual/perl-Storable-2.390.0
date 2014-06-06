@@ -1,0 +1,6 @@
+DEFINED_PHASES=-
+DESCRIPTION=Virtual for Storable
+KEYWORDS=*
+RDEPEND=~perl-core/Storable-2.390.0
+SLOT=0
+_md5_=3c504f9791b427cd7ca5c52e1a39069d
