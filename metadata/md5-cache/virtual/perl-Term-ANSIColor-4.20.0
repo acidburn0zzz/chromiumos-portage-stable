@@ -1,0 +1,6 @@
+DEFINED_PHASES=-
+DESCRIPTION=Virtual for Term-ANSIColor
+KEYWORDS=*
+RDEPEND=~perl-core/Term-ANSIColor-4.20.0
+SLOT=0
+_md5_=e92c3d78e9062bcbfffdfbb31eb961ba
