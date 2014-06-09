@@ -9,5 +9,5 @@ LICENSE=as-is BSD
 RDEPEND=selinux? ( sec-policy/selinux-dhcp ) kernel_linux? ( sys-apps/net-tools ) ldap? ( net-nds/openldap ssl? ( dev-libs/openssl ) ) vim-syntax? ( app-vim/dhcpd-syntax ) sys-apps/baselayout
 SLOT=0
 SRC_URI=ftp://ftp.isc.org/isc/dhcp/dhcp-4.2.2.tar.gz
-_eclasses_=eutils	a108f00cccac414097bcbbbb5de01762	multilib	fac675dcccf94392371a6abee62d909f	toolchain-funcs	48b38a216afb92db6314d6c3187abea3	user	1e9a1f5eb7c68eea197d4fbdb5063683
+_eclasses_=eutils	a108f00cccac414097bcbbbb5de01762	multilib	fac675dcccf94392371a6abee62d909f	toolchain-funcs	48b38a216afb92db6314d6c3187abea3	user	3d0b29638b4b219d3a53da28f58d87dd
 _md5_=7f8a4fba21d45a12e64bf8fd2f29eb4b
