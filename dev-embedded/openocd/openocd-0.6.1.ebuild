@@ -10,7 +10,7 @@ if [[ ${PV} == "9999" ]] ; then
 	KEYWORDS=""
 	EGIT_REPO_URI="git://${PN}.git.sourceforge.net/gitroot/${PN}/${PN}"
 else
-	KEYWORDS="amd64 x86"
+	KEYWORDS="*"
 	SRC_URI="mirror://sourceforge/project/${PN}/${PN}/${PV}/${P}.tar.bz2"
 fi
 
