@@ -118,7 +118,17 @@ src_compile() {
 	# is here because readline needs it.  But bash itself calls
 	# ncurses in one or two small places :(.
 
-	use plugins && append-ldflags -Wl,-rpath,/usr/$(get_libdir)/bash
+	if use plugins; then
+		append-ldflags -Wl,-rpath,/usr/$(get_libdir)/bash
+	else
+		# Disable the plugins logic by hand since bash doesn't
+		# provide a way of doing it.
+		export ac_cv_func_dl{close,open,sym}=no \
+			ac_cv_lib_dl_dlopen=no ac_cv_header_dlfcn_h=no
+		sed -i \
+			-e '/LOCAL_LDFLAGS=/s:-rdynamic::' \
+			configure || die
+	fi
 	tc-export AR #444070
 	econf \
 		--with-installed-readline=. \
