@@ -8,7 +8,7 @@
 
 --- a/Makefile
 +++ b/Makefile
-@@ -45,21 +45,21 @@
+@@ -45,21 +45,21 @@ POSIXRULES=	America/New_York
  
  # Everything gets put in subdirectories of. . .
  
@@ -33,7 +33,7 @@
  
  # If you "make INSTALL", the "date" command gets installed in. . .
  
-@@ -67,7 +67,7 @@
+@@ -67,7 +67,7 @@ BINDIR=		$(TOPDIR)/bin
  
  # Manual pages go in subdirectories of. . .
  
@@ -42,7 +42,7 @@
  
  # Library functions are put in an archive in LIBDIR.
  
-@@ -294,8 +294,10 @@
+@@ -298,8 +298,10 @@ GZIPFLAGS=	-9n
  
  ###############################################################################
  
@@ -53,43 +53,36 @@
 +CC+= -DHAVE_GETTEXT=1 -DTZ_DOMAIN=\"libc\"
 +endif
  
- TZCSRCS=	zic.c localtime.c asctime.c scheck.c ialloc.c
- TZCOBJS=	zic.o localtime.o asctime.o scheck.o ialloc.o
-@@ -338,14 +340,16 @@
+ AR=		ar
  
- ALL:		all date
- 
--install:	all $(DATA) $(REDO) $(DESTDIR)$(TZLIB) $(MANS)
-+install:	all $(DATA) $(REDO) $(MANS)
- 		$(ZIC) -y $(YEARISTYPE) \
- 			-d $(DESTDIR)$(TZDIR) -l $(LOCALTIME) -p $(POSIXRULES)
- 		-rm -f $(DESTDIR)$(TZDIR)/iso3166.tab \
- 			$(DESTDIR)$(TZDIR)/zone.tab
- 		cp iso3166.tab zone.tab $(DESTDIR)$(TZDIR)/.
--		-mkdir $(DESTDIR)$(TOPDIR) $(DESTDIR)$(ETCDIR)
--		cp tzselect zic zdump $(DESTDIR)$(ETCDIR)/.
-+		-mkdir $(DESTDIR)$(TOPDIR) $(DESTDIR)$(SBINDIR)
-+		cp zic zdump $(DESTDIR)$(SBINDIR)/.
-+		-mkdir $(DESTDIR)$(TOPDIR) $(DESTDIR)$(BINDIR)
-+		cp tzselect $(DESTDIR)$(BINDIR)/.
- 		-mkdir $(DESTDIR)$(TOPDIR) $(DESTDIR)$(MANDIR) \
+@@ -352,17 +354,14 @@ ALL:		all date
+ install:	all $(DATA) $(REDO) $(MANS)
+ 		mkdir -p $(DESTDIR)$(ETCDIR) $(DESTDIR)$(TZDIR) \
+-			$(DESTDIR)$(LIBDIR) \
++			$(DESTDIR)$(SBINDIR) $(DESTDIR)$(BINDIR) \
  			$(DESTDIR)$(MANDIR)/man3 $(DESTDIR)$(MANDIR)/man5 \
  			$(DESTDIR)$(MANDIR)/man8
-@@ -356,8 +360,6 @@
- 			$(DESTDIR)$(MANDIR)/man8/zdump.8 \
- 			$(DESTDIR)$(MANDIR)/man8/zic.8
- 		cp newctime.3 newtzset.3 $(DESTDIR)$(MANDIR)/man3/.
--		cp tzfile.5 $(DESTDIR)$(MANDIR)/man5/.
--		cp tzselect.8 zdump.8 zic.8 $(DESTDIR)$(MANDIR)/man8/.
+ 		$(ZIC) -y $(YEARISTYPE) \
+ 			-d $(DESTDIR)$(TZDIR) -l $(LOCALTIME) -p $(POSIXRULES)
+ 		cp -f iso3166.tab zone.tab $(DESTDIR)$(TZDIR)/.
+-		cp tzselect zic zdump $(DESTDIR)$(ETCDIR)/.
++		cp zic zdump $(DESTDIR)$(SBINDIR)/.
++		cp tzselect $(DESTDIR)$(BINDIR)/.
+-		cp libtz.a $(DESTDIR)$(LIBDIR)/.
+-		$(RANLIB) $(DESTDIR)$(LIBDIR)/libtz.a
+ 		cp -f newctime.3 newtzset.3 $(DESTDIR)$(MANDIR)/man3/.
+-		cp -f tzfile.5 $(DESTDIR)$(MANDIR)/man5/.
+-		cp -f tzselect.8 zdump.8 zic.8 $(DESTDIR)$(MANDIR)/man8/.
  
  INSTALL:	ALL install date.1
- 		-mkdir $(DESTDIR)$(TOPDIR) $(DESTDIR)$(BINDIR)
-@@ -405,17 +407,17 @@
+ 		mkdir -p $(DESTDIR)$(BINDIR) $(DESTDIR)$(MANDIR)/man1
+@@ -406,18 +408,18 @@ right_only:	zic leapseconds $(TDATA)
+ # to using them, or vice versa.
  right_posix:	right_only leapseconds
  		rm -fr $(DESTDIR)$(TZDIR)-leaps
 -		ln -s $(TZDIR_BASENAME) $(DESTDIR)$(TZDIR)-leaps || \
-+		ln -s . $(DESTDIR)$(TZDIR)/right || \
 -		  $(ZIC) -y $(YEARISTYPE) -d $(DESTDIR)$(TZDIR)-leaps \
++		ln -s . $(DESTDIR)$(TZDIR)/right || \
 +		  $(ZIC) -y $(YEARISTYPE) -d $(DESTDIR)$(TZDIR)/right \
  			-L leapseconds $(TDATA)
 -		$(ZIC) -y $(YEARISTYPE) -d $(DESTDIR)$(TZDIR)-posix \
@@ -99,8 +92,8 @@
  posix_right:	posix_only leapseconds
  		rm -fr $(DESTDIR)$(TZDIR)-posix
 -		ln -s $(TZDIR_BASENAME) $(DESTDIR)$(TZDIR)-posix || \
-+		ln -s . $(DESTDIR)$(TZDIR)/posix || \
 -		  $(ZIC) -y $(YEARISTYPE) -d $(DESTDIR)$(TZDIR)-posix \
++		ln -s . $(DESTDIR)$(TZDIR)/posix || \
 +		  $(ZIC) -y $(YEARISTYPE) -d $(DESTDIR)$(TZDIR)/posix \
  			-L /dev/null $(TDATA)
 -		$(ZIC) -y $(YEARISTYPE) -d $(DESTDIR)$(TZDIR)-leaps \
@@ -108,7 +101,7 @@
  			-L leapseconds $(TDATA)
  
  zones:		$(REDO)
-@@ -442,7 +442,7 @@
+@@ -440,7 +442,7 @@ tzselect:	tzselect.ksh
  			<$? >$@
  		chmod +x $@
  
