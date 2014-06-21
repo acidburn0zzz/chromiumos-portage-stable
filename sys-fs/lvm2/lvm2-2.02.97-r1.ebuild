@@ -14,7 +14,8 @@ LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="*"
 
-IUSE="readline static static-libs clvm cman +lvm1 selinux +udev thin"
+IUSE="readline static static-libs clvm cman +lvm1 selinux +udev thin device-mapper-only"
+REQUIRED_USE="device-mapper-only? ( !clvm !cman !lvm1 !thin )"
 
 DEPEND_COMMON="!!sys-fs/device-mapper
 	readline? ( sys-libs/readline )
@@ -127,11 +128,11 @@ src_configure() {
 	local myconf
 	local buildmode
 
-	myconf="${myconf} --enable-dmeventd"
-	myconf="${myconf} --enable-cmdlib"
-	myconf="${myconf} --enable-applib"
-	myconf="${myconf} --enable-fsadm"
-	myconf="${myconf} --enable-lvmetad"
+	myconf="${myconf} $(use_enable !device-mapper-only dmeventd)"
+	myconf="${myconf} $(use_enable !device-mapper-only cmdlib)"
+	myconf="${myconf} $(use_enable !device-mapper-only applib)"
+	myconf="${myconf} $(use_enable !device-mapper-only fsadm)"
+	myconf="${myconf} $(use_enable !device-mapper-only lvmetad)"
 
 	# Most of this package does weird stuff.
 	# The build options are tristate, and --without is NOT supported
@@ -147,11 +148,12 @@ src_configure() {
 		ewarn "Building shared LVM, it will not work inside genkernel!"
 		buildmode="shared"
 	fi
+	local dmbuildmode=$(use !device-mapper-only && echo internal || echo none)
 
 	# dmeventd requires mirrors to be internal, and snapshot available
 	# so we cannot disable them
-	myconf="${myconf} --with-mirrors=internal"
-	myconf="${myconf} --with-snapshots=internal"
+	myconf="${myconf} --with-mirrors=${dmbuildmode}"
+	myconf="${myconf} --with-snapshots=${dmbuildmode}"
 	use thin \
 		&& myconf="${myconf} --with-thin=internal" \
 		|| myconf="${myconf} --with-thin=none"
@@ -216,7 +218,12 @@ src_compile() {
 	popd
 
 	einfo "Starting main build"
-	emake AR="$(tc-getAR)" || die "compile fail"
+	if use device-mapper-only ; then
+		emake device-mapper || die "compile fail"
+	else
+		emake AR="$(tc-getAR)" || die "compile fail"
+	fi
+
 }
 
 src_install() {
