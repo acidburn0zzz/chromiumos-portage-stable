@@ -227,7 +227,7 @@ src_compile() {
 }
 
 src_install() {
-	emake DESTDIR="${D}" install
+	emake DESTDIR="${D}" $(usex device-mapper-only install_device-mapper install)
 
 	dodoc README VERSION* WHATS_NEW WHATS_NEW_DM doc/*.{conf,c,txt}
 	newinitd "${FILESDIR}"/lvm.rc-2.02.95-r2 lvm
@@ -244,9 +244,11 @@ src_install() {
 		#gen_usr_ldscript libdevmapper.so
 	fi
 
-	dosbin "${S}"/scripts/lvm2create_initrd/lvm2create_initrd
-	doman  "${S}"/scripts/lvm2create_initrd/lvm2create_initrd.8
-	newdoc "${S}"/scripts/lvm2create_initrd/README README.lvm2create_initrd
+	if ! use device-mapper-only; then
+		dosbin "${S}"/scripts/lvm2create_initrd/lvm2create_initrd
+		doman  "${S}"/scripts/lvm2create_initrd/lvm2create_initrd.8
+		newdoc "${S}"/scripts/lvm2create_initrd/README README.lvm2create_initrd
+	fi
 
 	insinto /etc
 	doins "${FILESDIR}"/dmtab
