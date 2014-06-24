@@ -10,7 +10,7 @@ SRC_URI="http://${PN}.haxx.se/download/${P}.tar.gz"
 
 LICENSE="MIT"
 SLOT="0"
-KEYWORDS="alpha ~amd64 ~arm hppa ia64 mips ppc ppc64 s390 sh sparc ~x86 ~x86-fbsd ~amd64-linux ~x86-linux ~ppc-macos ~x86-macos ~sparc64-solaris"
+KEYWORDS="*"
 IUSE="static-libs"
 
 DOCS=( AUTHORS CHANGES README README.cares RELEASE-NOTES TODO )
