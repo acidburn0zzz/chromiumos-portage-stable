@@ -49,7 +49,7 @@ esac
 # exports must be ALWAYS after inherit
 EXPORT_FUNCTIONS ${EXPORTED_FUNCTIONS}
 
-IUSE=""
+IUSE="opengl"
 HOMEPAGE="http://xorg.freedesktop.org/"
 
 # @ECLASS-VARIABLE: XORG_EAUTORECONF
@@ -191,7 +191,7 @@ DRI_COMMON_DEPEND="
 "
 DRI_DEPEND="
 	x11-proto/xf86driproto
-	x11-proto/glproto
+	opengl? ( x11-proto/glproto )
 	x11-proto/dri2proto
 "
 case ${XORG_DRI} in
