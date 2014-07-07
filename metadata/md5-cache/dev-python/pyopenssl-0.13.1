@@ -1,0 +1,14 @@
+DEFINED_PHASES=compile configure install prepare test
+DEPEND=>=dev-libs/openssl-0.9.6g doc? ( >=dev-tex/latex2html-2002.2[gif,png] ) python_targets_python2_6? ( >=dev-lang/python-2.6.8-r3:2.6 ) python_targets_python2_7? ( >=dev-lang/python-2.7.3-r2:2.7 ) python_targets_python3_2? ( >=dev-lang/python-3.2.5-r2:3.2 ) python_targets_python3_3? ( >=dev-lang/python-3.3.2-r2:3.3 ) python_targets_pypy? ( virtual/pypy:0= ) dev-lang/python-exec:=[python_targets_python2_6(-)?,python_targets_python2_7(-)?,python_targets_python3_2(-)?,python_targets_python3_3(-)?,python_targets_pypy(-)?,-python_single_target_python2_6(-),-python_single_target_python2_7(-),-python_single_target_python3_2(-),-python_single_target_python3_3(-),-python_single_target_pypy(-)]
+DESCRIPTION=Python interface to the OpenSSL library
+EAPI=5
+HOMEPAGE=http://pyopenssl.sourceforge.net/ https://launchpad.net/pyopenssl http://pypi.python.org/pypi/pyOpenSSL
+IUSE=doc python_targets_python2_6 python_targets_python2_7 python_targets_python3_2 python_targets_python3_3 python_targets_pypy
+KEYWORDS=*
+LICENSE=Apache-2.0
+RDEPEND=>=dev-libs/openssl-0.9.6g python_targets_python2_6? ( >=dev-lang/python-2.6.8-r3:2.6 ) python_targets_python2_7? ( >=dev-lang/python-2.7.3-r2:2.7 ) python_targets_python3_2? ( >=dev-lang/python-3.2.5-r2:3.2 ) python_targets_python3_3? ( >=dev-lang/python-3.3.2-r2:3.3 ) python_targets_pypy? ( virtual/pypy:0= ) dev-lang/python-exec:=[python_targets_python2_6(-)?,python_targets_python2_7(-)?,python_targets_python3_2(-)?,python_targets_python3_3(-)?,python_targets_pypy(-)?,-python_single_target_python2_6(-),-python_single_target_python2_7(-),-python_single_target_python3_2(-),-python_single_target_python3_3(-),-python_single_target_pypy(-)]
+REQUIRED_USE=doc? ( || ( python_targets_python2_6 python_targets_python2_7 ) ) || ( python_targets_python2_6 python_targets_python2_7 python_targets_python3_2 python_targets_python3_3 python_targets_pypy )
+SLOT=0
+SRC_URI=mirror://pypi/p/pyOpenSSL/pyOpenSSL-0.13.1.tar.gz
+_eclasses_=distutils-r1	364122897f9dc771167ee5ff362e54e1	eutils	a108f00cccac414097bcbbbb5de01762	flag-o-matic	c3131dc67d3bd39f044e92b8280505e4	multibuild	c2f33b0eedd7bcfd5bc226baa8da7837	multilib	fac675dcccf94392371a6abee62d909f	multiprocessing	1512bdfe7004902b8cd2c466fc3df772	python-r1	cd956d5a4bac2209a64d0f4851cc115d	python-utils-r1	3eaef07c45447158fad343dac1667938	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
+_md5_=e39a757235a340bfac2865c26909be27
