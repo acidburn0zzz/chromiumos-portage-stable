@@ -1,7 +1,0 @@
-DEFINED_PHASES=-
-DESCRIPTION=Virtual for the GNU conversion library
-IUSE=elibc_glibc elibc_uclibc
-KEYWORDS=*
-RDEPEND=!elibc_glibc? ( !elibc_uclibc? ( dev-libs/libiconv ) )
-SLOT=0
-_md5_=77752d8739d0b2d96ae318fce880341c
