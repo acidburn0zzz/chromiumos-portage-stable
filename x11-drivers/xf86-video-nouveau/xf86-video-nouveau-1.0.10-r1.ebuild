@@ -15,7 +15,18 @@ DESCRIPTION="Accelerated Open Source driver for nVidia cards"
 HOMEPAGE="http://nouveau.freedesktop.org/"
 
 KEYWORDS="*"
-IUSE=""
+IUSE="udev"
 
-RDEPEND=">=x11-libs/libdrm-2.4.34[video_cards_nouveau]"
+RDEPEND="udev? ( virtual/udev )
+	>=x11-libs/libdrm-2.4.34[video_cards_nouveau]"
 DEPEND="${RDEPEND}"
+
+src_prepare() {
+	xorg-2_src_prepare
+
+	# There is no configure knob for this, so hack it.
+	use udev || export LIBUDEV_{CFLAGS,LIBS}=' '
+	sed -i \
+		-e "/LIBUDEV=/s:=.*:=$(usex udev):" \
+		configure || die
+}
