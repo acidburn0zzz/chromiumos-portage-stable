@@ -1,6 +1,6 @@
 # Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-libs/timezone-data/timezone-data-2014e.ebuild,v 1.1 2014/06/14 02:40:31 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-libs/timezone-data/timezone-data-2014f.ebuild,v 1.1 2014/08/07 00:08:01 vapier Exp $
 
 EAPI="4"
 
@@ -29,7 +29,11 @@ pkg_setup() {
 	# dir here, but newer one installs symlinks.  Portage will
 	# barf when you try to transition file types.
 	if cd "${EROOT}"/usr/share/zoneinfo 2>/dev/null ; then
-		if [[ -d posix ]] ; then
+		# In case of a failed upgrade, clean up the symlinks #506570
+		if [ -L .gentoo-upgrade ] ; then
+			rm -rf posix .gentoo-upgrade
+		fi
+		if [ -d posix ] ; then
 			rm -rf .gentoo-upgrade #487192
 			mv posix .gentoo-upgrade || die
 			ln -s .gentoo-upgrade posix || die
@@ -38,7 +42,7 @@ pkg_setup() {
 }
 
 src_prepare() {
-	epatch "${FILESDIR}"/${PN}-2013h-makefile.patch
+	epatch "${FILESDIR}"/${PN}-2014f-makefile.patch
 	tc-is-cross-compiler && cp -pR "${S}" "${S}"-native
 }
 
@@ -80,7 +84,7 @@ src_compile() {
 src_install() {
 	local zic=""
 	tc-is-cross-compiler && zic="zic=${S}-native/zic"
-	_emake install ${zic} DESTDIR="${ED}"
+	_emake install ${zic} DESTDIR="${D}"
 	dodoc README Theory
 	dohtml *.htm
 

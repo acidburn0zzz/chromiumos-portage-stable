@@ -64,7 +64,7 @@
  			$(DESTDIR)$(MANDIR)/man8
  		$(ZIC) -y $(YEARISTYPE) \
  			-d $(DESTDIR)$(TZDIR) -l $(LOCALTIME) -p $(POSIXRULES)
- 		cp -f iso3166.tab zone.tab $(DESTDIR)$(TZDIR)/.
+ 		cp -f iso3166.tab $(ZONETABLES) $(DESTDIR)$(TZDIR)/.
 -		cp tzselect zic zdump $(DESTDIR)$(ETCDIR)/.
 +		cp zic zdump $(DESTDIR)$(SBINDIR)/.
 +		cp tzselect $(DESTDIR)$(BINDIR)/.
