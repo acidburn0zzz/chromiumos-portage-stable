@@ -1,6 +1,6 @@
 # Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-util/strace/strace-4.8.ebuild,v 1.7 2014/03/02 22:48:20 pacho Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-util/strace/strace-4.9.ebuild,v 1.1 2014/08/16 05:22:46 vapier Exp $
 
 EAPI="4"
 
@@ -29,6 +29,7 @@ RDEPEND=""
 src_prepare() {
 	if epatch_user || [[ ! -e configure ]] ; then
 		# git generation
+		./xlat/gen.sh
 		eautoreconf
 		[[ ! -e CREDITS ]] && cp CREDITS{.in,}
 	fi
