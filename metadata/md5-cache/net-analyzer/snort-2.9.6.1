@@ -1,0 +1,14 @@
+DEFINED_PHASES=configure install postinst prepare setup
+DEPEND=>=net-libs/libpcap-1.3.0 >=net-libs/daq-2.0.2 >=dev-libs/libpcre-8.33 dev-libs/libdnet zlib? ( sys-libs/zlib ) || ( >=sys-devel/automake-1.11.1:1.11 >=sys-devel/automake-1.12:1.12 ) >=sys-devel/autoconf-2.68 sys-devel/libtool sys-apps/baselayout
+DESCRIPTION=The de facto standard for intrusion detection/prevention
+EAPI=5
+HOMEPAGE=http://www.snort.org/
+IUSE=static +zlib +gre +mpls +targetbased +ppm +perfprofiling +non-ether-decoders control-socket file-inspect high-availability shared-rep side-channel sourcefire linux-smp-stats inline-init-failopen +threads debug +active-response +normalizer reload-error-restart +react +flexresp3 large-pcap-64bit selinux
+KEYWORDS=*
+LICENSE=GPL-2
+RDEPEND=>=net-libs/libpcap-1.3.0 >=net-libs/daq-2.0.2 >=dev-libs/libpcre-8.33 dev-libs/libdnet zlib? ( sys-libs/zlib ) selinux? ( sec-policy/selinux-snort ) sys-apps/baselayout
+REQUIRED_USE=!kernel_linux? ( !shared-rep )
+SLOT=0
+SRC_URI=http://snort.org/downloads/2911 -> snort-2.9.6.1.tar.gz
+_eclasses_=autotools	1b0fa473be98091220edff9f51d06153	libtool	eba09ed440f2692f73024ff3621a1f4b	multilib	fac675dcccf94392371a6abee62d909f	multiprocessing	1512bdfe7004902b8cd2c466fc3df772	toolchain-funcs	48b38a216afb92db6314d6c3187abea3	user	428413d4784b5a07274949c8354647d8
+_md5_=153fe24a2a1da9d1d8cc7fd8339ae857
