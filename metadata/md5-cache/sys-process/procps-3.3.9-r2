@@ -1,0 +1,13 @@
+DEFINED_PHASES=configure install prepare
+DEPEND=!<sys-apps/sysvinit-2.88-r6 ncurses? ( >=sys-libs/ncurses-5.7-r7[unicode?] ) selinux? ( sys-libs/libselinux ) systemd? ( >=sys-apps/systemd-209 ) ncurses? ( virtual/pkgconfig ) systemd? ( virtual/pkgconfig ) test? ( dev-util/dejagnu )
+DESCRIPTION=standard informational utilities and process-handling tools
+EAPI=4
+HOMEPAGE=http://procps.sourceforge.net/ http://gitorious.org/procps
+IUSE=+ncurses nls selinux static-libs systemd test unicode
+KEYWORDS=*
+LICENSE=GPL-2
+RDEPEND=!<sys-apps/sysvinit-2.88-r6 ncurses? ( >=sys-libs/ncurses-5.7-r7[unicode?] ) selinux? ( sys-libs/libselinux ) systemd? ( >=sys-apps/systemd-209 )
+SLOT=0
+SRC_URI=http://pkgs.fedoraproject.org/repo/pkgs/procps-ng/procps-ng-3.3.9.tar.xz/0980646fa25e0be58f7afb6b98f79d74/procps-ng-3.3.9.tar.xz
+_eclasses_=eutils	a108f00cccac414097bcbbbb5de01762	multilib	fac675dcccf94392371a6abee62d909f	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
+_md5_=347a4a3d2f896105068bc8611db033bd
