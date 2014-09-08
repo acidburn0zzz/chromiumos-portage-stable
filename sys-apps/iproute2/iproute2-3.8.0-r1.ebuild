@@ -46,6 +46,12 @@ src_prepare() {
 		-e "/^WFLAGS/s:-Werror::" \
 		Makefile || die
 
+	# Use /run instead of /var/run.
+	sed -i \
+		-e 's:/var/run:/run:g' \
+		ip/ipnetns.c \
+		man/man8/ip-netns.8 || die
+
 	# build against system headers
 	rm -r include/netinet #include/linux include/ip{,6}tables{,_common}.h include/libiptc
 	sed -i 's:TCPI_OPT_ECN_SEEN:16:' misc/ss.c || die
