@@ -1,8 +1,8 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/www-servers/lighttpd/lighttpd-1.4.32-r3.ebuild,v 1.8 2013/12/22 11:58:35 ago Exp $
+# $Header: /var/cvsroot/gentoo-x86/www-servers/lighttpd/lighttpd-1.4.35-r1.ebuild,v 1.1 2014/05/02 10:57:57 pacho Exp $
 
-EAPI="4"
+EAPI="5"
 inherit base autotools eutils depend.php readme.gentoo user systemd
 
 DESCRIPTION="Lightweight high-performance web server"
@@ -183,7 +183,7 @@ src_install() {
 
 	# logrotate
 	insinto /etc/logrotate.d
-	newins "${FILESDIR}"/lighttpd.logrotate lighttpd
+	newins "${FILESDIR}"/lighttpd.logrotate-r1 lighttpd
 
 	keepdir /var/l{ib,og}/lighttpd /var/www/localhost/htdocs
 	fowners lighttpd:lighttpd /var/l{ib,og}/lighttpd
