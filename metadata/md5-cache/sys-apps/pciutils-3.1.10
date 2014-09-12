@@ -9,5 +9,5 @@ LICENSE=GPL-2
 RDEPEND=static-libs? ( zlib? ( sys-libs/zlib[static-libs(+)] ) ) !static-libs? ( zlib? ( sys-libs/zlib ) ) sys-apps/hwids
 SLOT=0
 SRC_URI=ftp://atrey.karlin.mff.cuni.cz/pub/linux/pci/pciutils-3.1.10.tar.gz
-_eclasses_=eutils	a108f00cccac414097bcbbbb5de01762	multilib	fac675dcccf94392371a6abee62d909f	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
+_eclasses_=eutils	a108f00cccac414097bcbbbb5de01762	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
 _md5_=38c76228342dfd0be4bf891bd1ed99d4

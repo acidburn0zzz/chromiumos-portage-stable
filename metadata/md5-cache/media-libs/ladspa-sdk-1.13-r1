@@ -7,5 +7,5 @@ KEYWORDS=*
 LICENSE=LGPL-2.1
 SLOT=0
 SRC_URI=http://www.ladspa.org/download/ladspa_sdk_1.13.tgz
-_eclasses_=eutils	a108f00cccac414097bcbbbb5de01762	flag-o-matic	c3131dc67d3bd39f044e92b8280505e4	multilib	fac675dcccf94392371a6abee62d909f	portability	536c5e70c5fb252ed3b769e04aa3f05b	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
+_eclasses_=eutils	a108f00cccac414097bcbbbb5de01762	flag-o-matic	c3131dc67d3bd39f044e92b8280505e4	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	portability	536c5e70c5fb252ed3b769e04aa3f05b	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
 _md5_=f11aacadd674fad2dae6e69f34e3b2a0

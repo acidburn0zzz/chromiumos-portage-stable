@@ -7,5 +7,5 @@ KEYWORDS=*
 LICENSE=OFL
 SLOT=0
 SRC_URI=mirror://gentoo/ttf-sil-abyssinica-1.0.tgz
-_eclasses_=eutils	a108f00cccac414097bcbbbb5de01762	font	bc3df4ed373e09f86a90e8fad39034d6	multilib	fac675dcccf94392371a6abee62d909f	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
+_eclasses_=eutils	a108f00cccac414097bcbbbb5de01762	font	bc3df4ed373e09f86a90e8fad39034d6	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
 _md5_=72b1ffe8ab7aea25fd889ccd58a9af59

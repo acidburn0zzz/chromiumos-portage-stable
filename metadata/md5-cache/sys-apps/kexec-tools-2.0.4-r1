@@ -9,5 +9,5 @@ LICENSE=GPL-2
 RDEPEND=lzma? ( app-arch/xz-utils ) zlib? ( sys-libs/zlib )
 SLOT=0
 SRC_URI=mirror://kernel/linux/utils/kernel/kexec/kexec-tools-2.0.4.tar.xz
-_eclasses_=eutils	a108f00cccac414097bcbbbb5de01762	flag-o-matic	c3131dc67d3bd39f044e92b8280505e4	linux-info	923a15fa2808bce496fb21a26482e53a	multilib	fac675dcccf94392371a6abee62d909f	toolchain-funcs	48b38a216afb92db6314d6c3187abea3	versionator	865bc8b2fc9fcfb6d520bdf5a110f5ed
+_eclasses_=eutils	a108f00cccac414097bcbbbb5de01762	flag-o-matic	c3131dc67d3bd39f044e92b8280505e4	linux-info	923a15fa2808bce496fb21a26482e53a	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	toolchain-funcs	48b38a216afb92db6314d6c3187abea3	versionator	865bc8b2fc9fcfb6d520bdf5a110f5ed
 _md5_=0ecf88d6fb8fd1d2e83fd258388a093b

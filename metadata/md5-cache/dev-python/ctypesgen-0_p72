@@ -8,5 +8,5 @@ LICENSE=BSD
 RDEPEND=|| ( =dev-lang/python-2.7* =dev-lang/python-2.6* =dev-lang/python-2.5* )
 SLOT=0
 SRC_URI=mirror://gentoo/ctypesgen-0_p72.tar.bz2
-_eclasses_=distutils	c2658824b3debc637c77b58e1d658fab	multilib	fac675dcccf94392371a6abee62d909f	python	305197b0aa1194fa3ef67ca21f6faa7e	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
+_eclasses_=distutils	c2658824b3debc637c77b58e1d658fab	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	python	305197b0aa1194fa3ef67ca21f6faa7e	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
 _md5_=bb77ba52378c89b495b5f7d42d458c91

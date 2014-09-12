@@ -9,5 +9,5 @@ LICENSE=GPL-3
 RDEPEND=X? ( x11-libs/libICE x11-libs/libXau x11-libs/libSM x11-libs/libX11 x11-libs/libXt )
 SLOT=0
 SRC_URI=mirror://gnu/mtools/mtools-4.0.15.tar.bz2
-_eclasses_=autotools	1b0fa473be98091220edff9f51d06153	libtool	eba09ed440f2692f73024ff3621a1f4b	multilib	fac675dcccf94392371a6abee62d909f	multiprocessing	1512bdfe7004902b8cd2c466fc3df772	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
+_eclasses_=autotools	1b0fa473be98091220edff9f51d06153	libtool	eba09ed440f2692f73024ff3621a1f4b	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	multiprocessing	d7f2985a2c76c365ee20269db5261414	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
 _md5_=c1b39da8d5d94bba2ad7a061cf088254

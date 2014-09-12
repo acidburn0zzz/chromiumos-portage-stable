@@ -9,5 +9,5 @@ LICENSE=BSD
 RDEPEND=bzip2? ( app-arch/bzip2 ) zlib? ( sys-libs/zlib ) readline? ( sys-libs/readline )
 SLOT=3
 SRC_URI=mirror://sourceforge/pcre/pcre-8.30.tar.bz2 ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.30.tar.bz2
-_eclasses_=eutils	a108f00cccac414097bcbbbb5de01762	flag-o-matic	c3131dc67d3bd39f044e92b8280505e4	libtool	eba09ed440f2692f73024ff3621a1f4b	multilib	fac675dcccf94392371a6abee62d909f	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
+_eclasses_=eutils	a108f00cccac414097bcbbbb5de01762	flag-o-matic	c3131dc67d3bd39f044e92b8280505e4	libtool	eba09ed440f2692f73024ff3621a1f4b	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
 _md5_=31549d399dad8a12c238fd4a4e939ba2

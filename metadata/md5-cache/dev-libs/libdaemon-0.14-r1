@@ -8,5 +8,5 @@ KEYWORDS=*
 LICENSE=LGPL-2.1
 SLOT=0
 SRC_URI=http://0pointer.de/lennart/projects/libdaemon/libdaemon-0.14.tar.gz
-_eclasses_=eutils	a108f00cccac414097bcbbbb5de01762	libtool	eba09ed440f2692f73024ff3621a1f4b	multilib	fac675dcccf94392371a6abee62d909f	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
+_eclasses_=eutils	a108f00cccac414097bcbbbb5de01762	libtool	eba09ed440f2692f73024ff3621a1f4b	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
 _md5_=0d949679b8fb61c1ccb7018d184f3694
