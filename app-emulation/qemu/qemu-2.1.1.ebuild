@@ -1,6 +1,6 @@
 # Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/app-emulation/qemu/qemu-2.1.0.ebuild,v 1.6 2014/08/05 08:38:15 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/app-emulation/qemu/qemu-2.1.1.ebuild,v 1.1 2014/09/12 07:01:42 vapier Exp $
 
 EAPI=5
 
@@ -16,7 +16,7 @@ if [[ ${PV} = *9999* ]]; then
 	EGIT_REPO_URI="git://git.qemu.org/qemu.git"
 	inherit git-2
 	SRC_URI=""
-	KEYWORDS=""
+	KEYWORDS="*"
 else
 	SRC_URI="http://wiki.qemu-project.org/download/${P}.tar.bz2
 	${BACKPORTS:+
@@ -31,7 +31,8 @@ LICENSE="GPL-2 LGPL-2 BSD-2"
 SLOT="0"
 IUSE="accessibility +aio alsa bluetooth +caps +curl debug +fdt glusterfs \
 gtk infiniband iscsi +jpeg \
-kernel_linux kernel_FreeBSD lzo ncurses nfs nls numa opengl +png pulseaudio python \
+kernel_linux kernel_FreeBSD lzo ncurses nfs nls numa opengl +pin-upstream-blobs
++png pulseaudio python \
 rbd sasl +seccomp sdl selinux smartcard snappy spice ssh static static-softmmu \
 static-user systemtap tci test +threads tls usb usbredir +uuid vde +vhost-net \
 virtfs +vnc xattr xen xfs"
@@ -61,8 +62,13 @@ REQUIRED_USE="|| ( ${use_targets} )
 	virtfs? ( xattr )"
 
 # Yep, you need both libcap and libcap-ng since virtfs only uses libcap.
+#
+# The attr lib isn't always linked in (although the USE flag is always
+# respected).  This is because qemu supports using the C library's API
+# when available rather than always using the extranl library.
 COMMON_LIB_DEPEND=">=dev-libs/glib-2.0[static-libs(+)]
-	sys-libs/zlib[static-libs(+)]"
+	sys-libs/zlib[static-libs(+)]
+	xattr? ( sys-apps/attr[static-libs(+)] )"
 SOFTMMU_LIB_DEPEND="${COMMON_LIB_DEPEND}
 	>=x11-libs/pixman-0.28.0[static-libs(+)]
 	aio? ( dev-libs/libaio[static-libs(+)] )
@@ -74,7 +80,7 @@ SOFTMMU_LIB_DEPEND="${COMMON_LIB_DEPEND}
 	jpeg? ( virtual/jpeg[static-libs(+)] )
 	lzo? ( dev-libs/lzo:2[static-libs(+)] )
 	ncurses? ( sys-libs/ncurses[static-libs(+)] )
-	nfs? ( net-fs/libnfs[static-libs(+)] )
+	nfs? ( >=net-fs/libnfs-1.9.3[static-libs(+)] )
 	numa? ( sys-process/numactl[static-libs(+)] )
 	png? ( media-libs/libpng[static-libs(+)] )
 	rbd? ( sys-cluster/ceph[static-libs(+)] )
@@ -88,23 +94,24 @@ SOFTMMU_LIB_DEPEND="${COMMON_LIB_DEPEND}
 	usb? ( >=dev-libs/libusb-1.0.18[static-libs(+)] )
 	uuid? ( >=sys-apps/util-linux-2.16.0[static-libs(+)] )
 	vde? ( net-misc/vde[static-libs(+)] )
-	xattr? ( sys-apps/attr[static-libs(+)] )
 	xfs? ( sys-fs/xfsprogs[static-libs(+)] )"
 USER_LIB_DEPEND="${COMMON_LIB_DEPEND}"
+X86_FIRMWARE_DEPEND="
+	>=sys-firmware/ipxe-1.0.0_p20130624
+	pin-upstream-blobs? (
+		~sys-firmware/seabios-1.7.5
+		~sys-firmware/sgabios-0.1_pre8
+		~sys-firmware/vgabios-0.7a
+	)
+	!pin-upstream-blobs? (
+		sys-firmware/seabios
+		sys-firmware/sgabios
+		sys-firmware/vgabios
+	)"
 RDEPEND="!static-softmmu? ( ${SOFTMMU_LIB_DEPEND//\[static-libs(+)]} )
 	!static-user? ( ${USER_LIB_DEPEND//\[static-libs(+)]} )
-	qemu_softmmu_targets_i386? (
-		>=sys-firmware/ipxe-1.0.0_p20130624
-		~sys-firmware/seabios-1.7.5
-		~sys-firmware/sgabios-0.1_pre8
-		~sys-firmware/vgabios-0.7a
-	)
-	qemu_softmmu_targets_x86_64? (
-		>=sys-firmware/ipxe-1.0.0_p20130624
-		~sys-firmware/seabios-1.7.5
-		~sys-firmware/sgabios-0.1_pre8
-		~sys-firmware/vgabios-0.7a
-	)
+	qemu_softmmu_targets_i386? ( ${X86_FIRMWARE_DEPEND} )
+	qemu_softmmu_targets_x86_64? ( ${X86_FIRMWARE_DEPEND} )
 	accessibility? ( app-accessibility/brltty )
 	alsa? ( >=media-libs/alsa-lib-1.0.13 )
 	bluetooth? ( net-wireless/bluez )
@@ -145,7 +152,9 @@ QA_PREBUILT="
 	usr/share/qemu/openbios-sparc64
 	usr/share/qemu/openbios-sparc32
 	usr/share/qemu/palcode-clipper
-	usr/share/qemu/s390-ccw.img"
+	usr/share/qemu/s390-ccw.img
+	usr/share/qemu/u-boot.e500
+"
 
 QA_WX_LOAD="usr/bin/qemu-i386
 	usr/bin/qemu-x86_64
@@ -246,6 +255,7 @@ src_prepare() {
 	use nls || rm -f po/*.po
 
 	epatch "${FILESDIR}"/qemu-1.7.0-cflags.patch
+	epatch "${FILESDIR}"/${PN}-2.1.1-readlink-self.patch
 	[[ -n ${BACKPORTS} ]] && \
 		EPATCH_FORCE=yes EPATCH_SUFFIX="patch" EPATCH_SOURCE="${S}/patches" \
 			epatch
@@ -293,6 +303,7 @@ qemu_src_configure() {
 		$(use_enable debug debug-tcg)
 		--enable-docs
 		$(use_enable tci tcg-interpreter)
+		$(use_enable xattr attr)
 	)
 
 	# Disable options not used by user targets as the default configure
@@ -341,7 +352,6 @@ qemu_src_configure() {
 		$(conf_softmmu vhost-net)
 		$(conf_softmmu virtfs)
 		$(conf_softmmu vnc)
-		$(conf_softmmu xattr attr)
 		$(conf_softmmu xen)
 		$(conf_softmmu xen xen-pci-passthrough)
 		$(conf_softmmu xfs xfsctl)
