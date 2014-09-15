@@ -1,9 +1,9 @@
 # Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-python/boto/boto-2.27.0.ebuild,v 1.3 2014/06/04 21:02:00 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-python/boto/boto-2.31.1.ebuild,v 1.1 2014/07/10 23:52:54 radhermit Exp $
 
 EAPI="5"
-PYTHON_COMPAT=( python{2_6,2_7} )
+PYTHON_COMPAT=( python2_7 )
 
 inherit distutils-r1
 
