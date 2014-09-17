@@ -1,0 +1,14 @@
+DEFINED_PHASES=compile configure install postinst preinst prepare test
+DEPEND=bzip2? ( app-arch/bzip2 ) zlib? ( sys-libs/zlib ) libedit? ( dev-libs/libedit ) readline? ( sys-libs/readline ) virtual/pkgconfig userland_GNU? ( >=sys-apps/findutils-4.4.0 )
+DESCRIPTION=Perl-compatible regular expression library
+EAPI=4
+HOMEPAGE=http://www.pcre.org/
+IUSE=bzip2 +cxx +jit libedit pcre16 pcre32 +readline +recursion-limit static-libs unicode zlib abi_x86_32 abi_x86_64 abi_x86_x32 abi_mips_n32 abi_mips_n64 abi_mips_o32 abi_ppc_32 abi_ppc_64 abi_s390_32 abi_s390_64
+KEYWORDS=*
+LICENSE=BSD
+RDEPEND=bzip2? ( app-arch/bzip2 ) zlib? ( sys-libs/zlib ) libedit? ( dev-libs/libedit ) readline? ( sys-libs/readline ) abi_x86_32? ( !<=app-emulation/emul-linux-x86-baselibs-20131008-r2 !app-emulation/emul-linux-x86-baselibs[-abi_x86_32(-)] )
+REQUIRED_USE=readline? ( !libedit ) libedit? ( !readline )
+SLOT=3
+SRC_URI=mirror://sourceforge/pcre/pcre-8.35.tar.bz2 ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.35.tar.bz2
+_eclasses_=eutils	a108f00cccac414097bcbbbb5de01762	flag-o-matic	c3131dc67d3bd39f044e92b8280505e4	libtool	eba09ed440f2692f73024ff3621a1f4b	multibuild	46527a4656956da3d58acff72c9b59b1	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	multilib-build	9eb4b5fb858228316d8bb32ada51f6a5	multilib-minimal	5bbdc77877c1aa3c6bd89ca3f9196d11	multiprocessing	d7f2985a2c76c365ee20269db5261414	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
+_md5_=2bfee83cc922c2f78dcbb3cfda3ec8aa
