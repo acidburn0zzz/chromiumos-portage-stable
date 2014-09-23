@@ -1,6 +1,6 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-devel/gnuconfig/gnuconfig-20130516.ebuild,v 1.1 2013/05/16 15:21:59 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-devel/gnuconfig/gnuconfig-20140728.ebuild,v 1.1 2014/08/06 01:13:22 vapier Exp $
 
 EAPI="2"
 
@@ -33,7 +33,7 @@ maint_pkg_create() {
 	cp "${FILESDIR}"/${PV}/*.patch . || die
 
 	local tar="${T}/gnuconfig-${ver}.tar.bz2"
-	tar -jcf ${tar} . || die "creating tar failed"
+	tar -jcf ${tar} ./* || die "creating tar failed"
 	einfo "Packaged tar now available:"
 	einfo "$(du -b ${tar})"
 }
