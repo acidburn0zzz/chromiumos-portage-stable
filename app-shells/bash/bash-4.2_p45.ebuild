@@ -80,6 +80,7 @@ src_unpack() {
 	epatch "${FILESDIR}"/${PN}-4.2-parallel-build.patch
 	epatch "${FILESDIR}"/${PN}-4.2-no-readline.patch
 	epatch "${FILESDIR}"/${PN}-4.2-speed-up-read-N.patch
+	epatch "${FILESDIR}"/${PN}-4.2-bash43-025.patch
 
 	epatch_user
 }
