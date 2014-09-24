@@ -1,28 +1,28 @@
-# Copyright 1999-2012 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-apps/diffutils/diffutils-3.2.ebuild,v 1.13 2012/10/05 17:56:59 ranger Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-apps/diffutils/diffutils-3.3.ebuild,v 1.14 2014/01/18 05:12:18 vapier Exp $
 
 EAPI=4
 
-inherit flag-o-matic eutils
+inherit flag-o-matic
 
 DESCRIPTION="Tools to make diffs and compare files"
 HOMEPAGE="http://www.gnu.org/software/diffutils/"
-SRC_URI="mirror://gnu-alpha/diffutils/${P}.tar.gz
-	mirror://gnu/diffutils/${P}.tar.gz"
+SRC_URI="mirror://gnu-alpha/diffutils/${P}.tar.xz
+	mirror://gnu/diffutils/${P}.tar.xz"
 
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="*"
 IUSE="nls static"
 
-RDEPEND=""
-DEPEND="nls? ( sys-devel/gettext )"
+DEPEND="app-arch/xz-utils
+	nls? ( sys-devel/gettext )"
 
 DOCS=( AUTHORS ChangeLog NEWS README THANKS TODO )
 
 src_prepare() {
-	epatch "${FILESDIR}"/${P}-no-gets.patch
+	sed -i 's:@mkdir_p@:@MKDIR_P@:g' po/Makefile.in.in || die #464604
 }
 
 src_configure() {
