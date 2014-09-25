@@ -1,40 +1,41 @@
-# Copyright 1999-2012 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-libs/gmp/gmp-5.0.2_p1.ebuild,v 1.10 2012/01/03 10:21:17 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-libs/gmp/gmp-5.1.3-r1.ebuild,v 1.19 2014/05/14 14:41:58 ago Exp $
 
-inherit flag-o-matic eutils libtool toolchain-funcs
+EAPI="4"
+
+inherit flag-o-matic eutils libtool toolchain-funcs multilib-minimal
 
 MY_PV=${PV/_p*}
 MY_P=${PN}-${MY_PV}
 PLEVEL=${PV/*p}
 DESCRIPTION="Library for arithmetic on arbitrary precision integers, rational numbers, and floating-point numbers"
 HOMEPAGE="http://gmplib.org/"
-SRC_URI="mirror://gnu/${PN}/${MY_P}.tar.bz2
+SRC_URI="mirror://gnu/${PN}/${MY_P}.tar.xz
+	ftp://ftp.gmplib.org/pub/${MY_P}/${MY_P}.tar.xz
 	doc? ( http://gmplib.org/${PN}-man-${MY_PV}.pdf )"
 
 LICENSE="LGPL-3"
 SLOT="0"
 KEYWORDS="*"
-IUSE="doc cxx static-libs"
+IUSE="doc cxx pgo static-libs"
 
-DEPEND="sys-devel/m4"
-RDEPEND=""
+DEPEND="sys-devel/m4
+	app-arch/xz-utils"
+RDEPEND="abi_x86_32? (
+	!<=app-emulation/emul-linux-x86-baselibs-20131008-r1
+	!app-emulation/emul-linux-x86-baselibs[-abi_x86_32(-)]
+)"
 
 S=${WORKDIR}/${MY_P}
 
-src_unpack() {
-	unpack ${MY_P}.tar.bz2
-	cd "${S}"
+DOCS=( AUTHORS ChangeLog NEWS README doc/configuration doc/isa_abi_headache )
+HTML_DOCS=( doc )
+MULTILIB_WRAPPED_HEADERS=( /usr/include/gmp.h )
+
+src_prepare() {
 	[[ -d ${FILESDIR}/${PV} ]] && EPATCH_SUFFIX="diff" EPATCH_FORCE="yes" epatch "${FILESDIR}"/${PV}
 	epatch "${FILESDIR}"/${PN}-4.1.4-noexecstack.patch
-	epatch "${FILESDIR}"/${PN}-5.0.0-s390.diff
-	epatch "${FILESDIR}"/${MY_P}-unnormalised-dividends.patch
-	has x32 $(get_all_abis) && epatch "${FILESDIR}"/${PN}-5.0.2*x32*.patch
-
-	# disable -fPIE -pie in the tests for x86  #236054
-	if use x86 && gcc-specs-pie ; then
-		epatch "${FILESDIR}"/${PN}-5.0.1-x86-nopie-tests.patch
-	fi
 
 	# note: we cannot run autotools here as gcc depends on this package
 	elibtoolize
@@ -44,12 +45,12 @@ src_unpack() {
 	mv configure configure.wrapped || die
 	cat <<-\EOF > configure
 	#!/bin/sh
-	exec env ABI="$GMPABI" "${0}.wrapped" "$@"
+	exec env ABI="$GMPABI" "$0.wrapped" "$@"
 	EOF
 	chmod a+rx configure
 }
 
-src_compile() {
+multilib_src_configure() {
 	# Because of our 32-bit userland, 1.0 is the only HPPA ABI that works
 	# http://gmplib.org/manual/ABI-and-ISA.html#ABI-and-ISA (bug #344613)
 	if [[ ${CHOST} == hppa2.0-* ]] ; then
@@ -65,18 +66,34 @@ src_compile() {
 	export GMPABI
 
 	tc-export CC
-	econf \
+	ECONF_SOURCE="${S}" econf \
 		--localstatedir=/var/state/gmp \
-		--disable-mpbsd \
+		--enable-shared \
 		$(use_enable cxx) \
-		$(use_enable static-libs static) \
-		|| die
-
-	emake || die
+		$(use_enable static-libs static)
 }
 
-src_install() {
-	emake DESTDIR="${D}" install || die
+multilib_src_compile() {
+	emake
+
+	if use pgo ; then
+		emake -j1 -C tune tuneup
+		ebegin "Trying to generate tuned data"
+		./tune/tuneup | tee gmp.mparam.h.new
+		if eend $(( 0 + ${PIPESTATUS[*]/#/+} )) ; then
+			mv gmp.mparam.h.new gmp-mparam.h || die
+			emake clean
+			emake
+		fi
+	fi
+}
+
+multilib_src_test() {
+	emake check
+}
+
+multilib_src_install() {
+	emake DESTDIR="${D}" install
 
 	# should be a standalone lib
 	rm -f "${D}"/usr/$(get_libdir)/libgmp.la
@@ -85,11 +102,10 @@ src_install() {
 	use static-libs \
 		&& sed -i 's:/[^ ]*/libgmp.la:-lgmp:' "${la}" \
 		|| rm -f "${la}"
+}
 
-	dodoc AUTHORS ChangeLog NEWS README
-	dodoc doc/configuration doc/isa_abi_headache
-	dohtml -r doc
-
+multilib_src_install_all() {
+	einstalldocs
 	use doc && cp "${DISTDIR}"/gmp-man-${MY_PV}.pdf "${D}"/usr/share/doc/${PF}/
 }
 
