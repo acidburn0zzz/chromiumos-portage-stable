@@ -1,18 +1,14 @@
-# Copyright 1999-2011 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-util/gtk-doc-am/gtk-doc-am-1.18.ebuild,v 1.7 2011/10/30 15:33:30 armin76 Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-util/gtk-doc-am/gtk-doc-am-1.20.ebuild,v 1.13 2014/05/03 15:56:03 vapier Exp $
 
-EAPI="4"
+EAPI=5
+GNOME_ORG_MODULE="gtk-doc"
 
-inherit versionator
-
-MY_PN="gtk-doc"
-MY_P=${MY_PN}-${PV}
-MAJ_PV=$(get_version_component_range 1-2)
+inherit gnome.org
 
 DESCRIPTION="Automake files from gtk-doc"
 HOMEPAGE="http://www.gtk.org/gtk-doc/"
-SRC_URI="mirror://gnome/sources/${MY_PN}/${PV}/${MY_P}.tar.xz"
 
 LICENSE="GPL-2 FDL-1.1"
 SLOT="0"
@@ -21,17 +17,13 @@ IUSE=""
 
 RDEPEND=">=dev-lang/perl-5.6"
 DEPEND="${RDEPEND}
-	!<dev-util/gtk-doc-${MAJ_PV}"
+	!<dev-util/gtk-doc-${GNOME_ORG_PVP}"
 # pkg-config is used by gtkdoc-rebase at runtime
 # PDEPEND to avoid circular deps, bug 368301
-PDEPEND="dev-util/pkgconfig"
+PDEPEND="virtual/pkgconfig"
 
 # This ebuild doesn't even compile anything, causing tests to fail when updating (bug #316071)
 RESTRICT="test"
-
-S=${WORKDIR}/${MY_P}
-
-DOCS="AUTHORS ChangeLog MAINTAINERS NEWS README TODO"
 
 src_configure() {
 	# Duplicate autoconf checks so we don't have to call configure
