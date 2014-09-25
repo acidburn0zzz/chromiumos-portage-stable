@@ -1,9 +1,9 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-libs/expat/expat-2.1.0-r2.ebuild,v 1.8 2013/03/09 12:33:55 ssuominen Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-libs/expat/expat-2.1.0-r3.ebuild,v 1.15 2014/04/28 17:27:28 mgorny Exp $
 
-EAPI=4
-inherit eutils libtool multilib toolchain-funcs
+EAPI=5
+inherit eutils libtool multilib toolchain-funcs multilib-minimal
 
 DESCRIPTION="XML parsing libraries"
 HOMEPAGE="http://expat.sourceforge.net/"
@@ -13,66 +13,54 @@ LICENSE="MIT"
 SLOT="0"
 KEYWORDS="*"
 IUSE="elibc_FreeBSD examples static-libs unicode"
+RDEPEND="abi_x86_32? ( !<=app-emulation/emul-linux-x86-baselibs-20130224-r6
+		!app-emulation/emul-linux-x86-baselibs[-abi_x86_32(-)] )"
 
 src_prepare() {
 	elibtoolize
-
-	mkdir "${S}"-build{,u,w} || die
 }
 
-src_configure() {
+multilib_src_configure() {
 	local myconf="$(use_enable static-libs static)"
 
-	pushd "${S}"-build >/dev/null
+	mkdir -p "${BUILD_DIR}"{u,w} || die
+
 	ECONF_SOURCE="${S}" econf ${myconf}
-	popd >/dev/null
 
 	if use unicode; then
-		pushd "${S}"-buildu >/dev/null
+		pushd "${BUILD_DIR}"u >/dev/null
 		CPPFLAGS="${CPPFLAGS} -DXML_UNICODE" ECONF_SOURCE="${S}" econf ${myconf}
 		popd >/dev/null
 
-		pushd "${S}"-buildw >/dev/null
+		pushd "${BUILD_DIR}"w >/dev/null
 		CPPFLAGS="${CPPFLAGS} -DXML_UNICODE_WCHAR_T" ECONF_SOURCE="${S}" econf ${myconf}
 		popd >/dev/null
 	fi
 }
 
-src_compile() {
-	pushd "${S}"-build >/dev/null
+multilib_src_compile() {
 	emake
-	popd >/dev/null
 
 	if use unicode; then
-		pushd "${S}"-buildu >/dev/null
+		pushd "${BUILD_DIR}"u >/dev/null
 		emake buildlib LIBRARY=libexpatu.la
 		popd >/dev/null
 
-		pushd "${S}"-buildw >/dev/null
+		pushd "${BUILD_DIR}"w >/dev/null
 		emake buildlib LIBRARY=libexpatw.la
 		popd >/dev/null
 	fi
 }
 
-src_install() {
-	dodoc Changes README
-	dohtml doc/*
-
-	if use examples; then
-		insinto /usr/share/doc/${PF}/examples
-		doins examples/*.c
-	fi
-
-	pushd "${S}"-build >/dev/null
+multilib_src_install() {
 	emake install DESTDIR="${D}"
-	popd >/dev/null
 
 	if use unicode; then
-		pushd "${S}"-buildu >/dev/null
+		pushd "${BUILD_DIR}"u >/dev/null
 		emake installlib DESTDIR="${D}" LIBRARY=libexpatu.la
 		popd >/dev/null
 
-		pushd "${S}"-buildw >/dev/null
+		pushd "${BUILD_DIR}"w >/dev/null
 		emake installlib DESTDIR="${D}" LIBRARY=libexpatw.la
 		popd >/dev/null
 
@@ -84,9 +72,21 @@ src_install() {
 		popd >/dev/null
 	fi
 
-	rm -f "${ED}"usr/lib*/libexpat{,u,w}.la
+	if multilib_is_native_abi ; then
+		# libgeom in /lib and ifconfig in /sbin require libexpat on FreeBSD since
+		# we stripped the libbsdxml copy starting from freebsd-lib-8.2-r1
+		use elibc_FreeBSD && gen_usr_ldscript -a expat
+	fi
+}
 
-	# libgeom in /lib and ifconfig in /sbin require libexpat on FreeBSD since
-	# we stripped the libbsdxml copy starting from freebsd-lib-8.2-r1
-	use elibc_FreeBSD && gen_usr_ldscript -a expat
+multilib_src_install_all() {
+	dodoc Changes README
+	dohtml doc/*
+
+	if use examples; then
+		insinto /usr/share/doc/${PF}/examples
+		doins examples/*.c
+	fi
+
+	prune_libtool_files
 }
