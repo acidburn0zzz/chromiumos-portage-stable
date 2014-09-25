@@ -1,6 +1,6 @@
 # Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-libs/libxml2/libxml2-2.9.1-r4.ebuild,v 1.12 2014/06/24 19:59:48 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-libs/libxml2/libxml2-2.9.1-r5.ebuild,v 1.1 2014/09/03 09:51:22 mgorny Exp $
 
 EAPI="5"
 PYTHON_COMPAT=( python{2_6,2_7,3_2,3_3,3_4} )
@@ -46,6 +46,10 @@ DEPEND="${COMMON_DEPEND}
 "
 
 S="${WORKDIR}/${PN}-${PV%_rc*}"
+
+MULTILIB_CHOST_TOOLS=(
+	/usr/bin/xml2-config
+)
 
 src_unpack() {
 	# ${A} isn't used to avoid unpacking of test tarballs into $WORKDIR,
