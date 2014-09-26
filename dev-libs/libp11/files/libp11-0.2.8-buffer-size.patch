@@ -1,0 +1,26 @@
+3 year old upstream proposal https://www.opensc-project.org/opensc/ticket/350
+
+From: sanufrienko
+Date: 04/19/11
+
+The fixed buffers allocated in pkcs11_init_cert are too small to hold the
+output data for some certificates. It causes a "Buffer too small" error
+to be returned from pkcs11_getattr_var. Proposed solution is to increase
+the size of the buffers.
+
+
+diff -ur a/src/p11_cert.c b/src/p11_cert.c
+--- a/src/p11_cert.c	2011-04-15 04:56:52.000000000 -0700
++++ b/src/p11_cert.c	2014-09-26 10:51:37.700523186 -0700
+@@ -136,8 +136,8 @@
+ 	PKCS11_TOKEN_private *tpriv;
+ 	PKCS11_CERT_private *kpriv;
+ 	PKCS11_CERT *cert, *tmp;
+-	char label[256], data[2048];
+-	unsigned char id[256];
++	char label[512], data[4096];
++	unsigned char id[512];
+ 	CK_CERTIFICATE_TYPE cert_type;
+ 	size_t size;
+ 
+Only in b/src: p11_cert.c.orig
