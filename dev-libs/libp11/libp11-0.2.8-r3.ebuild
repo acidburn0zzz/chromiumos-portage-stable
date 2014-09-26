@@ -33,7 +33,7 @@ fi
 
 src_prepare() {
 	epatch "${FILESDIR}"/${P}-no-ltdl.patch
-	epatch "${FILESDIR}"/${P}-buffer-size.patch
+	epatch "${FILESDIR}"/${P}-variable-buffer-size.patch
 	eautoreconf
 }
 
