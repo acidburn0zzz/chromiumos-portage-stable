@@ -1,8 +1,8 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/app-shells/bash/bash-4.2_p45.ebuild,v 1.12 2013/05/20 18:01:51 ago Exp $
+# $Header: /var/cvsroot/gentoo-x86/app-shells/bash/bash-4.2_p48-r1.ebuild,v 1.4 2014/09/25 11:02:20 armin76 Exp $
 
-EAPI="1"
+EAPI="4"
 
 inherit eutils flag-o-matic toolchain-funcs multilib
 
@@ -41,8 +41,8 @@ DEPEND=">=sys-libs/ncurses-5.2-r2
 	readline? ( >=sys-libs/readline-6.2 )
 	nls? ( virtual/libintl )"
 RDEPEND="${DEPEND}
-	!<sys-apps/portage-2.1.6.7_p1
-	!<sys-apps/paludis-0.26.0_alpha5"
+	!!<sys-apps/portage-2.1.6.7_p1
+	!!<sys-apps/paludis-0.26.0_alpha5"
 # we only need yacc when the .y files get patched (bash42-005)
 DEPEND+=" virtual/yacc"
 
@@ -62,8 +62,9 @@ pkg_setup() {
 
 src_unpack() {
 	unpack ${MY_P}.tar.gz
-	cd "${S}"
+}
 
+src_prepare() {
 	# Include official patches
 	[[ ${PLEVEL} -gt 0 ]] && epatch $(patches -s)
 
@@ -79,14 +80,19 @@ src_unpack() {
 	epatch "${FILESDIR}"/${PN}-4.2-execute-job-control.patch #383237
 	epatch "${FILESDIR}"/${PN}-4.2-parallel-build.patch
 	epatch "${FILESDIR}"/${PN}-4.2-no-readline.patch
-	epatch "${FILESDIR}"/${PN}-4.2-speed-up-read-N.patch
-	epatch "${FILESDIR}"/${PN}-4.2-bash43-025.patch
+	epatch "${FILESDIR}"/${PN}-4.2-read-retry.patch #447810
+	if ! use vanilla ; then
+		epatch "${FILESDIR}"/${PN}-4.2-speed-up-read-N.patch
+	fi
+	epatch "${FILESDIR}"/bash-eol-pushback.patch #523592
+	epatch "${FILESDIR}"/${PN}-4.2-redhat-func-export.patch
+	epatch "${FILESDIR}"/${PN}-4.2-redhat-here-docs-stack.patch
 
 	epatch_user
 }
 
-src_compile() {
-	local myconf=
+src_configure() {
+	local myconf=()
 
 	# For descriptions of these, see config-top.h
 	# bashrc/#26952 bash_logout/#90488 ssh/#24762
@@ -103,7 +109,7 @@ src_compile() {
 	# reading Bug 7714 first.  If you still build it statically,
 	# don't come crying to us with bugs ;).
 	#use static && export LDFLAGS="${LDFLAGS} -static"
-	use nls || myconf="${myconf} --disable-nls"
+	use nls || myconf+=( --disable-nls )
 
 	# Historically, we always used the builtin readline, but since
 	# our handling of SONAME upgrades has gotten much more stable
@@ -119,17 +125,7 @@ src_compile() {
 	# is here because readline needs it.  But bash itself calls
 	# ncurses in one or two small places :(.
 
-	if use plugins; then
-		append-ldflags -Wl,-rpath,/usr/$(get_libdir)/bash
-	else
-		# Disable the plugins logic by hand since bash doesn't
-		# provide a way of doing it.
-		export ac_cv_func_dl{close,open,sym}=no \
-			ac_cv_lib_dl_dlopen=no ac_cv_header_dlfcn_h=no
-		sed -i \
-			-e '/LOCAL_LDFLAGS=/s:-rdynamic::' \
-			configure || die
-	fi
+	use plugins && append-ldflags -Wl,-rpath,/usr/$(get_libdir)/bash
 	tc-export AR #444070
 	econf \
 		--with-installed-readline=. \
@@ -142,19 +138,22 @@ src_compile() {
 		$(use_enable readline) \
 		$(use_enable readline history) \
 		$(use_enable readline bang-history) \
-		${myconf}
-	emake || die
+		"${myconf[@]}"
+}
+
+src_compile() {
+	emake
 
 	if use plugins ; then
-		emake -C examples/loadables all others || die
+		emake -C examples/loadables all others
 	fi
 }
 
 src_install() {
-	emake install DESTDIR="${D}" || die
+	emake install DESTDIR="${D}"
 
 	dodir /bin
-	mv "${D}"/usr/bin/bash "${D}"/bin/ || die
+	mv "${ED}"/usr/bin/bash "${ED}"/bin/ || die
 	dosym bash /bin/rbash
 
 	insinto /etc/bash
@@ -176,12 +175,12 @@ src_install() {
 	fi
 	sed -i \
 		"${sed_args[@]}" \
-		"${D}"/etc/skel/.bashrc \
-		"${D}"/etc/bash/bashrc || die
+		"${ED}"/etc/skel/.bashrc \
+		"${ED}"/etc/bash/bashrc || die
 
 	if use plugins ; then
 		exeinto /usr/$(get_libdir)/bash
-		doexe $(echo examples/loadables/*.o | sed 's:\.o::g') || die
+		doexe $(echo examples/loadables/*.o | sed 's:\.o::g')
 		insinto /usr/include/bash-plugins
 		doins *.h builtins/*.h examples/loadables/*.h include/*.h \
 			lib/{glob/glob.h,tilde/tilde.h}
@@ -207,24 +206,24 @@ src_install() {
 }
 
 pkg_preinst() {
-	if [[ -e ${ROOT}/etc/bashrc ]] && [[ ! -d ${ROOT}/etc/bash ]] ; then
-		mkdir -p "${ROOT}"/etc/bash
-		mv -f "${ROOT}"/etc/bashrc "${ROOT}"/etc/bash/
+	if [[ -e ${EROOT}/etc/bashrc ]] && [[ ! -d ${EROOT}/etc/bash ]] ; then
+		mkdir -p "${EROOT}"/etc/bash
+		mv -f "${EROOT}"/etc/bashrc "${EROOT}"/etc/bash/
 	fi
 
-	if [[ -L ${ROOT}/bin/sh ]]; then
+	if [[ -L ${EROOT}/bin/sh ]]; then
 		# rewrite the symlink to ensure that its mtime changes. having /bin/sh
 		# missing even temporarily causes a fatal error with paludis.
-		local target=$(readlink "${ROOT}"/bin/sh)
-		local tmp=$(emktemp "${ROOT}"/bin)
+		local target=$(readlink "${EROOT}"/bin/sh)
+		local tmp=$(emktemp "${EROOT}"/bin)
 		ln -sf "${target}" "${tmp}"
-		mv -f "${tmp}" "${ROOT}"/bin/sh
+		mv -f "${tmp}" "${EROOT}"/bin/sh
 	fi
 }
 
 pkg_postinst() {
 	# If /bin/sh does not exist, provide it
-	if [[ ! -e ${ROOT}/bin/sh ]]; then
-		ln -sf bash "${ROOT}"/bin/sh
+	if [[ ! -e ${EROOT}/bin/sh ]]; then
+		ln -sf bash "${EROOT}"/bin/sh
 	fi
 }
