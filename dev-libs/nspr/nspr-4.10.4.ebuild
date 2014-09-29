@@ -92,4 +92,8 @@ src_install() {
 
 	# Remove stupid files in /usr/bin
 	rm "${ED}"/usr/bin/prerr.properties || die "failed to cleanup unneeded files"
+
+	# Remove compile-et.pl because it is only used to generate prerr.c and prerr.h
+	# at build time.
+	rm "${ED}"/usr/bin/compile-et.pl || die "failed to cleanup unneeded files"
 }
