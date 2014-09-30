@@ -8,5 +8,5 @@ LICENSE=vim
 RDEPEND=|| ( >=app-editors/vim-7.0 >=app-editors/gvim-7.0 )
 SLOT=0
 SRC_URI=mirror://gentoo/gentoo-syntax-20101212.tar.bz2
-_eclasses_=eutils	a108f00cccac414097bcbbbb5de01762	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	toolchain-funcs	48b38a216afb92db6314d6c3187abea3	vim-doc	6bd5bb2529af326fe3359e975a3439d0	vim-plugin	395396a7fc48fd6a6b2306d493fdca89
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	toolchain-funcs	48b38a216afb92db6314d6c3187abea3	vim-doc	6bd5bb2529af326fe3359e975a3439d0	vim-plugin	395396a7fc48fd6a6b2306d493fdca89
 _md5_=60392467c5418ff64ae5c20fdcad481b

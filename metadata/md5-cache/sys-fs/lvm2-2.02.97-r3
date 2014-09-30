@@ -10,5 +10,5 @@ RDEPEND=!!sys-fs/device-mapper readline? ( sys-libs/readline ) clvm? ( =sys-clus
 REQUIRED_USE=device-mapper-only? ( !clvm !cman !lvm1 !thin )
 SLOT=0
 SRC_URI=ftp://sources.redhat.com/pub/lvm2/LVM2.2.02.97.tgz ftp://sources.redhat.com/pub/lvm2/old/LVM2.2.02.97.tgz
-_eclasses_=autotools	1b0fa473be98091220edff9f51d06153	eutils	a108f00cccac414097bcbbbb5de01762	libtool	eba09ed440f2692f73024ff3621a1f4b	linux-info	923a15fa2808bce496fb21a26482e53a	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	multiprocessing	d7f2985a2c76c365ee20269db5261414	toolchain-funcs	48b38a216afb92db6314d6c3187abea3	udev	a9a8d051efb42bfe884c1db82ce161de	versionator	865bc8b2fc9fcfb6d520bdf5a110f5ed
+_eclasses_=autotools	1b0fa473be98091220edff9f51d06153	eutils	06133990e861be0fe60c2b428fd025d9	libtool	eba09ed440f2692f73024ff3621a1f4b	linux-info	923a15fa2808bce496fb21a26482e53a	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	multiprocessing	d7f2985a2c76c365ee20269db5261414	toolchain-funcs	48b38a216afb92db6314d6c3187abea3	udev	a9a8d051efb42bfe884c1db82ce161de	versionator	865bc8b2fc9fcfb6d520bdf5a110f5ed
 _md5_=376502f0e15302d3979f2162384302d2

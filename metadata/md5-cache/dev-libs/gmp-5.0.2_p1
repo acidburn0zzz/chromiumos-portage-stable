@@ -7,5 +7,5 @@ KEYWORDS=*
 LICENSE=LGPL-3
 SLOT=0
 SRC_URI=mirror://gnu/gmp/gmp-5.0.2.tar.bz2 doc? ( http://gmplib.org/gmp-man-5.0.2.pdf )
-_eclasses_=eutils	a108f00cccac414097bcbbbb5de01762	flag-o-matic	c3131dc67d3bd39f044e92b8280505e4	libtool	eba09ed440f2692f73024ff3621a1f4b	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	c3131dc67d3bd39f044e92b8280505e4	libtool	eba09ed440f2692f73024ff3621a1f4b	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
 _md5_=9bff4c2f9532f4b4714d1e4f7e0a2197
