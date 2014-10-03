@@ -1,0 +1,7 @@
+DEFINED_PHASES=-
+DESCRIPTION=Virtual for man
+EAPI=3
+KEYWORDS=*
+RDEPEND=|| ( sys-apps/man-db sys-apps/man )
+SLOT=0
+_md5_=0d17191e7d1b2d0dfb19aef892947859
