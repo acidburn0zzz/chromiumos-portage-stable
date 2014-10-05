@@ -1,16 +1,16 @@
-# Copyright 1999-2012 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/x11-misc/xdotool/xdotool-2.20110530.1.ebuild,v 1.4 2012/04/04 21:24:51 jdhore Exp $
+# $Header: /var/cvsroot/gentoo-x86/x11-misc/xdotool/xdotool-2.20110530.1.ebuild,v 1.10 2014/01/07 16:56:09 vapier Exp $
 
 EAPI=2
 
 inherit eutils toolchain-funcs flag-o-matic multilib
 
-DESCRIPTION="Simulate keyboard input and mouse activity, move and resize windows."
+DESCRIPTION="Simulate keyboard input and mouse activity, move and resize windows"
 HOMEPAGE="http://www.semicomplete.com/projects/xdotool/"
 SRC_URI="http://semicomplete.googlecode.com/files/${P}.tar.gz"
-LICENSE="as-is"
 
+LICENSE="BSD"
 SLOT="0"
 KEYWORDS="*"
 IUSE="examples"
@@ -18,7 +18,6 @@ IUSE="examples"
 RDEPEND="x11-libs/libXtst
 	x11-libs/libX11
 	x11-libs/libXinerama"
-
 DEPEND="${RDEPEND}"
 
 # The test wants to manualy start Xvfb, wont use VirtualX and it tries
@@ -28,12 +27,14 @@ DEPEND="${RDEPEND}"
 RESTRICT="test"
 
 src_prepare() {
-	sed -e "s/installheader post-install$/installheader/" \
-	    -i Makefile || die "sed failed"
+	sed -i \
+		-e "s/installheader post-install$/installheader/" \
+		-e 's:\<pkg-config\>:$(PKG_CONFIG):' \
+		Makefile || die "sed failed"
 }
 
 src_compile() {
-	tc-export CC LD
+	tc-export CC LD PKG_CONFIG
 	default
 }
 
