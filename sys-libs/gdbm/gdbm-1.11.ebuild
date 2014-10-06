@@ -1,10 +1,10 @@
-# Copyright 1999-2011 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-libs/gdbm/gdbm-1.9.1-r2.ebuild,v 1.3 2011/12/07 20:32:55 zmedico Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-libs/gdbm/gdbm-1.11.ebuild,v 1.14 2014/08/26 11:02:23 mgorny Exp $
 
-EAPI="3"
+EAPI="4"
 
-inherit eutils libtool flag-o-matic
+inherit flag-o-matic libtool multilib multilib-minimal
 
 EX_P="${PN}-1.8.3"
 DESCRIPTION="Standard GNU database libraries"
@@ -15,48 +15,52 @@ SRC_URI="mirror://gnu/gdbm/${P}.tar.gz
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="*"
-IUSE="+berkdb exporter static-libs"
+IUSE="+berkdb exporter nls static-libs"
+
+RDEPEND="
+	abi_x86_32? (
+		!<=app-emulation/emul-linux-x86-baselibs-20131008-r4
+		!app-emulation/emul-linux-x86-baselibs[-abi_x86_32(-)]
+	)"
 
 EX_S="${WORKDIR}"/${EX_P}
 
 src_prepare() {
-	epatch "${FILESDIR}"/${P}-compat-link.patch #383743
 	elibtoolize
 }
 
-src_configure() {
+multilib_src_configure() {
 	# gdbm doesn't appear to use either of these libraries
 	export ac_cv_lib_dbm_main=no ac_cv_lib_ndbm_main=no
 
-	if use exporter ; then
+	if multilib_is_native_abi && use exporter ; then
 		pushd "${EX_S}" >/dev/null
 		append-lfs-flags
 		econf --disable-shared
 		popd >/dev/null
 	fi
 
+	ECONF_SOURCE=${S} \
 	econf \
 		--includedir="${EPREFIX}"/usr/include/gdbm \
 		--with-gdbm183-libdir="${EX_S}/.libs" \
 		--with-gdbm183-includedir="${EX_S}" \
 		$(use_enable berkdb libgdbm-compat) \
-		$(use_enable exporter gdbm-export) \
+		$(multilib_native_use_enable exporter gdbm-export) \
+		$(use_enable nls) \
 		$(use_enable static-libs static)
 }
 
-src_compile() {
-	if use exporter ; then
-		emake -C "${WORKDIR}"/${EX_P} libgdbm.la || die
-	fi
-
-	emake || die
+multilib_src_compile() {
+	use exporter && emake -C "${EX_S}" libgdbm.la
+	emake
 }
 
-src_install() {
-	emake DESTDIR="${D}" install || die
+multilib_src_install_all() {
+	einstalldocs
+
 	use static-libs || find "${ED}" -name '*.la' -delete
 	mv "${ED}"/usr/include/gdbm/gdbm.h "${ED}"/usr/include/ || die
-	dodoc ChangeLog NEWS README
 }
 
 pkg_preinst() {
