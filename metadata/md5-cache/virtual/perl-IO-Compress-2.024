@@ -1,6 +1,0 @@
-DEFINED_PHASES=-
-DESCRIPTION=Virtual for IO-Compress
-KEYWORDS=*
-RDEPEND=|| ( ~dev-lang/perl-5.12.4 ~dev-lang/perl-5.12.3 ~dev-lang/perl-5.12.2 ~perl-core/IO-Compress-2.024 )
-SLOT=0
-_md5_=fe524d6574f4e393d5e96ecee2fd9793

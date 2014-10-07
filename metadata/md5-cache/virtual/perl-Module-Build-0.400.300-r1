@@ -1,0 +1,7 @@
+DEFINED_PHASES=-
+DESCRIPTION=Virtual for Module-Build
+EAPI=5
+KEYWORDS=*
+RDEPEND=|| ( =dev-lang/perl-5.18* ~perl-core/Module-Build-0.400.300 ) !<perl-core/Module-Build-0.400.300 !>perl-core/Module-Build-0.400.300-r999
+SLOT=0
+_md5_=6b0c05667820af13203a0dbd1e0e5798

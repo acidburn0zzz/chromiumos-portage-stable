@@ -1,6 +1,0 @@
-DEFINED_PHASES=-
-DESCRIPTION=Build and install Perl modules
-KEYWORDS=*
-RDEPEND=~perl-core/Module-Build-0.36.07
-SLOT=0
-_md5_=e94d9a32ec8f17d3c5d5778b27119c1f

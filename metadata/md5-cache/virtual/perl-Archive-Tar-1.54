@@ -1,6 +1,0 @@
-DEFINED_PHASES=-
-DESCRIPTION=A Perl module for creation and manipulation of tar files
-KEYWORDS=*
-RDEPEND=|| ( ~dev-lang/perl-5.12.4 ~dev-lang/perl-5.12.3 ~dev-lang/perl-5.12.2 ~perl-core/Archive-Tar-1.54 )
-SLOT=0
-_md5_=c32539cfead64c120dcb90dde88646ad

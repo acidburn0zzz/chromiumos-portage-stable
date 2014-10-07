@@ -1,6 +1,0 @@
-DEFINED_PHASES=-
-DESCRIPTION=Virtual for IO-Zlib
-KEYWORDS=*
-RDEPEND=|| ( =dev-lang/perl-5.14* ~dev-lang/perl-5.12.4 ~dev-lang/perl-5.12.3 ~dev-lang/perl-5.12.2 ~perl-core/IO-Zlib-1.100.0 )
-SLOT=0
-_md5_=f7faedd18c83539775d8c8980264b285

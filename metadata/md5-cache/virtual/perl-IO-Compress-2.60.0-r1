@@ -1,0 +1,7 @@
+DEFINED_PHASES=-
+DESCRIPTION=Virtual for IO-Compress
+EAPI=5
+KEYWORDS=*
+RDEPEND=|| ( =dev-lang/perl-5.18* ~perl-core/IO-Compress-2.60.0 ) !<perl-core/IO-Compress-2.60.0 !>perl-core/IO-Compress-2.60.0-r999
+SLOT=0
+_md5_=504bf7717bbe5c89758ff9c97c92aa82

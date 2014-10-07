@@ -1,6 +1,0 @@
-DEFINED_PHASES=-
-DESCRIPTION=Virtual for Package-Constants
-KEYWORDS=*
-RDEPEND=|| ( =dev-lang/perl-5.14* ~dev-lang/perl-5.12.4 ~dev-lang/perl-5.12.3 ~dev-lang/perl-5.12.2 ~dev-lang/perl-5.10.1 ~perl-core/Package-Constants-0.20.0 )
-SLOT=0
-_md5_=f0ddb983199a5209ed7daf0635b506f9

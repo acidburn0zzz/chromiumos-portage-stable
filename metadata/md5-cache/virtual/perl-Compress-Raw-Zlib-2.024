@@ -1,6 +1,0 @@
-DEFINED_PHASES=-
-DESCRIPTION=Low-Level Interface to zlib compression library
-KEYWORDS=*
-RDEPEND=|| ( ~dev-lang/perl-5.12.4 ~dev-lang/perl-5.12.3 ~dev-lang/perl-5.12.2 ~perl-core/Compress-Raw-Zlib-2.024 )
-SLOT=0
-_md5_=4b170fece3bd9d0a7a0e6ef0328921e0

@@ -1,6 +1,0 @@
-DEFINED_PHASES=-
-DESCRIPTION=Converts Perl XS code into C code
-KEYWORDS=*
-RDEPEND=~perl-core/ExtUtils-ParseXS-2.22.05
-SLOT=0
-_md5_=f0ec27ac4e106e6fedad983cece2d116

@@ -1,0 +1,7 @@
+DEFINED_PHASES=-
+DESCRIPTION=Virtual for Archive-Tar
+EAPI=5
+KEYWORDS=*
+RDEPEND=|| ( =dev-lang/perl-5.18* ~perl-core/Archive-Tar-1.900.0 ) !<perl-core/Archive-Tar-1.900.0 !>perl-core/Archive-Tar-1.900.0-r999
+SLOT=0
+_md5_=f907001650b9e35961445047559c2fc3

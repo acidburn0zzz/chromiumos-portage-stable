@@ -1,6 +1,0 @@
-DEFINED_PHASES=-
-DESCRIPTION=Virtual for digest-base
-KEYWORDS=*
-RDEPEND=|| ( =dev-lang/perl-5.14* ~dev-lang/perl-5.12.4 ~dev-lang/perl-5.12.3 ~dev-lang/perl-5.12.2 ~dev-lang/perl-5.10.1 ~perl-core/digest-base-1.160.0 )
-SLOT=0
-_md5_=e61a37849e41dbfe10e268ce279a7593

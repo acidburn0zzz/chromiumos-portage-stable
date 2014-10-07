@@ -1,6 +1,0 @@
-DEFINED_PHASES=-
-DESCRIPTION=Compile and link C code for Perl modules
-KEYWORDS=*
-RDEPEND=~perl-core/ExtUtils-CBuilder-0.27.03
-SLOT=0
-_md5_=e304314673a31249c841493c21b4cc8e

@@ -1,6 +1,0 @@
-DEFINED_PHASES=-
-DESCRIPTION=Virtual for Scalar-List-Utils
-KEYWORDS=*
-RDEPEND=|| ( =dev-lang/perl-5.14* ~perl-core/Scalar-List-Utils-1.230.0 )
-SLOT=0
-_md5_=8cf226da8ea5fbdb869610a7aeca3c5e

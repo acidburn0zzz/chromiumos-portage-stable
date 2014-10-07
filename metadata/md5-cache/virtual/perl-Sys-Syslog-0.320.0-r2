@@ -1,0 +1,7 @@
+DEFINED_PHASES=-
+DESCRIPTION=Virtual for Sys-Syslog
+EAPI=5
+KEYWORDS=*
+RDEPEND=|| ( =dev-lang/perl-5.18* ~perl-core/Sys-Syslog-0.320.0 ) !<perl-core/Sys-Syslog-0.320.0 !>perl-core/Sys-Syslog-0.320.0-r999
+SLOT=0
+_md5_=fc08422ae31792b1b46c9cc4f10eb9ce

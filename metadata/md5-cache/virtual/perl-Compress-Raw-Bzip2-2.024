@@ -1,6 +1,0 @@
-DEFINED_PHASES=-
-DESCRIPTION=Virtual for Compress-Raw-Bzip2
-KEYWORDS=*
-RDEPEND=|| ( ~dev-lang/perl-5.12.4 ~dev-lang/perl-5.12.3 ~dev-lang/perl-5.12.2 ~perl-core/Compress-Raw-Bzip2-2.024 )
-SLOT=0
-_md5_=bae4e3c4c8e34d605f114dc465162b80

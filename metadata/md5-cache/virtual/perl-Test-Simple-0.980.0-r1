@@ -1,6 +1,0 @@
-DEFINED_PHASES=-
-DESCRIPTION=Virtual for Test-Simple
-KEYWORDS=*
-RDEPEND=|| ( =dev-lang/perl-5.14* ~perl-core/Test-Simple-0.980.0 )
-SLOT=0
-_md5_=2e2af3bb355085053912b0911be52303

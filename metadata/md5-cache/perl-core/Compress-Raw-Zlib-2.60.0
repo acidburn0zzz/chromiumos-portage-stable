@@ -1,0 +1,12 @@
+DEFINED_PHASES=compile configure install postinst postrm prepare test unpack
+DEPEND=>=sys-libs/zlib-1.2.5 || ( >=dev-lang/perl-5.16 <dev-lang/perl-5.16[-build] )
+DESCRIPTION=Low-Level Interface to zlib compression library
+EAPI=5
+HOMEPAGE=http://search.cpan.org/dist/Compress-Raw-Zlib/
+KEYWORDS=*
+LICENSE=|| ( Artistic GPL-1 GPL-2 GPL-3 )
+RDEPEND=>=sys-libs/zlib-1.2.5 || ( >=dev-lang/perl-5.16 <dev-lang/perl-5.16[-build] )
+SLOT=0
+SRC_URI=mirror://cpan/authors/id/P/PM/PMQS/Compress-Raw-Zlib-2.060.tar.gz
+_eclasses_=alternatives	eb864f6e50a20036e4cd47c8fd8f64d1	base	ec46b36a6f6fd1d0b505a33e0b74e413	eutils	06133990e861be0fe60c2b428fd025d9	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	multiprocessing	d7f2985a2c76c365ee20269db5261414	perl-module	d93571ca1c77e98760e5aa406388b02d	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
+_md5_=5f5391eea5a584991d9f8abc7ff0b53b

@@ -1,6 +1,0 @@
-DEFINED_PHASES=-
-DESCRIPTION=Virtual for File-Spec
-KEYWORDS=*
-RDEPEND=|| ( ~dev-lang/perl-5.12.1 ~perl-core/File-Spec-3.31 )
-SLOT=0
-_md5_=0b4f225baca91ae5b5742851c0c0dbbb

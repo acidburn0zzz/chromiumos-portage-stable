@@ -1,0 +1,7 @@
+DEFINED_PHASES=-
+DESCRIPTION=Virtual for Package-Constants
+EAPI=5
+KEYWORDS=*
+RDEPEND=|| ( =dev-lang/perl-5.18* =dev-lang/perl-5.16* ~perl-core/Package-Constants-0.20.0 ) !<perl-core/Package-Constants-0.20.0 !>perl-core/Package-Constants-0.20.0-r999
+SLOT=0
+_md5_=d65f65b2c2e47daa7459a2d432c1fdc7

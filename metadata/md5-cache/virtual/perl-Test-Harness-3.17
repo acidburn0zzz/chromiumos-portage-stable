@@ -1,6 +1,0 @@
-DEFINED_PHASES=-
-DESCRIPTION=Virtual for Test-Harness
-KEYWORDS=*
-RDEPEND=|| ( ~dev-lang/perl-5.12.4 ~dev-lang/perl-5.12.3 ~dev-lang/perl-5.12.2 ~dev-lang/perl-5.10.1 ~perl-core/Test-Harness-3.17 )
-SLOT=0
-_md5_=8707e8b3d497baa3b5ed1fba2d8b4caf

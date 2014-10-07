@@ -1,0 +1,7 @@
+DEFINED_PHASES=-
+DESCRIPTION=Virtual for IO-Zlib
+EAPI=5
+KEYWORDS=*
+RDEPEND=|| ( =dev-lang/perl-5.20* =dev-lang/perl-5.18* =dev-lang/perl-5.16* ~perl-core/IO-Zlib-1.100.0 ) !<perl-core/IO-Zlib-1.100.0 !>perl-core/IO-Zlib-1.100.0-r999
+SLOT=0
+_md5_=daa017b3e924af0c9dcab0c60d63476f

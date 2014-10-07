@@ -1,0 +1,7 @@
+DEFINED_PHASES=-
+DESCRIPTION=Virtual for File-Spec
+EAPI=5
+KEYWORDS=*
+RDEPEND=|| ( =dev-lang/perl-5.18* ~perl-core/File-Spec-3.400.0 ) !<perl-core/File-Spec-3.400.0 !>perl-core/File-Spec-3.400.0-r999
+SLOT=0
+_md5_=513d28e28feb222814585a7f63c92fcf
