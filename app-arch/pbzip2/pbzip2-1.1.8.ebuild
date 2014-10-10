@@ -1,6 +1,6 @@
-# Copyright 1999-2012 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/app-arch/pbzip2/pbzip2-1.1.6.ebuild,v 1.2 2012/07/15 18:24:16 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/app-arch/pbzip2/pbzip2-1.1.8.ebuild,v 1.11 2014/01/18 01:43:37 vapier Exp $
 
 EAPI=4
 
@@ -8,7 +8,7 @@ inherit flag-o-matic eutils
 
 DESCRIPTION="Parallel bzip2 (de)compressor using libbz2"
 HOMEPAGE="http://compression.ca/pbzip2/"
-SRC_URI="http://compression.ca/${PN}/${P}.tar.gz"
+SRC_URI="https://launchpad.net/pbzip2/${PV:0:3}/${PV}/+download/${P}.tar.gz"
 
 LICENSE="BZIP2"
 SLOT="0"
@@ -16,7 +16,9 @@ KEYWORDS="*"
 IUSE="static symlink"
 
 LIB_DEPEND="app-arch/bzip2[static-libs(+)]"
-RDEPEND="!static? ( ${LIB_DEPEND//\[static-libs(+)]} )"
+RDEPEND="
+	!static? ( ${LIB_DEPEND//\[static-libs(+)]} )
+	symlink? ( !app-arch/lbzip2[symlink] )"
 DEPEND="${RDEPEND}
 	static? ( ${LIB_DEPEND} )"
 
