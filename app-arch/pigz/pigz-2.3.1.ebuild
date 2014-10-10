@@ -1,8 +1,8 @@
-# Copyright 1999-2012 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/app-arch/pigz/pigz-2.2.5.ebuild,v 1.2 2012/08/06 19:34:16 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/app-arch/pigz/pigz-2.3.1.ebuild,v 1.4 2014/01/18 01:43:34 vapier Exp $
 
-EAPI="4"
+EAPI=5
 
 inherit toolchain-funcs flag-o-matic
 
@@ -21,10 +21,9 @@ DEPEND="${RDEPEND}
 	static? ( ${LIB_DEPEND} )
 	test? ( app-arch/ncompress )"
 
-src_prepare() {
-	sed -i -e '1,3d' -e '5s/$(CC)/$(CC) $(LDFLAGS)/' Makefile || die
+src_compile() {
 	use static && append-ldflags -static
-	tc-export CC
+	emake CC="$(tc-getCC)" CFLAGS="${CFLAGS}"
 }
 
 src_install() {
