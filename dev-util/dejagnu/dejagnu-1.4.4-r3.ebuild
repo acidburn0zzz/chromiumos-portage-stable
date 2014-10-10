@@ -1,6 +1,6 @@
-# Copyright 1999-2010 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-util/dejagnu/dejagnu-1.4.4-r1.ebuild,v 1.16 2010/01/15 21:30:53 fauli Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-util/dejagnu/dejagnu-1.4.4-r3.ebuild,v 1.3 2014/01/19 04:45:57 vapier Exp $
 
 inherit eutils
 
@@ -20,13 +20,15 @@ src_unpack() {
 	unpack ${A}
 	cd "${S}"
 	epatch "${FILESDIR}"/dejagnu-ignore-libwarning.patch
+	epatch "${FILESDIR}"/${P}-rsh-username.patch
+	epatch "${FILESDIR}"/${P}-testglue-protos.patch
 }
 
 src_test() {
 	# if you dont have dejagnu emerged yet, you cant
 	# run the tests ... crazy aint it :)
 	type -p runtest || return 0
-	make check || die "check failed :("
+	emake check || die "check failed :("
 }
 
 src_install() {
