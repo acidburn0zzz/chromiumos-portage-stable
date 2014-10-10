@@ -1,38 +1,47 @@
-# Copyright 1999-2010 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-apps/miscfiles/miscfiles-1.4.2-r1.ebuild,v 1.10 2010/03/04 17:42:43 jer Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-apps/miscfiles/miscfiles-1.5-r1.ebuild,v 1.10 2014/01/18 03:28:41 vapier Exp $
 
-inherit eutils
+EAPI="3"
 
-UNI_PV=5.2.0
+UNI_PV=6.1.0
 DESCRIPTION="Miscellaneous files"
-HOMEPAGE="http://www.gnu.org/directory/miscfiles.html"
-# updated unicode data file from:
+HOMEPAGE="http://savannah.gnu.org/projects/miscfiles/"
 # http://www.unicode.org/Public/${UNI_PV}/ucd/UnicodeData.txt
 SRC_URI="mirror://gnu/miscfiles/${P}.tar.gz
-	mirror://gentoo/UnicodeData-${UNI_PV}.txt.bz2"
+	mirror://gentoo/UnicodeData-${UNI_PV}.txt.xz"
 
 LICENSE="GPL-2 unicode"
 SLOT="0"
 KEYWORDS="*"
 IUSE="minimal"
+
 # Collides with older versions/revisions
 RDEPEND="!<sys-freebsd/freebsd-share-7.2-r1"
+DEPEND="app-arch/xz-utils"
 
-src_unpack() {
-	unpack ${A}
-	cd "${S}"
+src_prepare() {
 	mv "${WORKDIR}"/UnicodeData-${UNI_PV}.txt unicode || die
-	epatch "${FILESDIR}"/miscfiles-1.3-Makefile.diff
+}
+
+src_configure() {
+	econf --datadir="${EPREFIX}"/usr/share/misc
 }
 
 src_install() {
-	emake install prefix="${D}/usr" || die
+	emake install DESTDIR="${D}" || die
 	dodoc NEWS ORIGIN README dict-README
-	rm -f "${D}"/usr/share/dict/README
+
+	# not sure if this is still needed ...
+	dodir /usr/share/dict
+	cd "${ED}"/usr/share/misc
+	mv $(awk '$1=="dictfiles"{$1="";$2="";print}' "${S}"/Makefile) ../dict/ || die
+	cd ../dict
+	ln -s web2 words || die
+	ln -s web2a extra.words || die
 
 	if use minimal ; then
-		cd "${D}"/usr/share/dict
+		cd "${ED}"/usr/share/dict
 		rm -f words extra.words
 		gzip -9 *
 		ln -s web2.gz words
@@ -47,7 +56,7 @@ src_install() {
 pkg_postinst() {
 	if [[ ${ROOT} == "/" ]] && type -P create-cracklib-dict >/dev/null ; then
 		ebegin "Regenerating cracklib dictionary"
-		create-cracklib-dict /usr/share/dict/* > /dev/null
+		create-cracklib-dict "${EPREFIX}"/usr/share/dict/* > /dev/null
 		eend $?
 	fi
 }
