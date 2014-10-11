@@ -1,6 +1,6 @@
 # Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-vcs/git/git-1.8.3.2-r1.ebuild,v 1.11 2014/01/18 09:26:02 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-vcs/git/git-2.1.2.ebuild,v 1.1 2014/10/02 08:37:23 polynomial-c Exp $
 
 EAPI=5
 
@@ -10,6 +10,7 @@ GENTOO_DEPEND_ON_PERL=no
 PYTHON_COMPAT=( python2_{6,7} )
 [[ ${PV} == *9999 ]] && SCM="git-2"
 EGIT_REPO_URI="git://git.kernel.org/pub/scm/git/git.git"
+EGIT_MASTER=pu
 
 inherit toolchain-funcs eutils elisp-common perl-module bash-completion-r1 python-single-r1 systemd ${SCM}
 
@@ -21,7 +22,7 @@ DOC_VER=${MY_PV}
 DESCRIPTION="GIT - the stupid content tracker, the revision control system heavily used by the Linux kernel team"
 HOMEPAGE="http://www.git-scm.com/"
 if [[ ${PV} != *9999 ]]; then
-	SRC_URI_SUFFIX="gz"
+	SRC_URI_SUFFIX="xz"
 	SRC_URI_GOOG="http://git-core.googlecode.com/files"
 	SRC_URI_KORG="mirror://kernel/software/scm/git"
 	SRC_URI="${SRC_URI_GOOG}/${MY_P}.tar.${SRC_URI_SUFFIX}
@@ -35,34 +36,38 @@ if [[ ${PV} != *9999 ]]; then
 	KEYWORDS="*"
 else
 	SRC_URI=""
-	KEYWORDS="*"
+	KEYWORDS=""
 fi
 
 LICENSE="GPL-2"
 SLOT="0"
-IUSE="+blksha1 +curl cgi doc emacs gnome-keyring +gpg gtk highlight +iconv +nls +pcre +perl +python ppcsha1 tk +threads +webdav xinetd cvs subversion test"
+IUSE="+blksha1 +curl cgi doc emacs gnome-keyring +gpg gtk highlight +iconv mediawiki +nls +pcre +perl +python ppcsha1 tk +threads +webdav xinetd cvs subversion test"
 
 # Common to both DEPEND and RDEPEND
 CDEPEND="
 	dev-libs/openssl
 	sys-libs/zlib
 	pcre? ( dev-libs/libpcre )
-	perl? ( dev-lang/perl[-build(-)] )
+	perl? ( dev-lang/perl:=[-build(-)] )
 	tk? ( dev-lang/tk )
 	curl? (
 		net-misc/curl
 		webdav? ( dev-libs/expat )
 	)
 	emacs? ( virtual/emacs )
-	gnome-keyring? ( gnome-base/gnome-keyring )"
+	gnome-keyring? ( gnome-base/libgnome-keyring )"
 
 RDEPEND="${CDEPEND}
 	gpg? ( app-crypt/gnupg )
+	mediawiki? (
+		dev-perl/HTML-Tree
+		dev-perl/MediaWiki-API
+	)
 	perl? ( dev-perl/Error
 			dev-perl/Net-SMTP-SSL
 			dev-perl/Authen-SASL
 			cgi? ( virtual/perl-CGI highlight? ( app-text/highlight ) )
-			cvs? ( >=dev-vcs/cvsps-2.1 dev-perl/DBI dev-perl/DBD-SQLite )
+			cvs? ( >=dev-vcs/cvsps-2.1:0 dev-perl/DBI dev-perl/DBD-SQLite )
 			subversion? ( dev-vcs/subversion[-dso,perl] dev-perl/libwww-perl dev-perl/TermReadKey )
 			)
 	python? ( gtk?
@@ -84,9 +89,8 @@ DEPEND="${CDEPEND}
 		sys-apps/texinfo
 		app-text/xmlto
 	)
-	test? (
-		app-crypt/gnupg
-	)"
+	nls? ( sys-devel/gettext )
+	test? (	app-crypt/gnupg	)"
 
 # Live ebuild builds man pages and HTML docs, additionally
 if [[ ${PV} == *9999 ]]; then
@@ -100,6 +104,7 @@ S="${WORKDIR}/${MY_P}"
 REQUIRED_USE="
 	cgi? ( perl )
 	cvs? ( perl )
+	mediawiki? ( perl )
 	subversion? ( perl )
 	webdav? ( curl )
 	gtk? ( python )
@@ -220,15 +225,21 @@ src_unpack() {
 
 src_prepare() {
 	# bug #350330 - automagic CVS when we don't want it is bad.
-	epatch "${FILESDIR}"/git-1.8.2-optional-cvs.patch
+	epatch "${FILESDIR}"/git-2.0.0-r2-optional-cvs.patch
+
+	# install mediawiki perl modules also in vendor_dir
+	# hack, needs better upstream solution
+	epatch "${FILESDIR}"/git-1.8.5-mw-vendor.patch
+
+	epatch_user
 
 	sed -i \
-		-e 's:^\(CFLAGS =\).*$:\1 $(OPTCFLAGS) -Wall:' \
-		-e 's:^\(LDFLAGS =\).*$:\1 $(OPTLDFLAGS):' \
-		-e 's:^\(CC = \).*$:\1$(OPTCC):' \
-		-e 's:^\(AR = \).*$:\1$(OPTAR):' \
-		-e "s:\(PYTHON_PATH = \)\(.*\)$:\1${EPREFIX}\2:" \
-		-e "s:\(PERL_PATH = \)\(.*\)$:\1${EPREFIX}\2:" \
+		-e 's:^\(CFLAGS[[:space:]]*=\).*$:\1 $(OPTCFLAGS) -Wall:' \
+		-e 's:^\(LDFLAGS[[:space:]]*=\).*$:\1 $(OPTLDFLAGS):' \
+		-e 's:^\(CC[[:space:]]* =\).*$:\1$(OPTCC):' \
+		-e 's:^\(AR[[:space:]]* =\).*$:\1$(OPTAR):' \
+		-e "s:\(PYTHON_PATH[[:space:]]\+=[[:space:]]\+\)\(.*\)$:\1${EPREFIX}\2:" \
+		-e "s:\(PERL_PATH[[:space:]]\+=[[:space:]]\+\)\(.*\)$:\1${EPREFIX}\2:" \
 		Makefile contrib/svn-fe/Makefile || die "sed failed"
 
 	# Never install the private copy of Error.pm (bug #296310)
@@ -237,7 +248,7 @@ src_prepare() {
 		perl/Makefile.PL
 
 	# Fix docbook2texi command
-	sed -i 's/DOCBOOK2X_TEXI=docbook2x-texi/DOCBOOK2X_TEXI=docbook2texi.pl/' \
+	sed -r -i 's/DOCBOOK2X_TEXI[[:space:]]*=[[:space:]]*docbook2x-texi/DOCBOOK2X_TEXI = docbook2texi.pl/' \
 		Documentation/Makefile || die "sed failed"
 
 	# Fix git-subtree missing DESTDIR
@@ -314,7 +325,12 @@ src_compile() {
 
 	if use subversion ; then
 		cd "${S}"/contrib/svn-fe
-		git_emake EXTLIBS="${EXTLIBS}" || die "emake svn-fe failed"
+		# by defining EXTLIBS we override the detection for libintl and
+		# libiconv, bug #516168
+		local nlsiconv=
+		use nls && use !elibc_glibc && nlsiconv+=" -lintl"
+		use iconv && use !elibc_glibc && nlsiconv+=" -liconv"
+		git_emake EXTLIBS="${EXTLIBS} ${nlsiconv}" || die "emake svn-fe failed"
 		if use doc ; then
 			git_emake svn-fe.{1,html} || die "emake svn-fe.1 svn-fe.html failed"
 		fi
@@ -329,6 +345,11 @@ src_compile() {
 	cd "${S}"/contrib/subtree
 	git_emake
 	use doc && git_emake doc
+
+	if use mediawiki ; then
+		cd "${S}"/contrib/mw-to-git
+		git_emake
+	fi
 }
 
 src_install() {
@@ -357,7 +378,10 @@ src_install() {
 	use doc && doinfo Documentation/{git,gitman}.info
 
 	newbashcomp contrib/completion/git-completion.bash ${PN}
-	newbashcomp contrib/completion/git-prompt.sh ${PN}-prompt
+	# Not really a bash-completion file (bug #477920)
+	# but still needed uncompressed (bug #507480)
+	insinto /usr/share/${PN}
+	doins contrib/completion/git-prompt.sh
 
 	if use emacs ; then
 		elisp-install ${PN} contrib/emacs/git.{el,elc}
@@ -390,9 +414,11 @@ src_install() {
 	dodoc git-subtree.txt
 	cd "${S}"
 
-	# git-diffall
-	dobin contrib/diffall/git-diffall
-	newdoc contrib/diffall/README git-diffall.txt
+	if use mediawiki ; then
+		cd "${S}"/contrib/mw-to-git
+		git_emake install
+		cd "${S}"
+	fi
 
 	# diff-highlight
 	dobin contrib/diff-highlight/diff-highlight
@@ -402,6 +428,11 @@ src_install() {
 	exeinto /usr/libexec/git-core/
 	doexe contrib/git-jump/git-jump
 	newdoc contrib/git-jump/README git-jump.txt
+
+	# git-contacts
+	exeinto /usr/libexec/git-core/
+	doexe contrib/contacts/git-contacts
+	dodoc contrib/contacts/git-contacts.txt
 
 	if use gnome-keyring ; then
 		cd "${S}"/contrib/credential/gnome-keyring
@@ -416,19 +447,11 @@ src_install() {
 		cd "${S}"
 	fi
 
-	# remote-helpers
-	if use python ; then
-		python_scriptinto /usr/libexec/git-core/
-		python_doscript "${S}"/contrib/remote-helpers/git-remote-{bzr,hg}
-		python_optimize
-	fi
-
 	dodir /usr/share/${PN}/contrib
 	# The following are excluded:
 	# completion - installed above
 	# credential/gnome-keyring TODO
 	# diff-highlight - done above
-	# diffall - done above
 	# emacs - installed above
 	# examples - these are stuff that is not used in Git anymore actually
 	# git-jump - done above
@@ -441,9 +464,9 @@ src_install() {
 	# svnimport - use git-svn
 	# thunderbird-patch-inline - fixes thunderbird
 	for i in \
-		blameview buildsystems ciabot continuous convert-objects fast-import \
+		buildsystems convert-objects fast-import \
 		hg-to-git hooks remotes2config.sh rerere-train.sh \
-		stats vim workdir \
+		stats workdir \
 		; do
 		cp -rf \
 			"${S}"/contrib/${i} \
@@ -481,7 +504,7 @@ src_install() {
 	fi
 
 	if use !prefix ; then
-		newinitd "${FILESDIR}"/git-daemon.initd git-daemon
+		newinitd "${FILESDIR}"/git-daemon-r1.initd git-daemon
 		newconfd "${FILESDIR}"/git-daemon.confd git-daemon
 		systemd_newunit "${FILESDIR}/git-daemon_at.service" "git-daemon@.service"
 		systemd_dounit "${FILESDIR}/git-daemon.socket"
@@ -491,7 +514,7 @@ src_install() {
 }
 
 src_test() {
-	local disabled=""
+	local disabled="t7004-tag.sh" #520270
 	local tests_cvs="t9200-git-cvsexportcommit.sh \
 					t9400-git-cvsserver-server.sh \
 					t9401-git-cvsserver-crlf.sh \
@@ -599,13 +622,13 @@ showpkgdeps() {
 pkg_postinst() {
 	use emacs && elisp-site-regen
 	einfo "Please read /usr/share/bash-completion/git for Git bash command completion"
-	einfo "Please read /usr/share/bash-completion/git-prompt for Git bash prompt"
-	einfo "Note that the prompt bash code is now in the seperate script"
+	einfo "Please read /usr/share/git/git-prompt.sh for Git bash prompt"
+	einfo "Note that the prompt bash code is now in that separate script"
 	elog "These additional scripts need some dependencies:"
 	echo
 	showpkgdeps git-quiltimport "dev-util/quilt"
 	showpkgdeps git-instaweb \
-		"|| ( www-servers/lighttpd www-servers/apache )"
+		"|| ( www-servers/lighttpd www-servers/apache www-servers/nginx )"
 	echo
 }
 
