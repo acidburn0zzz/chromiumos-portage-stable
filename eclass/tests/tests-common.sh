@@ -5,10 +5,18 @@ if ! source /etc/init.d/functions.sh ; then
 	exit 1
 fi
 
+TESTS_ECLASS_SEARCH_PATHS=( .. )
+
 inherit() {
-	local e
+	local e path
 	for e in "$@" ; do
-		source ../${e}.eclass
+		for path in "${TESTS_ECLASS_SEARCH_PATHS[@]}"; do
+			local eclass=${path}/${e}.eclass
+			if [[ -e "${eclass}" ]]; then
+				source "${eclass}"
+				break
+			fi
+		done
 	done
 }
 EXPORT_FUNCTIONS() { :; }
