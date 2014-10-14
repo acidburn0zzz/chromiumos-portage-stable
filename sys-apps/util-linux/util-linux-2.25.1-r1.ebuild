@@ -61,6 +61,7 @@ pkg_setup() {
 }
 
 src_prepare() {
+	epatch "${FILESDIR}"/${P}-blkid-probe-fix.patch
 	if [[ ${PV} == 9999 ]] ; then
 		po/update-potfiles
 		eautoreconf
