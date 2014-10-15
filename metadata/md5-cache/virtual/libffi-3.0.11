@@ -1,6 +1,0 @@
-DEFINED_PHASES=-
-DESCRIPTION=A virtual for the Foreign Function Interface implementation
-KEYWORDS=*
-RDEPEND=>=dev-libs/libffi-3.0.11
-SLOT=0
-_md5_=f719710d74b67e9c4594994a6aa724c2
