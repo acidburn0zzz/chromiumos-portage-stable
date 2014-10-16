@@ -1,6 +1,6 @@
 # Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-libs/timezone-data/timezone-data-2014f.ebuild,v 1.1 2014/08/07 00:08:01 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-libs/timezone-data/timezone-data-2014h.ebuild,v 1.1 2014/10/16 19:19:44 vapier Exp $
 
 EAPI="4"
 
@@ -11,16 +11,14 @@ data_ver=${PV}
 DESCRIPTION="Timezone data (/usr/share/zoneinfo) and utilities (tzselect/zic/zdump)"
 HOMEPAGE="http://www.iana.org/time-zones http://www.twinsun.com/tz/tz-link.htm"
 SRC_URI="http://www.iana.org/time-zones/repository/releases/tzdata${data_ver}.tar.gz
-	http://www.iana.org/time-zones/repository/releases/tzcode${code_ver}.tar.gz
-	ftp://munnari.oz.au/pub/oldtz/tzdata${data_ver}.tar.gz
-	ftp://munnari.oz.au/pub/oldtz/tzcode${data_ver}.tar.gz"
+	http://www.iana.org/time-zones/repository/releases/tzcode${code_ver}.tar.gz"
 
 LICENSE="BSD public-domain"
 SLOT="0"
 KEYWORDS="*"
 IUSE="nls right_timezone elibc_FreeBSD elibc_glibc"
 
-RDEPEND="!<sys-libs/glibc-2.3.5"
+RDEPEND="!sys-libs/glibc[vanilla(+)]"
 
 S=${WORKDIR}
 
@@ -42,7 +40,7 @@ pkg_setup() {
 }
 
 src_prepare() {
-	epatch "${FILESDIR}"/${PN}-2014f-makefile.patch
+	epatch "${FILESDIR}"/${PN}-2014h-makefile.patch
 	tc-is-cross-compiler && cp -pR "${S}" "${S}"-native
 }
 
@@ -85,7 +83,7 @@ src_install() {
 	local zic=""
 	tc-is-cross-compiler && zic="zic=${S}-native/zic"
 	_emake install ${zic} DESTDIR="${D}"
-	dodoc README Theory
+	dodoc CONTRIBUTING README NEWS Theory
 	dohtml *.htm
 
 	# install the symlink by hand to not break existing timezones
@@ -101,7 +99,7 @@ get_TIMEZONE() {
 	else
 		tz="FOOKABLOIE"
 	fi
-	[[ -z ${tz} ]]
+	[[ -z ${tz} ]] && return 1 || echo "${tz}"
 }
 
 pkg_preinst() {

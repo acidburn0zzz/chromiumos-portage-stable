@@ -5,6 +5,7 @@
  - Move zic, zdump to sbin and tzselect to bin ala glibc
  - Install posix zoneinfo into zoneinfo/posix/ instead of zoneinfo-posix/ ala glibc
  - Install leaps zoneinfo into zoneinfo/right/ ala glibc
+ - Do not run network based unittests
 
 --- a/Makefile
 +++ b/Makefile
@@ -100,13 +101,13 @@
 +		$(ZIC) -y $(YEARISTYPE) -d $(DESTDIR)$(TZDIR)/right \
  			-L leapseconds $(TDATA)
  
- zones:		$(REDO)
+ posix_packrat:	posix_only backzone
 @@ -440,7 +442,7 @@ tzselect:	tzselect.ksh
- 			<$? >$@
  		chmod +x $@
  
--check:		check_character_set check_tables check_web
-+check:		check_character_set check_tables
+ check:		check_character_set check_white_space check_sorted \
+-		  check_tables check_web
++		  check_tables
  
  check_character_set: $(ENCHILADA)
- 		sharp='#'; ! grep -n $(INVALID_CHAR) $(ENCHILADA)
+ 		LC_ALL=en_US.utf8 && export LC_ALL && \
