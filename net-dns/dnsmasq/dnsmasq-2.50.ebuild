@@ -30,6 +30,7 @@ src_prepare() {
 
 	# dnsmasq on FreeBSD wants the config file in a silly location, this fixes
 	epatch "${FILESDIR}/${PN}-2.47-fbsd-config.patch"
+	epatch "${FILESDIR}/${PN}-2.47-reuse-port.patch"
 }
 
 src_configure() {
