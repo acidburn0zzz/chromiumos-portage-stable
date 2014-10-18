@@ -10,4 +10,4 @@ RDEPEND=dbus? ( sys-apps/dbus ) nls? ( sys-devel/gettext )
 SLOT=0
 SRC_URI=http://www.thekelleys.org.uk/dnsmasq/dnsmasq-2.50.tar.lzma
 _eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	c3131dc67d3bd39f044e92b8280505e4	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
-_md5_=f200b7dc8cd9481e1dea6bd4ba6a7558
+_md5_=c83acd2b0cfd1f55df3f8c1f02aaec2a
