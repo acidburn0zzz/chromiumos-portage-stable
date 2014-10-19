@@ -1,0 +1,12 @@
+DEFINED_PHASES=configure install postinst prepare
+DEPEND=app-arch/xz-utils
+DESCRIPTION=Miscellaneous files
+EAPI=3
+HOMEPAGE=http://savannah.gnu.org/projects/miscfiles/
+IUSE=minimal
+KEYWORDS=*
+LICENSE=GPL-2 unicode
+RDEPEND=!<sys-freebsd/freebsd-share-7.2-r1
+SLOT=0
+SRC_URI=mirror://gnu/miscfiles/miscfiles-1.5.tar.gz mirror://gentoo/UnicodeData-6.1.0.txt.xz
+_md5_=a682b05f281e2451d25c5a15b07b8c96

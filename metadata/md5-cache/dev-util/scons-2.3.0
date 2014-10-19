@@ -1,0 +1,14 @@
+DEFINED_PHASES=compile configure install prepare test
+DEPEND=python_targets_python2_6? ( >=dev-lang/python-2.6.8-r3:2.6[threads(+)] ) python_targets_python2_7? ( >=dev-lang/python-2.7.3-r2:2.7[threads(+)] ) dev-lang/python-exec:=[python_targets_python2_6(-)?,python_targets_python2_7(-)?,-python_single_target_python2_6(-),-python_single_target_python2_7(-)]
+DESCRIPTION=Extensible Python-based build utility
+EAPI=5
+HOMEPAGE=http://www.scons.org/
+IUSE=doc python_targets_python2_6 python_targets_python2_7
+KEYWORDS=*
+LICENSE=MIT
+RDEPEND=python_targets_python2_6? ( >=dev-lang/python-2.6.8-r3:2.6[threads(+)] ) python_targets_python2_7? ( >=dev-lang/python-2.7.3-r2:2.7[threads(+)] ) dev-lang/python-exec:=[python_targets_python2_6(-)?,python_targets_python2_7(-)?,-python_single_target_python2_6(-),-python_single_target_python2_7(-)]
+REQUIRED_USE=|| ( python_targets_python2_6 python_targets_python2_7 )
+SLOT=0
+SRC_URI=mirror://sourceforge/scons/scons-2.3.0.tar.gz doc? ( http://www.scons.org/doc/2.3.0/PDF/scons-user.pdf -> scons-2.3.0-user.pdf http://www.scons.org/doc/2.3.0/HTML/scons-user.html -> scons-2.3.0-user.html )
+_eclasses_=distutils-r1	364122897f9dc771167ee5ff362e54e1	eutils	06133990e861be0fe60c2b428fd025d9	multibuild	46527a4656956da3d58acff72c9b59b1	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	multiprocessing	d7f2985a2c76c365ee20269db5261414	python-r1	cd956d5a4bac2209a64d0f4851cc115d	python-utils-r1	3eaef07c45447158fad343dac1667938	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
+_md5_=9dbcde3406b7b24d097803064d9fe399
