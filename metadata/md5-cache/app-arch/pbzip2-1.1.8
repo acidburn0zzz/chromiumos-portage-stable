@@ -1,13 +1,13 @@
 DEFINED_PHASES=install prepare
-DEPEND=!static? ( app-arch/bzip2 ) static? ( app-arch/bzip2[static-libs(+)] )
+DEPEND=!static? ( app-arch/bzip2 ) symlink? ( !app-arch/lbzip2[symlink] ) static? ( app-arch/bzip2[static-libs(+)] )
 DESCRIPTION=Parallel bzip2 (de)compressor using libbz2
 EAPI=4
 HOMEPAGE=http://compression.ca/pbzip2/
 IUSE=static symlink
 KEYWORDS=*
 LICENSE=BZIP2
-RDEPEND=!static? ( app-arch/bzip2 )
+RDEPEND=!static? ( app-arch/bzip2 ) symlink? ( !app-arch/lbzip2[symlink] )
 SLOT=0
-SRC_URI=http://compression.ca/pbzip2/pbzip2-1.1.6.tar.gz
+SRC_URI=https://launchpad.net/pbzip2/1.1/1.1.8/+download/pbzip2-1.1.8.tar.gz
 _eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	c3131dc67d3bd39f044e92b8280505e4	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
-_md5_=5db63f792efa2de5efee0c8538d146f7
+_md5_=45c75beb8adf2ac6546b293f47318bf0
