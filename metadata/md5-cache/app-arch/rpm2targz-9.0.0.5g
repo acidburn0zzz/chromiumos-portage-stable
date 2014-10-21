@@ -1,11 +1,12 @@
 DEFINED_PHASES=compile install
 DEPEND=app-arch/xz-utils
 DESCRIPTION=Convert a .rpm file to a .tar.gz archive
+EAPI=4
 HOMEPAGE=http://www.slackware.com/config/packages.php
 KEYWORDS=*
-LICENSE=as-is
+LICENSE=BSD-1
 RDEPEND=app-arch/cpio
 SLOT=0
-SRC_URI=mirror://gentoo/rpm2targz-9.0.0.4g.tar.lzma
+SRC_URI=mirror://gentoo/rpm2targz-9.0.0.5g.tar.xz
 _eclasses_=multilib	3bf24e6abb9b76d9f6c20600f0b716bf	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
-_md5_=dead26cec0831968c75886d3b178457f
+_md5_=a18fb2d094a7740a0a0bf6ff6b54669e
