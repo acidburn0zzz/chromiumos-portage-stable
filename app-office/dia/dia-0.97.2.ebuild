@@ -16,7 +16,7 @@ HOMEPAGE="http://live.gnome.org/Dia"
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="alpha amd64 hppa ia64 ppc ppc64 sparc x86 ~x86-fbsd ~x86-freebsd ~amd64-linux ~x86-linux ~ppc-macos"
+KEYWORDS="*"
 # the doc USE flag doesn't seem to do anything without docbook2html
 IUSE="cairo doc gnome python"
 

@@ -7,7 +7,7 @@ inherit font
 DESCRIPTION="A GPL-2 Helvetica/Times/Courier replacement TrueType font set, courtesy of Red Hat"
 SRC_URI="https://fedorahosted.org/releases/l/i/${PN}/${P}.tar.gz"
 HOMEPAGE="https://fedorahosted.org/liberation-fonts"
-KEYWORDS="alpha amd64 ia64 ppc ppc64 sparc x86 x86-fbsd"
+KEYWORDS="*"
 SLOT="0"
 LICENSE="GPL-2-with-exceptions"
 IUSE="X"

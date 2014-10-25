@@ -12,7 +12,7 @@ SRC_URI="mirror://sourceforge/cryptopp/cryptopp${PV//.}.zip"
 
 LICENSE="cryptopp"
 SLOT="0"
-KEYWORDS="alpha amd64 hppa ppc ppc64 sparc x86"
+KEYWORDS="*"
 IUSE=""
 
 DEPEND="app-arch/unzip
