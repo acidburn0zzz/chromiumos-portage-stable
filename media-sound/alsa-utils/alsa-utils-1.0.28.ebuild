@@ -1,21 +1,20 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/media-sound/alsa-utils/alsa-utils-1.0.27.1-r1.ebuild,v 1.7 2013/09/01 18:36:14 ago Exp $
+# $Header: /var/cvsroot/gentoo-x86/media-sound/alsa-utils/alsa-utils-1.0.28.ebuild,v 1.4 2014/10/23 10:46:39 pacho Exp $
 
 EAPI=5
 inherit eutils systemd udev
 
 DESCRIPTION="Advanced Linux Sound Architecture Utils (alsactl, alsamixer, etc.)"
 HOMEPAGE="http://www.alsa-project.org/"
-SRC_URI="mirror://alsaproject/utils/${P}.tar.bz2
-	mirror://alsaproject/driver/alsa-driver-1.0.25.tar.bz2"
+SRC_URI="mirror://alsaproject/utils/${P}.tar.bz2"
 
 LICENSE="GPL-2"
 SLOT="0.9"
 KEYWORDS="*"
 IUSE="doc +libsamplerate +ncurses nls selinux"
 
-RDEPEND=">=media-libs/alsa-lib-1.0.27-r2
+RDEPEND=">=media-libs/alsa-lib-${PV}
 	libsamplerate? ( media-libs/libsamplerate )
 	ncurses? ( >=sys-libs/ncurses-5.7-r7 )
 	selinux? ( sec-policy/selinux-alsa )"
@@ -24,7 +23,6 @@ DEPEND="${RDEPEND}
 	doc? ( app-text/xmlto )"
 
 src_prepare() {
-	epatch "${FILESDIR}"/${P}-hctl_elem_search.patch
 	epatch_user
 }
 
@@ -48,9 +46,7 @@ src_install() {
 	emake DESTDIR="${D}" install
 	dodoc ChangeLog README TODO seq/*/README.*
 
-	newbin "${WORKDIR}"/alsa-driver-*/utils/alsa-info.sh alsa-info
-
-	newinitd "${FILESDIR}"/alsasound.initd-r5 alsasound
+	newinitd "${FILESDIR}"/alsasound.initd-r6 alsasound
 	newconfd "${FILESDIR}"/alsasound.confd-r4 alsasound
 
 	insinto /etc/modprobe.d

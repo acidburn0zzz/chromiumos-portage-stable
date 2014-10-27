@@ -1,70 +1,55 @@
-# Copyright 1999-2012 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/media-plugins/alsa-plugins/alsa-plugins-1.0.25-r1.ebuild,v 1.11 2012/08/18 02:57:41 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/media-plugins/alsa-plugins/alsa-plugins-1.0.28.ebuild,v 1.5 2014/10/23 10:47:22 pacho Exp $
 
-EAPI=3
-
-MY_P="${P/_/}"
-
-inherit autotools base flag-o-matic
+EAPI=5
+inherit autotools eutils flag-o-matic multilib multilib-minimal
 
 DESCRIPTION="ALSA extra plugins"
 HOMEPAGE="http://www.alsa-project.org/"
-SRC_URI="mirror://alsaproject/plugins/${MY_P}.tar.bz2"
+SRC_URI="mirror://alsaproject/plugins/${P}.tar.bz2"
 
 LICENSE="GPL-2 LGPL-2.1"
 SLOT="0"
 KEYWORDS="*"
 IUSE="debug ffmpeg jack libsamplerate pulseaudio speex"
 
-RDEPEND=">=media-libs/alsa-lib-${PV}
-	ffmpeg? ( virtual/ffmpeg
-		media-libs/alsa-lib )
-	jack? ( >=media-sound/jack-audio-connection-kit-0.98 )
-	libsamplerate? (
-		media-libs/libsamplerate
-		media-libs/alsa-lib )
-	pulseaudio? ( media-sound/pulseaudio )
-	speex? ( media-libs/speex
-		media-libs/alsa-lib )"
-
+RDEPEND=">=media-libs/alsa-lib-${PV}:=[${MULTILIB_USEDEP}]
+	ffmpeg? ( virtual/ffmpeg[${MULTILIB_USEDEP}] )
+	jack? ( >=media-sound/jack-audio-connection-kit-0.121.3-r1[${MULTILIB_USEDEP}] )
+	libsamplerate? ( >=media-libs/libsamplerate-0.1.8-r1:=[${MULTILIB_USEDEP}] )
+	pulseaudio? ( >=media-sound/pulseaudio-2.1-r1[${MULTILIB_USEDEP}] )
+	speex? ( >=media-libs/speex-1.2_rc1-r1:=[${MULTILIB_USEDEP}] )
+	abi_x86_32? (
+		!<app-emulation/emul-linux-x86-soundlibs-20140406-r1
+		!app-emulation/emul-linux-x86-soundlibs[-abi_x86_32]
+	)"
 DEPEND="${RDEPEND}
 	virtual/pkgconfig"
 
-PATCHES=(
-	"${FILESDIR}/${PN}-1.0.19-missing-avutil.patch"
-	"${FILESDIR}/${PN}-1.0.23-automagic.patch"
-	"${FILESDIR}/${PN}-1.0.25-avcodec54.patch"
-	"${FILESDIR}/${P}-glibc-2.16.patch" #426254
-)
-
-S="${WORKDIR}/${MY_P}"
-
 src_prepare() {
-	base_src_prepare
+:	epatch "${FILESDIR}"/${PN}-1.0.23-automagic.patch
+
+	epatch_user
 
 	# For some reasons the polyp/pulse plugin does fail with alsaplayer with a
 	# failed assert. As the code works just fine with asserts disabled, for now
 	# disable them waiting for a better solution.
-	sed -i -e '/AM_CFLAGS/s:-Wall:-DNDEBUG -Wall:' \
-		"${S}/pulse/Makefile.am"
+	sed -i \
+		-e '/AM_CFLAGS/s:-Wall:-DNDEBUG -Wall:' \
+		pulse/Makefile.am || die
 
 	eautoreconf
 }
 
-src_configure() {
-	use debug || append-flags -DNDEBUG
+multilib_src_configure() {
+	use debug || append-cppflags -DNDEBUG
 
-	local myspeex
+	local myspeex=no
+	use speex && myspeex=lib
 
-	if use speex; then
-		myspeex=lib
-	else
-		myspeex=no
-	fi
-
+	ECONF_SOURCE=${S} \
 	econf \
-		--disable-dependency-tracking \
 		$(use_enable ffmpeg avcodec) \
 		$(use_enable jack) \
 		$(use_enable libsamplerate samplerate) \
@@ -72,10 +57,10 @@ src_configure() {
 		--with-speex=${myspeex}
 }
 
-src_install() {
-	emake DESTDIR="${D}" install
+multilib_src_install_all() {
+	einstalldocs
 
-	cd "${S}/doc"
+	cd doc || die
 	dodoc upmix.txt vdownmix.txt README-pcm-oss
 	use jack && dodoc README-jack
 	use libsamplerate && dodoc samplerate.txt
@@ -89,8 +74,14 @@ src_install() {
 		doins "${FILESDIR}"/pulse-default.conf
 		insinto /usr/share/alsa/alsa.conf.d
 		doins "${FILESDIR}"/51-pulseaudio-probe.conf
+		# bug #410261, comment 5+
+		# seems to work fine without any path
+		sed -i \
+			-e "s:/usr/lib/alsa-lib/::" \
+			"${ED}"/usr/share/alsa/alsa.conf.d/51-pulseaudio-probe.conf || die #410261
 	fi
 
+	prune_libtool_files --all
 }
 
 pkg_postinst() {

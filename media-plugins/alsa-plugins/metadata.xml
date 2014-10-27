@@ -6,6 +6,6 @@
 <email>alsa-bugs@gentoo.org</email>
 </maintainer>
 <upstream>
-  <remote-id type="cpe">cpe:/a:alsa-project:alsa-plugins</remote-id>
+<remote-id type="cpe">cpe:/a:alsa-project:alsa-plugins</remote-id>
 </upstream>
 </pkgmetadata>

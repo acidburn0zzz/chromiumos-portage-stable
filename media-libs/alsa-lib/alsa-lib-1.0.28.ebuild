@@ -1,6 +1,6 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/media-libs/alsa-lib/alsa-lib-1.0.27.2.ebuild,v 1.2 2013/07/30 13:05:57 ssuominen Exp $
+# $Header: /var/cvsroot/gentoo-x86/media-libs/alsa-lib/alsa-lib-1.0.28.ebuild,v 1.6 2014/10/23 10:44:43 pacho Exp $
 
 EAPI=5
 
@@ -16,7 +16,7 @@ SRC_URI="mirror://alsaproject/lib/${P}.tar.bz2"
 LICENSE="LGPL-2.1"
 SLOT="0"
 KEYWORDS="*"
-IUSE="doc debug alisp python"
+IUSE="alisp debug doc elibc_uclibc python"
 
 RDEPEND="python? ( ${PYTHON_DEPS} )
 	abi_x86_32? (
@@ -26,15 +26,16 @@ RDEPEND="python? ( ${PYTHON_DEPS} )
 DEPEND="${RDEPEND}
 	doc? ( >=app-doc/doxygen-1.2.6 )"
 
+REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
+
 pkg_setup() {
 	use python && python-single-r1_pkg_setup
 }
 
 src_prepare() {
 	find . -name Makefile.am -exec sed -i -e '/CFLAGS/s:-g -O2::' {} + || die
-	if [[ ${ABI} == ${DEFAULT_ABI} ]]; then
-		use python && { sed -i -e "s:python-config:$EPYTHON-config:" configure.in || die; }
-	fi
+	# http://bugs.gentoo.org/509886
+	use elibc_uclibc && { sed -i -e 's:oldapi queue_timer:queue_timer:' test/Makefile.am || die; }
 	epatch_user
 	eautoreconf
 }
@@ -42,7 +43,7 @@ src_prepare() {
 multilib_src_configure() {
 	local myconf
 	# enable Python only on final ABI
-	if [[ ${ABI} == ${DEFAULT_ABI} ]]; then
+	if multilib_is_native_abi; then
 		myconf="$(use_enable python)"
 	else
 		myconf="--disable-python"
@@ -65,7 +66,7 @@ multilib_src_configure() {
 multilib_src_compile() {
 	emake
 
-	if [[ ${ABI} == ${DEFAULT_ABI} ]] && use doc; then
+	if multilib_is_native_abi && use doc; then
 		emake doc
 		fgrep -Zrl "${S}" doc/doxygen/html | \
 			xargs -0 sed -i -e "s:${S}::"
@@ -74,7 +75,7 @@ multilib_src_compile() {
 
 multilib_src_install() {
 	emake DESTDIR="${D}" install
-	if [[ ${ABI} == ${DEFAULT_ABI} ]] && use doc; then
+	if multilib_is_native_abi && use doc; then
 		dohtml -r doc/doxygen/html/.
 	fi
 }
