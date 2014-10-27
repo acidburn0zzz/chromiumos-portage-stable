@@ -1,6 +1,6 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/net-misc/wget/wget-1.14.ebuild,v 1.13 2013/11/04 06:38:44 polynomial-c Exp $
+# $Header: /var/cvsroot/gentoo-x86/net-misc/wget/wget-1.16.ebuild,v 1.1 2014/10/27 18:55:59 vapier Exp $
 
 EAPI="4"
 
@@ -35,8 +35,9 @@ REQUIRED_USE="ntlm? ( !gnutls ssl ) gnutls? ( ssl )"
 DOCS=( AUTHORS MAILING-LIST NEWS README doc/sample.wgetrc )
 
 src_prepare() {
-	epatch "${FILESDIR}"/${PN}-1.13.4-openssl-pkg-config.patch \
-		"${FILESDIR}"/${P}-texi2pod.patch
+	epatch "${FILESDIR}"/${PN}-1.16-pkg-config.patch
+	epatch "${FILESDIR}"/${PN}-1.16-openssl-header.patch
+	epatch "${FILESDIR}"/${PN}-1.16-tests-skip.patch
 	eautoreconf
 }
 
@@ -46,10 +47,6 @@ src_configure() {
 	# fix compilation on Solaris, we need filio.h for FIONBIO as used in
 	# the included gnutls -- force ioctl.h to include this header
 	[[ ${CHOST} == *-solaris* ]] && append-flags -DBSD_COMP=1
-
-	# some libraries tests lack configure options :( #432468
-	eval export ac_cv_{header_pcre_h,lib_pcre_pcre_compile}=$(usex pcre)
-	eval export ac_cv_{header_uuid_uuid_h,lib_uuid_uuid_generate}=$(usex uuid)
 
 	if use static ; then
 		append-ldflags -static
@@ -65,7 +62,9 @@ src_configure() {
 		$(use_enable ipv6) \
 		$(use_enable nls) \
 		$(use_enable ntlm) \
+		$(use_enable pcre) \
 		$(use_enable debug) \
+		$(use_with uuid libuuid) \
 		$(use_with zlib)
 }
 
