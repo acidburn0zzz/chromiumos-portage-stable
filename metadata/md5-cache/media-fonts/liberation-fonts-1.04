@@ -3,9 +3,9 @@ DEPEND=X? ( x11-apps/mkfontdir media-fonts/encodings ) >=media-libs/fontconfig-2
 DESCRIPTION=A GPL-2 Helvetica/Times/Courier replacement TrueType font set, courtesy of Red Hat
 HOMEPAGE=https://fedorahosted.org/liberation-fonts
 IUSE=X X
-KEYWORDS=alpha amd64 ia64 ppc ppc64 sparc x86 x86-fbsd
+KEYWORDS=*
 LICENSE=GPL-2-with-exceptions
 SLOT=0
 SRC_URI=https://fedorahosted.org/releases/l/i/liberation-fonts/liberation-fonts-1.04.tar.gz
 _eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	font	bc3df4ed373e09f86a90e8fad39034d6	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
-_md5_=c4e1779a8143f0644dfbdbc498632e2b
+_md5_=f7de8bf714b67a14fcb1430f51177d04
