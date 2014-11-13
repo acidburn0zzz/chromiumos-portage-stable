@@ -2,7 +2,8 @@
 #
 # ccache-config - helper script for ccache and its ebuild
 #
-# Copyright 2003-2010 Superlucidity Services, LLC
+# Copyright 2003-2014 Superlucidity Services, LLC
+# Copyright 2013-2014 Gentoo Foundation
 # This program licensed under the GNU GPL version 2.
 #
 # This script developed by Zachary T Welch at Superlucidity Services, LLC
@@ -10,7 +11,9 @@
 #
 # Additional features to come; this provides a starting point
 
-. /etc/init.d/functions.sh 2>/dev/null || {
+EPREFIX=''
+
+. "${EPREFIX}"/etc/init.d/functions.sh 2>/dev/null || {
 	ebegin() { echo " * $* ..."; }
 	eend() {
 		local r=${1:-$?}
@@ -37,7 +40,7 @@ c_eend()   { c_quiet || eend "$@" ; }
 #  automatically update ccache's links when upgrading toolchains
 #
 cc_path() {
-	echo ${ROOT%/}/usr/${LIBDIR}/ccache/bin/$1
+	echo ${ROOT%/}${EPREFIX}/usr/${LIBDIR}/ccache/bin/$1
 }
 cc_remove_link() {
 	local t=$(cc_path "$1")
@@ -45,49 +48,50 @@ cc_remove_link() {
 		c_ebegin "Removing ${t}"
 		rm -f "${t}"
 		c_eend
+
+		# Trim the empty dir if possible. #517242
+		t=${t%/*}
+		if rmdir "${t}" 2>/dev/null; then
+			rmdir "${t%/*}" 2>/dev/null
+		fi
+		:
 	fi
 }
 cc_install_link() {
 	# Search the PATH for the specified compiler
 	#  then create shadow link in /usr/lib/ccache/bin to ccache
 
-	if [ -n "$(type -p ${1})" ]; then
+	if command -v "$1" >/dev/null ; then
 		# first be sure any old link is removed
 		_CC_QUIET=1
-		cc_remove_link "${1}"
+		cc_remove_link "$1"
 		unset _CC_QUIET
 
 		# then create the new link
 		local t=$(cc_path "$1")
 		c_ebegin "Creating ccache shadow link ${t}"
-		mkdir -p -m 0755 "${t%/*}" && ln -s /usr/bin/ccache "${t}"
+		mkdir -p -m 0755 "${t%/*}" && ln -s "${EPREFIX}"/usr/bin/ccache "${t}"
 		c_eend
 	fi
 }
 cc_links() {
 	local a
-	for a in gcc cc c++ g++ ; do
-		if [ -n "${2}" ] ; then
-			# gcc-config doesnt install ${CHOST}-cc, so until
-			# it does, don't install a ccache symlink for it
-			[ "${a}" = "cc" ] && continue
-			a="${2}-${a}"
-		fi
-		eval "cc_${1}_link" "${a}"
+	for a in gcc cc c++ g++ icc icpc clang clang++ ; do
+		"cc_${1}_link" "${2}${2:+-}${a}"
 	done
 }
 
 ###
 # main routine
 
-case "${1}" in
+case $1 in
 	--install-links )
-		cc_links install "${2}"
+		cc_links install "$2"
 		;;
 	--remove-links )
-		cc_links remove "${2}"
+		cc_links remove "$2"
 		;;
 	* )
-		echo "usage: ${0} {--install-links|--remove-links} [ CHOST ]"
+		echo "usage: $0 {--install-links|--remove-links} [ CHOST ]"
 		;;
 esac
