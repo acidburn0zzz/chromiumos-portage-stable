@@ -1,0 +1,13 @@
+DEFINED_PHASES=compile configure install prepare
+DEPEND=aio? ( dev-libs/libaio ) glusterfs? ( sys-cluster/glusterfs ) gtk? ( dev-libs/glib:2 x11-libs/gtk+:2 ) numa? ( sys-process/numactl ) rbd? ( sys-cluster/ceph ) zlib? ( sys-libs/zlib )
+DESCRIPTION=Jens Axboe's Flexible IO tester
+EAPI=5
+HOMEPAGE=http://brick.kernel.dk/snaps/
+IUSE=aio glusterfs gnuplot gtk numa rbd zlib python_targets_python2_7
+KEYWORDS=*
+LICENSE=GPL-2
+RDEPEND=aio? ( dev-libs/libaio ) glusterfs? ( sys-cluster/glusterfs ) gtk? ( dev-libs/glib:2 x11-libs/gtk+:2 ) numa? ( sys-process/numactl ) rbd? ( sys-cluster/ceph ) zlib? ( sys-libs/zlib ) gnuplot? ( sci-visualization/gnuplot python_targets_python2_7? ( >=dev-lang/python-2.7.3-r2:2.7 ) dev-lang/python-exec:=[python_targets_python2_7(-)?,-python_single_target_python2_7(-)] )
+SLOT=0
+SRC_URI=http://brick.kernel.dk/snaps/fio-2.1.14.tar.bz2
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multibuild	46527a4656956da3d58acff72c9b59b1	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	multiprocessing	d7f2985a2c76c365ee20269db5261414	python-r1	cd956d5a4bac2209a64d0f4851cc115d	python-utils-r1	3eaef07c45447158fad343dac1667938	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
+_md5_=b94ee6a7724bdae695e027bde3b15adc

@@ -1,6 +1,6 @@
 # Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-block/fio/fio-2.1.10-r1.ebuild,v 1.1 2014/06/25 17:53:59 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-block/fio/fio-2.1.14.ebuild,v 1.1 2014/11/18 19:32:01 vapier Exp $
 
 EAPI="5"
 PYTHON_COMPAT=( python2_7 )
@@ -16,14 +16,16 @@ SRC_URI="http://brick.kernel.dk/snaps/${MY_P}.tar.bz2"
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="*"
-IUSE="aio gnuplot gtk numa zlib"
+IUSE="aio glusterfs gnuplot gtk numa rbd zlib"
 
 DEPEND="aio? ( dev-libs/libaio )
+	glusterfs? ( sys-cluster/glusterfs )
 	gtk? (
 		dev-libs/glib:2
 		x11-libs/gtk+:2
 	)
 	numa? ( sys-process/numactl )
+	rbd? ( sys-cluster/ceph )
 	zlib? ( sys-libs/zlib )"
 RDEPEND="${DEPEND}
 	gnuplot? (
@@ -35,7 +37,6 @@ S="${WORKDIR}/${MY_P}"
 
 src_prepare() {
 	sed -i '/^DEBUGFLAGS/s, -D_FORTIFY_SOURCE=2,,g' Makefile || die
-	epatch "${FILESDIR}"/${P}-json.patch
 	epatch_user
 
 	# Many checks don't have configure flags.
@@ -47,12 +48,15 @@ src_prepare() {
 }
 
 src_configure() {
+	chmod g-w "${T}"
 	# not a real configure script
 	./configure \
 		--extra-cflags="${CFLAGS} ${CPPFLAGS}" \
 		--cc="$(tc-getCC)" \
+		$(usex glusterfs '' '--disable-gfapi') \
 		$(usex gtk '--enable-gfio' '') \
 		$(usex numa '' '--disable-numa') \
+		$(usex rbd '' '--disable-rbd') \
 		|| die 'configure failed'
 }
 
