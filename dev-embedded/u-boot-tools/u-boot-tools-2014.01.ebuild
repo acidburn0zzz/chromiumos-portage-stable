@@ -1,10 +1,10 @@
-# Copyright 1999-2011 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-embedded/u-boot-tools/u-boot-tools-2011.06.ebuild,v 1.2 2011/10/14 22:29:10 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-embedded/u-boot-tools/u-boot-tools-2014.01.ebuild,v 1.4 2014/05/03 14:44:01 zlogene Exp $
 
-EAPI=4
+EAPI="5"
 
-inherit toolchain-funcs
+inherit eutils toolchain-funcs
 
 MY_P="u-boot-${PV/_/-}"
 DESCRIPTION="utilities for working with Das U-Boot"
@@ -19,15 +19,19 @@ IUSE=""
 S=${WORKDIR}/${MY_P}
 
 src_prepare() {
-	sed -i -e "s:-g ::" tools/Makefile || die
+	sed -i "s:-g ::" tools/Makefile || die
+	# Make sure we find local u-boot headers first #429302
+	ln -s ../include/image.h tools/ || die
+	epatch "${FILESDIR}"/u-boot-no-config.h.patch
 }
 
 src_compile() {
 	emake \
-		HOSTSTRIP=echo \
+		HOSTSTRIP=: \
 		HOSTCC="$(tc-getCC)" \
 		HOSTCFLAGS="${CFLAGS} ${CPPFLAGS}"' $(HOSTCPPFLAGS)' \
 		HOSTLDFLAGS="${LDFLAGS}" \
+		CONFIG_ENV_OVERWRITE=y \
 		tools-all
 }
 
