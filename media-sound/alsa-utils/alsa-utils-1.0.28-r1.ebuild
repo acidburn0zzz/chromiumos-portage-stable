@@ -1,6 +1,6 @@
 # Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/media-sound/alsa-utils/alsa-utils-1.0.28.ebuild,v 1.4 2014/10/23 10:46:39 pacho Exp $
+# $Header: /var/cvsroot/gentoo-x86/media-sound/alsa-utils/alsa-utils-1.0.28-r1.ebuild,v 1.1 2014/11/19 19:16:08 vapier Exp $
 
 EAPI=5
 inherit eutils systemd udev
@@ -14,15 +14,19 @@ SLOT="0.9"
 KEYWORDS="*"
 IUSE="doc +libsamplerate +ncurses nls selinux"
 
-RDEPEND=">=media-libs/alsa-lib-${PV}
+CDEPEND=">=media-libs/alsa-lib-${PV}
 	libsamplerate? ( media-libs/libsamplerate )
-	ncurses? ( >=sys-libs/ncurses-5.7-r7 )
-	selinux? ( sec-policy/selinux-alsa )"
-DEPEND="${RDEPEND}
+	ncurses? ( >=sys-libs/ncurses-5.7-r7 )"
+DEPEND="${CDEPEND}
 	virtual/pkgconfig
 	doc? ( app-text/xmlto )"
+RDEPEND="${CDEPEND}
+	selinux? ( sec-policy/selinux-alsa )"
 
 src_prepare() {
+	epatch "${FILESDIR}"/${P}-aplay-return.patch
+	epatch "${FILESDIR}"/${P}-va-end.patch
+	epatch "${FILESDIR}"/${P}-{mixer,monitor}-proto.patch
 	epatch_user
 }
 
@@ -43,8 +47,8 @@ src_configure() {
 }
 
 src_install() {
-	emake DESTDIR="${D}" install
-	dodoc ChangeLog README TODO seq/*/README.*
+	default
+	dodoc seq/*/README.*
 
 	newinitd "${FILESDIR}"/alsasound.initd-r6 alsasound
 	newconfd "${FILESDIR}"/alsasound.confd-r4 alsasound
