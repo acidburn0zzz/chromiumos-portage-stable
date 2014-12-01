@@ -1,0 +1,10 @@
+DEFINED_PHASES=install unpack
+DESCRIPTION=command line utility for interacting with patchwork repos
+EAPI=4
+HOMEPAGE=http://jk.ozlabs.org/projects/patchwork/
+KEYWORDS=*
+LICENSE=GPL-2
+RDEPEND=dev-lang/python
+SLOT=0
+SRC_URI=http://repo.or.cz/w/patchwork.git/blob_plain/bc695f5a7e0a2dd184dc0eae7a923be24b1b1723:/apps/patchwork/bin/pwclient -> pwclient-20121105131501
+_md5_=26ca3ff2dcbf5357427052764ae7a47f
