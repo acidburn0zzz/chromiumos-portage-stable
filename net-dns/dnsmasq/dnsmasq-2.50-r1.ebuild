@@ -4,7 +4,7 @@
 
 EAPI=2
 
-inherit eutils toolchain-funcs flag-o-matic
+inherit eutils toolchain-funcs flag-o-matic fcaps
 
 MY_P="${P/_/}"
 MY_PV="${PV/_/}"
@@ -67,4 +67,8 @@ src_install() {
 		insinto /etc/dbus-1/system.d
 		doins dbus/dnsmasq.conf
 	fi
+}
+
+pkg_postinst() {
+	fcaps cap_net_admin,cap_net_raw,cap_net_bind_service=ie usr/sbin/${PN}
 }
