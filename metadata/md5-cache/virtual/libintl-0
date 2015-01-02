@@ -1,6 +1,0 @@
-DEFINED_PHASES=-
-DESCRIPTION=Virtual for the GNU Internationalization Library
-KEYWORDS=*
-RDEPEND=!elibc_glibc? ( !elibc_uclibc? ( sys-devel/gettext ) )
-SLOT=0
-_md5_=7701f91803895206ef8a1baa82c0f040
