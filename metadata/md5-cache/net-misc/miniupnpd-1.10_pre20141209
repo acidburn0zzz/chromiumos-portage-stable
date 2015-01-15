@@ -7,6 +7,6 @@ KEYWORDS=*
 LICENSE=BSD
 RDEPEND=>=net-firewall/iptables-1.4.6 net-libs/libnfnetlink
 SLOT=0
-SRC_URI=http://miniupnp.free.fr/files/miniupnpd-1.8.tar.gz
+SRC_URI=http://miniupnp.free.fr/files/miniupnpd-1.9.20141209.tar.gz
 _eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
-_md5_=3deaac69e134c57131564c22bfe9d3a4
+_md5_=1483e8c813225337cc618d65b82842ad
