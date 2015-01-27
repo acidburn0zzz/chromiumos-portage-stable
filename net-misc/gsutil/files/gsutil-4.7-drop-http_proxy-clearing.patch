@@ -1,4 +1,5 @@
 http://crbug.com/318478
+https://github.com/GoogleCloudPlatform/gsutil/pull/171
 
 From 0067df5b08ebab29b88bbb7e6c1cd79dc4d96100 Mon Sep 17 00:00:00 2001
 From: Mike Frysinger <vapier@gentoo.org>
@@ -27,9 +28,9 @@ index 82a69c1..a18db42 100644
 -            'Unsetting http_proxy environment variable within gsutil run.\n')
 -      del os.environ['http_proxy']
 -
-     return _RunNamedCommandAndHandleExceptions(
-         command_runner, command_name, args[1:], headers, debug,
-         parallel_operations)
+     if os.environ.get('_ARGCOMPLETE', '0') == '1':
+       return _PerformTabCompletion(command_runner)
+ 
 -- 
 1.8.4.3
 
