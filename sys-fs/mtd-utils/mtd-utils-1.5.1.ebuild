@@ -1,15 +1,15 @@
-# Copyright 1999-2012 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-fs/mtd-utils/mtd-utils-1.4.8.ebuild,v 1.6 2012/04/17 16:02:42 ranger Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-fs/mtd-utils/mtd-utils-1.5.1.ebuild,v 1.1 2015/01/27 04:48:51 vapier Exp $
 
-EAPI="3"
+EAPI="4"
 
-inherit eutils
+inherit eutils vcs-snapshot
 
 if [[ ${PV} == "99999999" ]] ; then
 	EGIT_REPO_URI="git://git.infradead.org/mtd-utils.git"
 
-	inherit git
+	inherit git-2
 	SRC_URI=""
 	#KEYWORDS=""
 else
@@ -40,27 +40,22 @@ RDEPEND="!sys-fs/mtd
 DEPEND="${RDEPEND}
 	xattr? ( sys-apps/acl )"
 
-# Diff snapshots have diff versions encoded into their dirnames
-S=${WORKDIR}/${PN}
-
-src_prepare() {
-	cd "${S}"*
-	epatch "${FILESDIR}"/${P}-install.patch
-}
-
 makeopts() {
-	echo CROSS=${CHOST}-
+	# These affect build output, so keep it common between compile & install.
+	echo CROSS=${CHOST}- V=1
 	use xattr || echo WITHOUT_XATTR=1
 }
 
 src_compile() {
-	cd "${S}"*
-	emake $(makeopts) || die
+	tc-export AR CC RANLIB
+	local compileopts=(
+		AR="${AR}" CC="${CC}" RANLIB="${RANLIB}"
+	)
+	emake $(makeopts) "${compileopts[@]}"
 }
 
 src_install() {
-	cd "${S}"*
-	emake $(makeopts) install DESTDIR="${ED}" || die
+	emake $(makeopts) install DESTDIR="${ED}"
 	dodoc *.txt
 	newdoc mkfs.ubifs/README README.mkfs.ubifs
 	# TODO: check ubi-utils for docs+scripts
