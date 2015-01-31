@@ -1,17 +1,19 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/media-libs/freetype/freetype-2.5.3-r1.ebuild,v 1.12 2014/07/22 07:40:38 polynomial-c Exp $
+# $Header: /var/cvsroot/gentoo-x86/media-libs/freetype/freetype-2.5.5.ebuild,v 1.1 2015/01/08 00:15:32 polynomial-c Exp $
 
 EAPI=5
-
 inherit autotools-multilib flag-o-matic multilib toolchain-funcs
 
 DESCRIPTION="A high-quality and portable font engine"
 HOMEPAGE="http://www.freetype.org/"
 SRC_URI="mirror://sourceforge/freetype/${P/_/}.tar.bz2
-	utils?	( mirror://sourceforge/freetype/ft2demos-${PV}.tar.bz2 )
-	doc?	( mirror://sourceforge/freetype/${PN}-doc-${PV}.tar.bz2 )
-	infinality? ( https://raw.github.com/bohoomil/fontconfig-ultimate/ddda669247330d1a1b8c9473cfe5052d42e1b313/01_lib32-freetype2-iu-2.5.1-2/infinality-2.5.1.patch -> ${PN}-2.5.1-infinality.patch )"
+	mirror://nongnu/freetype/${P/_/}.tar.bz2
+	utils?	( mirror://sourceforge/freetype/ft2demos-${PV}.tar.bz2
+		mirror://nongnu/freetype/ft2demos-${PV}.tar.bz2 )
+	doc?	( mirror://sourceforge/freetype/${PN}-doc-${PV}.tar.bz2
+		mirror://nongnu/freetype/${PN}-doc-${PV}.tar.bz2 )
+	infinality? ( http://dev.gentoo.org/~polynomial-c/${P}-infinality-patches.tar.xz )"
 
 LICENSE="|| ( FTL GPL-2+ )"
 SLOT="2"
@@ -22,7 +24,7 @@ REQUIRED_USE="harfbuzz? ( auto-hinter )"
 
 CDEPEND=">=sys-libs/zlib-1.2.8-r1[${MULTILIB_USEDEP}]
 	bzip2? ( >=app-arch/bzip2-1.0.6-r4[${MULTILIB_USEDEP}] )
-	harfbuzz? ( >=media-libs/harfbuzz-0.9.12[truetype,${MULTILIB_USEDEP}] )
+	harfbuzz? ( >=media-libs/harfbuzz-0.9.19[truetype,${MULTILIB_USEDEP}] )
 	png? ( >=media-libs/libpng-1.2.51[${MULTILIB_USEDEP}] )
 	utils? (
 		X? (
@@ -34,8 +36,8 @@ CDEPEND=">=sys-libs/zlib-1.2.8-r1[${MULTILIB_USEDEP}]
 DEPEND="${CDEPEND}
 	virtual/pkgconfig"
 RDEPEND="${CDEPEND}
-	infinality? ( media-libs/fontconfig-infinality )
 	abi_x86_32? ( utils? ( !app-emulation/emul-linux-x86-xlibs[-abi_x86_32(-)] ) )"
+PDEPEND="infinality? ( media-libs/fontconfig-infinality )"
 
 src_prepare() {
 	enable_option() {
@@ -50,11 +52,14 @@ src_prepare() {
 			|| die "unable to disable option $1"
 	}
 
-	if use infinality; then
-		epatch "${DISTDIR}/${PN}-2.5.1-infinality.patch"
+	# This is the same as the 01 patch from infinality
+	epatch "${FILESDIR}"/${PN}-2.3.2-enable-valid.patch
 
-		# FT_CONFIG_OPTION_SUBPIXEL_RENDERING is already enabled in
-		# freetype-2.4.11
+	if use infinality; then
+		EPATCH_SOURCE="${WORKDIR}/${P}-infinality-patches" EPATCH_SUFFIX="patch" \
+			EPATCH_FORCE="yes" epatch
+
+		# FT_CONFIG_OPTION_SUBPIXEL_RENDERING is already enabled in freetype-2.4.11
 		enable_option TT_CONFIG_OPTION_SUBPIXEL_HINTING
 	fi
 
@@ -78,8 +83,6 @@ src_prepare() {
 		enable_option FT_DEBUG_MEMORY
 	fi
 
-	epatch "${FILESDIR}"/${PN}-2.3.2-enable-valid.patch
-
 	epatch "${FILESDIR}"/${PN}-2.4.11-sizeof-types.patch # 459966
 
 	if use utils; then
@@ -88,6 +91,7 @@ src_prepare() {
 		if ! use X; then
 			sed -i -e "/EXES\ +=\ ftdiff/ s:^:#:" Makefile || die
 		fi
+		cd "${S}" || die
 	fi
 
 	# we need non-/bin/sh to run configure
@@ -166,6 +170,6 @@ pkg_postinst() {
 		elog "To improve OpenType font hinting with the auto-hinter, the harfbuzz"
 		elog "useflag needs to be enabled for ${CATEGORY}/${PN}."
 		elog "See the INSTALL.UNIX file in the doc directory of this package for"
-		elog "more information."
+		elog "more information. But it is recommended not to use the auto-hinter."
 	fi
 }
