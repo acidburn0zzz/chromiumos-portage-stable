@@ -29,6 +29,7 @@ RDEPEND="media-libs/fontconfig
 	media-libs/freetype:2
 	media-libs/libpng:0
 	sys-libs/zlib
+	>=dev-libs/lzo-2
 	>=x11-libs/pixman-0.28.0
 	directfb? ( dev-libs/DirectFB )
 	glib? ( >=dev-libs/glib-2.28.6:2 )
