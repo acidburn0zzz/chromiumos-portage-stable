@@ -320,10 +320,6 @@ ladspa
 rpm
 
 # Matt Turner <mattst88@gentoo.org> (13 Dec 2010)
-# We don't care much about bluetooth
-bluetooth
-
-# Matt Turner <mattst88@gentoo.org> (13 Dec 2010)
 # We don't have net-libs/libsmi keyworded
 smi
 
