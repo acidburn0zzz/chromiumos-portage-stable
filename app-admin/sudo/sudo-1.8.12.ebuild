@@ -1,8 +1,8 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/app-admin/sudo/sudo-1.8.6_p7.ebuild,v 1.1 2013/02/28 05:58:09 flameeyes Exp $
+# $Header: /var/cvsroot/gentoo-x86/app-admin/sudo/sudo-1.8.12.ebuild,v 1.1 2015/02/10 08:48:37 polynomial-c Exp $
 
-EAPI=4
+EAPI=5
 
 inherit eutils pam multilib libtool
 
@@ -24,7 +24,7 @@ SRC_URI="http://www.sudo.ws/sudo/dist/${uri_prefix}${MY_P}.tar.gz
 LICENSE="ISC BSD"
 SLOT="0"
 KEYWORDS="*"
-IUSE="ldap nls pam offensive selinux skey"
+IUSE="ldap nls pam offensive selinux skey +sendmail"
 
 DEPEND="pam? ( virtual/pam )
 	skey? ( >=sys-auth/skey-1.1.5-r1 )
@@ -39,7 +39,7 @@ RDEPEND="${DEPEND}
 	pam? ( sys-auth/pambase )
 	>=app-misc/editor-wrapper-3
 	virtual/editor
-	virtual/mta"
+	sendmail? ( virtual/mta )"
 DEPEND="${DEPEND}
 	sys-devel/bison"
 
@@ -115,9 +115,11 @@ src_configure() {
 		$(use_with pam) \
 		$(use_with skey) \
 		$(use_with selinux) \
+		$(use_with sendmail) \
 		--without-opie \
 		--without-linux-audit \
-		--with-timedir="${EPREFIX}"/var/db/sudo \
+		--with-rundir="${EPREFIX}"/var/run/sudo \
+		--with-vardir="${EPREFIX}"/var/db/sudo \
 		--with-plugindir="${EPREFIX}"/usr/$(get_libdir)/sudo \
 		--docdir="${EPREFIX}"/usr/share/doc/${PF}
 }
@@ -147,6 +149,10 @@ src_install() {
 
 	keepdir /var/db/sudo
 	fperms 0700 /var/db/sudo
+
+	# Don't install into /var/run as that is a tmpfs most of the time
+	# (bug #504854)
+	rm -rf "${D}"/var/run
 }
 
 pkg_postinst() {
