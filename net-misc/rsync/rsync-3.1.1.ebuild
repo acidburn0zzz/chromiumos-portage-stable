@@ -1,8 +1,8 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/net-misc/rsync/rsync-3.0.9-r3.ebuild,v 1.10 2013/09/23 19:20:16 ago Exp $
+# $Header: /var/cvsroot/gentoo-x86/net-misc/rsync/rsync-3.1.1.ebuild,v 1.1 2014/07/07 07:51:31 polynomial-c Exp $
 
-EAPI="4"
+EAPI="5"
 
 inherit eutils flag-o-matic prefix systemd
 
@@ -14,6 +14,11 @@ LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="*"
 IUSE="acl iconv ipv6 static xattr"
+
+if [[ ${PV} = *pre* ]] ; then
+	SRC_URI="http://rsync.samba.org/ftp/rsync/src-previews/${P/_/}.tar.gz"
+	KEYWORDS="*"
+fi
 
 LIB_DEPEND="acl? ( virtual/acl[static-libs(+)] )
 	xattr? ( kernel_linux? ( sys-apps/attr[static-libs(+)] ) )
