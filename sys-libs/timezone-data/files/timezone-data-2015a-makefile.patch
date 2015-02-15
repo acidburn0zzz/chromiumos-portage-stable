@@ -49,9 +49,9 @@
  
 -cc=		cc
 -CC=		$(cc) -DTZDIR=\"$(TZDIR)\"
-+CC+=		-DTZDIR=\"$(TZDIR)\"
++CPPFLAGS+=		-DTZDIR=\"$(TZDIR)\"
 +ifeq ($(NLS),1)
-+CC+= -DHAVE_GETTEXT=1 -DTZ_DOMAIN=\"libc\"
++CPPFLAGS+= -DHAVE_GETTEXT=1 -DTZ_DOMAIN=\"libc\"
 +endif
  
  AR=		ar
@@ -105,7 +105,7 @@
 @@ -440,7 +442,7 @@ tzselect:	tzselect.ksh
  		chmod +x $@
  
- check:		check_character_set check_white_space check_sorted \
+ check:		check_character_set check_white_space check_links check_sorted \
 -		  check_tables check_web
 +		  check_tables
  
