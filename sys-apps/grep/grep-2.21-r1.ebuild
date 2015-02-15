@@ -1,15 +1,16 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-apps/grep/grep-2.20.ebuild,v 1.1 2014/06/04 05:15:09 ssuominen Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-apps/grep/grep-2.21-r1.ebuild,v 1.7 2015/01/31 10:31:29 ago Exp $
 
 EAPI="4"
 
-inherit flag-o-matic toolchain-funcs
+inherit eutils flag-o-matic toolchain-funcs
 
 DESCRIPTION="GNU regular expression matcher"
 HOMEPAGE="http://www.gnu.org/software/grep/"
 SRC_URI="mirror://gnu/${PN}/${P}.tar.xz
-	mirror://gentoo/${P}.tar.xz"
+	mirror://gentoo/${P}.tar.xz
+	http://dev.gentoo.org/~polynomial-c/${P}-heap_buffer_overrun.patch"
 
 LICENSE="GPL-3"
 SLOT="0"
@@ -26,6 +27,14 @@ DEPEND="${RDEPEND}
 	static? ( ${LIB_DEPEND} )"
 
 DOCS=( AUTHORS ChangeLog NEWS README THANKS TODO )
+
+src_prepare() {
+	sed -i \
+		-e "s:@SHELL@:${EPREFIX}/bin/sh:g" \
+		src/egrep.sh || die #523898
+
+	epatch "${DISTDIR}/${P}-heap_buffer_overrun.patch"
+}
 
 src_configure() {
 	use static && append-ldflags -static
