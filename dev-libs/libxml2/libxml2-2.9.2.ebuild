@@ -1,6 +1,6 @@
 # Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-libs/libxml2/libxml2-2.9.1-r5.ebuild,v 1.1 2014/09/03 09:51:22 mgorny Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-libs/libxml2/libxml2-2.9.2.ebuild,v 1.11 2014/12/11 11:29:32 armin76 Exp $
 
 EAPI="5"
 PYTHON_COMPAT=( python{2_6,2_7,3_2,3_3,3_4} )
@@ -29,7 +29,8 @@ SRC_URI="ftp://xmlsoft.org/${PN}/${PN}-${PV/_rc/-rc}.tar.gz
 		${XSTS_HOME}/${XSTS_NAME_2}/${XSTS_TARBALL_2}
 		http://www.w3.org/XML/Test/${XMLCONF_TARBALL} )"
 
-COMMON_DEPEND=">=sys-libs/zlib-1.2.8-r1:=[${MULTILIB_USEDEP}]
+COMMON_DEPEND="
+	>=sys-libs/zlib-1.2.8-r1:=[${MULTILIB_USEDEP}]
 	icu? ( >=dev-libs/icu-51.2-r1:=[${MULTILIB_USEDEP}] )
 	lzma? ( >=app-arch/xz-utils-5.0.5-r1:=[${MULTILIB_USEDEP}] )
 	python? ( ${PYTHON_DEPS} )
@@ -77,27 +78,17 @@ src_prepare() {
 
 #	epunt_cxx # if we don't eautoreconf
 
-	# Important patches from 2.9.2
-	epatch "${FILESDIR}/${P}-missing-break.patch" \
-		"${FILESDIR}/${P}-python-2.6.patch" \
-		"${FILESDIR}/${P}-compression-detection.patch" \
-		"${FILESDIR}/${P}-non-ascii-cr-lf.patch" \
-		"${FILESDIR}/${PN}-2.9.1-python3.patch" \
-		"${FILESDIR}/${PN}-2.9.1-python3a.patch"
-
-	# Security fixes from 2.9.2
-	epatch "${FILESDIR}/${P}-external-param-entities.patch"
-
-	# https://bugzilla.gnome.org/show_bug.cgi?id=730290
-	epatch "${FILESDIR}/${PN}-2.9.1-xmllint-postvalid.patch"
+	# Important patches from master
+	epatch \
+		"${FILESDIR}/${PN}-2.9.2-revert-missing-initialization.patch"
 
 	# Please do not remove, as else we get references to PORTAGE_TMPDIR
 	# in /usr/lib/python?.?/site-packages/libxml2mod.la among things.
 	# We now need to run eautoreconf at the end to prevent maintainer mode.
 #	elibtoolize
 
-	# Use pkgconfig to find icu to properly support multilib
-	epatch "${FILESDIR}/${PN}-2.9.1-icu-pkgconfig.patch"
+	# Use pkgconfig to find icu to properly support multilib, upstream bug #738751
+	epatch "${FILESDIR}/${PN}-2.9.2-icu-pkgconfig.patch"
 
 	eautoreconf
 }
