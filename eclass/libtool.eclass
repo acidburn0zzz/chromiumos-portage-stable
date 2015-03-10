@@ -1,6 +1,6 @@
-# Copyright 1999-2011 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/eclass/libtool.eclass,v 1.97 2011/12/13 21:28:15 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/eclass/libtool.eclass,v 1.112 2014/07/11 08:21:58 ulm Exp $
 
 # @ECLASS: libtool.eclass
 # @MAINTAINER:
@@ -14,8 +14,8 @@
 # generated libtool files.  We do not run the libtoolize program because that
 # requires a regeneration of the main autotool files in order to work properly.
 
-if [[ ${___ECLASS_ONCE_LIBTOOL} != "recur -_+^+_- spank" ]] ; then
-___ECLASS_ONCE_LIBTOOL="recur -_+^+_- spank"
+if [[ -z ${_LIBTOOL_ECLASS} ]]; then
+_LIBTOOL_ECLASS=1
 
 # If an overlay has eclass overrides, but doesn't actually override the
 # libtool.eclass, we'll have ECLASSDIR pointing to the active overlay's
@@ -30,8 +30,6 @@ elt_patch_dir() {
 	echo "${d}"
 }
 
-DESCRIPTION="Based on the ${ECLASS} eclass"
-
 inherit multilib toolchain-funcs
 
 #
@@ -45,12 +43,21 @@ ELT_try_and_apply_patch() {
 	local disp="${src} patch"
 	local log="${T}/elibtool.log"
 
-	if [[ -z ${__ELT_NOTED_TMP} ]] ; then
-		__ELT_NOTED_TMP=true
+	if [[ -z ${_ELT_NOTED_TMP} ]] ; then
+		_ELT_NOTED_TMP=true
 		printf 'temp patch: %s\n' "${patch}" > "${log}"
 	fi
 	printf '\nTrying %s\n' "${disp}" >> "${log}"
 
+	if [[ ! -e ${file} ]] ; then
+		echo "File not found: ${file}" >> "${log}"
+		return 1
+	fi
+
+	# Save file for permission restoration.  `patch` sometimes resets things.
+	# Ideally we'd want 'stat -c %a', but stat is highly non portable and we are
+	# guaranted to have GNU find, so use that instead.
+	local perms="$(find ${file} -maxdepth 0 -printf '%m')"
 	# We only support patchlevel of 0 - why worry if its static patches?
 	if patch -p0 --dry-run "${file}" "${patch}" >> "${log}" 2>&1 ; then
 		einfo "  Applying ${disp} ..."
@@ -60,6 +67,7 @@ ELT_try_and_apply_patch() {
 	else
 		ret=1
 	fi
+	chmod "${perms}" "${file}"
 
 	return "${ret}"
 }
@@ -127,6 +135,7 @@ ELT_walk_patches() {
 # The other options should be avoided in general unless you know what's going on.
 elibtoolize() {
 	local x
+	local dirs=()
 	local do_portage="no"
 	local do_reversedeps="no"
 	local do_only_patches="no"
@@ -134,7 +143,7 @@ elibtoolize() {
 	local deptoremove=
 	local do_shallow="no"
 	local force="false"
-	local elt_patches="install-sh ltmain portage relink max_cmd_len sed test tmp cross as-needed"
+	local elt_patches="install-sh ltmain portage relink max_cmd_len sed test tmp cross as-needed target-nm"
 
 	for x in "$@" ; do
 		case ${x} in
@@ -171,17 +180,20 @@ elibtoolize() {
 			--force)
 				force="true"
 				;;
-			*)
+			-*)
 				eerror "Invalid elibtoolize option: ${x}"
 				die "elibtoolize called with ${x} ??"
+				;;
+			*)	dirs+=( "${x}" )
 		esac
 	done
 
 	[[ ${do_uclibc} == "yes" ]] && elt_patches+=" uclibc-conf uclibc-ltconf"
 
 	case ${CHOST} in
-		*-aix*)     elt_patches+=" hardcode aixrtl aix-noundef" ;; #213277
+		*-aix*)     elt_patches+=" hardcode aixrtl" ;; #213277
 		*-darwin*)  elt_patches+=" darwin-ltconf darwin-ltmain darwin-conf" ;;
+		*-solaris*) elt_patches+=" sol2-conf sol2-ltmain" ;;
 		*-freebsd*) elt_patches+=" fbsd-conf fbsd-ltconf" ;;
 		*-hpux*)    elt_patches+=" hpux-conf deplibs hc-flag-ld hardcode hardcode-relink relink-prog no-lc" ;;
 		*-irix*)    elt_patches+=" irix-ltmain" ;;
@@ -192,30 +204,35 @@ elibtoolize() {
 		elt_patches+=" gold-conf"
 	fi
 
-	# Reuse "$@" for dirs to patch
-	set --
+	# Find out what dirs to scan.
 	if [[ ${do_shallow} == "yes" ]] ; then
-		[[ -f ${S}/ltmain.sh ]] && set -- "${S}"
+		[[ ${#dirs[@]} -ne 0 ]] && die "Using --shallow with explicit dirs doesn't make sense"
+		[[ -f ${S}/ltmain.sh || -f ${S}/configure ]] && dirs+=( "${S}" )
 	else
-		set -- $(find "${S}" -name ltmain.sh -printf '%h ')
+		[[ ${#dirs[@]} -eq 0 ]] && dirs+=( "${S}" )
+		dirs=( $(find "${dirs[@]}" '(' -name ltmain.sh -o -name configure ')' -printf '%h\n' | sort -u) )
 	fi
 
-	local d p
-	for d in "$@" ; do
+	local d p ret
+	for d in "${dirs[@]}" ; do
 		export ELT_APPLIED_PATCHES=
 
 		if [[ -f ${d}/.elibtoolized ]] ; then
 			${force} || continue
 		fi
 
-		einfo "Running elibtoolize in: ${d#${WORKDIR}/}/"
-		if [[ -f ${d}/.elibtoolized ]] ; then
+		local outfunc="einfo"
+		[[ -f ${d}/.elibtoolized ]] && outfunc="ewarn"
+		${outfunc} "Running elibtoolize in: ${d#${WORKDIR}/}/"
+		if [[ ${outfunc} == "ewarn" ]] ; then
 			ewarn "  We've already been run in this tree; you should"
 			ewarn "  avoid this if possible (perhaps by filing a bug)"
 		fi
 
+		# patching ltmain.sh
+		[[ -f ${d}/ltmain.sh ]] &&
 		for p in ${elt_patches} ; do
-			local ret=0
+			ret=0
 
 			case ${p} in
 				portage)
@@ -247,17 +264,6 @@ elibtoolize() {
 					ELT_walk_patches "${d}/ltmain.sh" "${p}"
 					ret=$?
 					;;
-				uclibc-conf)
-					if grep -qs 'Transform linux' "${d}/configure" ; then
-						ELT_walk_patches "${d}/configure" "${p}"
-						ret=$?
-					# ltmain.sh and co might be in a subdirectory ...
-					elif [[ ! -e ${d}/configure ]] && \
-						 grep -qs 'Transform linux' "${d}/../configure" ; then
-						ELT_walk_patches "${d}/../configure" "${p}"
-						ret=$?
-					fi
-					;;
 				uclibc-ltconf)
 					# Newer libtoolize clears ltconfig, as not used anymore
 					if [[ -s ${d}/ltconfig ]] ; then
@@ -265,31 +271,9 @@ elibtoolize() {
 						ret=$?
 					fi
 					;;
-				fbsd-conf)
-					if grep -qs 'version_type=freebsd-' "${d}/configure" ; then
-						ELT_walk_patches "${d}/configure" "${p}"
-						ret=$?
-					# ltmain.sh and co might be in a subdirectory ...
-					elif [[ ! -e ${d}/configure ]] && \
-						 grep -qs 'version_type=freebsd-' "${d}/../configure" ; then
-						ELT_walk_patches "${d}/../configure" "${p}"
-						ret=$?
-					fi
-					;;
 				fbsd-ltconf)
 					if [[ -s ${d}/ltconfig ]] ; then
 						ELT_walk_patches "${d}/ltconfig" "${p}"
-						ret=$?
-					fi
-					;;
-				darwin-conf)
-					if grep -qs '&& echo \.so ||' "${d}/configure" ; then
-						ELT_walk_patches "${d}/configure" "${p}"
-						ret=$?
-					# ltmain.sh and co might be in a subdirectory ...
-					elif [[ ! -e ${d}/configure ]] && \
-						 grep -qs '&& echo \.so ||' "${d}/../configure" ; then
-						ELT_walk_patches "${d}/../configure" "${p}"
 						ret=$?
 					fi
 					;;
@@ -308,45 +292,6 @@ elibtoolize() {
 					   ! grep -qs 'verstring="-compatibility_version' "${d}/ltmain.sh" ; then
 						ELT_walk_patches "${d}/ltmain.sh" "${p}"
 						ret=$?
-					fi
-					;;
-				aixrtl|hpux-conf)
-					ret=1
-					local subret=0
-					# apply multiple patches as often as they match
-					while [[ $subret -eq 0 ]]; do
-						subret=1
-						if [[ -e ${d}/configure ]]; then
-							ELT_walk_patches "${d}/configure" "${p}"
-							subret=$?
-						# ltmain.sh and co might be in a subdirectory ...
-						elif [[ ! -e ${d}/configure && -e ${d}/../configure ]] ; then
-							ELT_walk_patches "${d}/../configure" "${p}"
-							subret=$?
-						fi
-						if [[ $subret -eq 0 ]]; then
-							# have at least one patch succeeded.
-							ret=0
-						fi
-					done
-					;;
-				mint-conf|gold-conf)
-					ret=1
-					local subret=1
-					if [[ -e ${d}/configure ]]; then
-						ELT_walk_patches "${d}/configure" "${p}"
-						subret=$?
-					# ltmain.sh and co might be in a subdirectory ...
-					elif [[ -e ${d}/../configure ]] ; then
-						ELT_walk_patches "${d}/../configure" "${p}"
-						subret=$?
-					elif [[ -e ${d}/../../configure ]] ; then
-						ELT_walk_patches "${d}/../../configure" "${p}"
-						subret=$?
-					fi
-					if [[ $subret -eq 0 ]]; then
-						# have at least one patch succeeded.
-						ret=0
 					fi
 					;;
 				install-sh)
@@ -403,13 +348,88 @@ elibtoolize() {
 							ELT_APPLIED_PATCHES="portage"
 						fi
 						;;
+					darwin-*)
+						[[ ${CHOST} == *"-darwin"* ]] && ewarn "  Darwin patch set '${p}' failed to apply!"
+						;;
+				esac
+			fi
+		done
+
+		# makes sense for ltmain.sh patches only
+		[[ -f ${d}/ltmain.sh ]] &&
+		if [[ -z ${ELT_APPLIED_PATCHES} ]] ; then
+			if [[ ${do_portage} == "no" && \
+				  ${do_reversedeps} == "no" && \
+				  ${do_only_patches} == "no" && \
+				  ${deptoremove} == "" ]]
+			then
+				ewarn "Cannot apply any patches, please file a bug about this"
+				die
+			fi
+		fi
+
+		# patching configure
+		[[ -f ${d}/configure ]] &&
+		for p in ${elt_patches} ; do
+			ret=0
+
+			case ${p} in
+				uclibc-conf)
+					if grep -qs 'Transform linux' "${d}/configure" ; then
+						ELT_walk_patches "${d}/configure" "${p}"
+						ret=$?
+					fi
+					;;
+				fbsd-conf)
+					if grep -qs 'version_type=freebsd-' "${d}/configure" ; then
+						ELT_walk_patches "${d}/configure" "${p}"
+						ret=$?
+					fi
+					;;
+				darwin-conf)
+					if grep -qs '&& echo \.so ||' "${d}/configure" ; then
+						ELT_walk_patches "${d}/configure" "${p}"
+						ret=$?
+					fi
+					;;
+				aixrtl|hpux-conf)
+					ret=1
+					local subret=0
+					# apply multiple patches as often as they match
+					while [[ $subret -eq 0 ]]; do
+						subret=1
+						if [[ -e ${d}/configure ]]; then
+							ELT_walk_patches "${d}/configure" "${p}"
+							subret=$?
+						fi
+						if [[ $subret -eq 0 ]]; then
+							# have at least one patch succeeded.
+							ret=0
+						fi
+					done
+					;;
+				mint-conf|gold-conf|sol2-conf)
+					ELT_walk_patches "${d}/configure" "${p}"
+					ret=$?
+					;;
+				target-nm)
+					ELT_walk_patches "${d}/configure" "${p}"
+					ret=$?
+					;;
+				*)
+					# ltmain.sh patches are applied above
+					;;
+			esac
+
+			if [[ ${ret} -ne 0 ]] ; then
+				case ${p} in
 					uclibc-*)
 						[[ ${CHOST} == *-uclibc ]] && ewarn "  uClibc patch set '${p}' failed to apply!"
 						;;
 					fbsd-*)
 						if [[ ${CHOST} == *-freebsd* ]] ; then
 							if [[ -z $(grep 'Handle Gentoo/FreeBSD as it was Linux' \
-								"${d}/configure" "${d}/../configure" 2>/dev/null) ]]; then
+								"${d}/configure" 2>/dev/null) ]]; then
 								eerror "  FreeBSD patch set '${p}' failed to apply!"
 								die "FreeBSD patch set '${p}' failed to apply!"
 							fi
@@ -421,17 +441,6 @@ elibtoolize() {
 				esac
 			fi
 		done
-
-		if [[ -z ${ELT_APPLIED_PATCHES} ]] ; then
-			if [[ ${do_portage} == "no" && \
-				  ${do_reversedeps} == "no" && \
-				  ${do_only_patches} == "no" && \
-				  ${deptoremove} == "" ]]
-			then
-				ewarn "Cannot apply any patches, please file a bug about this"
-				die
-			fi
-		fi
 
 		rm -f "${d}/libtool"
 

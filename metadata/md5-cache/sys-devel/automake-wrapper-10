@@ -1,7 +1,8 @@
-DEFINED_PHASES=install unpack
+DEFINED_PHASES=install prepare unpack
 DESCRIPTION=wrapper for automake to manage multiple automake versions
+EAPI=4
 HOMEPAGE=http://www.gentoo.org/
 KEYWORDS=*
 LICENSE=GPL-2
 SLOT=0
-_md5_=ad5c5a63df4015ebf96e05f3866ab146
+_md5_=ff660cb0bc074df805d944a8139c399b

@@ -1,55 +1,43 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-devel/automake/automake-1.11.6.ebuild,v 1.8 2013/04/04 22:15:06 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-devel/automake/automake-1.13.4.ebuild,v 1.15 2014/11/15 06:07:49 vapier Exp $
 
-inherit eutils versionator unpacker
+EAPI="4"
 
-if [[ ${PV/_beta} == ${PV} ]]; then
-	MY_P=${P}
-	SRC_URI="mirror://gnu/${PN}/${P}.tar.xz
-		ftp://alpha.gnu.org/pub/gnu/${PN}/${MY_P}.tar.xz"
-else
-	MY_PV="$(get_major_version).$(($(get_version_component_range 2)-1))b"
-	MY_P="${PN}-${MY_PV}"
-
-	# Alpha/beta releases are not distributed on the usual mirrors.
-	SRC_URI="ftp://alpha.gnu.org/pub/gnu/${PN}/${MY_P}.tar.xz"
-fi
-
-S="${WORKDIR}/${MY_P}"
-
-# Use Gentoo versioning for slotting.
-SLOT="${PV:0:4}"
+inherit eutils
 
 DESCRIPTION="Used to generate Makefile.in from Makefile.am"
 HOMEPAGE="http://www.gnu.org/software/automake/"
+SRC_URI="mirror://gnu/${PN}/${P}.tar.xz"
 
 LICENSE="GPL-2"
+# Use Gentoo versioning for slotting.
+SLOT="${PV:0:4}"
 KEYWORDS="*"
 IUSE=""
 
 RDEPEND="dev-lang/perl
-	>=sys-devel/automake-wrapper-3-r2
-	>=sys-devel/autoconf-2.62
+	>=sys-devel/automake-wrapper-9
+	>=sys-devel/autoconf-2.69
 	sys-devel/gnuconfig"
 DEPEND="${RDEPEND}
 	sys-apps/help2man"
 
-src_unpack() {
-	unpacker_src_unpack
-	cd "${S}"
-	chmod a+rx tests/*.test
+src_prepare() {
 	export WANT_AUTOCONF=2.5
+	epatch "${FILESDIR}"/${PN}-1.13-dyn-ithreads.patch
+}
+
+src_configure() {
+	econf --docdir=/usr/share/doc/${PF} HELP2MAN=true
 }
 
 src_compile() {
-	econf --docdir=/usr/share/doc/${PF} HELP2MAN=true || die
-	emake APIVERSION="${SLOT}" pkgvdatadir="/usr/share/${PN}-${SLOT}" || die
+	emake APIVERSION="${SLOT}" pkgvdatadir="/usr/share/${PN}-${SLOT}"
+}
 
-	local x
-	for x in aclocal automake; do
-		help2man "perl -Ilib ${x}" > doc/${x}-${SLOT}.1
-	done
+src_test() {
+	emake check
 }
 
 # slot the info pages.  do this w/out munging the source so we don't have
@@ -83,13 +71,15 @@ slot_info_pages() {
 
 src_install() {
 	emake DESTDIR="${D}" install \
-		APIVERSION="${SLOT}" pkgvdatadir="/usr/share/${PN}-${SLOT}" || die
+		APIVERSION="${SLOT}" pkgvdatadir="/usr/share/${PN}-${SLOT}"
 	slot_info_pages
-	dodoc NEWS README THANKS TODO AUTHORS ChangeLog
+	rm "${D}"/usr/share/aclocal/README || die
+	rmdir "${D}"/usr/share/aclocal || die
+	dodoc AUTHORS ChangeLog NEWS README THANKS
 
 	rm \
 		"${D}"/usr/bin/{aclocal,automake} \
-		"${D}"/usr/share/man/man1/{aclocal,automake}.1
+		"${D}"/usr/share/man/man1/{aclocal,automake}.1 || die
 
 	# remove all config.guess and config.sub files replacing them
 	# w/a symlink to a specific gnuconfig version
