@@ -1,6 +1,17 @@
-Copyright (c) 2011 The Chromium OS Authors. All rights reserved.
-Use of this source code is governed by a BSD-style license that can be
-found in the LICENSE file.
+This overlay contains curated unmodified(*) Gentoo packages that are part of
+the Chromium OS build and are exact copies of upstream Gentoo packages.
 
-This overlay contains Portage packages that are part of the Chromium OS build
-and are exact copies of upstream Portage packages.
+For information on updating ebuilds here, see:
+	http://dev.chromium.org/chromium-os/gentoo-package-upgrade-process
+
+Note: While there are tools to help automate importing of updates, the overall
+process is not fully automatic: a developer must initiate the process as well
+as run all the proper tests themselves (trybots/etc...).
+
+(*)
+The spirit of this repo is that any package may be blindly blown away when
+upgrading to a newer version.  So we sometimes allow minor changes to be
+merged as long as that spirit is maintained.
+
+We also munge the ebuild to set KEYWORDS="*" when importing.  The upstream
+values have no bearing on our usage or porting efforts.
