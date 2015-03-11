@@ -1,10 +1,10 @@
-# Copyright 1999-2011 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-libs/libnih/libnih-1.0.3.ebuild,v 1.1 2011/10/19 17:27:02 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-libs/libnih/libnih-1.0.3-r2.ebuild,v 1.1 2015/03/05 21:18:32 vapier Exp $
 
-EAPI="2"
+EAPI="4"
 
-inherit versionator eutils autotools
+inherit versionator eutils autotools toolchain-funcs multilib flag-o-matic
 
 DESCRIPTION="Light-weight 'standard library' of C functions"
 HOMEPAGE="https://launchpad.net/libnih"
@@ -18,7 +18,7 @@ IUSE="+dbus nls static-libs test +threads"
 RDEPEND="dbus? ( dev-libs/expat >=sys-apps/dbus-1.2.16 )"
 DEPEND="${RDEPEND}
 	sys-devel/gettext
-	dev-util/pkgconfig
+	virtual/pkgconfig
 	test? ( dev-util/valgrind )"
 
 src_prepare() {
@@ -28,6 +28,7 @@ src_prepare() {
 }
 
 src_configure() {
+	append-lfs-flags
 	econf \
 		$(use_with dbus) \
 		$(use_enable nls) \
@@ -37,11 +38,9 @@ src_configure() {
 }
 
 src_install() {
-	emake DESTDIR="${D}" install || die
+	default
 
 	# we need to be in / because upstart needs libnih
 	gen_usr_ldscript -a nih $(use dbus && echo nih-dbus)
-	use static-libs || rm "${D}"/usr/lib*/*.la
-
-	dodoc AUTHORS ChangeLog HACKING NEWS README TODO
+	use static-libs || rm "${ED}"/usr/$(get_libdir)/*.la
 }
