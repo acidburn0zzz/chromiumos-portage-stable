@@ -1,6 +1,6 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/eclass/autotools-utils.eclass,v 1.72 2013/11/24 10:53:13 mgorny Exp $
+# $Header: /var/cvsroot/gentoo-x86/eclass/autotools-utils.eclass,v 1.74 2014/07/31 23:24:56 reavertm Exp $
 
 # @ECLASS: autotools-utils.eclass
 # @MAINTAINER:
@@ -96,7 +96,7 @@ esac
 # @ECLASS-VARIABLE: AUTOTOOLS_AUTORECONF
 # @DEFAULT_UNSET
 # @DESCRIPTION:
-# Set to a non-empty value in order to enable running autoreconf
+# Set to a non-empty value before calling inherit to enable running autoreconf
 # in src_prepare() and adding autotools dependencies.
 #
 # This is usually necessary when using live sources or applying patches
@@ -468,9 +468,9 @@ autotools-utils_src_test() {
 	_check_build_dir
 	pushd "${BUILD_DIR}" > /dev/null || die
 
-	if make -n check "${@}" &>/dev/null; then
+	if make -ni check "${@}" &>/dev/null; then
 		emake check "${@}" || die 'emake check failed.'
-	elif make -n test "${@}" &>/dev/null; then
+	elif make -ni test "${@}" &>/dev/null; then
 		emake test "${@}" || die 'emake test failed.'
 	fi
 
