@@ -8,6 +8,10 @@ Note: While there are tools to help automate importing of updates, the overall
 process is not fully automatic: a developer must initiate the process as well
 as run all the proper tests themselves (trybots/etc...).
 
+Licensing information can be found in the respective files, so consult them
+directly, or refer to the upstream Gentoo copy:
+	http://sources.gentoo.org/gentoo-x86/
+
 (*)
 The spirit of this repo is that any package may be blindly blown away when
 upgrading to a newer version.  So we sometimes allow minor changes to be
