@@ -1,15 +1,15 @@
 DEFINED_PHASES=compile configure install prepare test
-DEPEND=dev-python/setuptools[python_targets_python2_7(-)?,python_targets_python3_3(-)?,python_targets_python3_4(-)?,-python_single_target_python2_7(-),-python_single_target_python3_3(-),-python_single_target_python3_4(-)] test? ( dev-python/nose[python_targets_python2_7(-)?,python_targets_python3_3(-)?,python_targets_python3_4(-)?,-python_single_target_python2_7(-),-python_single_target_python3_3(-),-python_single_target_python3_4(-)] ) python_targets_python2_7? ( >=dev-lang/python-2.7.3-r2:2.7 ) python_targets_python3_3? ( >=dev-lang/python-3.3.2-r2:3.3 ) python_targets_python3_4? ( dev-lang/python:3.4 ) dev-lang/python-exec:=[python_targets_python2_7(-)?,python_targets_python3_3(-)?,python_targets_python3_4(-)?,-python_single_target_python2_7(-),-python_single_target_python3_3(-),-python_single_target_python3_4(-)]
+DEPEND=dev-python/setuptools[python_targets_python2_7(-)?,python_targets_python3_3(-)?,python_targets_python3_4(-)?,-python_single_target_python2_7(-),-python_single_target_python3_3(-),-python_single_target_python3_4(-)] test? ( dev-python/nose[python_targets_python2_7(-)?,python_targets_python3_3(-)?,python_targets_python3_4(-)?,-python_single_target_python2_7(-),-python_single_target_python3_3(-),-python_single_target_python3_4(-)] ) python_targets_python2_7? ( >=dev-lang/python-2.7.3-r2:2.7 ) python_targets_python3_3? ( >=dev-lang/python-3.3.2-r2:3.3 ) python_targets_python3_4? ( dev-lang/python:3.4 ) >=dev-lang/python-exec-2:=[python_targets_python2_7(-)?,python_targets_python3_3(-)?,python_targets_python3_4(-)?,-python_single_target_python2_7(-),-python_single_target_python3_3(-),-python_single_target_python3_4(-)]
 DESCRIPTION=Amazon Web Services API
 EAPI=5
 HOMEPAGE=https://github.com/boto/boto http://pypi.python.org/pypi/boto
 IUSE=test python_targets_python2_7 python_targets_python3_3 python_targets_python3_4
 KEYWORDS=*
 LICENSE=MIT
-RDEPEND=python_targets_python2_7? ( >=dev-lang/python-2.7.3-r2:2.7 ) python_targets_python3_3? ( >=dev-lang/python-3.3.2-r2:3.3 ) python_targets_python3_4? ( dev-lang/python:3.4 ) dev-lang/python-exec:=[python_targets_python2_7(-)?,python_targets_python3_3(-)?,python_targets_python3_4(-)?,-python_single_target_python2_7(-),-python_single_target_python3_3(-),-python_single_target_python3_4(-)]
+RDEPEND=python_targets_python2_7? ( >=dev-lang/python-2.7.3-r2:2.7 ) python_targets_python3_3? ( >=dev-lang/python-3.3.2-r2:3.3 ) python_targets_python3_4? ( dev-lang/python:3.4 ) >=dev-lang/python-exec-2:=[python_targets_python2_7(-)?,python_targets_python3_3(-)?,python_targets_python3_4(-)?,-python_single_target_python2_7(-),-python_single_target_python3_3(-),-python_single_target_python3_4(-)]
 REQUIRED_USE=|| ( python_targets_python2_7 python_targets_python3_3 python_targets_python3_4 )
 RESTRICT=test
 SLOT=0
 SRC_URI=mirror://pypi/b/boto/boto-2.35.1.tar.gz
-_eclasses_=distutils-r1	90e7008a7d21e3b1597bea444bb85827	eutils	06133990e861be0fe60c2b428fd025d9	multibuild	46527a4656956da3d58acff72c9b59b1	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	multiprocessing	d7f2985a2c76c365ee20269db5261414	python-r1	fef838277e0f17df29d4951b7183d1b4	python-utils-r1	dcc9fbd541ee94173178e4f14dd3945c	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
+_eclasses_=distutils-r1	c01d5c4af34f4a37a51fc9638299c222	eutils	06133990e861be0fe60c2b428fd025d9	multibuild	6d4858dc00f8bc51caf3f957f8430eb0	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	multiprocessing	d7f2985a2c76c365ee20269db5261414	python-r1	331701099758706863819fe3ff6ddc8a	python-utils-r1	42cc5b750abbcf9d4389848380bbef91	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
 _md5_=94c3f3d537b4b9250cdbd5dc88fccea9
