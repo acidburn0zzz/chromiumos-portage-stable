@@ -1,38 +1,41 @@
-# Copyright 1999-2012 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-libs/openssl/openssl-0.9.8x.ebuild,v 1.3 2012/05/13 11:13:51 ago Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-libs/openssl/openssl-0.9.8z_p6.ebuild,v 1.1 2015/03/19 20:47:26 polynomial-c Exp $
 
 # this ebuild is only for the libcrypto.so.0.9.8 and libssl.so.0.9.8 SONAME for ABI compat
 
-EAPI="2"
+EAPI="5"
 
-inherit eutils flag-o-matic toolchain-funcs
+inherit eutils flag-o-matic toolchain-funcs multilib multilib-minimal
 
+PLEVEL=$(echo "${PV##*_p}" | tr '[1-9]' '[a-i]')
+MY_PV=${PV/_p*/${PLEVEL}}
+MY_P=${PN}-${MY_PV}
+S="${WORKDIR}/${MY_P}"
 DESCRIPTION="Toolkit for SSL v2/v3 and TLS v1"
 HOMEPAGE="http://www.openssl.org/"
-SRC_URI="mirror://openssl/source/${P}.tar.gz"
+SRC_URI="mirror://openssl/source/${MY_P}.tar.gz"
 
 LICENSE="openssl"
 SLOT="0.9.8"
 KEYWORDS="*"
-IUSE="bindist gmp kerberos sse2 test zlib"
+IUSE="bindist gmp kerberos cpu_flags_x86_sse2 test zlib"
 
-RDEPEND="gmp? ( dev-libs/gmp )
-	zlib? ( sys-libs/zlib )
-	kerberos? ( app-crypt/mit-krb5 )
+RDEPEND="gmp? ( >=dev-libs/gmp-5.1.3-r1[${MULTILIB_USEDEP}] )
+	zlib? ( >=sys-libs/zlib-1.2.8-r1[${MULTILIB_USEDEP}] )
+	kerberos? ( >=app-crypt/mit-krb5-1.11.4[${MULTILIB_USEDEP}] )
+	abi_x86_32? (
+		!<=app-emulation/emul-linux-x86-baselibs-20140508-r4
+		!app-emulation/emul-linux-x86-baselibs[-abi_x86_32(-)]
+	)
 	!=dev-libs/openssl-0.9.8*:0"
 DEPEND="${RDEPEND}
 	sys-apps/diffutils
 	>=dev-lang/perl-5
 	test? ( sys-devel/bc )"
 
-pkg_setup() {
-	# avoid collisions with openssl-1 (preserve lib)
-	if ! has_version dev-libs/openssl:${SLOT} ; then
-		ewarn "Removing lib{crypto,ssl}.so.0.9.8 to avoid collision with openssl-1"
-		rm -f "${ROOT}"/usr/$(get_libdir)/lib{crypto,ssl}.so.0.9.8
-	fi
-}
+# Do not install any docs
+DOCS=()
 
 src_prepare() {
 	epatch "${FILESDIR}"/${PN}-0.9.8e-bsd-sparc64.patch
@@ -53,10 +56,22 @@ src_prepare() {
 		|| die
 	# show the actual commands in the log
 	sed -i '/^SET_X/s:=.*:=set -x:' Makefile.shared
-	# update the enginedir path
+	# update the enginedir path.
+	# punt broken config we don't care about as it fails sanity check.
 	sed -i \
+		-e '/^"debug-ben-debug-64"/d' \
 		-e "/foo.*engines/s|/lib/engines|/$(get_libdir)/engines|" \
 		Configure || die
+
+	# since we're forcing $(CC) as makedep anyway, just fix
+	# the conditional as always-on
+	# helps clang (#417795), and versioned gcc (#499818)
+	sed -i 's/expr.*MAKEDEPEND.*;/true;/' util/domd || die
+
+	# quiet out unknown driver argument warnings since openssl
+	# doesn't have well-split CFLAGS and we're making it even worse
+	# and 'make depend' uses -Werror for added fun (#417795 again)
+	[[ ${CC} == *clang* ]] && append-flags -Qunused-arguments
 
 	# allow openssl to be cross-compiled
 	cp "${FILESDIR}"/gentoo.config-0.9.8 gentoo.config || die "cp cross-compile failed"
@@ -66,11 +81,13 @@ src_prepare() {
 	append-flags -Wa,--noexecstack
 
 	sed -i '1s,^:$,#!/usr/bin/perl,' Configure #141906
-	sed -i '/^"debug-steve/d' Configure # 0.9.8k shipped broken
+	sed -i '/^"debug-bodo/d' Configure # 0.9.8za shipped broken
 	./config --test-sanity || die "I AM NOT SANE"
+
+	multilib_copy_sources
 }
 
-src_configure() {
+multilib_src_configure() {
 	unset APPS #197996
 	unset SCRIPTS #312551
 
@@ -92,10 +109,11 @@ src_configure() {
 	einfo "Use configuration ${sslout:-(openssl knows best)}"
 	local config="Configure"
 	[[ -z ${sslout} ]] && config="config"
+
 	echoit \
 	./${config} \
 		${sslout} \
-		$(use sse2 || echo "no-sse2") \
+		$(use cpu_flags_x86_sse2 || echo "no-sse2") \
 		enable-camellia \
 		$(use_ssl !bindist ec) \
 		enable-idea \
@@ -126,16 +144,16 @@ src_configure() {
 		Makefile || die
 }
 
-src_compile() {
+multilib_src_compile() {
 	# depend is needed to use $confopts
-	emake -j1 depend || die "depend failed"
-	emake -j1 build_libs || die "make build_libs failed"
+	emake -j1 depend
+	emake -j1 build_libs
 }
 
-src_test() {
-	emake -j1 test || die "make test failed"
+multilib_src_test() {
+	emake -j1 test
 }
 
-src_install() {
-	dolib.so lib{crypto,ssl}.so.0.9.8 || die
+multilib_src_install() {
+	dolib.so lib{crypto,ssl}.so.0.9.8
 }
