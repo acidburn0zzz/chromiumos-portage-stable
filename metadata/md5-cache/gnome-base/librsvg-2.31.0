@@ -1,0 +1,13 @@
+DEFINED_PHASES=compile configure install postinst postrm preinst prepare setup unpack
+DEPEND=>=media-libs/fontconfig-1.0.1 >=media-libs/freetype-2 >=dev-libs/glib-2.24 >=x11-libs/cairo-1.2 >=x11-libs/pango-1.10 >=dev-libs/libxml2-2.4.7 >=dev-libs/libcroco-0.6.1 || ( x11-libs/gdk-pixbuf x11-libs/gtk+:2 ) gtk? ( >=x11-libs/gtk+-2.16:2 ) >=dev-util/pkgconfig-0.12 >=dev-util/gtk-doc-am-1.13 doc? ( >=dev-util/gtk-doc-1 ) >=sys-apps/sed-4 || ( >=sys-devel/automake-1.11.1:1.11 >=sys-devel/automake-1.12:1.12 ) >=sys-devel/autoconf-2.68 sys-devel/libtool
+DESCRIPTION=Scalable Vector Graphics (SVG) rendering library
+EAPI=3
+HOMEPAGE=http://librsvg.sourceforge.net/
+IUSE=doc +gtk tools
+KEYWORDS=*
+LICENSE=LGPL-2
+RDEPEND=>=media-libs/fontconfig-1.0.1 >=media-libs/freetype-2 >=dev-libs/glib-2.24 >=x11-libs/cairo-1.2 >=x11-libs/pango-1.10 >=dev-libs/libxml2-2.4.7 >=dev-libs/libcroco-0.6.1 || ( x11-libs/gdk-pixbuf x11-libs/gtk+:2 ) gtk? ( >=x11-libs/gtk+-2.16:2 )
+SLOT=2
+SRC_URI=mirror://gnome/sources/librsvg/2.31/librsvg-2.31.0.tar.bz2
+_eclasses_=autotools	1b0fa473be98091220edff9f51d06153	eutils	06133990e861be0fe60c2b428fd025d9	fdo-mime	9c46e30acd923ff12e325dbe96bb98b9	gnome.org	8fef8f967214f56e08fa92d61163d891	gnome2	7976d3f4d0c0816c67033d3dcd4d9472	gnome2-utils	794d2847b4af390a1e020924876c8297	libtool	eba09ed440f2692f73024ff3621a1f4b	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	multiprocessing	d7f2985a2c76c365ee20269db5261414	toolchain-funcs	48b38a216afb92db6314d6c3187abea3	versionator	865bc8b2fc9fcfb6d520bdf5a110f5ed
+_md5_=8154a4bb23a7ce4d95bda1079cc4fe11
