@@ -1,11 +1,11 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-util/cmake/cmake-2.8.11.2.ebuild,v 1.6 2013/11/30 15:13:15 johu Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-util/cmake/cmake-2.8.12.2-r1.ebuild,v 1.13 2014/09/26 21:07:08 mattst88 Exp $
 
 EAPI=5
 
 CMAKE_REMOVE_MODULES="no"
-inherit elisp-common toolchain-funcs eutils versionator cmake-utils virtualx
+inherit bash-completion-r1 elisp-common toolchain-funcs eutils versionator cmake-utils virtualx
 
 MY_PV=${PV/_/-}
 MY_P=${PN}-${MY_PV}
@@ -17,7 +17,7 @@ SRC_URI="http://www.cmake.org/files/v$(get_version_component_range 1-2)/${MY_P}.
 LICENSE="CMake"
 KEYWORDS="*"
 SLOT="0"
-IUSE="emacs ncurses qt4 qt5 vim-syntax"
+IUSE="emacs ncurses qt4 qt5"
 
 REQUIRED_USE="?? ( qt4 qt5 )"
 
@@ -40,25 +40,17 @@ DEPEND="
 "
 RDEPEND="${DEPEND}
 	emacs? ( virtual/emacs )
-	vim-syntax? (
-		|| (
-			app-editors/vim
-			app-editors/gvim
-		)
-	)
 "
 
 S="${WORKDIR}/${MY_P}"
 
 SITEFILE="50${PN}-gentoo.el"
-VIMFILE="${PN}.vim"
 
 CMAKE_BINARY="${S}/Bootstrap.cmk/cmake"
 
 PATCHES=(
 	"${FILESDIR}"/${PN}-2.6.3-fix_broken_lfs_on_aix.patch
 	"${FILESDIR}"/${PN}-2.6.3-no-duplicates-in-rpath.patch
-	"${FILESDIR}"/${PN}-2.8.0-darwin-default-install_name.patch
 	"${FILESDIR}"/${PN}-2.8.7-FindLAPACK.patch
 	"${FILESDIR}"/${PN}-2.8.8-FindPkgConfig.patch
 	"${FILESDIR}"/${PN}-2.8.10-darwin-bundle.patch
@@ -68,10 +60,12 @@ PATCHES=(
 	"${FILESDIR}"/${PN}-2.8.10.2-FindPythonInterp.patch
 	"${FILESDIR}"/${PN}-2.8.10.2-FindPythonLibs.patch
 	"${FILESDIR}"/${PN}-2.8.11-FindBLAS.patch
-	"${FILESDIR}"/${PN}-2.8.11-FindBoost-python.patch
-	"${FILESDIR}"/${PN}-2.8.11-FindImageMagick.patch
 	"${FILESDIR}"/${PN}-2.8.11-more-no_host_paths.patch
-	"${FILESDIR}"/${PN}-2.8.11.2-hppa-bootstrap.patch
+	"${FILESDIR}"/${PN}-2.8.12.1-FindImageMagick.patch
+	"${FILESDIR}"/${PN}-2.8.12.1-FindFreetype.patch
+	"${FILESDIR}"/${PN}-2.8.12.2-hppa-bootstrap.patch
+	"${FILESDIR}"/${PN}-2.8.12.2-FindBoost-python.patch
+	"${FILESDIR}"/${PN}-2.8.12.2-FindCurses.patch
 )
 
 cmake_src_bootstrap() {
@@ -83,6 +77,11 @@ cmake_src_bootstrap() {
 		par_arg="--parallel=${par_arg}"
 	else
 		par_arg="--parallel=1"
+	fi
+
+	# execinfo.h on Solaris isn't quite what it is on Darwin
+	if [[ ${CHOST} == *-solaris* ]] ; then
+		sed -i -e 's/execinfo\.h/blablabla.h/' Source/kwsys/CMakeLists.txt || die
 	fi
 
 	tc-export CC CXX LD
@@ -101,7 +100,7 @@ cmake_src_test() {
 		"${S}"/Tests/{OutDir,CMakeOnly/SelectLibraryConfigurations}/CMakeLists.txt \
 		|| die
 
-	pushd "${CMAKE_BUILD_DIR}" > /dev/null
+	pushd "${BUILD_DIR}" > /dev/null
 
 	local ctestargs
 	[[ -n ${TEST_VERBOSE} ]] && ctestargs="--extra-verbose --output-on-failure"
@@ -111,7 +110,7 @@ cmake_src_test() {
 	#    CTest.updatecvs, which fails to commit as root
 	#    Qt4Deploy, which tries to break sandbox and ignores prefix
 	#    TestUpload, which requires network access
-	"${CMAKE_BUILD_DIR}"/bin/ctest ${ctestargs} \
+	"${BUILD_DIR}"/bin/ctest ${ctestargs} \
 		-E "(BootstrapTest|CTest.UpdateCVS|Qt4Deploy|TestUpload)" \
 		|| die "Tests failed"
 
@@ -179,16 +178,18 @@ src_install() {
 		elisp-install ${PN} Docs/cmake-mode.el Docs/cmake-mode.elc
 		elisp-site-file-install "${FILESDIR}/${SITEFILE}"
 	fi
-	if use vim-syntax; then
-		insinto /usr/share/vim/vimfiles/syntax
-		doins Docs/cmake-syntax.vim
 
-		insinto /usr/share/vim/vimfiles/indent
-		doins Docs/cmake-indent.vim
+	insinto /usr/share/vim/vimfiles/syntax
+	doins Docs/cmake-syntax.vim
 
-		insinto /usr/share/vim/vimfiles/ftdetect
-		doins "${FILESDIR}/${VIMFILE}"
-	fi
+	insinto /usr/share/vim/vimfiles/indent
+	doins Docs/cmake-indent.vim
+
+	insinto /usr/share/vim/vimfiles/ftdetect
+	doins "${FILESDIR}/${PN}.vim"
+
+	dobashcomp Docs/bash-completion/{${PN},ctest,cpack}
+	rm -rf "${D}/usr/share/cmake/completions" || die
 }
 
 pkg_postinst() {

@@ -1,18 +1,22 @@
 --- Modules/FindBoost.cmake
 +++ Modules/FindBoost.cmake
-@@ -903,6 +903,11 @@
+@@ -905,6 +905,15 @@
  
    set( _boost_docstring_release "Boost ${COMPONENT} library (release)")
    set( _boost_docstring_debug   "Boost ${COMPONENT} library (debug)")
 +  if(${COMPONENT} STREQUAL "python" OR ${COMPONENT} STREQUAL "mpi_python")
 +    # Get version of Python.
-+    execute_process(COMMAND python -c "import sys; sys.stdout.write('.'.join(str(x) for x in sys.version_info[:2]))" OUTPUT_VARIABLE _python_version)
++    if (NOT PYTHON_EXECUTABLE)
++      #if a certain version of python was detected by cmake before use that one
++        set(PYTHON_EXECUTABLE "python")
++      endif (NOT PYTHON_EXECUTABLE)
++    execute_process(COMMAND "${PYTHON_EXECUTABLE}" -c "import sys; sys.stdout.write('.'.join(str(x) for x in sys.version_info[:2]))" OUTPUT_VARIABLE _python_version)
 +  endif()
 +
  
    #
    # Find RELEASE libraries
-@@ -913,6 +918,14 @@
+@@ -915,6 +924,14 @@
      ${Boost_LIB_PREFIX}boost_${COMPONENT}${_boost_MULTITHREADED}${_boost_RELEASE_ABI_TAG}-${Boost_LIB_VERSION}
      ${Boost_LIB_PREFIX}boost_${COMPONENT}${_boost_MULTITHREADED}${_boost_RELEASE_ABI_TAG}
      ${Boost_LIB_PREFIX}boost_${COMPONENT} )
@@ -27,7 +31,7 @@
    if(_boost_STATIC_RUNTIME_WORKAROUND)
      set(_boost_RELEASE_STATIC_ABI_TAG "-s${_boost_RELEASE_ABI_TAG}")
      list(APPEND _boost_RELEASE_NAMES
-@@ -920,6 +933,13 @@
+@@ -922,6 +939,13 @@
        ${Boost_LIB_PREFIX}boost_${COMPONENT}${_boost_COMPILER}${_boost_MULTITHREADED}${_boost_RELEASE_STATIC_ABI_TAG}
        ${Boost_LIB_PREFIX}boost_${COMPONENT}${_boost_MULTITHREADED}${_boost_RELEASE_STATIC_ABI_TAG}-${Boost_LIB_VERSION}
        ${Boost_LIB_PREFIX}boost_${COMPONENT}${_boost_MULTITHREADED}${_boost_RELEASE_STATIC_ABI_TAG} )
@@ -41,7 +45,7 @@
    endif()
    if(Boost_THREADAPI AND ${COMPONENT} STREQUAL "thread")
       _Boost_PREPEND_LIST_WITH_THREADAPI(_boost_RELEASE_NAMES ${_boost_RELEASE_NAMES})
-@@ -945,6 +965,15 @@
+@@ -951,6 +975,15 @@
      ${Boost_LIB_PREFIX}boost_${COMPONENT}${_boost_MULTITHREADED}${_boost_DEBUG_ABI_TAG}
      ${Boost_LIB_PREFIX}boost_${COMPONENT}${_boost_MULTITHREADED}
      ${Boost_LIB_PREFIX}boost_${COMPONENT} )
@@ -57,7 +61,7 @@
    if(_boost_STATIC_RUNTIME_WORKAROUND)
      set(_boost_DEBUG_STATIC_ABI_TAG "-s${_boost_DEBUG_ABI_TAG}")
      list(APPEND _boost_DEBUG_NAMES
-@@ -952,6 +981,13 @@
+@@ -958,6 +991,13 @@
        ${Boost_LIB_PREFIX}boost_${COMPONENT}${_boost_COMPILER}${_boost_MULTITHREADED}${_boost_DEBUG_STATIC_ABI_TAG}
        ${Boost_LIB_PREFIX}boost_${COMPONENT}${_boost_MULTITHREADED}${_boost_DEBUG_STATIC_ABI_TAG}-${Boost_LIB_VERSION}
        ${Boost_LIB_PREFIX}boost_${COMPONENT}${_boost_MULTITHREADED}${_boost_DEBUG_STATIC_ABI_TAG} )
