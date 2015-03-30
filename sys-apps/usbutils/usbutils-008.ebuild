@@ -1,12 +1,11 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-apps/usbutils/usbutils-007.ebuild,v 1.7 2014/03/05 15:53:36 ago Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-apps/usbutils/usbutils-008.ebuild,v 1.11 2015/03/03 09:51:34 dlan Exp $
 
 EAPI=5
-
 PYTHON_COMPAT=( python2_7 )
 
-inherit base python-single-r1
+inherit python-single-r1
 
 DESCRIPTION="USB enumeration utilities"
 HOMEPAGE="http://linux-usb.sourceforge.net/"
@@ -16,6 +15,7 @@ LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="*"
 IUSE="python zlib"
+REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
 RDEPEND="virtual/libusb:1=
 	zlib? ( sys-libs/zlib:= )"
@@ -25,14 +25,13 @@ DEPEND="${RDEPEND}
 RDEPEND="${RDEPEND}
 	sys-apps/hwids
 	python? ( ${PYTHON_DEPS} )"
-PATCHES=( "${FILESDIR}"/${PN}-006-stdint.patch )
 
 pkg_setup() {
 	use python && python-single-r1_pkg_setup
 }
 
 src_prepare() {
-	base_src_prepare
+	epatch "${FILESDIR}"/${PN}-006-stdint.patch
 	sed -i -e '/^usbids/s:/usr/share:/usr/share/misc:' lsusb.py || die
 	use python && python_fix_shebang lsusb.py
 }
