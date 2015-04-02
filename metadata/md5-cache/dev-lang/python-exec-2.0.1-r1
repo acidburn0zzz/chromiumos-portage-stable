@@ -4,10 +4,9 @@ EAPI=5
 HOMEPAGE=https://bitbucket.org/mgorny/python-exec/
 IUSE=python_targets_jython2_5 python_targets_jython2_7 python_targets_pypy python_targets_pypy3 python_targets_python3_3 python_targets_python3_4 python_targets_python2_7
 KEYWORDS=*
-LICENSE=BSD
-PDEPEND=>=dev-python/python-exec-10000:2
+LICENSE=BSD-2
 RDEPEND=!<dev-python/python-exec-10000
 SLOT=2
-SRC_URI=mirror://bitbucket/mgorny/python-exec/downloads/python-exec-2.0.1.tar.bz2
+SRC_URI=https://www.bitbucket.org/mgorny/python-exec/downloads/python-exec-2.0.1.tar.bz2
 _eclasses_=autotools	1b0fa473be98091220edff9f51d06153	autotools-utils	3727db64c7b960903d5033280f108080	eutils	06133990e861be0fe60c2b428fd025d9	libtool	eba09ed440f2692f73024ff3621a1f4b	multibuild	6d4858dc00f8bc51caf3f957f8430eb0	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	multiprocessing	d7f2985a2c76c365ee20269db5261414	python-r1	331701099758706863819fe3ff6ddc8a	python-utils-r1	42cc5b750abbcf9d4389848380bbef91	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
-_md5_=655dc9544ec23cea1e631ca7a7005a82
+_md5_=1cedf1219f626e77b3462f25f069a9fa
