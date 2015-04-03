@@ -81,6 +81,10 @@ src_configure() {
 
 	econf \
 		--htmldir="${EPREFIX}"/usr/share/doc/${PF}/html \
+		--without-libgcrypt-prefix \
+		--without-libnettle-prefix \
+		--without-libpth-prefix \
+		--without-libreadline-prefix \
 		$(use_enable cxx) \
 		$(use_enable doc gtk-doc) \
 		$(use_enable doc gtk-doc-pdf) \
