@@ -1,9 +1,8 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/net-misc/socat/socat-1.7.2.3.ebuild,v 1.10 2014/02/17 21:07:52 ago Exp $
+# $Header: /var/cvsroot/gentoo-x86/net-misc/socat/socat-1.7.3.0.ebuild,v 1.10 2015/03/08 07:58:31 jer Exp $
 
 EAPI=5
-
 inherit eutils flag-o-matic toolchain-funcs
 
 DESCRIPTION="Multipurpose relay (SOcket CAT)"
@@ -19,15 +18,16 @@ IUSE="ssl readline ipv6 tcpd"
 
 DEPEND="
 	ssl? ( >=dev-libs/openssl-0.9.6 )
-	readline? ( >=sys-libs/ncurses-5.1 >=sys-libs/readline-4.1 )
+	readline? ( >=sys-libs/readline-4.1 )
 	tcpd? ( sys-apps/tcp-wrappers )
 "
 RDEPEND="${DEPEND}"
 
-src_prepare() {
-	epatch "${FILESDIR}"/${PN}-1.7.2.1-long-long.patch #436164
-	sed -i test.sh -e "s|/sbin/ifconfig|$(type -P ifconfig)|g" || die
-}
+RESTRICT="test"
+
+DOCS=(
+	BUGREPORTS CHANGES DEVELOPMENT EXAMPLES FAQ FILES PORTING README SECURITY
+)
 
 src_configure() {
 	filter-flags '-Wno-error*' #293324
@@ -39,16 +39,8 @@ src_configure() {
 		$(use_enable tcpd libwrap)
 }
 
-src_test() {
-	TMPDIR="${T}" emake test
-}
-
 src_install() {
 	default
 
-	dodoc BUGREPORTS CHANGES DEVELOPMENT \
-		FAQ FILES PORTING README SECURITY VERSION
-	docinto examples
-	dodoc EXAMPLES *.sh
 	dohtml doc/*.html doc/*.css
 }
