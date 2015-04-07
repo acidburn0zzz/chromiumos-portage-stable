@@ -1,0 +1,14 @@
+DEFINED_PHASES=compile configure install postinst postrm prepare test
+DEPEND=berkdb? ( sys-libs/db ) gdbm? ( sys-libs/gdbm ) ssl? ( dev-libs/openssl ) socks5? ( >=net-proxy/dante-1.1.13 ) ncurses? ( sys-libs/ncurses ) readline? ( sys-libs/readline ) yaml? ( dev-libs/libyaml ) virtual/libffi sys-libs/zlib >=app-eselect/eselect-ruby-20100402 !<dev-ruby/rdoc-3.9.4 !<dev-ruby/rubygems-1.8.10-r1 || ( >=sys-devel/automake-1.11.1:1.11 >=sys-devel/automake-1.12:1.12 ) >=sys-devel/autoconf-2.68 sys-devel/libtool
+DESCRIPTION=An object-oriented scripting language
+EAPI=4
+HOMEPAGE=http://www.ruby-lang.org/
+IUSE=berkdb debug doc examples gdbm ipv6 +rdoc rubytests socks5 ssl xemacs ncurses +readline +yaml
+KEYWORDS=*
+LICENSE=|| ( Ruby-BSD BSD-2 )
+PDEPEND=virtual/rubygems[ruby_targets_ruby19] rdoc? ( >=dev-ruby/rdoc-3.9.4[ruby_targets_ruby19] ) xemacs? ( app-xemacs/ruby-modes )
+RDEPEND=berkdb? ( sys-libs/db ) gdbm? ( sys-libs/gdbm ) ssl? ( dev-libs/openssl ) socks5? ( >=net-proxy/dante-1.1.13 ) ncurses? ( sys-libs/ncurses ) readline? ( sys-libs/readline ) yaml? ( dev-libs/libyaml ) virtual/libffi sys-libs/zlib >=app-eselect/eselect-ruby-20100402 !<dev-ruby/rdoc-3.9.4 !<dev-ruby/rubygems-1.8.10-r1
+SLOT=1.9
+SRC_URI=mirror://ruby/1.9/ruby-1.9.3-p551.tar.bz2 http://dev.gentoo.org/~flameeyes/ruby-team/ruby-patches-1.9.3_p551.tar.bz2
+_eclasses_=autotools	1b0fa473be98091220edff9f51d06153	eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	c3131dc67d3bd39f044e92b8280505e4	libtool	eba09ed440f2692f73024ff3621a1f4b	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	multiprocessing	d7f2985a2c76c365ee20269db5261414	toolchain-funcs	48b38a216afb92db6314d6c3187abea3	versionator	865bc8b2fc9fcfb6d520bdf5a110f5ed
+_md5_=8a5a0a1264cca8fea3b037a8661ee9c4

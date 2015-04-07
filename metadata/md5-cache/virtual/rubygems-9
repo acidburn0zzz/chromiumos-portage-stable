@@ -1,0 +1,11 @@
+DEFINED_PHASES=compile configure install postinst preinst prepare setup test unpack
+DEPEND=ruby_targets_ruby19? ( dev-lang/ruby:1.9 ) ruby_targets_ruby20? ( dev-lang/ruby:2.0 )
+DESCRIPTION=Virtual ebuild for rubygems
+EAPI=5
+IUSE=elibc_FreeBSD ruby_targets_ruby19 ruby_targets_ruby20
+KEYWORDS=*
+RDEPEND=ruby_targets_ruby19? ( >=dev-ruby/rubygems-1.8.10-r1[ruby_targets_ruby19] ) ruby_targets_ruby20? ( >=dev-ruby/rubygems-2.0.2[ruby_targets_ruby20] ) ruby_targets_ruby19? ( dev-lang/ruby:1.9 ) ruby_targets_ruby20? ( dev-lang/ruby:2.0 )
+REQUIRED_USE=|| ( ruby_targets_ruby19 ruby_targets_ruby20 )
+SLOT=0
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	java-utils-2	6beafc7c3d1dbae83a4478182b158f66	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	ruby-ng	c79a9fd7644eefe8009be02a82648e1f	toolchain-funcs	48b38a216afb92db6314d6c3187abea3	versionator	865bc8b2fc9fcfb6d520bdf5a110f5ed
+_md5_=ea5add2eea265d770c424f21e56643fd
