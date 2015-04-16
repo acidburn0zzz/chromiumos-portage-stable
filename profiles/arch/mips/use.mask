@@ -182,11 +182,6 @@ mono
 # Quick fix to my tree b0rkage
 ieee1394
 
-# Hardave Riar <hardave@gentoo.org>
-# Temporarily masking wifi until I can test it
-# Preventing kde from going stable
-wifi
-
 # Henrik Brix Andersen <brix@gentoo.org>
 # According to the mips herd, we currently have no way of testing
 # pcmcia on mips, bug #90359
