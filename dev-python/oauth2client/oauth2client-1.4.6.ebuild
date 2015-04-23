@@ -1,6 +1,6 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-python/oauth2client/oauth2client-1.4.2.ebuild,v 1.3 2014/12/30 17:43:38 maekke Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-python/oauth2client/oauth2client-1.4.6.ebuild,v 1.3 2015/03/08 23:54:32 pacho Exp $
 
 EAPI=5
 
@@ -10,10 +10,10 @@ inherit distutils-r1
 
 DESCRIPTION="Library for accessing resources protected by OAuth 2.0"
 HOMEPAGE="https://github.com/google/oauth2client"
-SRC_URI="https://github.com/google/oauth2client/archive/v1.4.2.tar.gz -> ${P}.tar.gz"
+SRC_URI="https://github.com/google/oauth2client/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
-SLOT="0"
 LICENSE="Apache-2.0"
+SLOT="0"
 KEYWORDS="*"
 IUSE="test"
 
