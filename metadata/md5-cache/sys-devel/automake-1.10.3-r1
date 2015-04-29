@@ -1,11 +1,12 @@
-DEFINED_PHASES=compile install unpack
-DEPEND=dev-lang/perl >=sys-devel/automake-wrapper-2 >=sys-devel/autoconf-2.60 sys-devel/gnuconfig sys-apps/help2man
+DEFINED_PHASES=configure install prepare
+DEPEND=dev-lang/perl >=sys-devel/automake-wrapper-9 >=sys-devel/autoconf-2.69 sys-devel/gnuconfig sys-apps/help2man
 DESCRIPTION=Used to generate Makefile.in from Makefile.am
+EAPI=4
 HOMEPAGE=http://www.gnu.org/software/automake/
 KEYWORDS=*
 LICENSE=GPL-2
-RDEPEND=dev-lang/perl >=sys-devel/automake-wrapper-2 >=sys-devel/autoconf-2.60 sys-devel/gnuconfig
+RDEPEND=dev-lang/perl >=sys-devel/automake-wrapper-9 >=sys-devel/autoconf-2.69 sys-devel/gnuconfig
 SLOT=1.10
 SRC_URI=mirror://gnu/automake/automake-1.10.3.tar.bz2
 _eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
-_md5_=23488c18427aa57bd5c747374cb48990
+_md5_=ece349d1aad2bb79b70975bcd41ab466
