@@ -1,6 +1,6 @@
-# Copyright 1999-2011 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/eclass/xorg-2.eclass,v 1.48 2011/09/12 13:50:57 mgorny Exp $
+# $Header: /var/cvsroot/gentoo-x86/eclass/xorg-2.eclass,v 1.65 2015/03/06 01:32:36 chithanh Exp $
 
 # @ECLASS: xorg-2.eclass
 # @MAINTAINER:
@@ -22,7 +22,7 @@
 
 GIT_ECLASS=""
 if [[ ${PV} == *9999* ]]; then
-	GIT_ECLASS="git-2"
+	GIT_ECLASS="git-r3"
 	XORG_EAUTORECONF="yes"
 fi
 
@@ -37,19 +37,30 @@ if [[ ${PN} == font* \
 	FONT_ECLASS="font"
 fi
 
-inherit autotools-utils eutils libtool multilib toolchain-funcs flag-o-matic autotools \
-	${FONT_ECLASS} ${GIT_ECLASS}
+# @ECLASS-VARIABLE: XORG_MULTILIB
+# @DESCRIPTION:
+# If set to 'yes', the multilib support for package will be enabled. Set
+# before inheriting this eclass.
+: ${XORG_MULTILIB:="no"}
+
+# we need to inherit autotools first to get the deps
+inherit autotools autotools-utils eutils libtool multilib toolchain-funcs \
+	flag-o-matic ${FONT_ECLASS} ${GIT_ECLASS}
+
+if [[ ${XORG_MULTILIB} == yes ]]; then
+	inherit autotools-multilib
+fi
 
 EXPORTED_FUNCTIONS="src_unpack src_compile src_install pkg_postinst pkg_postrm"
 case "${EAPI:-0}" in
-	3|4) EXPORTED_FUNCTIONS="${EXPORTED_FUNCTIONS} src_prepare src_configure" ;;
+	3|4|5) EXPORTED_FUNCTIONS="${EXPORTED_FUNCTIONS} src_prepare src_configure" ;;
 	*) die "EAPI=${EAPI} is not supported" ;;
 esac
 
 # exports must be ALWAYS after inherit
 EXPORT_FUNCTIONS ${EXPORTED_FUNCTIONS}
 
-IUSE="opengl"
+IUSE=""
 HOMEPAGE="http://xorg.freedesktop.org/"
 
 # @ECLASS-VARIABLE: XORG_EAUTORECONF
@@ -90,7 +101,7 @@ fi
 : ${XORG_PACKAGE_NAME:=${PN}}
 
 if [[ -n ${GIT_ECLASS} ]]; then
-	: ${EGIT_REPO_URI:="git://anongit.freedesktop.org/git/xorg/${XORG_MODULE}${XORG_PACKAGE_NAME} http://anongit.freedesktop.org/git/xorg/${XORG_MODULE}${XORG_PACKAGE_NAME}"}
+	: ${EGIT_REPO_URI:="git://anongit.freedesktop.org/xorg/${XORG_MODULE}${XORG_PACKAGE_NAME} http://anongit.freedesktop.org/git/xorg/${XORG_MODULE}${XORG_PACKAGE_NAME}"}
 elif [[ -n ${XORG_BASE_INDIVIDUAL_URI} ]]; then
 	SRC_URI="${XORG_BASE_INDIVIDUAL_URI}/${XORG_MODULE}${P}.tar.bz2"
 fi
@@ -109,7 +120,7 @@ EAUTORECONF_DEPEND+="
 	>=sys-devel/libtool-2.2.6a
 	sys-devel/m4"
 if [[ ${PN} != util-macros ]] ; then
-	EAUTORECONF_DEPEND+=" >=x11-misc/util-macros-1.14.0"
+	EAUTORECONF_DEPEND+=" >=x11-misc/util-macros-1.18"
 	# Required even by xorg-server
 	[[ ${PN} == "font-util" ]] || EAUTORECONF_DEPEND+=" >=media-fonts/font-util-1.2.0"
 fi
@@ -175,7 +186,7 @@ if [[ ${XORG_STATIC} == yes \
 	IUSE+=" static-libs"
 fi
 
-DEPEND+=" >=dev-util/pkgconfig-0.23"
+DEPEND+=" virtual/pkgconfig"
 
 # @ECLASS-VARIABLE: XORG_DRI
 # @DESCRIPTION:
@@ -191,7 +202,7 @@ DRI_COMMON_DEPEND="
 "
 DRI_DEPEND="
 	x11-proto/xf86driproto
-	opengl? ( x11-proto/glproto )
+	x11-proto/glproto
 	x11-proto/dri2proto
 "
 case ${XORG_DRI} in
@@ -269,9 +280,35 @@ case ${XORG_DOC} in
 esac
 unset DOC_DEPEND
 
+# @ECLASS-VARIABLE: XORG_MODULE_REBUILD
+# @DESCRIPTION:
+# Describes whether a package contains modules that need to be rebuilt on
+# xorg-server upgrade. This has an effect only since EAPI=5.
+# Possible values are "yes" or "no". Default value is "yes" for packages which
+# are recognized as DRIVER by this eclass and "no" for all other packages.
+if [[ "${DRIVER}" == yes ]]; then
+	: ${XORG_MODULE_REBUILD:="yes"}
+else
+	: ${XORG_MODULE_REBUILD:="no"}
+fi
+
+if [[ ${XORG_MODULE_REBUILD} == yes ]]; then
+	case ${EAPI} in
+		3|4)
+			;;
+		*)
+			RDEPEND+=" x11-base/xorg-server:="
+			;;
+	esac
+fi
+
 DEPEND+=" ${COMMON_DEPEND}"
 RDEPEND+=" ${COMMON_DEPEND}"
 unset COMMON_DEPEND
+
+if [[ ${XORG_MULTILIB} == yes ]]; then
+	RDEPEND+=" abi_x86_32? ( !app-emulation/emul-linux-x86-xlibs[-abi_x86_32(-)] )"
+fi
 
 debug-print "${LINENO} ${ECLASS} ${FUNCNAME}: DEPEND=${DEPEND}"
 debug-print "${LINENO} ${ECLASS} ${FUNCNAME}: RDEPEND=${RDEPEND}"
@@ -293,7 +330,7 @@ xorg-2_src_unpack() {
 	debug-print-function ${FUNCNAME} "$@"
 
 	if [[ -n ${GIT_ECLASS} ]]; then
-		git-2_src_unpack
+		git-r3_src_unpack
 	else
 		unpack ${A}
 	fi
@@ -313,7 +350,6 @@ xorg-2_patch_source() {
 	EPATCH_SUFFIX=${EPATCH_SUFFIX:=patch}
 
 	[[ -d "${EPATCH_SOURCE}" ]] && epatch
-	autotools-utils_src_prepare "$@"
 }
 
 # @FUNCTION: xorg-2_reconf_source
@@ -325,11 +361,13 @@ xorg-2_reconf_source() {
 	case ${CHOST} in
 		*-interix* | *-aix* | *-winnt*)
 			# some hosts need full eautoreconf
-			[[ -e "./configure.ac" || -e "./configure.in" ]] && eautoreconf || ewarn "Unable to autoreconf the configure script. Things may fail."
+			[[ -e "./configure.ac" || -e "./configure.in" ]] \
+				&& AUTOTOOLS_AUTORECONF=1
 			;;
 		*)
 			# elibtoolize required for BSD
-			[[ ${XORG_EAUTORECONF} != no && ( -e "./configure.ac" || -e "./configure.in" ) ]] && eautoreconf || elibtoolize
+			[[ ${XORG_EAUTORECONF} != no && ( -e "./configure.ac" || -e "./configure.in" ) ]] \
+				&& AUTOTOOLS_AUTORECONF=1
 			;;
 	esac
 }
@@ -342,6 +380,7 @@ xorg-2_src_prepare() {
 
 	xorg-2_patch_source
 	xorg-2_reconf_source
+	autotools-utils_src_prepare "$@"
 }
 
 # @FUNCTION: xorg-2_font_configure
@@ -415,19 +454,31 @@ xorg-2_src_configure() {
 			eqawarn "to preserve namespace."
 		fi
 
-		local xorgconfadd=(${CONFIGURE_OPTIONS})
+		local xorgconfadd=(${CONFIGURE_OPTIONS} ${XORG_CONFIGURE_OPTIONS})
 	else
 		local xorgconfadd=("${XORG_CONFIGURE_OPTIONS[@]}")
 	fi
 
 	[[ -n "${FONT}" ]] && xorg-2_font_configure
+
+	# Check if package supports disabling of dep tracking
+	# Fixes warnings like:
+	#    WARNING: unrecognized options: --disable-dependency-tracking
+	if grep -q -s "disable-depencency-tracking" ${ECONF_SOURCE:-.}/configure; then
+		local dep_track="--disable-dependency-tracking"
+	fi
+
 	local myeconfargs=(
-		--disable-dependency-tracking
+		${dep_track}
 		${FONT_OPTIONS}
 		"${xorgconfadd[@]}"
 	)
 
-	autotools-utils_src_configure "$@"
+	if [[ ${XORG_MULTILIB} == yes ]]; then
+		autotools-multilib_src_configure "$@"
+	else
+		autotools-utils_src_configure "$@"
+	fi
 }
 
 # @FUNCTION: xorg-2_src_compile
@@ -436,7 +487,11 @@ xorg-2_src_configure() {
 xorg-2_src_compile() {
 	debug-print-function ${FUNCNAME} "$@"
 
-	autotools-utils_src_compile "$@"
+	if [[ ${XORG_MULTILIB} == yes ]]; then
+		autotools-multilib_src_compile "$@"
+	else
+		autotools-utils_src_compile "$@"
+	fi
 }
 
 # @FUNCTION: xorg-2_src_install
@@ -446,13 +501,18 @@ xorg-2_src_compile() {
 xorg-2_src_install() {
 	debug-print-function ${FUNCNAME} "$@"
 
+	local install_args=( docdir="${EPREFIX}/usr/share/doc/${PF}" )
+
 	if [[ ${CATEGORY} == x11-proto ]]; then
-		autotools-utils_src_install \
-			${PN/proto/}docdir="${EPREFIX}/usr/share/doc/${PF}" \
-			docdir="${EPREFIX}/usr/share/doc/${PF}"
+		install_args+=(
+			${PN/proto/}docdir="${EPREFIX}/usr/share/doc/${PF}"
+		)
+	fi
+
+	if [[ ${XORG_MULTILIB} == yes ]]; then
+		autotools-multilib_src_install "${install_args[@]}"
 	else
-		autotools-utils_src_install \
-			docdir="${EPREFIX}/usr/share/doc/${PF}"
+		autotools-utils_src_install "${install_args[@]}"
 	fi
 
 	if [[ -n ${GIT_ECLASS} ]]; then
@@ -465,8 +525,8 @@ xorg-2_src_install() {
 		dodoc "${S}"/ChangeLog || die "dodoc failed"
 	fi
 
-	# Don't install libtool archives (even with static-libs)
-	remove_libtool_files all
+	# Don't install libtool archives (even for modules)
+	prune_libtool_files --all
 
 	[[ -n ${FONT} ]] && remove_font_metadata
 }
@@ -478,7 +538,11 @@ xorg-2_src_install() {
 xorg-2_pkg_postinst() {
 	debug-print-function ${FUNCNAME} "$@"
 
-	[[ -n ${FONT} ]] && setup_fonts "$@"
+	if [[ -n ${FONT} ]]; then
+		create_fonts_scale
+		create_fonts_dir
+		font_pkg_postinst "$@"
+	fi
 }
 
 # @FUNCTION: xorg-2_pkg_postrm
@@ -488,18 +552,14 @@ xorg-2_pkg_postinst() {
 xorg-2_pkg_postrm() {
 	debug-print-function ${FUNCNAME} "$@"
 
-	[[ -n ${FONT} ]] && font_pkg_postrm "$@"
-}
-
-# @FUNCTION: setup_fonts
-# @DESCRIPTION:
-# Generates needed files for fonts and fixes font permissions
-setup_fonts() {
-	debug-print-function ${FUNCNAME} "$@"
-
-	create_fonts_scale
-	create_fonts_dir
-	font_pkg_postinst
+	if [[ -n ${FONT} ]]; then
+		# if we're doing an upgrade, postinst will do
+		if [[ ${EAPI} -lt 4 || -z ${REPLACED_BY_VERSION} ]]; then
+			create_fonts_scale
+			create_fonts_dir
+			font_pkg_postrm "$@"
+		fi
+	fi
 }
 
 # @FUNCTION: remove_font_metadata
@@ -522,7 +582,7 @@ create_fonts_scale() {
 	debug-print-function ${FUNCNAME} "$@"
 
 	if [[ ${FONT_DIR} != Speedo && ${FONT_DIR} != CID ]]; then
-		ebegin "Generating font.scale"
+		ebegin "Generating fonts.scale"
 			mkfontscale \
 				-a "${EROOT}/usr/share/fonts/encodings/encodings.dir" \
 				-- "${EROOT}/usr/share/fonts/${FONT_DIR}"
