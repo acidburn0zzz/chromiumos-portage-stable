@@ -102,7 +102,7 @@ src_configure() {
 	[[ ${CHOST} == *-solaris* ]] && append-flags -D_POSIX_PTHREAD_SEMANTICS
 
 	#gets rid of fbmmx.c inlining warnings
-	append-flags -finline-limit=1200
+	append-flags $(test-flags-CC -finline-limit=1200)
 
 	use X && myopts+=" --enable-tee=yes"
 
