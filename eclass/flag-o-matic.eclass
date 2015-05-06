@@ -1,6 +1,6 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/eclass/flag-o-matic.eclass,v 1.187 2013/01/12 14:32:31 jlec Exp $
+# $Header: /var/cvsroot/gentoo-x86/eclass/flag-o-matic.eclass,v 1.205 2015/05/06 07:04:53 vapier Exp $
 
 # @ECLASS: flag-o-matic.eclass
 # @MAINTAINER:
@@ -10,8 +10,8 @@
 # This eclass contains a suite of functions to help developers sanely
 # and safely manage toolchain flags in their builds.
 
-if [[ ${___ECLASS_ONCE_FLAG_O_MATIC} != "recur -_+^+_- spank" ]] ; then
-___ECLASS_ONCE_FLAG_O_MATIC="recur -_+^+_- spank"
+if [[ -z ${_FLAG_O_MATIC_ECLASS} ]]; then
+_FLAG_O_MATIC_ECLASS=1
 
 inherit eutils toolchain-funcs multilib
 
@@ -24,18 +24,19 @@ all-flag-vars() {
 # Note: shell globs and character lists are allowed
 setup-allowed-flags() {
 	ALLOWED_FLAGS="-pipe"
-	ALLOWED_FLAGS+=" -O -O1 -O2 -Os -mcpu -march -mtune"
-	ALLOWED_FLAGS+=" -fstack-protector -fstack-protector-all"
+	ALLOWED_FLAGS+=" -O -O1 -O2 -Os -Og -mcpu -march -mtune"
+	ALLOWED_FLAGS+=" -fstack-protector* -fsanitize=*"
 	ALLOWED_FLAGS+=" -fbounds-checking -fno-strict-overflow"
-	ALLOWED_FLAGS+=" -fno-PIE -fno-pie -fno-unit-at-a-time"
-	ALLOWED_FLAGS+=" -g -g[0-9] -ggdb -ggdb[0-9] -gstabs -gstabs+"
-	ALLOWED_FLAGS+=" -fno-ident -fpermissive"
+	ALLOWED_FLAGS+=" -fno-PIE -fno-pie -nopie -fno-unit-at-a-time"
+	ALLOWED_FLAGS+=" -g -g[0-9] -ggdb -ggdb[0-9] -gdwarf-* gstabs -gstabs+"
+	ALLOWED_FLAGS+=" -fno-ident -fpermissive -frecord-gcc-switches"
+	ALLOWED_FLAGS+=" -fdiagnostics*"
 	ALLOWED_FLAGS+=" -W* -w"
 
 	# allow a bunch of flags that negate features / control ABI
-	ALLOWED_FLAGS+=" -fno-stack-protector -fno-stack-protector-all \
+	ALLOWED_FLAGS+=" -fno-stack-protector* -fabi-version=* \
 		-fno-strict-aliasing -fno-bounds-checking -fstrict-overflow \
-		-fno-omit-frame-pointer"
+		-fno-omit-frame-pointer -fno-builtin*"
 	ALLOWED_FLAGS+=" -mregparm -mno-app-regs -mapp-regs -mno-mmx -mno-sse \
 		-mno-sse2 -mno-sse3 -mno-ssse3 -mno-sse4 -mno-sse4.1 -mno-sse4.2 \
 		-mno-avx -mno-aes -mno-pclmul -mno-sse4a -mno-3dnow -mno-popcnt \
@@ -46,7 +47,7 @@ setup-allowed-flags() {
 		-mno-faster-structs -mfaster-structs -m32 -m64 -mx32 -mabi \
 		-mlittle-endian -mbig-endian -EL -EB -fPIC -mlive-g0 -mcmodel \
 		-mstack-bias -mno-stack-bias -msecure-plt -m*-toc -mfloat-abi \
-		-D* -U*"
+		-mfix-r10000 -mno-fix-r10000 -D* -U*"
 
 	# 4.5
 	ALLOWED_FLAGS+=" -mno-fma4 -mno-movbe -mno-xop -mno-lwp"
@@ -54,6 +55,10 @@ setup-allowed-flags() {
 	ALLOWED_FLAGS+=" -mno-fsgsbase -mno-rdrnd -mno-f16c -mno-bmi -mno-tbm"
 	# 4.7
 	ALLOWED_FLAGS+=" -mno-avx2 -mno-bmi2 -mno-fma -mno-lzcnt"
+	# 4.8
+	ALLOWED_FLAGS+=" -mno-fxsr -mno-rtm -mno-xsave -mno-xsaveopt"
+	# 4.9
+	ALLOWED_FLAGS+=" -mno-avx512cd -mno-avx512er -mno-avx512f -mno-avx512pf -mno-sha"
 
 	# CPPFLAGS and LDFLAGS
 	ALLOWED_FLAGS+=" -I* -L* -R* -Wl,*"
@@ -144,38 +149,53 @@ filter-ldflags() {
 # Add extra <flags> to the current CPPFLAGS.
 append-cppflags() {
 	[[ $# -eq 0 ]] && return 0
-	export CPPFLAGS="${CPPFLAGS} $*"
+	export CPPFLAGS+=" $*"
 	return 0
 }
 
 # @FUNCTION: append-cflags
 # @USAGE: <flags>
 # @DESCRIPTION:
-# Add extra <flags> to the current CFLAGS.
+# Add extra <flags> to the current CFLAGS.  If a flag might not be supported
+# with different compilers (or versions), then use test-flags-CC like so:
+# @CODE
+# append-cflags $(test-flags-CC -funky-flag)
+# @CODE
 append-cflags() {
 	[[ $# -eq 0 ]] && return 0
-	export CFLAGS="${CFLAGS} $*"
+	# Do not do automatic flag testing ourselves. #417047
+	export CFLAGS+=" $*"
 	return 0
 }
 
 # @FUNCTION: append-cxxflags
 # @USAGE: <flags>
 # @DESCRIPTION:
-# Add extra <flags> to the current CXXFLAGS.
+# Add extra <flags> to the current CXXFLAGS.  If a flag might not be supported
+# with different compilers (or versions), then use test-flags-CXX like so:
+# @CODE
+# append-cxxflags $(test-flags-CXX -funky-flag)
+# @CODE
 append-cxxflags() {
 	[[ $# -eq 0 ]] && return 0
-	export CXXFLAGS="${CXXFLAGS} $*"
+	# Do not do automatic flag testing ourselves. #417047
+	export CXXFLAGS+=" $*"
 	return 0
 }
 
 # @FUNCTION: append-fflags
 # @USAGE: <flags>
 # @DESCRIPTION:
-# Add extra <flags> to the current {F,FC}FLAGS.
+# Add extra <flags> to the current {F,FC}FLAGS.  If a flag might not be supported
+# with different compilers (or versions), then use test-flags-F77 like so:
+# @CODE
+# append-fflags $(test-flags-F77 -funky-flag)
+# @CODE
 append-fflags() {
 	[[ $# -eq 0 ]] && return 0
-	export FFLAGS="${FFLAGS} $*"
-	export FCFLAGS="${FCFLAGS} $*"
+	# Do not do automatic flag testing ourselves. #417047
+	export FFLAGS+=" $*"
+	export FCFLAGS+=" $*"
 	return 0
 }
 
@@ -325,7 +345,9 @@ filter-mfpmath() {
 	orig_mfpmath=$(get-flag -mfpmath)
 	# get the value of the current -mfpmath flag
 	new_math=$(get-flag mfpmath)
-	new_math=" ${new_math//,/ } "
+	# convert "both" to something we can filter
+	new_math=${new_math/both/387,sse}
+	new_math=" ${new_math//[,+]/ } "
 	# figure out which math values are to be removed
 	prune_math=""
 	for prune_math in "$@" ; do
@@ -375,6 +397,9 @@ strip-flags() {
 			new+=( -O2 )
 		fi
 
+		if [[ ${!var} != "${new[*]}" ]] ; then
+			einfo "strip-flags: ${var}: changed '${!var}' to '${new[*]}'"
+		fi
 		eval export ${var}=\""${new[*]}"\"
 	done
 
@@ -390,13 +415,18 @@ test-flag-PROG() {
 
 	[[ -z ${comp} || -z ${flag} ]] && return 1
 
-	# use -c so we can test the assembler as well
-	local PROG=$(tc-get${comp})
-	if ${PROG} -c -o /dev/null -x${lang} - < /dev/null > /dev/null 2>&1 ; then
-		${PROG} "${flag}" -c -o /dev/null -x${lang} - < /dev/null \
-			> /dev/null 2>&1
+	local cmdline=(
+		$(tc-get${comp})
+		# Clang will warn about unknown gcc flags but exit 0.
+		# Need -Werror to force it to exit non-zero.
+		-Werror
+		# Use -c so we can test the assembler as well.
+		-c -o /dev/null
+	)
+	if "${cmdline[@]}" -x${lang} - </dev/null >/dev/null 2>&1 ; then
+		"${cmdline[@]}" "${flag}" -x${lang} - </dev/null >/dev/null 2>&1
 	else
-		${PROG} "${flag}" -c -o /dev/null /dev/null > /dev/null 2>&1
+		"${cmdline[@]}" "${flag}" -c -o /dev/null /dev/null >/dev/null 2>&1
 	fi
 }
 
@@ -579,13 +609,28 @@ replace-sparc64-flags() {
 # @FUNCTION: append-libs
 # @USAGE: <libs>
 # @DESCRIPTION:
-# Add extra <libs> to the current LIBS.
+# Add extra <libs> to the current LIBS. All arguments should be prefixed with
+# either -l or -L.  For compatibility, if arguments are not prefixed as
+# options, they are given a -l prefix automatically.
 append-libs() {
 	[[ $# -eq 0 ]] && return 0
 	local flag
 	for flag in "$@"; do
-		[[ ${flag} == -l* ]] && flag=${flag#-l}
-		export LIBS="${LIBS} -l${flag}"
+		if [[ -z "${flag// }" ]]; then
+			eqawarn "Appending an empty argument to LIBS is invalid! Skipping."
+			continue
+		fi
+		case $flag in
+			-[lL]*)
+				export LIBS="${LIBS} ${flag}"
+				;;
+			-*)
+				eqawarn "Appending non-library to LIBS (${flag}); Other linker flags should be passed via LDFLAGS"
+				export LIBS="${LIBS} ${flag}"
+				;;
+			*)
+				export LIBS="${LIBS} -l${flag}"
+		esac
 	done
 
 	return 0
