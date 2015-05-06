@@ -1,14 +1,14 @@
 # Eclass for simple bare-source Java packages
 #
-# Copyright (c) 2004-2009, Gentoo Foundation
+# Copyright (c) 2004-2015, Gentoo Foundation
 #
 # Licensed under the GNU General Public License, v2
 #
-# $Header: /var/cvsroot/gentoo-x86/eclass/java-pkg-simple.eclass,v 1.1 2010/01/16 18:48:39 weaver Exp $
+# $Header: /var/cvsroot/gentoo-x86/eclass/java-pkg-simple.eclass,v 1.5 2015/04/04 21:04:49 chewi Exp $
 
 inherit java-utils-2
 
-if ! hasq java-pkg-2 ${INHERITED}; then
+if ! has java-pkg-2 ${INHERITED}; then
 	eerror "java-pkg-simple eclass can only be inherited AFTER java-pkg-2"
 fi
 
@@ -86,13 +86,21 @@ S="${WORKDIR}"
 # -----------------------------------------------------------------------------
 # JAVADOC_ARGS
 
+# -----------------------------------------------------------------------------
+# @variable-external JAVA_JAR_FILENAME
+# @variable-default ${PN}.jar
+#
+# The name of the jar file to create and install
+# -----------------------------------------------------------------------------
+: ${JAVA_JAR_FILENAME:=${PN}.jar}
+
 # ------------------------------------------------------------------------------
 # @eclass-src_compile
 #
 # src_compile for simple bare source java packages. Finds all *.java
 # sources in ${JAVA_SRC_DIR}, compiles them with the classpath
 # calculated from ${JAVA_GENTOO_CLASSPATH}, and packages the resulting
-# classes to ${PN}.jar.
+# classes to ${JAVA_JAR_FILENAME}.
 #
 # variables:
 # JAVA_GENTOO_CLASSPATH - list java packages to put on the classpath.
@@ -128,19 +136,19 @@ java-pkg-simple_src_compile() {
 		@${sources}
 
 	# javadoc
-	if hasq doc ${JAVA_PKG_IUSE} && use doc; then
+	if has doc ${JAVA_PKG_IUSE} && use doc; then
 		mkdir -p ${apidoc}
 		java-pkg-simple_verbose-cmd \
-			javadoc -d ${apidoc} \
+			ejavadoc -d ${apidoc} \
 			-encoding ${JAVA_ENCODING} -docencoding UTF-8 -charset UTF-8 \
 			${classpath:+-classpath ${classpath}} ${JAVADOC_ARGS:- -quiet} \
 			@${sources} || die "javadoc failed"
 	fi
 
 	# package
-	local jar_args="cf ${PN}.jar"
+	local jar_args="cf ${JAVA_JAR_FILENAME}"
 	if [[ -e ${classes}/META-INF/MANIFEST.MF ]]; then
-		jar_args="cfm ${PN}.jar ${classes}/META-INF/MANIFEST.MF"
+		jar_args="cfm ${JAVA_JAR_FILENAME} ${classes}/META-INF/MANIFEST.MF"
 	fi
 	java-pkg-simple_verbose-cmd \
 		jar ${jar_args} -C ${classes} . || die "jar failed"
@@ -150,25 +158,25 @@ java-pkg-simple_src_compile() {
 # @eclass-src_install
 #
 # src_install for simple single jar java packages. Simply packages the
-# contents from the target directory and installs it as ${PN}.jar. If
-# the file target/META-INF/MANIFEST.MF exists, it is used as the
-# manifest of the created jar.
+# contents from the target directory and installs it as
+# ${JAVA_JAR_FILENAME}. If the file target/META-INF/MANIFEST.MF exists,
+# it is used as the manifest of the created jar.
 # ------------------------------------------------------------------------------
 java-pkg-simple_src_install() {
 	local sources=sources.lst classes=target/classes apidoc=target/api
 
 	# main jar
 	java-pkg-simple_verbose-cmd \
-		java-pkg_dojar ${PN}.jar
+		java-pkg_dojar ${JAVA_JAR_FILENAME}
 
 	# javadoc
-	if hasq doc ${JAVA_PKG_IUSE} && use doc; then
+	if has doc ${JAVA_PKG_IUSE} && use doc; then
 		java-pkg-simple_verbose-cmd \
 			java-pkg_dojavadoc ${apidoc}
 	fi
 
 	# dosrc
-	if hasq source ${JAVA_PKG_IUSE} && use source; then
+	if has source ${JAVA_PKG_IUSE} && use source; then
 		local srcdirs=""
 		if [[ ${JAVA_SRC_DIR} ]]; then
 			local parent child
