@@ -10,5 +10,5 @@ RDEPEND=sys-libs/ncurses >=app-admin/eselect-emacs-1.2 net-libs/liblockfile hesi
 REQUIRED_USE=aqua? ( !X )
 SLOT=23
 SRC_URI=mirror://gnu/emacs/emacs-23.3a.tar.bz2 mirror://gentoo/emacs-23.3-patches-1.tar.bz2
-_eclasses_=autotools	999c8f6cf5d91495cb0779588f20716c	elisp-common	3322f14f031ddc95feccd9089c9adc59	eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	c3131dc67d3bd39f044e92b8280505e4	libtool	52d0e17251d04645ffaa61bfdd858944	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
+_eclasses_=autotools	999c8f6cf5d91495cb0779588f20716c	elisp-common	3322f14f031ddc95feccd9089c9adc59	eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	libtool	52d0e17251d04645ffaa61bfdd858944	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
 _md5_=be8c1c8a125076f334f83d002077e5cb
