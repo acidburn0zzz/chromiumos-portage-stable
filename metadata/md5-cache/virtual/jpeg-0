@@ -1,8 +1,0 @@
-DEFINED_PHASES=-
-DESCRIPTION=Virtual for jpeg library
-EAPI=2
-IUSE=static-libs
-KEYWORDS=*
-RDEPEND=|| ( media-libs/libjpeg-turbo:0[static-libs?] media-libs/jpeg:0[static-libs?] )
-SLOT=0
-_md5_=327f93d9b33847cc003f5dae9025f80e
