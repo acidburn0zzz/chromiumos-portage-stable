@@ -1,10 +1,10 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-libs/libxslt/libxslt-1.1.28-r3.ebuild,v 1.10 2014/09/15 08:18:41 ago Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-libs/libxslt/libxslt-1.1.28-r4.ebuild,v 1.11 2015/04/08 17:51:55 mgorny Exp $
 
 EAPI=5
 
-PYTHON_COMPAT=( python{2_6,2_7} )
+PYTHON_COMPAT=( python2_7 )
 PYTHON_REQ_USE="xml"
 
 inherit autotools eutils python-r1 toolchain-funcs multilib-minimal
@@ -20,7 +20,7 @@ IUSE="crypt debug python static-libs"
 
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
-RDEPEND=">=dev-libs/libxml2-2.9.1-r4:2[${MULTILIB_USEDEP}]
+RDEPEND=">=dev-libs/libxml2-2.9.1-r5:2[${MULTILIB_USEDEP}]
 	crypt?  ( >=dev-libs/libgcrypt-1.5.3:0=[${MULTILIB_USEDEP}] )
 	python? (
 		${PYTHON_DEPS}
@@ -32,6 +32,10 @@ RDEPEND=">=dev-libs/libxml2-2.9.1-r4:2[${MULTILIB_USEDEP}]
 "
 DEPEND="${RDEPEND}"
 
+MULTILIB_CHOST_TOOLS=(
+	/usr/bin/xslt-config
+)
+
 src_prepare() {
 	DOCS=( AUTHORS ChangeLog FEATURES NEWS README TODO )
 
@@ -42,7 +46,9 @@ src_prepare() {
 
 	# use AC_PATH_TOOL for libgcrypt-config for sane cross-compile and multilib support
 	# https://bugzilla.gnome.org/show_bug.cgi?id=725635
-	epatch "${FILESDIR}"/${PN}-1.1.28-libgcrypt-config.patch
+	# same for xml2-config
+	# https://bugs.gentoo.org/show_bug.cgi?id=518728
+	epatch "${FILESDIR}"/${PN}-1.1.28-AC_PATH_TOOL.patch
 
 	eautoreconf
 	# If eautoreconf'd with new autoconf, then epunt_cxx is not necessary
