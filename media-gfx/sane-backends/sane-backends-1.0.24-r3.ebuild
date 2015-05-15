@@ -175,7 +175,8 @@ src_prepare() {
 		"${FILESDIR}"/${P}-automagic_systemd.patch \
 		"${FILESDIR}"/${P}-systemd_pkgconfig.patch \
 		"${FILESDIR}"/${P}-kodakaio_avahi.patch \
-		"${FILESDIR}"/${P}-saned_pidfile_location.patch
+		"${FILESDIR}"/${P}-saned_pidfile_location.patch \
+		"${FILESDIR}"/${P}-cross-compile.patch
 	# Fix for "make check".
 	sed -i -e 's/sane-backends 1.0.24git/sane-backends 1.0.24/' testsuite/tools/data/html*
 	AT_NOELIBTOOLIZE=yes eautoreconf
