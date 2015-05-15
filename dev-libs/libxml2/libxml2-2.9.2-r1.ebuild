@@ -1,9 +1,9 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-libs/libxml2/libxml2-2.9.2.ebuild,v 1.11 2014/12/11 11:29:32 armin76 Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-libs/libxml2/libxml2-2.9.2-r1.ebuild,v 1.9 2015/04/28 07:28:58 ago Exp $
 
 EAPI="5"
-PYTHON_COMPAT=( python{2_6,2_7,3_2,3_3,3_4} )
+PYTHON_COMPAT=( python{2_7,3_3,3_4} )
 PYTHON_REQ_USE="xml"
 
 inherit libtool flag-o-matic eutils python-r1 autotools prefix multilib-minimal
@@ -78,9 +78,15 @@ src_prepare() {
 
 #	epunt_cxx # if we don't eautoreconf
 
+	epatch "${FILESDIR}"/${PN}-2.9.2-cross-compile.patch
+
 	# Important patches from master
 	epatch \
-		"${FILESDIR}/${PN}-2.9.2-revert-missing-initialization.patch"
+		"${FILESDIR}/${PN}-2.9.2-revert-missing-initialization.patch" \
+		"${FILESDIR}/${PN}-2.9.2-missing-entities.patch" \
+		"${FILESDIR}/${PN}-2.9.2-threads-declarations.patch" \
+		"${FILESDIR}/${PN}-2.9.2-timsort.patch" \
+		"${FILESDIR}/${PN}-2.9.2-constant-memory.patch"
 
 	# Please do not remove, as else we get references to PORTAGE_TMPDIR
 	# in /usr/lib/python?.?/site-packages/libxml2mod.la among things.
@@ -128,7 +134,7 @@ multilib_src_configure() {
 	libxml2_configure --without-python # build python bindings separately
 
 	if multilib_is_native_abi && use python; then
-		python_parallel_foreach_impl libxml2_py_configure
+		python_foreach_impl libxml2_py_configure
 	fi
 }
 
