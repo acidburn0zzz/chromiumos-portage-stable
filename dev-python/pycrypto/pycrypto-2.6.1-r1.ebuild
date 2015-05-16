@@ -1,10 +1,10 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-python/pycrypto/pycrypto-2.6.1.ebuild,v 1.11 2013/11/19 18:48:53 grobian Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-python/pycrypto/pycrypto-2.6.1-r1.ebuild,v 1.2 2014/12/11 09:28:17 jlec Exp $
 
 EAPI=5
 
-PYTHON_COMPAT=( python{2_6,2_7,3_2,3_3} )
+PYTHON_COMPAT=( python{2_7,3_3,3_4} )
 
 inherit distutils-r1
 
@@ -19,8 +19,22 @@ IUSE="doc +gmp"
 
 RDEPEND="gmp? ( dev-libs/gmp )"
 DEPEND="${RDEPEND}
-	doc? ( dev-python/docutils
-		>=dev-python/epydoc-3 )"
+	doc? (
+		dev-python/docutils[${PYTHON_USEDEP}]
+		$(python_gen_cond_dep '>=dev-python/epydoc-3[${PYTHON_USEDEP}]' python2_7)
+		)"
+
+python_prepare_all() {
+	epatch "${FILESDIR}"/${P}-cross-compile.patch
+	# Fix Crypto.PublicKey.RSA._RSAobj.exportKey(format="OpenSSH") with Python 3
+	# https://github.com/dlitz/pycrypto/commit/ab25c6fe95ee92fac3187dcd90e0560ccacb084a
+	sed \
+		-e "/keyparts =/s/'ssh-rsa'/b('ssh-rsa')/" \
+		-e "s/keystring = ''.join/keystring = b('').join/" \
+		-e "s/return 'ssh-rsa '/return b('ssh-rsa ')/" \
+		-i lib/Crypto/PublicKey/RSA.py || die
+	distutils-r1_python_prepare_all
+}
 
 python_configure_all() {
 	# the configure does not interact with python in any way,
