@@ -189,7 +189,7 @@ src_configure() {
 		--disable-mod-activation \
 		--disable-neon-version-check \
 		--disable-static \
-		--with-sqlite="${EPREFIX}/usr"
+		--with-sqlite="${SYSROOT}${EPREFIX}/usr"
 }
 
 src_compile() {
