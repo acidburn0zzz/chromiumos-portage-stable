@@ -1,10 +1,10 @@
 # Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/net-libs/neon/neon-0.30.0.ebuild,v 1.11 2014/03/16 02:51:12 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/net-libs/neon/neon-0.30.1.ebuild,v 1.10 2014/12/06 16:41:07 ago Exp $
 
 EAPI="5"
 
-inherit autotools libtool
+inherit autotools libtool multilib-minimal
 
 DESCRIPTION="HTTP and WebDAV client library"
 HOMEPAGE="http://www.webdav.org/neon/"
@@ -21,37 +21,49 @@ done
 unset lingua
 RESTRICT="test"
 
-RDEPEND="expat? ( dev-libs/expat:0= )
-	!expat? ( dev-libs/libxml2:2= )
+RDEPEND="expat? ( dev-libs/expat:0=[${MULTILIB_USEDEP}] )
+	!expat? ( dev-libs/libxml2:2=[${MULTILIB_USEDEP}] )
 	gnutls? (
 		app-misc/ca-certificates
-		net-libs/gnutls:0=
-		pkcs11? ( dev-libs/pakchois:0= )
+		net-libs/gnutls:0=[${MULTILIB_USEDEP}]
+		pkcs11? ( dev-libs/pakchois:0=[${MULTILIB_USEDEP}] )
 	)
 	!gnutls? ( ssl? (
-		dev-libs/openssl:0=
-		pkcs11? ( dev-libs/pakchois:0= )
+		dev-libs/openssl:0=[${MULTILIB_USEDEP}]
+		pkcs11? ( dev-libs/pakchois:0=[${MULTILIB_USEDEP}] )
 	) )
-	kerberos? ( virtual/krb5:0= )
-	libproxy? ( net-libs/libproxy:0= )
-	nls? ( virtual/libintl:0= )
-	zlib? ( sys-libs/zlib:0= )"
+	kerberos? ( virtual/krb5:0=[${MULTILIB_USEDEP}] )
+	libproxy? ( net-libs/libproxy:0=[${MULTILIB_USEDEP}] )
+	nls? ( virtual/libintl:0=[${MULTILIB_USEDEP}] )
+	zlib? ( sys-libs/zlib:0=[${MULTILIB_USEDEP}] )"
 DEPEND="${RDEPEND}
-	virtual/pkgconfig"
+	virtual/pkgconfig[${MULTILIB_USEDEP}]"
+RDEPEND="${RDEPEND}
+	abi_x86_32? (
+		!<=app-emulation/emul-linux-x86-baselibs-20140508-r8
+		!app-emulation/emul-linux-x86-baselibs[-abi_x86_32(-)]
+	)"
+
+MULTILIB_CHOST_TOOLS=(
+	/usr/bin/neon-config
+)
 
 src_prepare() {
 	local lingua linguas
 	for lingua in ${IUSE_LINGUAS}; do
 		use linguas_${lingua} && linguas+=" ${lingua}"
 	done
-	sed -e "s/ALL_LINGUAS=.*/ALL_LINGUAS=\"${linguas}\"/" -i configure.in
+	sed -e "s/ALL_LINGUAS=.*/ALL_LINGUAS=\"${linguas}\"/" -i configure.ac || die
 
+	epatch "${FILESDIR}"/${P}-xml2-config.patch
 	AT_M4DIR="macros" eautoreconf
 
 	elibtoolize
+
+	multilib_copy_sources
 }
 
-src_configure() {
+multilib_src_configure() {
 	local myconf=()
 
 	if has_version sys-libs/glibc; then
@@ -83,14 +95,16 @@ src_configure() {
 		"${myconf[@]}"
 }
 
-src_install() {
+multilib_src_install() {
 	emake DESTDIR="${D}" install-{config,headers,lib,man,nls}
 
-	find "${ED}" -name "*.la" -delete
-
-	if use doc; then
-		emake DESTDIR="${D}" install-html
+	if multilib_is_native_abi && use doc; then
+		dohtml -r doc/html/
 	fi
+}
+
+multilib_src_install_all() {
+	find "${ED}" -name "*.la" -delete
 
 	dodoc AUTHORS BUGS NEWS README THANKS TODO
 }
