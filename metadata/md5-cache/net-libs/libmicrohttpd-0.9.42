@@ -8,5 +8,5 @@ KEYWORDS=*
 LICENSE=LGPL-2.1
 RDEPEND=ssl? ( dev-libs/libgcrypt:0 net-libs/gnutls )
 SLOT=0
-SRC_URI=mirror://gnu/libmicrohttpd/libmicrohttpd-0.9.37.tar.gz
-_md5_=416d3185e69b2652f102f507fd726713
+SRC_URI=mirror://gnu/libmicrohttpd/libmicrohttpd-0.9.42.tar.gz
+_md5_=7c6e59506d6b2405f566628df2125738
