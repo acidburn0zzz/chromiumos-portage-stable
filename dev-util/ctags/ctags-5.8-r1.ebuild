@@ -1,8 +1,8 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-util/ctags/ctags-5.8.ebuild,v 1.11 2014/06/06 05:59:37 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-util/ctags/ctags-5.8-r1.ebuild,v 1.2 2015/03/31 17:44:26 ulm Exp $
 
-EAPI="4"
+EAPI="5"
 
 inherit eutils
 
@@ -16,7 +16,7 @@ SLOT="0"
 KEYWORDS="*"
 IUSE="ada"
 
-DEPEND="app-admin/eselect-ctags"
+RDEPEND="app-eselect/eselect-ctags"
 
 src_prepare() {
 	epatch "${FILESDIR}/${PN}-5.6-ebuilds.patch"
