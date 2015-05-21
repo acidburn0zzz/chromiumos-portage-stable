@@ -1,0 +1,7 @@
+DEFINED_PHASES=-
+DESCRIPTION=Virtual for Java Development Kit (JDK)
+EAPI=4
+KEYWORDS=*
+RDEPEND=|| ( ppc? ( || ( =dev-java/ibm-jdk-bin-1.6.0* =dev-java/icedtea-6* ) ) ppc64? ( || ( =dev-java/ibm-jdk-bin-1.6.0* =dev-java/icedtea-6* ) ) prefix? ( || ( =dev-java/icedtea-bin-6* =dev-java/icedtea-bin-1* ) ) =dev-java/icedtea-bin-6* =dev-java/icedtea-bin-1* =dev-java/icedtea-6* =dev-java/ibm-jdk-bin-1.6.0* =dev-java/hp-jdk-bin-1.6.0* =dev-java/diablo-jdk-1.6.0* =dev-java/soylatte-jdk-bin-1.0* =dev-java/apple-jdk-bin-1.6.0* =dev-java/winjdk-bin-1.6.0* )
+SLOT=1.6
+_md5_=a07f896a2c575878ab4f0ee15abb4326
