@@ -1,0 +1,10 @@
+DEFINED_PHASES=install
+DESCRIPTION=Manages ctags implementations
+EAPI=5
+HOMEPAGE=http://wiki.gentoo.org/wiki/Project:Emacs
+KEYWORDS=*
+LICENSE=GPL-2+
+RDEPEND=!<app-eselect/eselect-emacs-1.18 >=app-admin/eselect-1.2.3 !app-admin/eselect-ctags
+SLOT=0
+SRC_URI=http://dev.gentoo.org/~ulm/emacs/eselect-emacs-1.18.tar.xz
+_md5_=132c5a4c8bf8fdf8f48b4efcfa2ee403

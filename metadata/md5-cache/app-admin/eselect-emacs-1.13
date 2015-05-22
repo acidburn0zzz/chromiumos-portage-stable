@@ -1,9 +1,0 @@
-DEFINED_PHASES=install
-DESCRIPTION=Manage multiple Emacs versions on one system
-HOMEPAGE=http://www.gentoo.org/proj/en/lisp/emacs/
-KEYWORDS=*
-LICENSE=GPL-2
-RDEPEND=>=app-admin/eselect-1.2.6 ~app-admin/eselect-ctags-1.13
-SLOT=0
-SRC_URI=mirror://gentoo/eselect-emacs-1.13.tar.bz2
-_md5_=f5516db8cf13dc03c64473262d6cc93e

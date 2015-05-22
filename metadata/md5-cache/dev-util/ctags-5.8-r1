@@ -1,12 +1,12 @@
 DEFINED_PHASES=configure install postinst postrm prepare
-DEPEND=app-admin/eselect-ctags
 DESCRIPTION=Exuberant Ctags creates tags files for code browsing in editors
-EAPI=4
+EAPI=5
 HOMEPAGE=http://ctags.sourceforge.net
 IUSE=ada
 KEYWORDS=*
 LICENSE=GPL-2
+RDEPEND=app-eselect/eselect-ctags
 SLOT=0
 SRC_URI=mirror://sourceforge/ctags/ctags-5.8.tar.gz ada? ( mirror://sourceforge/gnuada/ctags-ada-mode-4.3.11.tar.bz2 )
 _eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
-_md5_=363ebc85b772305029783c206db7a6bd
+_md5_=5daf81f9524cf7f0fd92657cfc823e7e
