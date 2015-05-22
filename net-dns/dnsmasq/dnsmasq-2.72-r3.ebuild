@@ -4,7 +4,7 @@
 
 EAPI=5
 
-inherit eutils toolchain-funcs flag-o-matic user systemd
+inherit fcaps eutils toolchain-funcs flag-o-matic user systemd
 
 DESCRIPTION="Small forwarding DNS server"
 HOMEPAGE="http://www.thekelleys.org.uk/dnsmasq/doc.html"
@@ -188,4 +188,7 @@ pkg_preinst() {
 pkg_postinst() {
 	# temporary workaround to (hopefully) prevent leases file from being removed
 	[[ -f "${T}"/dnsmasq.leases ]] && cp "${T}"/dnsmasq.leases /var/lib/misc/dnsmasq.leases
+	# Inherit network related capabilities from parent process. Needed in order
+	# for it to run in the minijail.
+	fcaps cap_net_admin,cap_net_raw,cap_net_bind_service=ie usr/sbin/${PN}
 }
