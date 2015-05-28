@@ -1,6 +1,6 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-libs/readline/readline-6.3_p8-r1.ebuild,v 1.1 2014/08/30 08:20:50 polynomial-c Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-libs/readline/readline-6.3_p8-r2.ebuild,v 1.9 2015/05/27 04:44:00 jer Exp $
 
 EAPI=4
 
@@ -35,7 +35,7 @@ SRC_URI="mirror://gnu/${PN}/${MY_P}.tar.gz $(patches)"
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="*"
-IUSE="static-libs"
+IUSE="static-libs utils"
 
 RDEPEND=">=sys-libs/ncurses-5.9-r3[${MULTILIB_USEDEP}]
 	abi_x86_32? (
@@ -56,6 +56,7 @@ src_prepare() {
 	epatch "${FILESDIR}"/${PN}-5.0-no_rpath.patch
 	epatch "${FILESDIR}"/${PN}-6.2-rlfe-tgoto.patch #385091
 	epatch "${FILESDIR}"/${PN}-6.3-fix-long-prompt-vi-search.patch
+	epatch "${FILESDIR}"/${PN}-6.3-read-eof.patch
 
 	# Force ncurses linking. #71420
 	# Use pkg-config to get the right values. #457558
@@ -106,10 +107,11 @@ multilib_src_configure() {
 	ECONF_SOURCE=${S} \
 	econf \
 		--cache-file="${BUILD_DIR}"/config.cache \
+		--docdir=/usr/share/doc/${PF} \
 		--with-curses \
 		$(use_enable static-libs static)
 
-	if multilib_is_native_abi && ! tc-is-cross-compiler ; then
+	if use utils && multilib_is_native_abi && ! tc-is-cross-compiler ; then
 		# code is full of AC_TRY_RUN()
 		mkdir -p examples/rlfe || die
 		cd examples/rlfe || die
@@ -121,7 +123,7 @@ multilib_src_configure() {
 multilib_src_compile() {
 	emake
 
-	if multilib_is_native_abi && ! tc-is-cross-compiler ; then
+	if use utils && multilib_is_native_abi && ! tc-is-cross-compiler ; then
 		# code is full of AC_TRY_RUN()
 		cd examples/rlfe || die
 		local l
@@ -139,7 +141,7 @@ multilib_src_install() {
 	if multilib_is_native_abi ; then
 		gen_usr_ldscript -a readline history #4411
 
-		if ! tc-is-cross-compiler; then
+		if use utils && ! tc-is-cross-compiler; then
 			dobin examples/rlfe/rlfe
 		fi
 	fi
