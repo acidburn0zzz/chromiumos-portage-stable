@@ -5,9 +5,9 @@ EAPI=4
 HOMEPAGE=http://gmplib.org/
 IUSE=doc cxx pgo static-libs abi_x86_32 abi_x86_64 abi_x86_x32 abi_mips_n32 abi_mips_n64 abi_mips_o32 abi_ppc_32 abi_ppc_64 abi_s390_32 abi_s390_64
 KEYWORDS=*
-LICENSE=LGPL-3
+LICENSE=|| ( LGPL-3+ GPL-2+ )
 RDEPEND=abi_x86_32? ( !<=app-emulation/emul-linux-x86-baselibs-20131008-r1 !app-emulation/emul-linux-x86-baselibs[-abi_x86_32(-)] )
 SLOT=0
-SRC_URI=mirror://gnu/gmp/gmp-5.1.3.tar.xz ftp://ftp.gmplib.org/pub/gmp-5.1.3/gmp-5.1.3.tar.xz doc? ( http://gmplib.org/gmp-man-5.1.3.pdf )
+SRC_URI=mirror://gnu/gmp/gmp-6.0.0a.tar.xz ftp://ftp.gmplib.org/pub/gmp-6.0.0a/gmp-6.0.0a.tar.xz doc? ( http://gmplib.org/gmp-man-6.0.0a.pdf )
 _eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	libtool	52d0e17251d04645ffaa61bfdd858944	multibuild	6d4858dc00f8bc51caf3f957f8430eb0	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	multilib-build	0983c7893df461213a05f791cc7dea6d	multilib-minimal	13dd976916c35a1e2c8d170e840c7018	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
-_md5_=285ba6e5a745f8ddd250c0a7d0a4b81b
+_md5_=6c91b5fd399e43ea247fd7bae7d0a906
