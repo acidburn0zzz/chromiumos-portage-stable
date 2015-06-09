@@ -59,6 +59,9 @@ src_prepare() {
 	# Add dbus support to dhclient
 	epatch "${FILESDIR}"/${PN}-3.0.3-dhclient-dbus.patch
 
+	# Allow "dhcpd -6" to run on a system without SO_REUSEPORT support.
+	epatch "${FILESDIR}"/${PN}-4.2.2-Gracefully-handle-SO_REUSEPORT-command-failure.patch
+
 	# Brand the version with Gentoo
 	sed -i \
 		-e "/VERSION=/s:'$: Gentoo-${PR}':" \
