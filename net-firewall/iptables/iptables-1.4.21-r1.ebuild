@@ -1,17 +1,17 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/net-firewall/iptables/iptables-1.4.16.3.ebuild,v 1.6 2013/02/08 14:30:33 jer Exp $
+# $Header: /var/cvsroot/gentoo-x86/net-firewall/iptables/iptables-1.4.21-r1.ebuild,v 1.9 2014/08/02 18:06:48 ago Exp $
 
-EAPI="4"
+EAPI="5"
 
 # Force users doing their own patches to install their own tools
 AUTOTOOLS_AUTO_DEPEND=no
 
-inherit eutils multilib toolchain-funcs autotools
+inherit eutils multilib systemd toolchain-funcs autotools
 
 DESCRIPTION="Linux kernel (2.4+) firewall, NAT and packet mangling tools"
-HOMEPAGE="http://www.iptables.org/"
-SRC_URI="http://iptables.org/projects/iptables/files/${P}.tar.bz2"
+HOMEPAGE="http://www.netfilter.org/projects/iptables/"
+SRC_URI="http://www.netfilter.org/projects/iptables/files/${P}.tar.bz2"
 
 LICENSE="GPL-2"
 SLOT="0"
@@ -35,6 +35,9 @@ src_prepare() {
 }
 
 src_configure() {
+	# Some libs use $(AR) rather than libtool to build #444282
+	tc-export AR
+
 	sed -i \
 		-e "/nfnetlink=[01]/s:=[01]:=$(usex netlink 1 0):" \
 		configure || die
@@ -77,7 +80,13 @@ src_install() {
 		newconfd "${FILESDIR}"/ip6tables-1.4.13.confd ip6tables
 	fi
 
+	systemd_dounit "${FILESDIR}"/systemd/iptables{,-{re,}store}.service
+	if use ipv6 ; then
+		systemd_dounit "${FILESDIR}"/systemd/ip6tables{,-{re,}store}.service
+	fi
+
 	# Move important libs to /lib
 	gen_usr_ldscript -a ip{4,6}tc iptc xtables
-	find "${ED}" -type f -name '*.la' -exec rm -rf '{}' '+' || die "la removal failed"
+
+	prune_libtool_files
 }
