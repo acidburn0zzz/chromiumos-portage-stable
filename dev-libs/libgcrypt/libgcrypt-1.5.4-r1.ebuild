@@ -1,11 +1,11 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-libs/libgcrypt/libgcrypt-1.5.4.ebuild,v 1.11 2014/08/24 09:02:47 ago Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-libs/libgcrypt/libgcrypt-1.5.4-r1.ebuild,v 1.9 2015/07/08 07:53:59 vapier Exp $
 
 EAPI=5
 AUTOTOOLS_AUTORECONF=1
 
-inherit autotools-utils
+inherit autotools-multilib
 
 DESCRIPTION="General purpose crypto library based on the code used in GnuPG"
 HOMEPAGE="http://www.gnupg.org/"
@@ -16,7 +16,12 @@ SLOT="0/11" # subslot = soname major version
 KEYWORDS="*"
 IUSE="static-libs"
 
-RDEPEND=">=dev-libs/libgpg-error-1.8"
+RDEPEND=">=dev-libs/libgpg-error-1.12[${MULTILIB_USEDEP}]
+	!dev-libs/libgcrypt:11
+	abi_x86_32? (
+		!<=app-emulation/emul-linux-x86-baselibs-20131008-r19
+		!app-emulation/emul-linux-x86-baselibs[-abi_x86_32]
+	)"
 DEPEND="${RDEPEND}"
 
 DOCS=( AUTHORS ChangeLog NEWS README THANKS TODO )
@@ -24,6 +29,11 @@ DOCS=( AUTHORS ChangeLog NEWS README THANKS TODO )
 PATCHES=(
 	"${FILESDIR}"/${PN}-1.5.0-uscore.patch
 	"${FILESDIR}"/${PN}-multilib-syspath.patch
+	"${FILESDIR}"/${P}-clang-arm.patch
+)
+
+MULTILIB_CHOST_TOOLS=(
+	/usr/bin/libgcrypt-config
 )
 
 src_configure() {
@@ -43,5 +53,5 @@ src_configure() {
 		$([[ ${CHOST} == *86*-darwin* ]] && echo "--disable-asm")
 		$([[ ${CHOST} == sparcv9-*-solaris* ]] && echo "--disable-asm")
 	)
-	autotools-utils_src_configure
+	autotools-multilib_src_configure
 }
