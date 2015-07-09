@@ -1,6 +1,6 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-power/powertop/powertop-2.7-r1.ebuild,v 1.2 2015/03/02 22:25:47 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-power/powertop/powertop-2.7-r2.ebuild,v 1.1 2015/07/08 11:53:58 vapier Exp $
 
 EAPI="5"
 
@@ -89,6 +89,10 @@ pkg_setup() {
 
 src_prepare() {
 	epatch "${FILESDIR}"/${P}-baytrail-msr.patch
+	epatch "${FILESDIR}"/${P}-broadwell.patch
+	epatch "${FILESDIR}"/${P}-braswell.patch
+	epatch "${FILESDIR}"/${P}-skylake.patch
+	epatch "${FILESDIR}"/${P}-skylake-2.patch
 }
 
 src_configure() {
