@@ -1,10 +1,10 @@
-# Copyright 1999-2012 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-apps/hdparm/hdparm-9.39.ebuild,v 1.10 2012/09/29 09:58:03 ulm Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-apps/hdparm/hdparm-9.45.ebuild,v 1.9 2015/06/21 15:54:23 zlogene Exp $
 
 EAPI="4"
 
-inherit toolchain-funcs
+inherit toolchain-funcs flag-o-matic
 
 DESCRIPTION="Utility to change hard drive performance parameters"
 HOMEPAGE="http://sourceforge.net/projects/hdparm/"
@@ -13,9 +13,10 @@ SRC_URI="mirror://sourceforge/hdparm/${P}.tar.gz"
 LICENSE="BSD GPL-2" # GPL-2 only
 SLOT="0"
 KEYWORDS="*"
-IUSE=""
+IUSE="static"
 
 src_prepare() {
+	use static && append-ldflags -static
 	sed -i \
 		-e "/^CFLAGS/ s:-O2:${CFLAGS}:" \
 		-e "/^LDFLAGS/ s:-s:${LDFLAGS}:" \
