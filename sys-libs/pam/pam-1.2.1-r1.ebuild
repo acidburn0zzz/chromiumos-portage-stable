@@ -1,34 +1,30 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-libs/pam/pam-1.1.8-r2.ebuild,v 1.12 2014/09/15 08:24:10 ago Exp $
+# $Header: /var/cvsroot/gentoo-x86/sys-libs/pam/pam-1.2.1-r1.ebuild,v 1.1 2015/07/13 05:03:16 vapier Exp $
 
 EAPI=5
 
-inherit libtool multilib multilib-minimal eutils pam toolchain-funcs flag-o-matic db-use
+inherit libtool multilib multilib-minimal eutils pam toolchain-funcs flag-o-matic db-use fcaps
 
 MY_PN="Linux-PAM"
 MY_P="${MY_PN}-${PV}"
 
-HOMEPAGE="https://fedorahosted.org/linux-pam/"
 DESCRIPTION="Linux-PAM (Pluggable Authentication Modules)"
-
+HOMEPAGE="http://www.linux-pam.org/ https://fedorahosted.org/linux-pam/"
 SRC_URI="http://www.linux-pam.org/library/${MY_P}.tar.bz2
-	http://www.linux-pam.org/documentation/${MY_P}-docs.tar.bz2"
+	http://www.linux-pam.org/documentation/${MY_PN}-1.2.0-docs.tar.bz2"
 
 LICENSE="|| ( BSD GPL-2 )"
 SLOT="0"
 KEYWORDS="*"
-IUSE="cracklib nls elibc_FreeBSD selinux vim-syntax audit test elibc_glibc debug berkdb nis"
+IUSE="audit berkdb cracklib debug nis nls +pie selinux test vim-syntax"
 
 RDEPEND="nls? ( >=virtual/libintl-0-r1[${MULTILIB_USEDEP}] )
 	cracklib? ( >=sys-libs/cracklib-2.9.1-r1[${MULTILIB_USEDEP}] )
 	audit? ( >=sys-process/audit-2.2.2[${MULTILIB_USEDEP}] )
 	selinux? ( >=sys-libs/libselinux-2.2.2-r4[${MULTILIB_USEDEP}] )
 	berkdb? ( >=sys-libs/db-4.8.30-r1[${MULTILIB_USEDEP}] )
-	elibc_glibc? (
-		>=sys-libs/glibc-2.7
-		nis? ( || ( >=net-libs/libtirpc-0.2.4-r2[${MULTILIB_USEDEP}] <sys-libs/glibc-2.14 ) )
-	)"
+	nis? ( >=net-libs/libtirpc-0.2.4-r2[${MULTILIB_USEDEP}] )"
 DEPEND="${RDEPEND}
 	>=sys-devel/libtool-2
 	>=sys-devel/flex-2.5.39-r1[${MULTILIB_USEDEP}]
@@ -80,7 +76,7 @@ check_old_modules() {
 		retval=1
 	fi
 
-	return $retval
+	return ${retval}
 }
 
 pkg_pretend() {
@@ -89,23 +85,32 @@ pkg_pretend() {
 	check_old_modules
 }
 
-src_prepare() {
-	epatch "${FILESDIR}"/${PN}-1.1.8-doc-install.patch #473650
+src_unpack() {
+	# Upstream didn't release a new doc tarball (since nothing changed?).
+	unpack ${MY_PN}-1.2.0-docs.tar.bz2
+	mv Linux-PAM-1.2.{0,1} || die
+	unpack ${MY_P}.tar.bz2
+}
 
+src_prepare() {
 	elibtoolize
 }
 
 multilib_src_configure() {
+	# Do not let user's BROWSER setting mess us up. #549684
+	unset BROWSER
+
 	# Disable automatic detection of libxcrypt; we _don't_ want the
 	# user to link libxcrypt in by default, since we won't track the
 	# dependency and allow to break PAM this way.
 	export ac_cv_header_xcrypt_h=no
 
 	local myconf=(
-		--htmldir="${EPREFIX}"/usr/share/doc/${PF}/html
-		--libdir="${EPREFIX}"/usr/$(get_libdir) \
+		--docdir='$(datarootdir)'/doc/${PF}
+		--htmldir='$(docdir)/html'
+		--libdir='$(prefix)'/$(get_libdir)
 		--enable-securedir="${EPREFIX}"/$(get_libdir)/security
-		--enable-isadir="${EPREFIX}"/$(get_libdir)/security
+		--enable-isadir='.' #464016
 		$(use_enable nls)
 		$(use_enable selinux)
 		$(use_enable cracklib)
@@ -113,13 +118,10 @@ multilib_src_configure() {
 		$(use_enable debug)
 		$(use_enable berkdb db)
 		$(use_enable nis)
+		$(use_enable pie)
 		--with-db-uniquename=-$(db_findver sys-libs/db)
 		--disable-prelude
 	)
-
-	if use hppa || use elibc_FreeBSD; then
-		myconf+=( --disable-pie )
-	fi
 
 	ECONF_SOURCE=${S} \
 	econf "${myconf[@]}"
@@ -156,10 +158,8 @@ multilib_src_install_all() {
 	einstalldocs
 	prune_libtool_files --all
 
-	# Need to be suid
-	fperms u+s /sbin/unix_chkpwd
-
 	docinto modules
+	local dir
 	for dir in modules/pam_*; do
 		newdoc "${dir}"/README README."$(basename "${dir}")"
 	done
@@ -195,4 +195,8 @@ pkg_postinst() {
 		elog "  chmod -x /var/log/tallylog"
 		elog ""
 	fi
+
+	# The pam_unix module needs to check the password of the user which requires
+	# read access to /etc/shadow only.
+	fcaps cap_dac_override sbin/unix_chkpwd
 }
