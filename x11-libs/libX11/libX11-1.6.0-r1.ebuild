@@ -8,7 +8,7 @@ XORG_DOC=doc
 # needs automake-1.13 without eautoreconf
 XORG_EAUTORECONF=yes
 XORG_MULTILIB=yes
-inherit xorg-2 toolchain-funcs flag-o-matic
+inherit xorg-2 toolchain-funcs
 
 DESCRIPTION="X.Org X11 library"
 
@@ -44,12 +44,14 @@ src_configure() {
 }
 
 src_compile() {
-	# [Cross-Compile Love] Disable {C,LD}FLAGS and redefine CC= for 'makekeys'
 	if tc-is-cross-compiler; then
-		(
-			filter-flags -m*
-			emake -C "${AUTOTOOLS_BUILD_DIR}"/src/util CC=$(tc-getBUILD_CC) CFLAGS="${CFLAGS}" LDFLAGS="" clean all || die
-		)
+		# Make sure the build-time tool "makekeys" uses build settings.
+		tc-export_build_env BUILD_CC
+		emake -C "${AUTOTOOLS_BUILD_DIR}"/src/util \
+			CC="${BUILD_CC}" \
+			CFLAGS="${BUILD_CFLAGS}" \
+			LDFLAGS="${BUILD_LDFLAGS}" \
+			clean all
 	fi
 	xorg-2_src_compile
 }
