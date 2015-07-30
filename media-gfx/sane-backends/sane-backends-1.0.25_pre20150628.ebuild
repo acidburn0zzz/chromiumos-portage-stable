@@ -1,10 +1,10 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/media-gfx/sane-backends/sane-backends-1.0.24-r3.ebuild,v 1.2 2014/03/25 22:15:48 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/media-gfx/sane-backends/sane-backends-1.0.25_pre20150628.ebuild,v 1.4 2015/08/06 05:47:07 vapier Exp $
 
 EAPI="5"
 
-inherit autotools eutils flag-o-matic multilib udev user toolchain-funcs
+inherit autotools eutils flag-o-matic multilib multilib-minimal udev user toolchain-funcs
 
 # gphoto and v4l are handled by their usual USE flags.
 # The pint backend was disabled because I could not get it to compile.
@@ -94,7 +94,7 @@ IUSE_SANE_BACKENDS="
 	umax_pp
 	xerox_mfp"
 
-IUSE="avahi doc gphoto2 ipv6 threads usb v4l xinetd snmp systemd"
+IUSE="avahi doc gphoto2 ipv6 nls snmp systemd threads usb v4l xinetd"
 
 for backend in ${IUSE_SANE_BACKENDS}; do
 	case ${backend} in
@@ -118,30 +118,38 @@ REQUIRED_USE="
 
 DESCRIPTION="Scanner Access Now Easy - Backends"
 HOMEPAGE="http://www.sane-project.org/"
-SRC_URI="https://alioth.debian.org/frs/download.php/file/3958/${P}.tar.gz"
+if [[ ${PV} == *_pre* ]] ; then
+	MY_P="${PN}-git${PV#*_pre}"
+	SRC_URI="http://www.sane-project.org/snapshots/${MY_P}.tar.gz
+		mirror://gentoo/${MY_P}.tar.gz"
+	S=${WORKDIR}/${MY_P}
+else
+	MY_P=${P}
+	SRC_URI="https://alioth.debian.org/frs/download.php/file/3958/${P}.tar.gz"
+fi
 
 LICENSE="GPL-2 public-domain"
 SLOT="0"
 KEYWORDS="*"
 
 RDEPEND="
-	sane_backends_dc210? ( virtual/jpeg )
-	sane_backends_dc240? ( virtual/jpeg )
-	sane_backends_dell1600n_net? ( virtual/jpeg
-									media-libs/tiff )
-	avahi? ( >=net-dns/avahi-0.6.24 )
-	sane_backends_canon_pp? ( sys-libs/libieee1284 )
-	sane_backends_hpsj5s? ( sys-libs/libieee1284 )
-	sane_backends_mustek_pp? ( sys-libs/libieee1284 )
-	usb? ( virtual/libusb:1 )
+	sane_backends_dc210? ( >=virtual/jpeg-0-r2[${MULTILIB_USEDEP}] )
+	sane_backends_dc240? ( >=virtual/jpeg-0-r2[${MULTILIB_USEDEP}] )
+	sane_backends_dell1600n_net? ( >=virtual/jpeg-0-r2[${MULTILIB_USEDEP}]
+									>=media-libs/tiff-3.9.7-r1[${MULTILIB_USEDEP}] )
+	avahi? ( >=net-dns/avahi-0.6.31-r2[${MULTILIB_USEDEP}] )
+	sane_backends_canon_pp? ( >=sys-libs/libieee1284-0.2.11-r3[${MULTILIB_USEDEP}] )
+	sane_backends_hpsj5s? ( >=sys-libs/libieee1284-0.2.11-r3[${MULTILIB_USEDEP}] )
+	sane_backends_mustek_pp? ( >=sys-libs/libieee1284-0.2.11-r3[${MULTILIB_USEDEP}] )
+	usb? ( >=virtual/libusb-1-r1:1[${MULTILIB_USEDEP}] )
 	gphoto2? (
-		media-libs/libgphoto2:=
-		virtual/jpeg
+		>=media-libs/libgphoto2-2.5.3.1:=[${MULTILIB_USEDEP}]
+		>=virtual/jpeg-0-r2[${MULTILIB_USEDEP}]
 	)
-	v4l? ( media-libs/libv4l )
+	v4l? ( >=media-libs/libv4l-0.9.5[${MULTILIB_USEDEP}] )
 	xinetd? ( sys-apps/xinetd )
 	snmp? ( net-analyzer/net-snmp )
-	systemd? ( sys-apps/systemd )
+	systemd? ( sys-apps/systemd:0= )
 "
 
 DEPEND="${RDEPEND}
@@ -150,13 +158,19 @@ DEPEND="${RDEPEND}
 		virtual/latex-base
 		dev-texlive/texlive-latexextra
 	)
-	>=sys-apps/sed-4
-
-	virtual/pkgconfig"
+	>=virtual/pkgconfig-0-r1[${MULTILIB_USEDEP}]"
 
 # We now use new syntax construct (SUBSYSTEMS!="usb|usb_device)
 RDEPEND="${RDEPEND}
-	!<sys-fs/udev-114"
+	!<sys-fs/udev-114
+	abi_x86_32? (
+		!<=app-emulation/emul-linux-x86-medialibs-20140508
+		!app-emulation/emul-linux-x86-medialibs[-abi_x86_32(-)]
+	)"
+
+MULTILIB_CHOST_TOOLS=(
+	/usr/bin/sane-config
+)
 
 pkg_setup() {
 	enewgroup scanner
@@ -171,20 +185,30 @@ src_prepare() {
 	epkowa
 	EOF
 	epatch "${FILESDIR}"/niash_array_index.patch \
-		"${FILESDIR}"/${P}-unused-cups.patch \
-		"${FILESDIR}"/${P}-automagic_systemd.patch \
-		"${FILESDIR}"/${P}-systemd_pkgconfig.patch \
-		"${FILESDIR}"/${P}-kodakaio_avahi.patch \
-		"${FILESDIR}"/${P}-saned_pidfile_location.patch \
-		"${FILESDIR}"/${P}-cross-compile.patch
+		"${FILESDIR}"/${PN}-1.0.24-automagic_systemd.patch \
+		"${FILESDIR}"/${PN}-1.0.24-systemd_pkgconfig.patch \
+		"${FILESDIR}"/${PN}-1.0.24-saned_pidfile_location.patch \
+		"${FILESDIR}"/${PN}-1.0.24-cross-compile.patch
 	# Fix for "make check".
 	sed -i -e 's/sane-backends 1.0.24git/sane-backends 1.0.24/' testsuite/tools/data/html*
+	mv configure.{in,ac} || die
 	AT_NOELIBTOOLIZE=yes eautoreconf
 }
 
 src_configure() {
 	append-flags -fno-strict-aliasing
 
+	# if LINGUAS is set, just use the listed and supported localizations.
+	if [[ ${LINGUAS+set} == "set" ]]; then
+		mkdir -p po || die
+		strip-linguas -u po
+		printf '%s\n' ${LINGUAS} > po/LINGUAS
+	fi
+
+	multilib-minimal_src_configure
+}
+
+multilib_src_configure() {
 	# the blank is intended - an empty string would result in building ALL backends.
 	local BACKENDS=" "
 
@@ -196,57 +220,53 @@ src_configure() {
 		fi
 	done
 
-	local myconf="$(use_enable usb libusb_1_0) $(use_with snmp)"
+	local myconf=(
+		$(use_enable usb libusb_1_0)
+		$(multilib_native_use_with snmp)
+	)
+
 	# you can only enable this backend, not disable it...
 	if use sane_backends_pnm; then
-		myconf="${myconf} --enable-pnm-backend"
+		myconf+=( --enable-pnm-backend )
 	fi
 	if ! use doc; then
-		myconf="${myconf} --disable-latex"
+		myconf+=( --disable-latex )
 	fi
 	if use sane_backends_mustek_pp; then
-		myconf="${myconf} --enable-parport-directio"
+		myconf+=( --enable-parport-directio )
 	fi
-	if ! ( use sane_backends_canon_pp || use sane_backends_hpsj5s || use sane_backends_mustek_pp ); then
-		myconf="${myconf} sane_cv_use_libieee1284=no"
+	if ! { use sane_backends_canon_pp || use sane_backends_hpsj5s || use sane_backends_mustek_pp; }; then
+		myconf+=( sane_cv_use_libieee1284=no )
 	fi
-	# if LINGUAS is set, just use the listed and supported localizations.
-	if [ "${LINGUAS-NoLocalesSet}" != NoLocalesSet ]; then
-		echo > po/LINGUAS
-		for lang in ${LINGUAS}; do
-			if [ -a po/${lang}.po ]; then
-				echo ${lang} >> po/LINGUAS
-			fi
-		done
-	fi
+
+	# relative path must be used for tests to work properly
+	ECONF_SOURCE=../${MY_P} \
 	SANEI_JPEG="sanei_jpeg.o" SANEI_JPEG_LO="sanei_jpeg.lo" \
-	BACKENDS="${BACKENDS}" econf \
+	BACKENDS="${BACKENDS}" \
+	econf \
 		$(use_with gphoto2) \
-		$(use_with systemd) \
+		$(multilib_native_use_with systemd) \
 		$(use_with v4l) \
 		$(use_enable avahi) \
 		$(use_enable ipv6) \
+		$(use_enable nls translations) \
 		$(use_enable threads pthread) \
-		${myconf}
+		"${myconf[@]}"
 }
 
-src_compile() {
+multilib_src_compile() {
 	emake VARTEXFONTS="${T}/fonts"
 
-	if use usb; then
-		cd tools/hotplug
-		grep -v '^$' libsane.usermap > libsane.usermap.new
-		mv libsane.usermap.new libsane.usermap
-	fi
-
 	if tc-is-cross-compiler; then
+		pushd "${BUILD_DIR}"/tools >/dev/null || die
+
 		# The build system sucks and doesn't handle this properly.
 		# https://alioth.debian.org/tracker/index.php?func=detail&aid=314236&group_id=30186&atid=410366
 		tc-export_build_env BUILD_CC
-		cd "${S}"/tools
-		${BUILD_CC} ${BUILD_CPPFLAGS} ${BUILD_CFLAGS} -I. -I../include \
-			../sanei/sanei_config.c ../sanei/sanei_constrain_value.c \
-			../sanei/sanei_init_debug.c sane-desc.c -o sane-desc || die
+		${BUILD_CC} ${BUILD_CPPFLAGS} ${BUILD_CFLAGS} ${BUILD_LDFLAGS} \
+			-I. -I../include -I"${S}"/include \
+			"${S}"/sanei/sanei_config.c "${S}"/sanei/sanei_constrain_value.c \
+			"${S}"/sanei/sanei_init_debug.c "${S}"/tools/sane-desc.c -o sane-desc || die
 		local dirs=( hal hotplug hotplug-ng udev )
 		local targets=(
 			hal/libsane.fdi
@@ -256,30 +276,46 @@ src_compile() {
 		)
 		mkdir -p "${dirs[@]}" || die
 		emake "${targets[@]}"
+
+		popd >/dev/null
+	fi
+
+	if use usb; then
+		sed -i -e '/^$/d' \
+			tools/hotplug/libsane.usermap || die
 	fi
 }
 
-src_install () {
+multilib_src_install() {
 	emake INSTALL_LOCKPATH="" DESTDIR="${D}" install \
 		docdir="${EPREFIX}"/usr/share/doc/${PF}
+
+	if multilib_is_native_abi; then
+		if use usb; then
+			insinto /etc/hotplug/usb
+			doins tools/hotplug/libsane.usermap
+		fi
+
+		udev_newrules tools/udev/libsane.rules 41-libsane.rules
+		insinto "/usr/share/pkgconfig"
+		doins tools/sane-backends.pc
+	fi
+}
+
+multilib_src_install_all() {
 	keepdir /var/lib/lock/sane
 	fowners root:scanner /var/lib/lock/sane
 	fperms g+w /var/lib/lock/sane
 	dodir /etc/env.d
 
 	if use usb; then
-		insinto /etc/hotplug/usb
 		exeinto /etc/hotplug/usb
-		doins tools/hotplug/libsane.usermap
 		doexe tools/hotplug/libusbscanner
 		newdoc tools/hotplug/README README.hotplug
 	fi
-	udev_newrules tools/udev/libsane.rules 41-libsane.rules
-	insinto "/usr/share/pkgconfig"
-	doins tools/sane-backends.pc
 
 	dodoc NEWS AUTHORS ChangeLog* PROBLEMS README README.linux
-	find "${ED}" -name "*.la" | while read file; do rm "${file}"; done
+	prune_libtool_files --all
 	if use xinetd; then
 		insinto /etc/xinetd.d
 		doins "${FILESDIR}"/saned
