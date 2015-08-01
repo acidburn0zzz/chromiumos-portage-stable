@@ -1,7 +1,0 @@
-DEFINED_PHASES=-
-DESCRIPTION=Virtual for libusb
-EAPI=2
-KEYWORDS=*
-RDEPEND=|| ( >=dev-libs/libusbx-1.0.15:1 >=dev-libs/libusb-1.0.9:1 >=sys-freebsd/freebsd-lib-9.1_rc3-r1[usb] )
-SLOT=1
-_md5_=83edf81ea6267f33649c0c3836cfb923
