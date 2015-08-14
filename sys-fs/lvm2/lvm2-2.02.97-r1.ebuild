@@ -21,7 +21,7 @@ DEPEND_COMMON="!!sys-fs/device-mapper
 	readline? ( sys-libs/readline )
 	clvm? ( =sys-cluster/libdlm-3*
 			cman? ( =sys-cluster/cman-3* ) )
-	udev? ( virtual/udev[static-libs?] )"
+	udev? ( virtual/udev )"
 
 # /run is now required for locking during early boot. /var cannot be assumed to
 # be available.
