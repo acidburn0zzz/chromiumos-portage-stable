@@ -1,6 +1,7 @@
 DEFINED_PHASES=-
 DESCRIPTION=Virtual for system loggers
+EAPI=3
 KEYWORDS=*
-RDEPEND=|| ( app-admin/metalog app-admin/rsyslog app-admin/socklog app-admin/sysklogd app-admin/syslog-ng app-admin/syslogread app-admin/busybox-sysklogd sys-freebsd/freebsd-usbin )
+RDEPEND=|| ( app-admin/metalog app-admin/rsyslog app-admin/socklog app-admin/sysklogd app-admin/syslog-ng app-admin/syslogread sys-freebsd/freebsd-usbin sys-apps/busybox[syslog] >=sys-apps/systemd-38 )
 SLOT=0
-_md5_=9623e69deb91f62fe3b7a7d2a6a041b8
+_md5_=f3ed3575fe79d49b53c10f89bf6f144d
