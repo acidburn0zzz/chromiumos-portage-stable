@@ -1,6 +1,6 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/media-libs/freetype/freetype-2.5.5.ebuild,v 1.12 2015/02/27 06:19:31 yngwin Exp $
+# $Id$
 
 EAPI=5
 inherit autotools-multilib flag-o-matic multilib toolchain-funcs
@@ -13,14 +13,13 @@ SRC_URI="mirror://sourceforge/freetype/${P/_/}.tar.bz2
 		mirror://nongnu/freetype/ft2demos-${PV}.tar.bz2 )
 	doc?	( mirror://sourceforge/freetype/${PN}-doc-${PV}.tar.bz2
 		mirror://nongnu/freetype/${PN}-doc-${PV}.tar.bz2 )
-	infinality? ( http://dev.gentoo.org/~polynomial-c/${P}-infinality-patches.tar.xz )"
+	infinality? ( https://dev.gentoo.org/~polynomial-c/${P}-infinality-patches.tar.xz )"
 
 LICENSE="|| ( FTL GPL-2+ )"
 SLOT="2"
 KEYWORDS="*"
-IUSE="X +adobe-cff auto-hinter bindist bzip2 debug doc fontforge harfbuzz
+IUSE="X +adobe-cff bindist bzip2 debug doc fontforge harfbuzz
 	infinality png static-libs utils"
-REQUIRED_USE="harfbuzz? ( auto-hinter )"
 RESTRICT="!bindist? ( bindist )" # bug 541408
 
 CDEPEND=">=sys-libs/zlib-1.2.8-r1[${MULTILIB_USEDEP}]
@@ -68,11 +67,6 @@ src_prepare() {
 		# See http://freetype.org/patents.html
 		# ClearType is covered by several Microsoft patents in the US
 		enable_option FT_CONFIG_OPTION_SUBPIXEL_RENDERING
-	fi
-
-	if use auto-hinter; then
-		disable_option TT_CONFIG_OPTION_BYTECODE_INTERPRETER
-		enable_option TT_CONFIG_OPTION_UNPATENTED_HINTING
 	fi
 
 	if ! use adobe-cff; then
@@ -153,7 +147,7 @@ multilib_src_install_all() {
 		# Probably fontforge needs less but this way makes things simplier...
 		einfo "Installing internal headers required for fontforge"
 		local header
-		find src/truetype include/freetype/internal -name '*.h' | \
+		find src/truetype include/internal -name '*.h' | \
 		while read header; do
 			mkdir -p "${ED}/usr/include/freetype2/internal4fontforge/$(dirname ${header})" || die
 			cp ${header} "${ED}/usr/include/freetype2/internal4fontforge/$(dirname ${header})" || die
@@ -164,13 +158,4 @@ multilib_src_install_all() {
 	use doc && dohtml -r docs/*
 
 	prune_libtool_files --all
-}
-
-pkg_postinst() {
-	if use auto-hinter && ! use harfbuzz; then
-		elog "To improve OpenType font hinting with the auto-hinter, the harfbuzz"
-		elog "useflag needs to be enabled for ${CATEGORY}/${PN}."
-		elog "See the INSTALL.UNIX file in the doc directory of this package for"
-		elog "more information. But it is recommended not to use the auto-hinter."
-	fi
 }
