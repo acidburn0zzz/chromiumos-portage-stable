@@ -1,42 +1,49 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-libs/libgcrypt/libgcrypt-1.5.4-r1.ebuild,v 1.9 2015/07/08 07:53:59 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-libs/libgcrypt/libgcrypt-1.6.3-r3.ebuild,v 1.1 2015/06/28 19:19:39 k_f Exp $
 
 EAPI=5
 AUTOTOOLS_AUTORECONF=1
+WANT_AUTOMAKE=1.14
 
-inherit autotools-multilib
+inherit autotools-multilib flag-o-matic
 
 DESCRIPTION="General purpose crypto library based on the code used in GnuPG"
 HOMEPAGE="http://www.gnupg.org/"
 SRC_URI="mirror://gnupg/${PN}/${P}.tar.bz2"
 
 LICENSE="LGPL-2.1 MIT"
-SLOT="0/11" # subslot = soname major version
+SLOT="0/20" # subslot = soname major version
 KEYWORDS="*"
-IUSE="static-libs"
+IUSE="doc static-libs"
 
 RDEPEND=">=dev-libs/libgpg-error-1.12[${MULTILIB_USEDEP}]
-	!dev-libs/libgcrypt:11
 	abi_x86_32? (
 		!<=app-emulation/emul-linux-x86-baselibs-20131008-r19
 		!app-emulation/emul-linux-x86-baselibs[-abi_x86_32]
 	)"
-DEPEND="${RDEPEND}"
+DEPEND="${RDEPEND}
+	doc? ( sys-apps/texinfo )"
 
 DOCS=( AUTHORS ChangeLog NEWS README THANKS TODO )
 
 PATCHES=(
-	"${FILESDIR}"/${PN}-1.5.0-uscore.patch
+	"${FILESDIR}"/${PN}-1.6.1-uscore.patch
 	"${FILESDIR}"/${PN}-multilib-syspath.patch
-	"${FILESDIR}"/${P}-clang-arm.patch
+	"${FILESDIR}"/${P}-freebsd-mpi.patch
 )
 
 MULTILIB_CHOST_TOOLS=(
 	/usr/bin/libgcrypt-config
 )
 
-src_configure() {
+multilib_src_configure() {
+	if [[ ${CHOST} == *86*-solaris* ]] ; then
+		# ASM code uses GNU ELF syntax, divide in particular, we need to
+		# allow this via ASFLAGS, since we don't have a flag-o-matic
+		# function for that, we'll have to abuse cflags for this
+		append-cflags -Wa,--divide
+	fi
 	local myeconfargs=(
 		--disable-padlock-support # bug 201917
 		--disable-dependency-tracking
@@ -53,5 +60,15 @@ src_configure() {
 		$([[ ${CHOST} == *86*-darwin* ]] && echo "--disable-asm")
 		$([[ ${CHOST} == sparcv9-*-solaris* ]] && echo "--disable-asm")
 	)
-	autotools-multilib_src_configure
+	autotools-utils_src_configure
+}
+
+multilib_src_compile() {
+	emake
+	multilib_is_native_abi && use doc && emake -C doc gcrypt.pdf
+}
+
+multilib_src_install() {
+	emake DESTDIR="${D}" install
+	multilib_is_native_abi && use doc && dodoc doc/gcrypt.pdf
 }
