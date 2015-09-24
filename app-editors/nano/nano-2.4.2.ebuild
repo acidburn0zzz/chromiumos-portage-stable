@@ -1,10 +1,10 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/app-editors/nano/nano-2.3.2-r1.ebuild,v 1.3 2014/02/17 19:32:49 vapier Exp $
+# $Id$
 
 EAPI="4"
 
-inherit eutils autotools
+inherit eutils
 if [[ ${PV} == "9999" ]] ; then
 	ESVN_REPO_URI="svn://svn.savannah.gnu.org/nano/trunk/nano"
 	inherit subversion autotools
@@ -14,7 +14,7 @@ else
 fi
 
 DESCRIPTION="GNU GPL'd Pico clone with more functionality"
-HOMEPAGE="http://www.nano-editor.org/ http://www.gentoo.org/doc/en/nano-basics-guide.xml"
+HOMEPAGE="http://www.nano-editor.org/ https://www.gentoo.org/doc/en/nano-basics-guide.xml"
 
 LICENSE="GPL-3"
 SLOT="0"
@@ -30,11 +30,7 @@ DEPEND="${RDEPEND}
 	virtual/pkgconfig"
 
 src_prepare() {
-	epatch "${FILESDIR}"/${PN}-2.3.1-ncurses-pkg-config.patch
-	epatch "${FILESDIR}"/${PN}-2.3.2-bind-unbind-docs.patch
-	epatch "${FILESDIR}"/${PN}-2.3.1-{shell,gentoo}-nanorc.patch
 	epatch_user
-	eautoreconf
 }
 
 src_configure() {
@@ -45,6 +41,7 @@ src_configure() {
 	esac
 	econf \
 		--bindir="${EPREFIX}"/bin \
+		--htmldir=/trash \
 		$(use_enable !minimal color) \
 		$(use_enable !minimal multibuffer) \
 		$(use_enable !minimal nanorc) \
@@ -61,9 +58,9 @@ src_configure() {
 
 src_install() {
 	default
-	rm -rf "${ED}"/usr/share/nano/man-html
+	rm -rf "${D}"/trash
 
-	dodoc ChangeLog README doc/nanorc.sample AUTHORS BUGS NEWS TODO
+	dodoc doc/nanorc.sample
 	dohtml doc/faq.html
 	insinto /etc
 	newins doc/nanorc.sample nanorc
