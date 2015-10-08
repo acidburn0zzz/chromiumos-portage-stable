@@ -58,7 +58,7 @@ src_prepare() {
 	epatch "${FILESDIR}"/${PN}-2.3.2-enable-valid.patch
 
 	if use infinality; then
-		epatch ${WORKDIR}/${INFINALITY_PATCH}
+		epatch "${WORKDIR}/${INFINALITY_PATCH}"
 
 		# FT_CONFIG_OPTION_SUBPIXEL_RENDERING is already enabled in freetype-2.4.11
 		enable_option TT_CONFIG_OPTION_SUBPIXEL_HINTING
@@ -80,6 +80,7 @@ src_prepare() {
 	fi
 
 	epatch "${FILESDIR}"/${PN}-2.4.11-sizeof-types.patch # 459966
+	epatch "${FILESDIR}"/${PN}-2.6.1-bad-shift.patch
 
 	if use utils; then
 		cd "${WORKDIR}/ft2demos-${PV}" || die
