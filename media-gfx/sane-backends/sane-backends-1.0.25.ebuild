@@ -1,10 +1,10 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/media-gfx/sane-backends/sane-backends-1.0.25_pre20150628.ebuild,v 1.4 2015/08/06 05:47:07 vapier Exp $
+# $Id$
 
 EAPI="5"
 
-inherit autotools eutils flag-o-matic multilib multilib-minimal udev user toolchain-funcs
+inherit eutils flag-o-matic multilib multilib-minimal udev user toolchain-funcs
 
 # gphoto and v4l are handled by their usual USE flags.
 # The pint backend was disabled because I could not get it to compile.
@@ -118,33 +118,45 @@ REQUIRED_USE="
 
 DESCRIPTION="Scanner Access Now Easy - Backends"
 HOMEPAGE="http://www.sane-project.org/"
-if [[ ${PV} == *_pre* ]] ; then
+case ${PV} in
+9999)
+	EGIT_REPO_URI="git://anonscm.debian.org/sane/sane-backends.git"
+	inherit git-r3 autotools
+	;;
+*_pre*)
 	MY_P="${PN}-git${PV#*_pre}"
 	SRC_URI="http://www.sane-project.org/snapshots/${MY_P}.tar.gz
 		mirror://gentoo/${MY_P}.tar.gz"
 	S=${WORKDIR}/${MY_P}
-else
+	;;
+*)
 	MY_P=${P}
-	SRC_URI="https://alioth.debian.org/frs/download.php/file/3958/${P}.tar.gz"
-fi
+	FRS_ID="4146"
+	SRC_URI="https://alioth.debian.org/frs/download.php/file/${FRS_ID}/${P}.tar.gz"
+	;;
+esac
 
 LICENSE="GPL-2 public-domain"
 SLOT="0"
-KEYWORDS="*"
+if [[ ${PV} != "9999" ]] ; then
+	KEYWORDS="*"
+fi
 
 RDEPEND="
-	sane_backends_dc210? ( >=virtual/jpeg-0-r2[${MULTILIB_USEDEP}] )
-	sane_backends_dc240? ( >=virtual/jpeg-0-r2[${MULTILIB_USEDEP}] )
-	sane_backends_dell1600n_net? ( >=virtual/jpeg-0-r2[${MULTILIB_USEDEP}]
-									>=media-libs/tiff-3.9.7-r1[${MULTILIB_USEDEP}] )
+	sane_backends_dc210? ( >=virtual/jpeg-0-r2:0=[${MULTILIB_USEDEP}] )
+	sane_backends_dc240? ( >=virtual/jpeg-0-r2:0=[${MULTILIB_USEDEP}] )
+	sane_backends_dell1600n_net? (
+		>=virtual/jpeg-0-r2:0=[${MULTILIB_USEDEP}]
+		>=media-libs/tiff-3.9.7-r1:0=[${MULTILIB_USEDEP}]
+	)
 	avahi? ( >=net-dns/avahi-0.6.31-r2[${MULTILIB_USEDEP}] )
 	sane_backends_canon_pp? ( >=sys-libs/libieee1284-0.2.11-r3[${MULTILIB_USEDEP}] )
 	sane_backends_hpsj5s? ( >=sys-libs/libieee1284-0.2.11-r3[${MULTILIB_USEDEP}] )
 	sane_backends_mustek_pp? ( >=sys-libs/libieee1284-0.2.11-r3[${MULTILIB_USEDEP}] )
-	usb? ( >=virtual/libusb-1-r1:1[${MULTILIB_USEDEP}] )
+	usb? ( >=virtual/libusb-1-r1:1=[${MULTILIB_USEDEP}] )
 	gphoto2? (
 		>=media-libs/libgphoto2-2.5.3.1:=[${MULTILIB_USEDEP}]
-		>=virtual/jpeg-0-r2[${MULTILIB_USEDEP}]
+		>=virtual/jpeg-0-r2:0=[${MULTILIB_USEDEP}]
 	)
 	v4l? ( >=media-libs/libv4l-0.9.5[${MULTILIB_USEDEP}] )
 	xinetd? ( sys-apps/xinetd )
@@ -162,11 +174,7 @@ DEPEND="${RDEPEND}
 
 # We now use new syntax construct (SUBSYSTEMS!="usb|usb_device)
 RDEPEND="${RDEPEND}
-	!<sys-fs/udev-114
-	abi_x86_32? (
-		!<=app-emulation/emul-linux-x86-medialibs-20140508
-		!app-emulation/emul-linux-x86-medialibs[-abi_x86_32(-)]
-	)"
+	!<sys-fs/udev-114"
 
 MULTILIB_CHOST_TOOLS=(
 	/usr/bin/sane-config
@@ -184,15 +192,18 @@ src_prepare() {
 	# Add support for the Epson-specific backend.  Needs media-gfx/iscan installed.
 	epkowa
 	EOF
-	epatch "${FILESDIR}"/niash_array_index.patch \
-		"${FILESDIR}"/${PN}-1.0.24-automagic_systemd.patch \
-		"${FILESDIR}"/${PN}-1.0.24-systemd_pkgconfig.patch \
-		"${FILESDIR}"/${PN}-1.0.24-saned_pidfile_location.patch \
-		"${FILESDIR}"/${PN}-1.0.24-cross-compile.patch
-	# Fix for "make check".
-	sed -i -e 's/sane-backends 1.0.24git/sane-backends 1.0.24/' testsuite/tools/data/html*
-	mv configure.{in,ac} || die
-	AT_NOELIBTOOLIZE=yes eautoreconf
+	epatch "${FILESDIR}"/${PN}-1.0.24-saned_pidfile_location.patch
+	epatch "${FILESDIR}"/${PN}-1.0.25-disable-usb-tests.patch
+	if [[ ${PV} == "9999" ]] ; then
+		mv configure.{in,ac} || die
+		AT_NOELIBTOOLIZE=yes eautoreconf
+	fi
+
+	# Fix for "make check".  Upstream sometimes forgets to update this.
+	local ver=$(./configure --version | awk '{print $NF; exit 0}')
+	sed -i \
+		-e "/by sane-desc 3.5 from sane-backends/s:sane-backends .*:sane-backends ${ver}:" \
+		testsuite/tools/data/html* || die
 }
 
 src_configure() {
@@ -240,7 +251,7 @@ multilib_src_configure() {
 	fi
 
 	# relative path must be used for tests to work properly
-	ECONF_SOURCE=../${MY_P} \
+	ECONF_SOURCE=${S} \
 	SANEI_JPEG="sanei_jpeg.o" SANEI_JPEG_LO="sanei_jpeg.lo" \
 	BACKENDS="${BACKENDS}" \
 	econf \
