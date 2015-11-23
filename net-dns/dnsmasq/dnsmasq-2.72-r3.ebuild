@@ -100,7 +100,6 @@ src_prepare() {
 
 	epatch "${FILESDIR}"/${P}-Fix-crash-on-receipt-of-certain-malformed-DNS-requests.patch
 	epatch "${FILESDIR}"/${P}-Fix-crash-caused-by-looking-up-servers.bind-when-many-servers-defined.patch
-	epatch "${FILESDIR}"/${P}-Fix-fork-when-no-fork-option-used.patch
 }
 
 src_configure() {
