@@ -1,6 +1,6 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-python/pyshark/pyshark-0.3.4.ebuild,v 1.1 2015/03/26 17:55:35 vapier Exp $
+# $Id$
 
 EAPI="5"
 
@@ -10,7 +10,7 @@ inherit distutils-r1 eutils
 
 DESCRIPTION="A Python wrapper for tshark output parsing"
 HOMEPAGE="https://pypi.python.org/pypi/pyshark https://github.com/KimiNewt/pyshark"
-SRC_URI="mirror://pypi/${PN:0:1}/${PN}/${P}.zip"
+SRC_URI="mirror://pypi/${PN:0:1}/${PN}/${P}.tar.gz"
 
 LICENSE="MIT"
 SLOT="0"
@@ -18,11 +18,11 @@ KEYWORDS="*"
 IUSE=""
 
 DEPEND="dev-python/setuptools[${PYTHON_USEDEP}]"
-RDEPEND="dev-python/futures[${PYTHON_USEDEP}]
+# See pyshark.egg-info/requires.txt
+RDEPEND="dev-python/py[${PYTHON_USEDEP}]
 	dev-python/logbook[${PYTHON_USEDEP}]
 	dev-python/lxml[${PYTHON_USEDEP}]
 	dev-python/trollius[${PYTHON_USEDEP}]
 	virtual/python-futures[${PYTHON_USEDEP}]
 	net-analyzer/wireshark"
-
-DOCS=( README.txt )
+# Tests exlcuded in MANIFEST.in
