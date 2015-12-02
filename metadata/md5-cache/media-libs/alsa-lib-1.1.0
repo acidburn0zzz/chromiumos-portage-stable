@@ -9,6 +9,6 @@ LICENSE=LGPL-2.1
 RDEPEND=python? ( >=dev-lang/python-2.7.3-r2:2.7 >=dev-lang/python-exec-2:=[python_targets_python2_7(-)?,-python_single_target_jython2_5(-),-python_single_target_jython2_7(-),-python_single_target_pypy(-),-python_single_target_pypy3(-),-python_single_target_python3_3(-),-python_single_target_python3_4(-),python_single_target_python2_7(+)] ) abi_x86_32? ( !<=app-emulation/emul-linux-x86-soundlibs-20130224-r1 !app-emulation/emul-linux-x86-soundlibs[-abi_x86_32(-)] )
 REQUIRED_USE=python? ( python_targets_python2_7 )
 SLOT=0
-SRC_URI=mirror://alsaproject/lib/alsa-lib-1.0.28.tar.bz2
+SRC_URI=mirror://alsaproject/lib/alsa-lib-1.1.0.tar.bz2
 _eclasses_=autotools	999c8f6cf5d91495cb0779588f20716c	eutils	06133990e861be0fe60c2b428fd025d9	libtool	52d0e17251d04645ffaa61bfdd858944	multibuild	6d4858dc00f8bc51caf3f957f8430eb0	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	multilib-build	0983c7893df461213a05f791cc7dea6d	multilib-minimal	13dd976916c35a1e2c8d170e840c7018	python-single-r1	f782db6207752efeca1d59c016d8c813	python-utils-r1	42cc5b750abbcf9d4389848380bbef91	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
-_md5_=ca52a1edacaee1c97e1f776a9a487aba
+_md5_=f6f35ba943f3b64078f552ad7c5e96e6
