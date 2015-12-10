@@ -1,0 +1,9 @@
+DEFINED_PHASES=-
+DESCRIPTION=SCSI sysfs query tool
+EAPI=5
+HOMEPAGE=http://sg.danny.cz/scsi/lsscsi.html
+KEYWORDS=*
+LICENSE=GPL-2
+SLOT=0
+SRC_URI=http://sg.danny.cz/scsi/lsscsi-0.28.tgz
+_md5_=1adff8380e83d32735d6fa971e4a1063
