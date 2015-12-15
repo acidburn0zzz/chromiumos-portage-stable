@@ -1,6 +1,6 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/media-plugins/alsa-plugins/alsa-plugins-1.0.28.ebuild,v 1.5 2014/10/23 10:47:22 pacho Exp $
+# $Id$
 
 EAPI=5
 inherit autotools eutils flag-o-matic multilib multilib-minimal
@@ -12,10 +12,14 @@ SRC_URI="mirror://alsaproject/plugins/${P}.tar.bz2"
 LICENSE="GPL-2 LGPL-2.1"
 SLOT="0"
 KEYWORDS="*"
-IUSE="debug ffmpeg jack libsamplerate pulseaudio speex"
+IUSE="debug ffmpeg jack libav libsamplerate pulseaudio speex"
 
-RDEPEND=">=media-libs/alsa-lib-${PV}:=[${MULTILIB_USEDEP}]
-	ffmpeg? ( virtual/ffmpeg[${MULTILIB_USEDEP}] )
+RDEPEND="
+	>=media-libs/alsa-lib-${PV}:=[${MULTILIB_USEDEP}]
+	ffmpeg? (
+		libav? ( media-video/libav:= )
+		!libav? ( media-video/ffmpeg:0= )
+	)
 	jack? ( >=media-sound/jack-audio-connection-kit-0.121.3-r1[${MULTILIB_USEDEP}] )
 	libsamplerate? ( >=media-libs/libsamplerate-0.1.8-r1:=[${MULTILIB_USEDEP}] )
 	pulseaudio? ( >=media-sound/pulseaudio-2.1-r1[${MULTILIB_USEDEP}] )
@@ -23,12 +27,15 @@ RDEPEND=">=media-libs/alsa-lib-${PV}:=[${MULTILIB_USEDEP}]
 	abi_x86_32? (
 		!<app-emulation/emul-linux-x86-soundlibs-20140406-r1
 		!app-emulation/emul-linux-x86-soundlibs[-abi_x86_32]
-	)"
+	)
+"
 DEPEND="${RDEPEND}
 	virtual/pkgconfig"
 
 src_prepare() {
-:	epatch "${FILESDIR}"/${PN}-1.0.23-automagic.patch
+	epatch "${FILESDIR}"/${PN}-1.0.23-automagic.patch
+	epatch "${FILESDIR}"/${PN}-1.0.28-libav10.patch
+	has_version '>=media-video/ffmpeg-2.8' && epatch "${FILESDIR}"/${PN}-1.0.29-ffmpeg29.patch
 
 	epatch_user
 
