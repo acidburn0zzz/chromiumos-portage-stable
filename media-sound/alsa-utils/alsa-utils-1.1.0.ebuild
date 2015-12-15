@@ -1,6 +1,6 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/media-sound/alsa-utils/alsa-utils-1.0.28-r1.ebuild,v 1.1 2014/11/19 19:16:08 vapier Exp $
+# $Id$
 
 EAPI=5
 inherit eutils systemd udev
@@ -12,11 +12,12 @@ SRC_URI="mirror://alsaproject/utils/${P}.tar.bz2"
 LICENSE="GPL-2"
 SLOT="0.9"
 KEYWORDS="*"
-IUSE="doc +libsamplerate +ncurses nls selinux"
+IUSE="bat doc +libsamplerate +ncurses nls selinux"
 
 CDEPEND=">=media-libs/alsa-lib-${PV}
 	libsamplerate? ( media-libs/libsamplerate )
-	ncurses? ( >=sys-libs/ncurses-5.7-r7 )"
+	ncurses? ( >=sys-libs/ncurses-5.7-r7:5= )
+	bat? ( sci-libs/fftw )"
 DEPEND="${CDEPEND}
 	virtual/pkgconfig
 	doc? ( app-text/xmlto )"
@@ -24,9 +25,6 @@ RDEPEND="${CDEPEND}
 	selinux? ( sec-policy/selinux-alsa )"
 
 src_prepare() {
-	epatch "${FILESDIR}"/${P}-aplay-return.patch
-	epatch "${FILESDIR}"/${P}-va-end.patch
-	epatch "${FILESDIR}"/${P}-{mixer,monitor}-proto.patch
 	epatch_user
 }
 
@@ -37,6 +35,7 @@ src_configure() {
 	# --disable-alsaconf because it doesn't work with sys-apps/kmod wrt #456214
 	econf \
 		--disable-maintainer-mode \
+		$(use_enable bat) \
 		$(use_enable libsamplerate alsaloop) \
 		$(use_enable nls) \
 		$(use_enable ncurses alsamixer) \
