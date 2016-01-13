@@ -1,6 +1,6 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/net-print/cups/cups-2.0.2-r1.ebuild,v 1.9 2015/05/05 07:50:11 jer Exp $
+# $Id$
 
 EAPI=5
 
@@ -152,6 +152,7 @@ pkg_setup() {
 
 src_prepare() {
 	base_src_prepare
+	epatch_user
 
 	# Remove ".SILENT" rule for verbose output (bug 524338).
 	sed 's#^.SILENT:##g' -i "${S}"/Makedefs.in || die "sed failed"
