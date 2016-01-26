@@ -1,7 +1,0 @@
-DEFINED_PHASES=-
-DESCRIPTION=Virtual for Test-Harness
-EAPI=5
-KEYWORDS=*
-RDEPEND=|| ( =dev-lang/perl-5.18* ~perl-core/Test-Harness-3.260.0 ) !<perl-core/Test-Harness-3.260.0 !>perl-core/Test-Harness-3.260.0-r999
-SLOT=0
-_md5_=125dd2f9faa33158878f555b30d81c61
