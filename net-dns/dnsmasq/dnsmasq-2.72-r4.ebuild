@@ -13,7 +13,7 @@ SRC_URI="http://www.thekelleys.org.uk/dnsmasq/${P}.tar.xz"
 LICENSE="|| ( GPL-2 GPL-3 )"
 SLOT="0"
 KEYWORDS="*"
-IUSE="auth-dns conntrack dbus +dhcp dhcp-tools dnssec idn ipv6 lua nls script selinux static tftp"
+IUSE="auth-dns conntrack dbus +dhcp dhcp-options dhcp-tools dnssec idn ipv6 lua nls script selinux static tftp"
 DM_LINGUAS="de es fi fr id it no pl pt_BR ro"
 for dm_lingua in ${DM_LINGUAS}; do
 	IUSE+=" linguas_${dm_lingua}"
@@ -100,6 +100,9 @@ src_prepare() {
 
 	epatch "${FILESDIR}"/${P}-Fix-crash-on-receipt-of-certain-malformed-DNS-requests.patch
 	epatch "${FILESDIR}"/${P}-Fix-crash-caused-by-looking-up-servers.bind-when-many-servers-defined.patch
+	if use dhcp-options; then
+		epatch "${FILESDIR}"/${P}-Write-DHCP-request-options-to-lease-file.patch
+	fi
 }
 
 src_configure() {
