@@ -112,6 +112,13 @@ src_prepare() {
 		you may have to set the GDFONTPATH and GNUPLOT_DEFAULT_GDFONT
 		environment variables. See the FAQ file in /usr/share/doc/${PF}/
 		for more information.'
+
+	# Make sure we don't mix build & host flags.
+	sed -i \
+		-e 's:@CPPFLAGS@:$(BUILD_CPPFLAGS):' \
+		-e 's:@CFLAGS@:$(BUILD_CFLAGS):' \
+		-e 's:@LDFLAGS@:$(BUILD_LDFLAGS):' \
+		docs/Makefile.in || die
 }
 
 src_configure() {
@@ -125,6 +132,8 @@ src_configure() {
 	fi
 
 	tc-export CC CXX			#453174
+	tc-export_build_env BUILD_CC
+	export CC_FOR_BUILD=${BUILD_CC}
 
 	local emacs lispdir
 	if use emacs; then
