@@ -31,6 +31,7 @@ DEPEND="${RDEPEND}
 
 PATCHES=(
 	"${FILESDIR}"/${PN}-4.3.0-sharedlibs.patch
+	"${FILESDIR}"/${PN}-4.3.0-cross-compile.patch
 	"${FILESDIR}"/${PN}-4.5.0-linguas.patch
 )
 
@@ -71,6 +72,7 @@ src_configure() {
 	export DEBUG=-DNDEBUG
 	export OPTIMIZER=${CFLAGS}
 	unset PLATFORM # if set in user env, this breaks configure
+	tc-export_build_env BUILD_CC
 
 	local myconf
 	if use static || use static-libs ; then
