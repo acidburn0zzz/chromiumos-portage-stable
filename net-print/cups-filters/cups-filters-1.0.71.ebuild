@@ -24,8 +24,8 @@ SLOT="0"
 IUSE="dbus +foomatic jpeg perl png static-libs tiff zeroconf"
 
 RDEPEND="
-	>=app-text/ghostscript-gpl-9.09
-	<app-text/poppler-0.35.0:=[cxx,jpeg?,lcms,tiff?,xpdf-headers(+)]
+	>=app-text/ghostscript-gpl-9.09[cups]
+	<app-text/poppler-0.35.0:=[cxx,jpeg?,lcms,tiff?,xpdf-headers(+),utils]
 	>=app-text/qpdf-3.0.2:=
 	media-libs/fontconfig
 	media-libs/freetype:2

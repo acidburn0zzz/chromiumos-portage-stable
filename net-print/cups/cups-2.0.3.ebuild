@@ -77,8 +77,6 @@ RDEPEND="${CDEPEND}
 "
 
 PDEPEND="
-	app-text/ghostscript-gpl[cups]
-	app-text/poppler[utils]
 	>=net-print/cups-filters-1.0.43
 "
 
