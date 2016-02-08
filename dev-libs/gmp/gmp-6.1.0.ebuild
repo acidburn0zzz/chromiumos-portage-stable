@@ -1,31 +1,30 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-libs/gmp/gmp-6.0.0a.ebuild,v 1.3 2015/03/09 17:53:52 blueness Exp $
+# $Id$
 
-EAPI="4"
+EAPI="5"
 
-inherit flag-o-matic eutils libtool toolchain-funcs multilib-minimal
+inherit flag-o-matic eutils libtool multilib-minimal
 
 MY_PV=${PV/_p*}
+MY_PV=${MY_PV/_/-}
 MY_P=${PN}-${MY_PV}
 PLEVEL=${PV/*p}
 DESCRIPTION="Library for arithmetic on arbitrary precision integers, rational numbers, and floating-point numbers"
 HOMEPAGE="http://gmplib.org/"
-SRC_URI="mirror://gnu/${PN}/${MY_P}.tar.xz
-	ftp://ftp.gmplib.org/pub/${MY_P}/${MY_P}.tar.xz
+SRC_URI="ftp://ftp.gmplib.org/pub/${MY_P}/${MY_P}.tar.xz
+	mirror://gnu/${PN}/${MY_P}.tar.xz
 	doc? ( http://gmplib.org/${PN}-man-${MY_PV}.pdf )"
 
 LICENSE="|| ( LGPL-3+ GPL-2+ )"
-SLOT="0"
+# The subslot reflects the C & C++ SONAMEs.
+SLOT="0/10.4"
 KEYWORDS="*"
-IUSE="doc cxx pgo static-libs"
+IUSE="+asm doc cxx pgo static-libs"
 
 DEPEND="sys-devel/m4
 	app-arch/xz-utils"
-RDEPEND="abi_x86_32? (
-	!<=app-emulation/emul-linux-x86-baselibs-20131008-r1
-	!app-emulation/emul-linux-x86-baselibs[-abi_x86_32(-)]
-)"
+RDEPEND=""
 
 S=${WORKDIR}/${MY_P%a}
 
@@ -44,7 +43,7 @@ src_prepare() {
 	mv configure configure.wrapped || die
 	cat <<-\EOF > configure
 	#!/bin/sh
-	exec env ABI="$GMPABI" "$0.wrapped" "$@"
+	exec env ABI="${GMPABI}" "$0.wrapped" "$@"
 	EOF
 	chmod a+rx configure
 }
@@ -53,7 +52,7 @@ multilib_src_configure() {
 	# Because of our 32-bit userland, 1.0 is the only HPPA ABI that works
 	# http://gmplib.org/manual/ABI-and-ISA.html#ABI-and-ISA (bug #344613)
 	if [[ ${CHOST} == hppa2.0-* ]] ; then
-		export GMPABI="1.0"
+		GMPABI="1.0"
 	fi
 
 	# ABI mappings (needs all architectures supported)
@@ -66,8 +65,9 @@ multilib_src_configure() {
 
 	tc-export CC
 	ECONF_SOURCE="${S}" econf \
-		--localstatedir=/var/state/gmp \
+		--localstatedir="${EPREFIX}"/var/state/gmp \
 		--enable-shared \
+		$(use_enable asm assembly) \
 		$(use_enable cxx) \
 		$(use_enable static-libs static)
 }
@@ -106,12 +106,4 @@ multilib_src_install() {
 multilib_src_install_all() {
 	einstalldocs
 	use doc && cp "${DISTDIR}"/gmp-man-${MY_PV}.pdf "${D}"/usr/share/doc/${PF}/
-}
-
-pkg_preinst() {
-	preserve_old_lib /usr/$(get_libdir)/libgmp.so.3
-}
-
-pkg_postinst() {
-	preserve_old_lib_notify /usr/$(get_libdir)/libgmp.so.3
 }
