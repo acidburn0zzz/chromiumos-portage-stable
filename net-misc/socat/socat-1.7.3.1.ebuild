@@ -1,6 +1,6 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/net-misc/socat/socat-1.7.3.0.ebuild,v 1.11 2015/04/24 23:11:21 vapier Exp $
+# $Id$
 
 EAPI=5
 inherit eutils flag-o-matic toolchain-funcs
@@ -17,8 +17,8 @@ KEYWORDS="*"
 IUSE="ssl readline ipv6 tcpd"
 
 DEPEND="
-	ssl? ( >=dev-libs/openssl-0.9.6 )
-	readline? ( >=sys-libs/readline-4.1 )
+	ssl? ( dev-libs/openssl:0= )
+	readline? ( sys-libs/readline:= )
 	tcpd? ( sys-apps/tcp-wrappers )
 "
 RDEPEND="${DEPEND}"
@@ -30,7 +30,7 @@ DOCS=(
 )
 
 src_prepare() {
-	epatch "${FILESDIR}"/${P}-filan-build.patch
+	epatch "${FILESDIR}"/${PN}-1.7.3.0-filan-build.patch
 }
 
 src_configure() {
