@@ -1,8 +1,8 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-libs/libpcre/libpcre-8.35.ebuild,v 1.13 2014/08/23 15:28:31 ago Exp $
+# $Id$
 
-EAPI="4"
+EAPI="5"
 
 inherit eutils multilib libtool flag-o-matic toolchain-funcs multilib-minimal
 
@@ -27,10 +27,9 @@ REQUIRED_USE="readline? ( !libedit )
 RDEPEND="bzip2? ( app-arch/bzip2 )
 	zlib? ( sys-libs/zlib )
 	libedit? ( dev-libs/libedit )
-	readline? ( sys-libs/readline )"
+	readline? ( sys-libs/readline:0= )"
 DEPEND="${RDEPEND}
-	virtual/pkgconfig
-	userland_GNU? ( >=sys-apps/findutils-4.4.0 )"
+	virtual/pkgconfig"
 RDEPEND="${RDEPEND}
 	abi_x86_32? (
 		!<=app-emulation/emul-linux-x86-baselibs-20131008-r2
@@ -44,12 +43,7 @@ MULTILIB_CHOST_TOOLS=(
 )
 
 src_prepare() {
-	local pc
-	for pc in *.pc.in ; do
-		echo "Libs.private: @PTHREAD_CFLAGS@" >> ${pc} #454478
-	done
 	sed -i -e "s:-lpcre ::" libpcrecpp.pc.in || die
-	epatch "${FILESDIR}"/${P}-export-output.patch
 	elibtoolize
 }
 
