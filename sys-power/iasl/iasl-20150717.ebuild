@@ -1,8 +1,8 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-power/iasl/iasl-20130117-r1.ebuild,v 1.1 2013/03/05 04:36:19 patrick Exp $
+# $Id$
 
-EAPI=4
+EAPI=5
 
 inherit toolchain-funcs flag-o-matic eutils
 
@@ -10,13 +10,13 @@ MY_PN=acpica-unix
 MY_P=${MY_PN}-${PV}
 MY_TESTS_P=${MY_PN/ca/tests}-${PV}
 DESCRIPTION="Intel ACPI Source Language (ASL) compiler"
-HOMEPAGE="https://www.acpica.org/downloads/index.php"
-SRC_URI="http://www.acpica.org/download/${MY_P}.tar.gz
-	test? ( http://www.acpica.org/download/${MY_TESTS_P}.tar.gz )"
+HOMEPAGE="https://www.acpica.org/downloads/"
+SRC_URI="http://www.acpica.org/sites/acpica/files/${MY_P}.tar.gz
+	test? ( http://www.acpica.org/sites/acpica/files/${MY_TESTS_P}.tar.gz )"
 
 LICENSE="iASL"
 SLOT="0"
-KEYWORDS="amd64 ppc x86 ~amd64-fbsd ~x86-fbsd"
+KEYWORDS="*"
 IUSE="test"
 
 DEPEND="sys-devel/bison
@@ -36,13 +36,8 @@ pkg_setup() {
 }
 
 src_prepare() {
-	#epatch "${FILESDIR}/${PN}-20110922-as-needed.patch"
-	epatch "${FILESDIR}/${PN}-20120816-locale.patch"
-	# Upstream has changed the buildsystem a lot, not sure if these are still
-	# needed
-	#epatch "${FILESDIR}/${PN}-20120816-parallelmake-001.patch"
-	#epatch "${FILESDIR}/${PN}-20110922-parallelmake-002.patch"
-	#epatch "${FILESDIR}/${PN}-20110922-parallelmake-003.patch"
+	epatch "${FILESDIR}/${PN}-20140828-locale.patch" \
+		"${FILESDIR}/${PN}-20140214-nostrip.patch"
 
 	find "${S}" -type f -name 'Makefile*' -print0 | \
 		xargs -0 -I '{}' \
@@ -94,14 +89,14 @@ src_install() {
 		eend $?
 		dodir /usr/share/${PF}
 		insinto /usr/share/${PF}
-		doins ${tb} || die "doins testresults.tar.bz2 failed"
+		doins ${tb}
 	fi
 
 }
 
 aslts_test() {
-	export	ASL="${S}"/generate/unix/bin${BITS}/iasl \
-		acpiexec="${S}"/generate/unix/bin${BITS}/acpiexec \
+	export	ASL="${S}"/generate/unix/bin/iasl \
+		acpiexec="${S}"/generate/unix/bin/acpiexec \
 		ASLTSDIR="${WORKDIR}/${MY_TESTS_P}"/tests/aslts
 	export	PATH="${PATH}:${ASLTSDIR}/bin"
 	echo "$ASLTSDIR" >"${T}"/asltdir
