@@ -1,0 +1,13 @@
+DEFINED_PHASES=compile configure install postinst postrm preinst prepare test unpack
+DEPEND=>=dev-libs/glib-2.22.0:2=[static-libs?] virtual/libudev:=[static-libs?] introspection? ( dev-libs/gobject-introspection ) app-arch/xz-utils >=sys-apps/sed-4
+DESCRIPTION=GObject bindings for libudev
+EAPI=5
+HOMEPAGE=https://wiki.gnome.org/Projects/libgudev
+IUSE=introspection static-libs debug abi_x86_32 abi_x86_64 abi_x86_x32 abi_mips_n32 abi_mips_n64 abi_mips_o32 abi_ppc_32 abi_ppc_64 abi_s390_32 abi_s390_64
+KEYWORDS=*
+LICENSE=LGPL-2.1
+RDEPEND=>=dev-libs/glib-2.22.0:2=[static-libs?] virtual/libudev:=[static-libs?] introspection? ( dev-libs/gobject-introspection ) !sys-fs/eudev[gudev(-)] !sys-fs/udev[gudev(-)] !sys-apps/systemd[gudev(-)]
+SLOT=0/0
+SRC_URI=mirror://gnome/sources/libgudev/230/libgudev-230.tar.xz
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	fdo-mime	9c46e30acd923ff12e325dbe96bb98b9	gnome.org	8fef8f967214f56e08fa92d61163d891	gnome2	7976d3f4d0c0816c67033d3dcd4d9472	gnome2-utils	794d2847b4af390a1e020924876c8297	libtool	52d0e17251d04645ffaa61bfdd858944	multibuild	6d4858dc00f8bc51caf3f957f8430eb0	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	multilib-build	0983c7893df461213a05f791cc7dea6d	multilib-minimal	13dd976916c35a1e2c8d170e840c7018	toolchain-funcs	48b38a216afb92db6314d6c3187abea3	versionator	865bc8b2fc9fcfb6d520bdf5a110f5ed
+_md5_=637aad354dbe0e8b3773e91b48afaa67
