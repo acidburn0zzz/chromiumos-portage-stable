@@ -1,25 +1,31 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2016 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/net-misc/wget/wget-1.16.ebuild,v 1.1 2014/10/27 18:55:59 vapier Exp $
+# $Id$
 
-EAPI="4"
+EAPI="5"
 
-inherit flag-o-matic toolchain-funcs autotools
+PYTHON_COMPAT=( python{3_3,3_4} )
+
+inherit flag-o-matic python-any-r1 toolchain-funcs eutils
 
 DESCRIPTION="Network utility to retrieve files from the WWW"
-HOMEPAGE="http://www.gnu.org/software/wget/"
+HOMEPAGE="https://www.gnu.org/software/wget/"
 SRC_URI="mirror://gnu/wget/${P}.tar.xz"
 
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="*"
-IUSE="debug gnutls idn ipv6 nls ntlm pcre +ssl static uuid zlib"
+IUSE="debug gnutls idn ipv6 libressl nls ntlm pcre +ssl static test uuid zlib"
+REQUIRED_USE=" ntlm? ( !gnutls ssl ) gnutls? ( ssl )"
 
 LIB_DEPEND="idn? ( net-dns/libidn[static-libs(+)] )
 	pcre? ( dev-libs/libpcre[static-libs(+)] )
 	ssl? (
-		gnutls? ( net-libs/gnutls[static-libs(+)] )
-		!gnutls? ( dev-libs/openssl:0[static-libs(+)] )
+		gnutls? ( net-libs/gnutls:0=[static-libs(+)] )
+		!gnutls? (
+			!libressl? ( dev-libs/openssl:0=[static-libs(+)] )
+			libressl? ( dev-libs/libressl[static-libs(+)] )
+		)
 	)
 	uuid? ( sys-apps/util-linux[static-libs(+)] )
 	zlib? ( sys-libs/zlib[static-libs(+)] )"
@@ -28,25 +34,29 @@ DEPEND="${RDEPEND}
 	app-arch/xz-utils
 	virtual/pkgconfig
 	static? ( ${LIB_DEPEND} )
+	test? (
+		${PYTHON_DEPS}
+		dev-lang/perl
+		dev-perl/HTTP-Daemon
+		dev-perl/HTTP-Message
+		dev-perl/IO-Socket-SSL
+	)
 	nls? ( sys-devel/gettext )"
-
-REQUIRED_USE="ntlm? ( !gnutls ssl ) gnutls? ( ssl )"
 
 DOCS=( AUTHORS MAILING-LIST NEWS README doc/sample.wgetrc )
 
+pkg_setup() {
+	use test && python-any-r1_pkg_setup
+}
+
 src_prepare() {
-	epatch "${FILESDIR}"/${PN}-1.16-pkg-config.patch
-	epatch "${FILESDIR}"/${PN}-1.16-openssl-header.patch
-	epatch "${FILESDIR}"/${PN}-1.16-tests-skip.patch
-	eautoreconf
+	epatch "${FILESDIR}"/${P}-progress-bar-segv.patch
 }
 
 src_configure() {
-	# openssl-0.9.8 now builds with -pthread on the BSD's
-	use elibc_FreeBSD && use ssl && append-ldflags -pthread
 	# fix compilation on Solaris, we need filio.h for FIONBIO as used in
 	# the included gnutls -- force ioctl.h to include this header
-	[[ ${CHOST} == *-solaris* ]] && append-flags -DBSD_COMP=1
+	[[ ${CHOST} == *-solaris* ]] && append-cppflags -DBSD_COMP=1
 
 	if use static ; then
 		append-ldflags -static
@@ -54,6 +64,7 @@ src_configure() {
 		PKG_CONFIG+=" --static"
 	fi
 	econf \
+		--disable-assert \
 		--disable-rpath \
 		$(use_with ssl ssl $(usex gnutls gnutls openssl)) \
 		$(use_enable ssl opie) \
@@ -66,6 +77,10 @@ src_configure() {
 		$(use_enable debug) \
 		$(use_with uuid libuuid) \
 		$(use_with zlib)
+}
+
+src_test() {
+	emake check
 }
 
 src_install() {
