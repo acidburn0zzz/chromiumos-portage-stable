@@ -49,6 +49,8 @@ DEPEND="${RDEPEND}
 src_prepare() {
 	base_src_prepare
 	sed -e "s/AM_CONFIG_HEADER/AC_CONFIG_HEADERS/" -i configure.ac || die
+	epatch "${FILESDIR}/${PN}-1.8.2-disable-ijs.patch"
+	epatch "${FILESDIR}/${PN}-1.8.2-gstoraster.patch"
 	eautoreconf
 }
 
@@ -60,6 +62,7 @@ src_configure() {
 		$(use_enable static-libs static) \
 		$(use_enable foomatic) \
 		$(use_enable postscript ghostscript) \
+		$(use_enable postscript ijs) \
 		--with-fontdir="fonts/conf.avail" \
 		--with-pdftops=pdftops \
 		--enable-imagefilters \
