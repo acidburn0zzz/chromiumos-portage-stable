@@ -1,6 +1,6 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-libs/timezone-data/timezone-data-2015a.ebuild,v 1.2 2015/02/14 02:27:33 floppym Exp $
+# $Id$
 
 EAPI="4"
 
@@ -16,44 +16,28 @@ SRC_URI="http://www.iana.org/time-zones/repository/releases/tzdata${data_ver}.ta
 LICENSE="BSD public-domain"
 SLOT="0"
 KEYWORDS="*"
-IUSE="nls right_timezone elibc_FreeBSD elibc_glibc"
+IUSE="nls leaps_timezone elibc_FreeBSD elibc_glibc"
 
 RDEPEND="!sys-libs/glibc[vanilla(+)]"
 
 S=${WORKDIR}
 
-pkg_setup() {
-	# Deal with the case where older timezone-data installed a
-	# dir here, but newer one installs symlinks.  Portage will
-	# barf when you try to transition file types.
-	if cd "${EROOT}"/usr/share/zoneinfo 2>/dev/null ; then
-		# In case of a failed upgrade, clean up the symlinks #506570
-		if [ -L .gentoo-upgrade ] ; then
-			rm -rf posix .gentoo-upgrade
-		fi
-		if [ -d posix ] ; then
-			rm -rf .gentoo-upgrade #487192
-			mv posix .gentoo-upgrade || die
-			ln -s .gentoo-upgrade posix || die
-		fi
-	fi
-}
-
 src_prepare() {
-	epatch "${FILESDIR}"/${PN}-2015a-makefile.patch
+	epatch "${FILESDIR}"/${PN}-2016a-makefile.patch
 	tc-is-cross-compiler && cp -pR "${S}" "${S}"-native
 }
 
 _emake() {
 	emake \
 		TOPDIR="${EPREFIX}/usr" \
-		REDO=$(usex right_timezone posix_right posix_only) \
+		REDO=$(usex leaps_timezone posix_right posix_only) \
 		"$@"
 }
 
 src_compile() {
 	local LDLIBS
 	tc-export CC
+	append-lfs-flags #471102
 	if use elibc_FreeBSD || use elibc_Darwin ; then
 		append-cppflags -DSTD_INSPIRED #138251
 	fi
@@ -86,11 +70,6 @@ src_install() {
 	_emake install ${zic} DESTDIR="${D}"
 	dodoc CONTRIBUTING README NEWS Theory
 	dohtml *.htm
-
-	# install the symlink by hand to not break existing timezones
-	if ! use right_timezone && [[ ! -e ${ED}/usr/share/zoneinfo/posix ]] ; then
-		dosym . /usr/share/zoneinfo/posix
-	fi
 }
 
 get_TIMEZONE() {
@@ -105,9 +84,22 @@ get_TIMEZONE() {
 
 pkg_preinst() {
 	local tz=$(get_TIMEZONE)
-	if ! use right_timezone && [[ ${tz} == right/* ]] ; then
-		eerror "Your timezone is set to '${tz}' but you have USE=-right_timezone."
-		die "Please fix your USE or timezone"
+	if [[ ${tz} == right/* || ${tz} == posix/* ]] ; then
+		eerror "The right & posix subdirs are no longer installed as subdirs -- they have been"
+		eerror "relocated to match upstream paths as sibling paths.  Further, posix/xxx is the"
+		eerror "same as xxx, so you should simply drop the posix/ prefix.  You also should not"
+		eerror "be using right/xxx for the system timezone as it breaks programs."
+		die "Please fix your timezone setting"
+	fi
+
+	# Trim the symlink by hand to avoid portage's automatic protection checks.
+	rm -f "${EROOT}"/usr/share/zoneinfo/posix
+
+	if has_version "<=${CATEGORY}/${PN}-2015c" ; then
+		elog "Support for accessing posix/ and right/ directly has been dropped to match"
+		elog "upstream.  There is no need to set TZ=posix/xxx as it is the same as TZ=xxx."
+		elog "For TZ=right/, you can use TZ=../zoneinfo-leaps/xxx instead.  See this post"
+		elog "for details: https://mm.icann.org/pipermail/tz/2015-February/022024.html"
 	fi
 }
 
@@ -115,19 +107,23 @@ pkg_config() {
 	# make sure the /etc/localtime file does not get stale #127899
 	local tz src="${EROOT}etc/timezone" etc_lt="${EROOT}etc/localtime"
 
-	tz=$(get_TIMEZONE) || return 0
+	# If it's a symlink, assume the user knows what they're doing and
+	# they're managing it themselves. #511474
+	if [[ -L ${etc_lt} ]] ; then
+		einfo "Assuming your ${etc_lt} symlink is what you want; skipping update."
+		return 0
+	fi
+
+	if ! tz=$(get_TIMEZONE) ; then
+		einfo "Assuming your empty ${etc_lt} file is what you want; skipping update."
+		return 0
+	fi
 	if [[ ${tz} == "FOOKABLOIE" ]] ; then
 		elog "You do not have TIMEZONE set in ${src}."
 
 		if [[ ! -e ${etc_lt} ]] ; then
-			# if /etc/localtime is a symlink somewhere, assume they
-			# know what they're doing and they're managing it themselves
-			if [[ ! -L ${etc_lt} ]] ; then
-				cp -f "${EROOT}"/usr/share/zoneinfo/Factory "${etc_lt}"
-				elog "Setting ${etc_lt} to Factory."
-			else
-				elog "Assuming your ${etc_lt} symlink is what you want; skipping update."
-			fi
+			cp -f "${EROOT}"/usr/share/zoneinfo/Factory "${etc_lt}"
+			elog "Setting ${etc_lt} to Factory."
 		else
 			elog "Skipping auto-update of ${etc_lt}."
 		fi
@@ -139,16 +135,10 @@ pkg_config() {
 		elog "Your ${etc_lt} has been reset to Factory; enjoy!"
 		tz="Factory"
 	fi
-	if [[ -L ${etc_lt} ]]; then
-		einfo "Skipping symlinked ${etc_lt}"
-	else
-		einfo "Updating ${etc_lt} with ${EROOT}usr/share/zoneinfo/${tz}"
-		cp -f "${EROOT}"/usr/share/zoneinfo/"${tz}" "${etc_lt}"
-	fi
+	einfo "Updating ${etc_lt} with ${EROOT}usr/share/zoneinfo/${tz}"
+	cp -f "${EROOT}"/usr/share/zoneinfo/"${tz}" "${etc_lt}"
 }
 
 pkg_postinst() {
-	rm -rf "${EROOT}"/usr/share/zoneinfo/.gentoo-upgrade &
 	pkg_config
-	wait
 }
