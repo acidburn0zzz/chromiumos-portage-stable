@@ -57,6 +57,8 @@ src_prepare() {
 src_configure() {
 	econf \
 		--docdir="${EPREFIX}/usr/share/doc/${PF}" \
+		--localstatedir="${EPREFIX}"/var \
+		--with-cups-rundir="${EPREFIX}"/run/cups \
 		$(use_enable dbus) \
 		$(use_enable zeroconf avahi) \
 		$(use_enable static-libs static) \
