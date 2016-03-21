@@ -51,6 +51,7 @@ src_prepare() {
 	sed -e "s/AM_CONFIG_HEADER/AC_CONFIG_HEADERS/" -i configure.ac || die
 	epatch "${FILESDIR}/${PN}-1.8.2-disable-ijs.patch"
 	epatch "${FILESDIR}/${PN}-1.8.2-gstoraster.patch"
+	epatch "${FILESDIR}/${PN}-1.8.2-configure-PKG_CONFIG.patch"
 	eautoreconf
 }
 
