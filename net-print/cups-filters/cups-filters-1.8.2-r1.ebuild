@@ -6,7 +6,7 @@ EAPI=5
 
 GENTOO_DEPEND_ON_PERL=no
 
-inherit base eutils perl-module autotools systemd
+inherit eutils perl-module autotools systemd
 
 if [[ "${PV}" == "9999" ]] ; then
 	inherit bzr
@@ -21,12 +21,13 @@ HOMEPAGE="http://www.linuxfoundation.org/collaborate/workgroups/openprinting/pdf
 
 LICENSE="MIT GPL-2"
 SLOT="0"
-IUSE="dbus +foomatic jpeg perl png +postscript static-libs tiff zeroconf"
+IUSE="dbus +foomatic jpeg ldap perl png +postscript static-libs tiff zeroconf"
 
 RDEPEND="
 	postscript? ( >=app-text/ghostscript-gpl-9.09[cups] )
-	app-text/poppler:=[cxx,jpeg?,lcms,tiff?,utils,xpdf-headers(+)]
+	>=app-text/poppler-0.32:=[cxx,jpeg?,lcms,tiff?,utils,xpdf-headers(+)]
 	>=app-text/qpdf-3.0.2:=
+	dev-libs/glib:2
 	media-libs/fontconfig
 	media-libs/freetype:2
 	media-libs/lcms:2
@@ -37,6 +38,7 @@ RDEPEND="
 	dbus? ( sys-apps/dbus )
 	foomatic? ( !net-print/foomatic-filters )
 	jpeg? ( virtual/jpeg:0 )
+	ldap? ( net-nds/openldap )
 	perl? ( dev-lang/perl:= )
 	png? ( media-libs/libpng:0= )
 	tiff? ( media-libs/tiff:0 )
@@ -63,6 +65,7 @@ src_configure() {
 		$(use_enable zeroconf avahi) \
 		$(use_enable static-libs static) \
 		$(use_enable foomatic) \
+		$(use_enable ldap) \
 		$(use_enable postscript ghostscript) \
 		$(use_enable postscript ijs) \
 		--with-fontdir="fonts/conf.avail" \
