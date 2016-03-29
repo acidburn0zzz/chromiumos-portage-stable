@@ -1,21 +1,21 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-perl/Net-SSLeay/Net-SSLeay-1.550.ebuild,v 1.12 2014/06/06 05:42:45 vapier Exp $
+# $Id$
 
 EAPI=5
 
 MODULE_AUTHOR=MIKEM
-MODULE_VERSION=1.55
+MODULE_VERSION=1.65
 inherit multilib perl-module
 
 DESCRIPTION="Net::SSLeay module for perl"
 
-LICENSE="SSLeay"
+LICENSE="openssl"
 SLOT="0"
 KEYWORDS="*"
 IUSE=""
 
-RDEPEND="dev-libs/openssl"
+RDEPEND="dev-libs/openssl:0"
 DEPEND="${RDEPEND}"
 #	test? ( dev-perl/Test-Exception
 #		dev-perl/Test-Warn
