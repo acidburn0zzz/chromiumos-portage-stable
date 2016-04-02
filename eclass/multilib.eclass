@@ -1,6 +1,6 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/eclass/multilib.eclass,v 1.106 2014/07/11 08:21:58 ulm Exp $
+# $Id$
 
 # @ECLASS: multilib.eclass
 # @MAINTAINER:
@@ -49,15 +49,17 @@ has_multilib_profile() {
 #   fall back on old behavior.  Any profile that has these set should also
 #   depend on a newer version of portage (not yet released) which uses these
 #   over CONF_LIBDIR in econf, dolib, etc...
-get_libdir() {
-	local CONF_LIBDIR
-	if [ -n  "${CONF_LIBDIR_OVERRIDE}" ] ; then
-		# if there is an override, we want to use that... always.
-		echo ${CONF_LIBDIR_OVERRIDE}
-	else
-		get_abi_LIBDIR
-	fi
-}
+if has "${EAPI:-0}" 0 1 2 3 4 5; then
+	get_libdir() {
+		local CONF_LIBDIR
+		if [ -n  "${CONF_LIBDIR_OVERRIDE}" ] ; then
+			# if there is an override, we want to use that... always.
+			echo ${CONF_LIBDIR_OVERRIDE}
+		else
+			get_abi_LIBDIR
+		fi
+	}
+fi
 
 # @FUNCTION: get_abi_var
 # @USAGE: <VAR> [ABI]
@@ -415,7 +417,7 @@ multilib_toolchain_setup() {
 
 	# First restore any saved state we have laying around.
 	if [[ ${_DEFAULT_ABI_SAVED} == "true" ]] ; then
-		for v in CHOST CBUILD AS CC CXX LD PKG_CONFIG_{LIBDIR,PATH} ; do
+		for v in CHOST CBUILD AS CC CXX F77 FC LD PKG_CONFIG_{LIBDIR,PATH} ; do
 			vv="_abi_saved_${v}"
 			[[ ${!vv+set} == "set" ]] && export ${v}="${!vv}" || unset ${v}
 			unset ${vv}
@@ -427,7 +429,7 @@ multilib_toolchain_setup() {
 	# screws up ccache and distcc.  See #196243 for more info.
 	if [[ ${ABI} != ${DEFAULT_ABI} ]] ; then
 		# Back that multilib-ass up so we can restore it later
-		for v in CHOST CBUILD AS CC CXX LD PKG_CONFIG_{LIBDIR,PATH} ; do
+		for v in CHOST CBUILD AS CC CXX F77 FC LD PKG_CONFIG_{LIBDIR,PATH} ; do
 			vv="_abi_saved_${v}"
 			[[ ${!v+set} == "set" ]] && export ${vv}="${!v}" || unset ${vv}
 		done
@@ -438,6 +440,8 @@ multilib_toolchain_setup() {
 		export CHOST=$(get_abi_CHOST ${DEFAULT_ABI})
 		export CC="$(tc-getCC) $(get_abi_CFLAGS)"
 		export CXX="$(tc-getCXX) $(get_abi_CFLAGS)"
+		export F77="$(tc-getF77) $(get_abi_CFLAGS)"
+		export FC="$(tc-getFC) $(get_abi_CFLAGS)"
 		export LD="$(tc-getLD) $(get_abi_LDFLAGS)"
 		export CHOST=$(get_abi_CHOST $1)
 		export CBUILD=$(get_abi_CHOST $1)
