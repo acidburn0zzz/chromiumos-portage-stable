@@ -27,6 +27,7 @@ src_configure() {
 		python_export "${i}" EPYTHON
 		pyimpls+=" ${EPYTHON}"
 	done
+	export EPYTHON='python2.7'
 
 	local myeconfargs=(
 		--with-eprefix="${EPREFIX}"
