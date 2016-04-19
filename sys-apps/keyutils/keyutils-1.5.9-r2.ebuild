@@ -1,25 +1,20 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2016 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-apps/keyutils/keyutils-1.5.9-r1.ebuild,v 1.11 2014/08/10 17:25:33 ago Exp $
 
 EAPI="5"
 
 inherit multilib eutils toolchain-funcs linux-info multilib-minimal
 
 DESCRIPTION="Linux Key Management Utilities"
-HOMEPAGE="http://people.redhat.com/dhowells/keyutils/"
-SRC_URI="http://people.redhat.com/dhowells/${PN}/${P}.tar.bz2"
+HOMEPAGE="https://people.redhat.com/dhowells/keyutils/"
+SRC_URI="https://people.redhat.com/dhowells/${PN}/${P}.tar.bz2"
 
 LICENSE="GPL-2 LGPL-2.1"
 SLOT="0"
 KEYWORDS="*"
-IUSE="test"
+IUSE="static static-libs test"
 
-RDEPEND="
-	abi_x86_32? (
-		!<=app-emulation/emul-linux-x86-baselibs-20140508-r1
-		!app-emulation/emul-linux-x86-baselibs[-abi_x86_32(-)]
-	)"
+RDEPEND=""
 DEPEND="!prefix? ( >=sys-kernel/linux-headers-2.6.11 )"
 
 pkg_setup() {
@@ -49,17 +44,28 @@ src_prepare() {
 }
 
 multilib_src_compile() {
-	tc-export CC
-	tc-export AR
+	tc-export AR CC
 	sed -i \
-		-e '1iRPATH=' \
+		-e "1iRPATH = $(usex static -static '')" \
 		-e '/^C.*FLAGS/s|:=|+=|' \
 		-e 's:-Werror::' \
 		-e '/^BUILDFOR/s:=.*:=:' \
-		-e "/^LIBDIR/s:=.*:=/usr/$(get_libdir):" \
+		-e "/^LIBDIR/s:=.*:= /usr/$(get_libdir):" \
 		-e '/^USRLIBDIR/s:=.*:=$(LIBDIR):' \
+		-e "s: /: ${EPREFIX}/:g" \
+		-e '/^NO_ARLIB/d' \
 		Makefile || die
 
+	# We need the static lib in order to statically link programs.
+	if use static ; then
+		export NO_ARLIB=0
+		# Hack the progs to depend on the static lib instead.
+		sed -i \
+			-e '/^.*:.*[$](DEVELLIB)$/s:$(DEVELLIB):$(ARLIB):' \
+			Makefile || die
+	else
+		export NO_ARLIB=$(usex static-libs 0 1)
+	fi
 	emake
 }
 
@@ -72,8 +78,11 @@ multilib_src_test() {
 }
 
 multilib_src_install() {
+	# Possibly undo the setting for USE=static (see src_compile).
+	export NO_ARLIB=$(usex static-libs 0 1)
+
 	default
-	multilib_is_native_abi && gen_usr_ldscript -a keyutils
+	use static || gen_usr_ldscript -a keyutils
 }
 
 multilib_src_install_all() {
