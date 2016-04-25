@@ -1,8 +1,8 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-util/ccache/ccache-3.1.10-r1.ebuild,v 1.1 2014/11/01 08:11:46 vapier Exp $
+# $Id$
 
-EAPI="4"
+EAPI=5
 
 inherit eutils readme.gentoo
 
@@ -15,24 +15,23 @@ SLOT="0"
 KEYWORDS="*"
 IUSE=""
 
-RDEPEND="sys-libs/zlib"
-DEPEND="${RDEPEND}
-	app-arch/xz-utils"
+DEPEND="app-arch/xz-utils
+	sys-libs/zlib"
+RDEPEND="${DEPEND}
+	sys-apps/gentoo-functions"
 
 src_prepare() {
 	# make sure we always use system zlib
-	rm -rf zlib
-	epatch "${FILESDIR}"/${PN}-3.1.7-no-perl.patch #421609
+	rm -rf zlib || die
 	epatch "${FILESDIR}"/${PN}-3.1.10-size-on-disk.patch #456178
-	epatch "${FILESDIR}"/${PN}-3.1.10-real-temp-files.patch
 	sed \
 		-e "/^EPREFIX=/s:'':'${EPREFIX}':" \
-		"${FILESDIR}"/ccache-config-2 > ccache-config || die
+		"${FILESDIR}"/ccache-config-3 > ccache-config || die
 }
 
 src_install() {
+	DOCS=( AUTHORS.txt MANUAL.txt NEWS.txt README.txt )
 	default
-	dodoc AUTHORS.txt MANUAL.txt NEWS.txt README.txt
 
 	dobin ccache-config
 
@@ -62,8 +61,8 @@ pkg_postinst() {
 	"${EROOT}"/usr/bin/ccache-config --install-links ${CHOST}
 
 	# nuke broken symlinks from previous versions that shouldn't exist
-	rm -f "${EROOT}"/usr/lib/ccache/bin/${CHOST}-cc
-	rm -rf "${EROOT}"/usr/lib/ccache.backup
+	rm -f "${EROOT}"/usr/lib/ccache/bin/${CHOST}-cc || die
+	rm -rf "${EROOT}"/usr/lib/ccache.backup || die
 
 	readme.gentoo_print_elog
 }

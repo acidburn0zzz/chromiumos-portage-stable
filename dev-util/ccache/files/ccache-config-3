@@ -13,7 +13,7 @@
 
 EPREFIX=''
 
-. "${EPREFIX}"/etc/init.d/functions.sh 2>/dev/null || {
+. "${EPREFIX}"/lib/gentoo/functions.sh 2>/dev/null || {
 	ebegin() { echo " * $* ..."; }
 	eend() {
 		local r=${1:-$?}
