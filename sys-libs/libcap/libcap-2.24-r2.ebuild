@@ -1,6 +1,6 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2016 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-libs/libcap/libcap-2.22-r2.ebuild,v 1.15 2014/09/15 08:24:08 ago Exp $
+# $Id$
 
 EAPI="4"
 
@@ -8,13 +8,13 @@ inherit eutils multilib multilib-minimal toolchain-funcs pam
 
 DESCRIPTION="POSIX 1003.1e capabilities"
 HOMEPAGE="http://www.friedhoff.org/posixfilecaps.html"
-SRC_URI="mirror://gentoo/${P}.tar.bz2"
+SRC_URI="mirror://kernel/linux/libs/security/linux-privs/libcap2/${P}.tar.xz"
 
 # it's available under either of the licenses
 LICENSE="|| ( GPL-2 BSD )"
 SLOT="0"
 KEYWORDS="*"
-IUSE="pam"
+IUSE="pam static-libs"
 
 RDEPEND=">=sys-apps/attr-2.4.47-r1[${MULTILIB_USEDEP}]
 	pam? ( virtual/pam )"
@@ -22,15 +22,17 @@ DEPEND="${RDEPEND}
 	sys-kernel/linux-headers"
 
 src_prepare() {
-	epatch "${FILESDIR}"/${PN}-2.22-build-system-fixes.patch
+	epatch "${FILESDIR}"/${PN}-2.24-build-system-fixes.patch
 	epatch "${FILESDIR}"/${PN}-2.22-no-perl.patch
 	epatch "${FILESDIR}"/${PN}-2.20-ignore-RAISE_SETFCAP-install-failures.patch
 	epatch "${FILESDIR}"/${PN}-2.21-include.patch
+	epatch "${FILESDIR}"/${PN}-2.24-setcap-errno.patch #551672
 
 	multilib_copy_sources
 }
 
 multilib_src_configure() {
+	local pam
 	if multilib_is_native_abi && use pam; then
 		pam=yes
 	else
@@ -40,7 +42,8 @@ multilib_src_configure() {
 	sed -i \
 		-e "/^PAM_CAP/s:=.*:=${pam}:" \
 		-e '/^DYNAMIC/s:=.*:=yes:' \
-		-e "/^lib=/s:=.*:=/usr/$(get_libdir):" \
+		-e '/^lib_prefix=/s:=.*:=$(prefix):' \
+		-e "/^lib=/s:=.*:=$(get_libdir):" \
 		Make.Rules
 }
 
@@ -55,7 +58,8 @@ multilib_src_install() {
 	# no configure, needs explicit install line #444724#c3
 	emake install DESTDIR="${ED}"
 
-	multilib_is_native_abi && gen_usr_ldscript -a cap
+	gen_usr_ldscript -a cap
+	use static-libs || rm "${ED}"/usr/$(get_libdir)/libcap.a
 
 	rm -rf "${ED}"/usr/$(get_libdir)/security
 	if multilib_is_native_abi && use pam; then
