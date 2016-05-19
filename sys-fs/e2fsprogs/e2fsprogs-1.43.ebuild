@@ -1,28 +1,30 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2016 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-fs/e2fsprogs/e2fsprogs-1.42.12.ebuild,v 1.1 2014/09/05 18:40:53 polynomial-c Exp $
+# $Id$
 
-EAPI=4
+EAPI="5"
 
 case ${PV} in
 *_pre*) UP_PV="${PV%_pre*}-WIP-${PV#*_pre}" ;;
 *)      UP_PV=${PV} ;;
 esac
 
-inherit autotools eutils flag-o-matic multilib toolchain-funcs
+inherit eutils flag-o-matic multilib toolchain-funcs
 
 DESCRIPTION="Standard EXT2/EXT3/EXT4 filesystem utilities"
 HOMEPAGE="http://e2fsprogs.sourceforge.net/"
-SRC_URI="mirror://sourceforge/e2fsprogs/${PN}-${UP_PV}.tar.gz
+SRC_URI="mirror://sourceforge/e2fsprogs/${PN}-${UP_PV}.tar.xz
+	mirror://kernel/linux/kernel/people/tytso/e2fsprogs/v${UP_PV}/${PN}-${UP_PV}.tar.xz
 	elibc_mintlib? ( mirror://gentoo/${PN}-1.42.9-mint-r1.patch.xz )"
 
 LICENSE="GPL-2 BSD"
 SLOT="0"
 KEYWORDS="*"
-IUSE="nls static-libs elibc_FreeBSD"
+IUSE="fuse nls static-libs elibc_FreeBSD"
 
 RDEPEND="~sys-libs/${PN}-libs-${PV}
 	>=sys-apps/util-linux-2.16
+	fuse? ( sys-fs/fuse )
 	nls? ( virtual/libintl )"
 DEPEND="${RDEPEND}
 	nls? ( sys-devel/gettext )
@@ -37,7 +39,8 @@ src_prepare() {
 	if [[ ${CHOST} == *-mint* ]] ; then
 		epatch "${WORKDIR}"/${PN}-1.42.9-mint-r1.patch
 	fi
-	epatch "${FILESDIR}"/${PN}-1.42.10-fix-build-cflags.patch
+	epatch "${FILESDIR}"/${PN}-1.42.13-fix-build-cflags.patch #516854
+	epatch "${FILESDIR}"/${PN}-1.43-sysmacros.patch
 
 	# blargh ... trick e2fsprogs into using e2fsprogs-libs
 	rm -rf doc
@@ -53,7 +56,6 @@ src_prepare() {
 
 	# Avoid rebuild
 	echo '#include_next <ss/ss_err.h>' > lib/ss/ss_err.h
-	eautoreconf
 }
 
 src_configure() {
@@ -70,16 +72,16 @@ src_configure() {
 		$(tc-is-static-only || echo --enable-elf-shlibs) \
 		$(tc-has-tls || echo --disable-tls) \
 		--without-included-gettext \
+		$(use_enable fuse fuse2fs) \
 		$(use_enable nls) \
 		--disable-libblkid \
 		--disable-libuuid \
-		--disable-quota \
 		--disable-fsck \
 		--disable-uuidd
 	if [[ ${CHOST} != *-uclibc ]] && grep -qs 'USE_INCLUDED_LIBINTL.*yes' config.{log,status} ; then
 		eerror "INTL sanity check failed, aborting build."
 		eerror "Please post your ${S}/config.log file as an"
-		eerror "attachment to http://bugs.gentoo.org/show_bug.cgi?id=81096"
+		eerror "attachment to https://bugs.gentoo.org/show_bug.cgi?id=81096"
 		die "Preventing included intl cruft from building"
 	fi
 }
@@ -91,14 +93,6 @@ src_compile() {
 	if use elibc_FreeBSD ; then
 		cp "${FILESDIR}"/fsck_ext2fs.c .
 		emake V=1 fsck_ext2fs
-	fi
-}
-
-pkg_preinst() {
-	if [[ -r ${EROOT}/etc/mtab ]] ; then
-		if [[ $(<"${EROOT}"/etc/mtab) == "${PN} crap for src_test" ]] ; then
-			rm -f "${EROOT}"/etc/mtab
-		fi
 	fi
 }
 
