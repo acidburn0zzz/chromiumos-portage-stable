@@ -1,0 +1,14 @@
+DEFINED_PHASES=compile configure install prepare test
+DEPEND=>=dev-python/httplib2-0.8[python_targets_python2_7(-)?,-python_single_target_python2_7(-)] >=dev-python/oauth2client-1.5.2[python_targets_python2_7(-)?,-python_single_target_python2_7(-)] >=dev-python/six-1.9.0[python_targets_python2_7(-)?,-python_single_target_python2_7(-)] >=dev-python/google-apputils-0.4.0[python_targets_python2_7(-)?,-python_single_target_python2_7(-)] >=dev-python/python-gflags-2.0[python_targets_python2_7(-)?,-python_single_target_python2_7(-)] >=dev-python/setuptools-18.5[python_targets_python2_7(-)?,-python_single_target_python2_7(-)] python_targets_python2_7? ( >=dev-lang/python-2.7.3-r2:2.7 ) >=dev-lang/python-exec-2:=[python_targets_python2_7(-)?,-python_single_target_python2_7(-)]
+DESCRIPTION=Python library to manipulate Google APIs
+EAPI=5
+HOMEPAGE=https://github.com/google/apitools
+IUSE=python_targets_python2_7
+KEYWORDS=*
+LICENSE=Apache-2.0
+RDEPEND=>=dev-python/httplib2-0.8[python_targets_python2_7(-)?,-python_single_target_python2_7(-)] >=dev-python/oauth2client-1.5.2[python_targets_python2_7(-)?,-python_single_target_python2_7(-)] >=dev-python/six-1.9.0[python_targets_python2_7(-)?,-python_single_target_python2_7(-)] >=dev-python/google-apputils-0.4.0[python_targets_python2_7(-)?,-python_single_target_python2_7(-)] >=dev-python/python-gflags-2.0[python_targets_python2_7(-)?,-python_single_target_python2_7(-)] python_targets_python2_7? ( >=dev-lang/python-2.7.3-r2:2.7 ) >=dev-lang/python-exec-2:=[python_targets_python2_7(-)?,-python_single_target_python2_7(-)]
+REQUIRED_USE=|| ( python_targets_python2_7 )
+SLOT=0
+SRC_URI=https://github.com/google/apitools/archive/v0.4.15.tar.gz -> google-apitools-0.4.15.tar.gz
+_eclasses_=distutils-r1	c01d5c4af34f4a37a51fc9638299c222	eutils	06133990e861be0fe60c2b428fd025d9	multibuild	6d4858dc00f8bc51caf3f957f8430eb0	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	multiprocessing	d7f2985a2c76c365ee20269db5261414	python-r1	331701099758706863819fe3ff6ddc8a	python-utils-r1	9500a9740660edfcbc0b3b0b491ef307	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
+_md5_=669bb3a5ca15853095a0356b9900b370
