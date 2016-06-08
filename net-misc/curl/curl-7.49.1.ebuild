@@ -7,8 +7,8 @@ EAPI="5"
 inherit autotools eutils prefix multilib-minimal
 
 DESCRIPTION="A Client that groks URLs"
-HOMEPAGE="http://curl.haxx.se/"
-SRC_URI="http://curl.haxx.se/download/${P}.tar.bz2"
+HOMEPAGE="https://curl.haxx.se/"
+SRC_URI="https://curl.haxx.se/download/${P}.tar.bz2"
 
 LICENSE="MIT"
 SLOT="0"
@@ -32,7 +32,7 @@ RDEPEND="ldap? ( net-nds/openldap[${MULTILIB_USEDEP}] )
 			app-misc/ca-certificates
 		)
 		curl_ssl_libressl? (
-			dev-libs/libressl[static-libs?,${MULTILIB_USEDEP}]
+			dev-libs/libressl:0=[static-libs?,${MULTILIB_USEDEP}]
 		)
 		curl_ssl_mbedtls? (
 			net-libs/mbedtls:0=[${MULTILIB_USEDEP}]
@@ -129,7 +129,7 @@ multilib_src_configure() {
 	# So start with all ssl providers off until proven otherwise
 	local myconf=()
 	myconf+=( --without-axtls --without-gnutls --without-mbedtls --without-nss --without-polarssl --without-ssl --without-winssl )
-	myconf+=( --with-ca-bundle="${EPREFIX}"/etc/ssl/certs/ca-certificates.crt )
+	myconf+=( --without-ca-fallback --with-ca-bundle="${EPREFIX}"/etc/ssl/certs/ca-certificates.crt  )
 	if use ssl ; then
 		if use curl_ssl_axtls; then
 			einfo "SSL provided by axtls"
@@ -223,6 +223,27 @@ multilib_src_configure() {
 		sed -i -e '/SUBDIRS/s:src::' Makefile || die
 		sed -i -e '/SUBDIRS/s:scripts::' Makefile || die
 	fi
+
+	# Fix up the pkg-config file to be more robust.
+	# https://github.com/curl/curl/issues/864
+	local priv=() libs=()
+	# We always enable zlib.
+	libs+=( "-lz" )
+	priv+=( "zlib" )
+	if use http2; then
+		libs+=( "-lnghttp2" )
+		priv+=( "libnghttp2" )
+	fi
+	if use curl_ssl_openssl; then
+		libs+=( "-lssl" "-lcrypto" )
+		priv+=( "openssl" )
+	fi
+	grep -q Requires.private libcurl.pc && die "need to update ebuild"
+	libs=$(printf '|%s' "${libs[@]}")
+	sed -i -r \
+		-e "/^Libs.private/s:(${libs#|})( |$)::g" \
+		libcurl.pc || die
+	echo "Requires.private: ${priv[*]}" >> libcurl.pc
 }
 
 multilib_src_install_all() {
@@ -230,8 +251,4 @@ multilib_src_install_all() {
 	prune_libtool_files --all
 
 	rm -rf "${ED}"/etc/
-
-	# https://sourceforge.net/tracker/index.php?func=detail&aid=1705197&group_id=976&atid=350976
-	insinto /usr/share/aclocal
-	doins docs/libcurl/libcurl.m4
 }
