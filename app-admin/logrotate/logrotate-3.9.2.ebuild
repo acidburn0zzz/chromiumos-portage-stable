@@ -1,46 +1,60 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2016 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/app-admin/logrotate/logrotate-3.8.7.ebuild,v 1.10 2014/01/15 09:29:01 ago Exp $
+# $Id$
 
 EAPI=5
 
-inherit eutils toolchain-funcs flag-o-matic
+inherit autotools eutils toolchain-funcs flag-o-matic
 
 DESCRIPTION="Rotates, compresses, and mails system logs"
 HOMEPAGE="https://fedorahosted.org/logrotate/"
-SRC_URI="https://fedorahosted.org/releases/l/o/logrotate/${P}.tar.gz"
+SRC_URI="https://github.com/logrotate/logrotate/archive/${PV}.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="*"
-IUSE="acl selinux"
+IUSE="acl +cron selinux"
 
-RDEPEND="
+CDEPEND="
 	>=dev-libs/popt-1.5
 	selinux? (
 		sys-libs/libselinux
-		sec-policy/selinux-logrotate
 	)
 	acl? ( virtual/acl )"
 
-DEPEND="${RDEPEND}
+DEPEND="${CDEPEND}
 	>=sys-apps/sed-4"
+
+RDEPEND="${CDEPEND}
+	selinux? ( sec-policy/selinux-logrotate )
+	cron? ( virtual/cron )"
+
+install_cron_file() {
+	exeinto /etc/cron.daily
+	newexe "${S}"/examples/logrotate.cron "${PN}"
+}
 
 src_prepare() {
 	epatch \
-		"${FILESDIR}"/${P}-datehack.patch \
 		"${FILESDIR}"/${P}-ignore-hidden.patch \
 		"${FILESDIR}"/${P}-fbsd.patch \
 		"${FILESDIR}"/${P}-noasprintf.patch \
-		"${FILESDIR}"/${P}-atomic-create.patch
+		"${FILESDIR}"/${P}-atomic-create.patch \
+		"${FILESDIR}"/${P}-Werror.patch \
+		"${FILESDIR}"/${P}-lfs.patch
+	eautoreconf
+}
+
+src_configure() {
+	econf $(use_with acl) $(use_with selinux)
 }
 
 src_compile() {
-	local myconf
-	myconf="CC=$(tc-getCC)"
-	use selinux && myconf="${myconf} WITH_SELINUX=yes"
-	use acl && myconf="${myconf} WITH_ACL=yes"
 	emake ${myconf} RPM_OPT_FLAGS="${CFLAGS}"
+}
+
+src_test() {
+	emake test
 }
 
 src_install() {
@@ -49,11 +63,10 @@ src_install() {
 	doman logrotate.8
 	dodoc CHANGES examples/logrotate*
 
-	exeinto /etc/cron.daily
-	newexe "${S}"/examples/logrotate.cron "${PN}"
-
 	insinto /etc
 	doins "${FILESDIR}"/logrotate.conf
+
+	use cron && install_cron_file
 
 	keepdir /etc/logrotate.d
 }
