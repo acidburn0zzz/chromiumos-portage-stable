@@ -1,7 +1,0 @@
-DEFINED_PHASES=-
-DESCRIPTION=Virtual for Storable
-EAPI=5
-KEYWORDS=*
-RDEPEND=|| ( =dev-lang/perl-5.18* ~perl-core/Storable-2.410.0 ) !<perl-core/Storable-2.410.0 !>perl-core/Storable-2.410.0-r999
-SLOT=0
-_md5_=031af05fb42c79f8bd072c650f0e4678

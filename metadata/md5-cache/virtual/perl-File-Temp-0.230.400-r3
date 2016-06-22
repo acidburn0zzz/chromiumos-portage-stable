@@ -1,7 +1,0 @@
-DEFINED_PHASES=-
-DESCRIPTION=Virtual for File-Temp
-EAPI=5
-KEYWORDS=*
-RDEPEND=~perl-core/File-Temp-0.230.400 !=perl-core/File-Temp-0.230.400
-SLOT=0
-_md5_=4ea1fbe66f6527d65e9111c7bdb941df
