@@ -1,5 +1,5 @@
 DEFINED_PHASES=compile configure install postinst preinst prepare test
-DEPEND=bzip2? ( app-arch/bzip2 ) zlib? ( sys-libs/zlib ) libedit? ( dev-libs/libedit ) readline? ( sys-libs/readline:0= ) virtual/pkgconfig userland_GNU? ( >=sys-apps/findutils-4.4.0 )
+DEPEND=bzip2? ( app-arch/bzip2 ) zlib? ( sys-libs/zlib ) libedit? ( dev-libs/libedit ) readline? ( sys-libs/readline:0= ) virtual/pkgconfig
 DESCRIPTION=Perl-compatible regular expression library
 EAPI=5
 HOMEPAGE=http://www.pcre.org/
@@ -11,4 +11,4 @@ REQUIRED_USE=readline? ( !libedit ) libedit? ( !readline )
 SLOT=3
 SRC_URI=mirror://sourceforge/pcre/pcre-8.38.tar.bz2 ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.38.tar.bz2
 _eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	libtool	52d0e17251d04645ffaa61bfdd858944	multibuild	6d4858dc00f8bc51caf3f957f8430eb0	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	multilib-build	0983c7893df461213a05f791cc7dea6d	multilib-minimal	13dd976916c35a1e2c8d170e840c7018	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
-_md5_=20de4d72b2547bdf2d73696653d9aa05
+_md5_=4094a4eeaf4c926249e03c0c75866719
