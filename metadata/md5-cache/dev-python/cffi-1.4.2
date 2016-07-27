@@ -1,0 +1,14 @@
+DEFINED_PHASES=compile configure install prepare test
+DEPEND=virtual/libffi dev-python/pycparser[python_targets_python2_7(-)?,python_targets_python3_3(-)?,python_targets_python3_4(-)?,python_targets_python3_5(-)?,-python_single_target_python2_7(-),-python_single_target_python3_3(-),-python_single_target_python3_4(-),-python_single_target_python3_5(-)] test? ( dev-python/pytest[python_targets_python2_7(-)?,python_targets_python3_3(-)?,python_targets_python3_4(-)?,python_targets_python3_5(-)?,-python_single_target_python2_7(-),-python_single_target_python3_3(-),-python_single_target_python3_4(-),-python_single_target_python3_5(-)] ) python_targets_python2_7? ( >=dev-lang/python-2.7.3-r2:2.7 ) python_targets_python3_3? ( >=dev-lang/python-3.3.2-r2:3.3 ) python_targets_python3_4? ( dev-lang/python:3.4 ) python_targets_python3_5? ( dev-lang/python:3.5 ) >=dev-lang/python-exec-2:=[python_targets_python2_7(-)?,python_targets_python3_3(-)?,python_targets_python3_4(-)?,python_targets_python3_5(-)?,-python_single_target_python2_7(-),-python_single_target_python3_3(-),-python_single_target_python3_4(-),-python_single_target_python3_5(-)]
+DESCRIPTION=Foreign Function Interface for Python calling C code
+EAPI=5
+HOMEPAGE=http://cffi.readthedocs.org/ https://pypi.python.org/pypi/cffi
+IUSE=doc test python_targets_python2_7 python_targets_python3_3 python_targets_python3_4 python_targets_python3_5
+KEYWORDS=*
+LICENSE=MIT
+RDEPEND=virtual/libffi dev-python/pycparser[python_targets_python2_7(-)?,python_targets_python3_3(-)?,python_targets_python3_4(-)?,python_targets_python3_5(-)?,-python_single_target_python2_7(-),-python_single_target_python3_3(-),-python_single_target_python3_4(-),-python_single_target_python3_5(-)] python_targets_python2_7? ( >=dev-lang/python-2.7.3-r2:2.7 ) python_targets_python3_3? ( >=dev-lang/python-3.3.2-r2:3.3 ) python_targets_python3_4? ( dev-lang/python:3.4 ) python_targets_python3_5? ( dev-lang/python:3.5 ) >=dev-lang/python-exec-2:=[python_targets_python2_7(-)?,python_targets_python3_3(-)?,python_targets_python3_4(-)?,python_targets_python3_5(-)?,-python_single_target_python2_7(-),-python_single_target_python3_3(-),-python_single_target_python3_4(-),-python_single_target_python3_5(-)]
+REQUIRED_USE=|| ( python_targets_python2_7 python_targets_python3_3 python_targets_python3_4 python_targets_python3_5 )
+SLOT=0/1.4.2
+SRC_URI=mirror://pypi/c/cffi/cffi-1.4.2.tar.gz
+_eclasses_=distutils-r1	c01d5c4af34f4a37a51fc9638299c222	eutils	06133990e861be0fe60c2b428fd025d9	multibuild	6d4858dc00f8bc51caf3f957f8430eb0	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	multiprocessing	d7f2985a2c76c365ee20269db5261414	python-r1	331701099758706863819fe3ff6ddc8a	python-utils-r1	9500a9740660edfcbc0b3b0b491ef307	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
+_md5_=5be3e95060db1512d978dfc4a57a8f9d
