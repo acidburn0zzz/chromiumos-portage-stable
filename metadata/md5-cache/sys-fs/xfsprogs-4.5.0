@@ -11,4 +11,4 @@ REQUIRED_USE=static? ( static-libs )
 SLOT=0
 SRC_URI=ftp://oss.sgi.com/projects/xfs/cmd_tars/xfsprogs-4.5.0.tar.gz ftp://oss.sgi.com/projects/xfs/previous/cmd_tars/xfsprogs-4.5.0.tar.gz
 _eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
-_md5_=80a06ebf81783ac7d684af6acb4bbc70
+_md5_=c16945efdd81563c2adfba2d35977b3d
