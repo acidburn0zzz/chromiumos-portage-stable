@@ -11,13 +11,14 @@ inherit eutils user flag-o-matic multilib autotools pam systemd versionator
 PARCH=${P/_}
 
 #HPN_PATCH="${PARCH}-hpnssh14v10.tar.xz"
-LDAP_PATCH="${PN}-lpk-7.2p2-0.3.14.patch.xz"
-X509_VER="8.9" X509_PATCH="${PN}-${PV/_}+x509-${X509_VER}.diff.gz"
+SCTP_PATCH="${PN}-7.3_p1-sctp.patch.xz"
+LDAP_PATCH="${PN}-lpk-7.3p1-0.3.14.patch.xz"
+X509_VER="9.0" X509_PATCH="${PN}-${PV/_}+x509-${X509_VER}.diff.gz"
 
 DESCRIPTION="Port of OpenBSD's free SSH release"
 HOMEPAGE="http://www.openssh.org/"
 SRC_URI="mirror://openbsd/OpenSSH/portable/${PARCH}.tar.gz
-	mirror://gentoo/${PN}-7.2_p1-sctp.patch.xz
+	${SCTP_PATCH:+mirror://gentoo/${SCTP_PATCH}}
 	${HPN_PATCH:+hpn? (
 		mirror://gentoo/${HPN_PATCH}
 		mirror://sourceforge/hpnssh/${HPN_PATCH}
@@ -30,7 +31,7 @@ LICENSE="BSD GPL-2"
 SLOT="0"
 KEYWORDS="*"
 # Probably want to drop ssl defaulting to on in a future version.
-IUSE="bindist debug ${HPN_PATCH:++}hpn kerberos kernel_linux ldap ldns libedit libressl pam +pie sctp selinux skey ssh1 +ssl static X X509"
+IUSE="bindist debug ${HPN_PATCH:++}hpn kerberos kernel_linux ldap ldns libedit libressl livecd pam +pie sctp selinux skey ssh1 +ssl static X X509"
 REQUIRED_USE="ldns? ( ssl )
 	pie? ( !static )
 	ssh1? ( ssl )
@@ -121,7 +122,7 @@ src_prepare() {
 			epatch "${FILESDIR}"/${PN}-7.1_p1-hpn-x509-glue.patch
 			popd >/dev/null
 		fi
-		epatch "${FILESDIR}"/${PN}-7.2_p1-sctp-x509-glue.patch
+		epatch "${FILESDIR}"/${PN}-7.3_p1-sctp-x509-glue.patch
 		popd >/dev/null
 		epatch "${WORKDIR}"/${X509_PATCH%.*}
 		#epatch "${FILESDIR}"/${PN}-7.1_p2-x509-hpn14v10-glue.patch
@@ -131,9 +132,9 @@ src_prepare() {
 		epatch "${WORKDIR}"/${LDAP_PATCH%.*}
 		save_version LPK
 	fi
-	epatch "${FILESDIR}"/${PN}-7.2_p1-GSSAPI-dns.patch #165444 integrated into gsskex
+	epatch "${FILESDIR}"/${PN}-7.3_p1-GSSAPI-dns.patch #165444 integrated into gsskex
 	epatch "${FILESDIR}"/${PN}-6.7_p1-openssl-ignore-status.patch
-	epatch "${WORKDIR}"/${PN}-7.2_p1-sctp.patch
+	epatch "${WORKDIR}"/${SCTP_PATCH%.*}
 	if use hpn ; then
 		EPATCH_FORCE="yes" EPATCH_SUFFIX="patch" \
 			EPATCH_MULTI_MSG="Applying HPN patchset ..." \
@@ -237,13 +238,20 @@ src_install() {
 	SendEnv LANG LC_*
 	EOF
 
+	if use livecd ; then
+		sed -i \
+			-e '/^#PermitRootLogin/c# Allow root login with password on livecds.\nPermitRootLogin Yes' \
+			"${ED}"/etc/ssh/sshd_config || die
+	fi
+
 	if ! use X509 && [[ -n ${LDAP_PATCH} ]] && use ldap ; then
 		insinto /etc/openldap/schema/
 		newins openssh-lpk_openldap.schema openssh-lpk.schema
 	fi
 
 	doman contrib/ssh-copy-id.1
-	dodoc ChangeLog CREDITS OVERVIEW README* TODO sshd_config
+	dodoc CREDITS OVERVIEW README* TODO sshd_config
+	use X509 || dodoc ChangeLog
 
 	diropts -m 0700
 	dodir /etc/skel/.ssh
