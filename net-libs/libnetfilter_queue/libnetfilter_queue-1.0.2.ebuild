@@ -1,9 +1,8 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/net-libs/libnetfilter_queue/libnetfilter_queue-1.0.1.ebuild,v 1.7 2013/02/08 06:43:05 vapier Exp $
+# $Id$
 
-EAPI="4"
-
+EAPI=5
 inherit autotools-utils linux-info
 
 DESCRIPTION="API to packets that have been queued by the kernel packet filter"
@@ -15,7 +14,10 @@ SLOT="0"
 KEYWORDS="*"
 IUSE="static-libs"
 
-RDEPEND=">=net-libs/libnfnetlink-0.0.41"
+RDEPEND="
+	>=net-libs/libmnl-1.0.3
+	>=net-libs/libnfnetlink-0.0.41
+"
 DEPEND="${RDEPEND}
 	virtual/pkgconfig"
 
