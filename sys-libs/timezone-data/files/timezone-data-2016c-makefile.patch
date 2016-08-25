@@ -41,16 +41,13 @@
  
  # Library functions are put in an archive in LIBDIR.
  
-@@ -298,8 +298,10 @@ GZIPFLAGS=	-9n
+@@ -298,8 +298,7 @@ GZIPFLAGS=	-9n
  
  #MAKE=		make
  
 -cc=		cc
 -CC=		$(cc) -DTZDIR=\"$(TZDIR)\"
 +CPPFLAGS+=		-DTZDIR=\"$(TZDIR)\"
-+ifeq ($(NLS),1)
-+CPPFLAGS+= -DHAVE_GETTEXT=1 -DTZ_DOMAIN=\"libc\"
-+endif
  
  AR=		ar
  
