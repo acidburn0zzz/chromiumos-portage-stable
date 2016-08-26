@@ -1,8 +1,7 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2016 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-util/strace/strace-4.9.ebuild,v 1.1 2014/08/16 05:22:46 vapier Exp $
 
-EAPI="4"
+EAPI="5"
 
 inherit flag-o-matic eutils
 
@@ -15,21 +14,25 @@ else
 fi
 
 DESCRIPTION="A useful diagnostic, instructional, and debugging tool"
-HOMEPAGE="http://sourceforge.net/projects/strace/"
+HOMEPAGE="https://sourceforge.net/projects/strace/"
 
 LICENSE="BSD"
 SLOT="0"
-IUSE="aio +perl static"
+IUSE="aio perl static unwind"
 
+LIB_DEPEND="unwind? ( sys-libs/libunwind[static-libs(+)] )"
 # strace only uses the header from libaio to decode structs
-DEPEND="aio? ( >=dev-libs/libaio-0.3.106 )
+DEPEND="static? ( ${LIB_DEPEND} )
+	aio? ( >=dev-libs/libaio-0.3.106 )
 	sys-kernel/linux-headers"
-RDEPEND=""
+RDEPEND="!static? ( ${LIB_DEPEND//\[static-libs(+)]} )
+	perl? ( dev-lang/perl )"
 
 src_prepare() {
 	if epatch_user || [[ ! -e configure ]] ; then
 		# git generation
-		./xlat/gen.sh
+		./xlat/gen.sh || die
+		./generate_mpers_am.sh || die
 		eautoreconf
 		[[ ! -e CREDITS ]] && cp CREDITS{.in,}
 	fi
@@ -38,6 +41,13 @@ src_prepare() {
 	use static && append-ldflags -static
 
 	export ac_cv_header_libaio_h=$(usex aio)
+
+	# Stub out the -k test since it's known to be flaky. #545812
+	sed -i '1iexit 77' tests*/strace-k.test || die
+}
+
+src_configure() {
+	econf $(use_with unwind libunwind)
 }
 
 src_install() {
