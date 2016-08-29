@@ -1,10 +1,10 @@
-# Copyright 1999-2011 Gentoo Foundation
+# Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-fs/mtools/mtools-4.0.15.ebuild,v 1.8 2011/06/19 16:59:24 armin76 Exp $
+# $Id$
 
-EAPI="2"
+EAPI="4"
 
-inherit autotools
+inherit flag-o-matic
 
 DESCRIPTION="utilities to access MS-DOS disks from Unix without mounting them"
 HOMEPAGE="http://mtools.linux.lu/"
@@ -13,9 +13,10 @@ SRC_URI="mirror://gnu/${PN}/${P}.tar.bz2"
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="*"
-IUSE="X"
+IUSE="X elibc_glibc"
 
 DEPEND="
+	!elibc_glibc? ( virtual/libiconv )
 	X? (
 		x11-libs/libICE
 		x11-libs/libXau
@@ -26,19 +27,24 @@ DEPEND="
 RDEPEND="${DEPEND}"
 
 src_prepare() {
-	eautoconf #341443
+	# Don't throw errors on existing directories
+	sed -i -e "s:mkdir:mkdir -p:" mkinstalldirs || die
 }
 
 src_configure() {
+	# 447688
+	use elibc_glibc || append-libs iconv
 	econf \
-		--sysconfdir=/etc/mtools \
+		--sysconfdir="${EPREFIX}"/etc/mtools \
 		$(use_with X x)
 }
 
 src_install() {
-	emake -j1 DESTDIR="${D}" install || die
-	insinto /etc/mtools
-	doins mtools.conf || die
-	dosed '/^SAMPLE FILE$/s:^:#:' /etc/mtools/mtools.conf # default is fine
+	emake DESTDIR="${D}" install
 	dodoc README* Release.notes
+
+	insinto /etc/mtools
+	doins mtools.conf
+	# default is fine
+	sed -i -e '/^SAMPLE FILE$/s:^:#:' "${ED}"/etc/mtools/mtools.conf || die
 }
