@@ -1,6 +1,6 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/eclass/toolchain-binutils.eclass,v 1.131 2014/01/06 16:10:56 vapier Exp $
+# $Id$
 #
 # Maintainer: Toolchain Ninjas <toolchain@gentoo.org>
 #
@@ -8,17 +8,14 @@
 # us easily merge multiple versions for multiple targets (if we wish) and
 # then switch the versions on the fly (with `binutils-config`).
 #
-# binutils-99999999       -> live cvs
 # binutils-9999           -> live git
 # binutils-9999_preYYMMDD -> nightly snapshot date YYMMDD
 # binutils-#              -> normal release
 
-extra_eclass=""
 if [[ -n ${BINUTILS_TYPE} ]] ; then
 	BTYPE=${BINUTILS_TYPE}
 else
 	case ${PV} in
-	99999999)  BTYPE="cvs";;
 	9999)      BTYPE="git";;
 	9999_pre*) BTYPE="snap";;
 	*.*.90)    BTYPE="snap";;
@@ -28,18 +25,10 @@ else
 fi
 
 case ${BTYPE} in
-cvs)
-	extra_eclass="cvs"
-	ECVS_SERVER="sourceware.org:/cvs/src"
-	ECVS_MODULE="binutils"
-	ECVS_USER="anoncvs"
-	ECVS_PASS="anoncvs"
-	BVER="cvs"
-	;;
 git)
-	extra_eclass="git-2"
 	BVER="git"
 	EGIT_REPO_URI="git://sourceware.org/git/binutils-gdb.git"
+	inherit git-2
 	;;
 snap)
 	BVER=${PV/9999_pre}
@@ -49,7 +38,7 @@ snap)
 	;;
 esac
 
-inherit eutils libtool flag-o-matic gnuconfig multilib versionator unpacker ${extra_eclass}
+inherit eutils libtool flag-o-matic gnuconfig multilib versionator unpacker
 case ${EAPI:-0} in
 0|1)
 	EXPORT_FUNCTIONS src_unpack src_compile src_test src_install pkg_postinst pkg_postrm ;;
@@ -60,17 +49,17 @@ esac
 
 export CTARGET=${CTARGET:-${CHOST}}
 if [[ ${CTARGET} == ${CHOST} ]] ; then
-	if [[ ${CATEGORY/cross-} != ${CATEGORY} ]] ; then
-		export CTARGET=${CATEGORY/cross-}
+	if [[ ${CATEGORY} == cross-* ]] ; then
+		export CTARGET=${CATEGORY#cross-}
 	fi
 fi
 is_cross() { [[ ${CHOST} != ${CTARGET} ]] ; }
 
 DESCRIPTION="Tools necessary to build programs"
-HOMEPAGE="http://sourceware.org/binutils/"
+HOMEPAGE="https://sourceware.org/binutils/"
 
 case ${BTYPE} in
-	cvs|git) SRC_URI="" ;;
+	git) SRC_URI="" ;;
 	snap)
 		SRC_URI="ftp://gcc.gnu.org/pub/binutils/snapshots/binutils-${BVER}.tar.bz2
 			ftp://sourceware.org/pub/binutils/snapshots/binutils-${BVER}.tar.bz2" ;;
@@ -87,7 +76,7 @@ add_src_uri() {
 	else
 		a+=".bz2"
 	fi
-	set -- mirror://gentoo http://dev.gentoo.org/~vapier/dist
+	set -- mirror://gentoo https://dev.gentoo.org/~vapier/dist
 	SRC_URI="${SRC_URI} ${@/%//${a}}"
 }
 add_src_uri binutils-${BVER}-patches-${PATCHVER}.tar ${PATCHVER}
@@ -99,17 +88,13 @@ if version_is_at_least 2.18 ; then
 else
 	LICENSE="|| ( GPL-2 LGPL-2 )"
 fi
-IUSE="cxx nls multitarget multislot static-libs test vanilla"
+IUSE="cxx multitarget nls static-libs test vanilla"
 if version_is_at_least 2.19 ; then
 	IUSE+=" zlib"
 fi
-if use multislot ; then
-	SLOT="${BVER}"
-else
-	SLOT="0"
-fi
+SLOT="${BVER}"
 
-RDEPEND=">=sys-devel/binutils-config-1.9"
+RDEPEND=">=sys-devel/binutils-config-3"
 in_iuse zlib && RDEPEND+=" zlib? ( sys-libs/zlib )"
 DEPEND="${RDEPEND}
 	test? ( dev-util/dejagnu )
@@ -119,7 +104,7 @@ DEPEND="${RDEPEND}
 
 S=${WORKDIR}/binutils
 case ${BVER} in
-cvs|git) ;;
+git) ;;
 *) S=${S}-${BVER} ;;
 esac
 
@@ -135,7 +120,6 @@ fi
 
 tc-binutils_unpack() {
 	case ${BTYPE} in
-	cvs) cvs_src_unpack ;;
 	git) git-2_src_unpack ;;
 	*)   unpacker ${A} ;;
 	esac
@@ -176,6 +160,13 @@ tc-binutils_apply_patches() {
 			fi
 		fi
 		[[ ${#PATCHES[@]} -gt 0 ]] && epatch "${PATCHES[@]}"
+
+		# Make sure our explicit libdir paths don't get clobbered. #562460
+		sed -i \
+			-e 's:@bfdlibdir@:@libdir@:g' \
+			-e 's:@bfdincludedir@:@includedir@:g' \
+			{bfd,opcodes}/Makefile.in || die
+
 		epatch_user
 	fi
 
@@ -218,6 +209,15 @@ toolchain-binutils_src_prepare() {
 
 _eprefix_init() {
 	has "${EAPI:-0}" 0 1 2 && ED=${D} EPREFIX= EROOT=${ROOT}
+}
+
+# Intended for ebuilds to override to set their own versioning information.
+toolchain-binutils_bugurl() {
+	printf "https://bugs.gentoo.org/"
+}
+toolchain-binutils_pkgversion() {
+	printf "Gentoo ${BVER}"
+	[[ -n ${PATCHVER} ]] && printf " p${PATCHVER}"
 }
 
 toolchain-binutils_src_configure() {
@@ -274,7 +274,10 @@ toolchain-binutils_src_configure() {
 
 	use multitarget && myconf+=( --enable-targets=all --enable-64-bit-bfd )
 	[[ -n ${CBUILD} ]] && myconf+=( --build=${CBUILD} )
-	is_cross && myconf+=( --with-sysroot="${EPREFIX}"/usr/${CTARGET} )
+	is_cross && myconf+=(
+		--with-sysroot="${EPREFIX}"/usr/${CTARGET}
+		--enable-poison-system-directories
+	)
 
 	# glibc-2.3.6 lacks support for this ... so rather than force glibc-2.5+
 	# on everyone in alpha (for now), we'll just enable it when possible
@@ -295,14 +298,20 @@ toolchain-binutils_src_configure() {
 		--enable-obsolete
 		--enable-shared
 		--enable-threads
+		# Newer versions (>=2.27) offer a configure flag now.
+		--enable-relro
 		# Newer versions (>=2.24) make this an explicit option. #497268
 		--enable-install-libiberty
 		--disable-werror
-		--with-bugurl=http://bugs.gentoo.org/
+		--with-bugurl="$(toolchain-binutils_bugurl)"
+		--with-pkgversion="$(toolchain-binutils_pkgversion)"
 		$(use_enable static-libs static)
 		${EXTRA_ECONF}
 		# Disable modules that are in a combined binutils/gdb tree. #490566
 		--disable-{gdb,libdecnumber,readline,sim}
+		# Strip out broken static link flags.
+		# https://gcc.gnu.org/PR56750
+		--without-stage1-ldflags
 	)
 	echo ./configure "${myconf[@]}"
 	"${S}"/configure "${myconf[@]}" || die
@@ -428,32 +437,12 @@ toolchain-binutils_src_install() {
 		newdoc README README.elf2flt
 	fi
 
-	# Now, some binutils are tricky and actually provide
-	# for multiple TARGETS.  Really, we're talking just
-	# 32bit/64bit support (like mips/ppc/sparc).  Here
-	# we want to tell binutils-config that it's cool if
-	# it generates multiple sets of binutil symlinks.
-	# e.g. sparc gets {sparc,sparc64}-unknown-linux-gnu
-	local targ=${CTARGET/-*} src="" dst=""
-	local FAKE_TARGETS=${CTARGET}
-	case ${targ} in
-		mips*)    src="mips"    dst="mips64";;
-		powerpc*) src="powerpc" dst="powerpc64";;
-		s390*)    src="s390"    dst="s390x";;
-		sparc*)   src="sparc"   dst="sparc64";;
-	esac
-	case ${targ} in
-		mips64*|powerpc64*|s390x*|sparc64*) targ=${src} src=${dst} dst=${targ};;
-	esac
-	[[ -n ${src}${dst} ]] && FAKE_TARGETS="${FAKE_TARGETS} ${CTARGET/${src}/${dst}}"
-
 	# Generate an env.d entry for this binutils
 	insinto /etc/env.d/binutils
 	cat <<-EOF > "${T}"/env.d
 		TARGET="${CTARGET}"
 		VER="${BVER}"
 		LIBPATH="${EPREFIX}${LIBPATH}"
-		FAKE_TARGETS="${FAKE_TARGETS}"
 	EOF
 	newins "${T}"/env.d ${CTARGET}-${BVER}
 
