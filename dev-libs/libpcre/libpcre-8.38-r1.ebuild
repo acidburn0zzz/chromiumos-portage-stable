@@ -1,4 +1,4 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2016 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
@@ -43,6 +43,8 @@ MULTILIB_CHOST_TOOLS=(
 )
 
 src_prepare() {
+	epatch "${FILESDIR}"/${P}-ZDI-CAN-3542.patch #575546
+	epatch "${FILESDIR}"/${P}-CVE-2016-1283.patch #570694
 	sed -i -e "s:-lpcre ::" libpcrecpp.pc.in || die
 	elibtoolize
 }
@@ -75,7 +77,7 @@ multilib_src_install() {
 		DESTDIR="${D}" \
 		$(multilib_is_native_abi || echo "bin_PROGRAMS= dist_html_DATA=") \
 		install
-	multilib_is_native_abi && gen_usr_ldscript -a pcre
+	gen_usr_ldscript -a pcre
 }
 
 multilib_src_install_all() {
