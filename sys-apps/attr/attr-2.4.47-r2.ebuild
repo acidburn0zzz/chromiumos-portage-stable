@@ -1,13 +1,13 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-apps/attr/attr-2.4.47-r1.ebuild,v 1.15 2014/07/13 20:30:00 tgall Exp $
+# $Id$
 
 EAPI="4"
 
-inherit eutils toolchain-funcs multilib-minimal
+inherit eutils libtool toolchain-funcs multilib-minimal
 
 DESCRIPTION="Extended attributes tools"
-HOMEPAGE="http://savannah.nongnu.org/projects/attr"
+HOMEPAGE="https://savannah.nongnu.org/projects/attr"
 SRC_URI="mirror://nongnu/${PN}/${P}.src.tar.gz"
 
 LICENSE="LGPL-2.1"
@@ -29,6 +29,8 @@ src_prepare() {
 		include/builddefs.in \
 		|| die
 	strip-linguas -u po
+	elibtoolize #580792
+
 	multilib_copy_sources # https://savannah.nongnu.org/bugs/index.php?39736
 }
 
@@ -59,7 +61,7 @@ multilib_src_install() {
 		gen_usr_ldscript -a attr
 		# the man-pages packages provides the man2 files
 		# note: man-pages are installed by TOOL_SUBDIRS
-		rm -r "${ED}"/usr/share/man/man2 || die
+		rm -r "${ED}"/usr/share/man/man2 "${ED}"/usr/share/man/man5/attr.5 || die
 	fi
 }
 
