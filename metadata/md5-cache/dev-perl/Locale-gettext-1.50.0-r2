@@ -1,0 +1,12 @@
+DEFINED_PHASES=compile configure install prepare test unpack
+DEPEND=sys-devel/gettext || ( >=dev-lang/perl-5.16 <dev-lang/perl-5.16[-build] )
+DESCRIPTION=A Perl module for accessing the GNU locale utilities
+EAPI=5
+HOMEPAGE=http://search.cpan.org/dist/gettext/
+KEYWORDS=*
+LICENSE=|| ( Artistic GPL-1 GPL-2 GPL-3 )
+RDEPEND=sys-devel/gettext || ( >=dev-lang/perl-5.16 <dev-lang/perl-5.16[-build] )
+SLOT=0
+SRC_URI=mirror://cpan/authors/id/P/PV/PVANDRY/gettext-1.05.tar.gz
+_eclasses_=base	ec46b36a6f6fd1d0b505a33e0b74e413	eutils	06133990e861be0fe60c2b428fd025d9	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	multiprocessing	d7f2985a2c76c365ee20269db5261414	perl-module	d93571ca1c77e98760e5aa406388b02d	toolchain-funcs	6198c04daba0e1307bd844df7d37f423
+_md5_=d6ce103290bd025ac97251c83fc063fe

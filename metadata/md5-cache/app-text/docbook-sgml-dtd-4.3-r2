@@ -7,5 +7,5 @@ LICENSE=as-is
 RDEPEND=app-text/sgml-common
 SLOT=4.3
 SRC_URI=http://www.docbook.org/sgml/4.3/docbook-4.3.zip
-_eclasses_=base	ec46b36a6f6fd1d0b505a33e0b74e413	eutils	06133990e861be0fe60c2b428fd025d9	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	sgml-catalog	a4d9b97f60f3331317a2d4279eecbe7d	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
+_eclasses_=base	ec46b36a6f6fd1d0b505a33e0b74e413	eutils	06133990e861be0fe60c2b428fd025d9	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	sgml-catalog	a4d9b97f60f3331317a2d4279eecbe7d	toolchain-funcs	6198c04daba0e1307bd844df7d37f423
 _md5_=da869cc4631ddff280271cec5caeee4c
