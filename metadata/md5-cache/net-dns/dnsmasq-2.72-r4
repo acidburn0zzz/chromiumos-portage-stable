@@ -1,0 +1,14 @@
+DEFINED_PHASES=compile configure install postinst preinst prepare pretend setup
+DEPEND=dbus? ( sys-apps/dbus ) idn? ( net-dns/libidn ) lua? ( || ( dev-lang/lua:0 dev-lang/lua:5.1 ) ) conntrack? ( !s390? ( net-libs/libnetfilter_conntrack ) ) nls? ( sys-devel/gettext net-dns/libidn ) app-arch/xz-utils dnssec? ( dev-libs/nettle[gmp] static? ( dev-libs/nettle[static-libs(+)] ) ) virtual/pkgconfig filecaps? ( sys-libs/libcap ) sys-apps/baselayout virtual/pkgconfig
+DESCRIPTION=Small forwarding DNS server
+EAPI=5
+HOMEPAGE=http://www.thekelleys.org.uk/dnsmasq/doc.html
+IUSE=auth-dns conntrack dbus +dhcp dhcp-options dhcp-tools dnssec idn ipv6 lua nls script selinux static tftp linguas_de linguas_es linguas_fi linguas_fr linguas_id linguas_it linguas_no linguas_pl linguas_pt_BR linguas_ro +filecaps
+KEYWORDS=*
+LICENSE=|| ( GPL-2 GPL-3 )
+RDEPEND=dbus? ( sys-apps/dbus ) idn? ( net-dns/libidn ) lua? ( || ( dev-lang/lua:0 dev-lang/lua:5.1 ) ) conntrack? ( !s390? ( net-libs/libnetfilter_conntrack ) ) nls? ( sys-devel/gettext net-dns/libidn ) dnssec? ( !static? ( dev-libs/nettle[gmp] ) ) selinux? ( sec-policy/selinux-dnsmasq ) sys-apps/baselayout
+REQUIRED_USE=dhcp-tools? ( dhcp ) lua? ( script ) s390? ( !conntrack )
+SLOT=0
+SRC_URI=http://www.thekelleys.org.uk/dnsmasq/dnsmasq-2.72.tar.xz
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	fcaps	eeefea88d5fef2853d4c1e3770340302	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	systemd	9f063b2cc19c5e8030911372aa246c4e	toolchain-funcs	6198c04daba0e1307bd844df7d37f423	user	428413d4784b5a07274949c8354647d8
+_md5_=83bd1cd45c52dfc6c4aaab7baa4a2802
