@@ -1,0 +1,13 @@
+DEFINED_PHASES=configure install prepare
+DEPEND=!static? ( >=sys-libs/ncurses-5.9-r1:0=[unicode?] sys-libs/ncurses:0= magic? ( sys-apps/file ) nls? ( virtual/libintl ) !ncurses? ( slang? ( sys-libs/slang ) ) ) nls? ( sys-devel/gettext ) virtual/pkgconfig static? ( >=sys-libs/ncurses-5.9-r1:0=[unicode?] sys-libs/ncurses:0=[static-libs(+)] magic? ( sys-apps/file[static-libs(+)] ) nls? ( virtual/libintl ) !ncurses? ( slang? ( sys-libs/slang[static-libs(+)] ) ) )
+DESCRIPTION=GNU GPL'd Pico clone with more functionality
+EAPI=5
+HOMEPAGE=http://www.nano-editor.org/ https://wiki.gentoo.org/wiki/Nano/Basics_Guide
+IUSE=debug justify +magic minimal ncurses nls slang +spell static unicode
+KEYWORDS=*
+LICENSE=GPL-3
+RDEPEND=!static? ( >=sys-libs/ncurses-5.9-r1:0=[unicode?] sys-libs/ncurses:0= magic? ( sys-apps/file ) nls? ( virtual/libintl ) !ncurses? ( slang? ( sys-libs/slang ) ) )
+SLOT=0
+SRC_URI=http://www.nano-editor.org/dist/v2.5/nano-2.5.3.tar.gz
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	toolchain-funcs	6198c04daba0e1307bd844df7d37f423
+_md5_=037b2de9a6bbedbde70d10677760ad6a

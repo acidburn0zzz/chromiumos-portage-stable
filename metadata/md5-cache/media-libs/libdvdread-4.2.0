@@ -9,5 +9,5 @@ LICENSE=GPL-2
 RDEPEND=!<media-libs/libdvdnav-4.2.0 css? ( media-libs/libdvdcss )
 SLOT=0
 SRC_URI=http://dvdnav.mplayerhq.hu/releases/libdvdread-4.2.0.tar.bz2
-_eclasses_=autotools	999c8f6cf5d91495cb0779588f20716c	libtool	52d0e17251d04645ffaa61bfdd858944	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
+_eclasses_=autotools	999c8f6cf5d91495cb0779588f20716c	libtool	52d0e17251d04645ffaa61bfdd858944	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	toolchain-funcs	6198c04daba0e1307bd844df7d37f423
 _md5_=3de16f8a35d57c0a155c235e8a81024d

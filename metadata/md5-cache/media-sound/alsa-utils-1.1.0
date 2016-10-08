@@ -1,13 +1,13 @@
 DEFINED_PHASES=configure install postinst prepare
-DEPEND=>=media-libs/alsa-lib-1.1.0 libsamplerate? ( media-libs/libsamplerate ) ncurses? ( >=sys-libs/ncurses-5.7-r7:0= ) bat? ( sci-libs/fftw ) virtual/pkgconfig doc? ( app-text/xmlto ) virtual/pkgconfig virtual/pkgconfig
+DEPEND=>=media-libs/alsa-lib-1.1.0 libsamplerate? ( media-libs/libsamplerate ) ncurses? ( >=sys-libs/ncurses-5.7-r7:5= ) bat? ( sci-libs/fftw ) virtual/pkgconfig doc? ( app-text/xmlto ) virtual/pkgconfig virtual/pkgconfig
 DESCRIPTION=Advanced Linux Sound Architecture Utils (alsactl, alsamixer, etc.)
 EAPI=5
 HOMEPAGE=http://www.alsa-project.org/
 IUSE=bat doc +libsamplerate +ncurses nls selinux
 KEYWORDS=*
 LICENSE=GPL-2
-RDEPEND=>=media-libs/alsa-lib-1.1.0 libsamplerate? ( media-libs/libsamplerate ) ncurses? ( >=sys-libs/ncurses-5.7-r7:0= ) bat? ( sci-libs/fftw ) selinux? ( sec-policy/selinux-alsa )
+RDEPEND=>=media-libs/alsa-lib-1.1.0 libsamplerate? ( media-libs/libsamplerate ) ncurses? ( >=sys-libs/ncurses-5.7-r7:5= ) bat? ( sci-libs/fftw ) selinux? ( sec-policy/selinux-alsa )
 SLOT=0.9
 SRC_URI=mirror://alsaproject/utils/alsa-utils-1.1.0.tar.bz2
-_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	systemd	9f063b2cc19c5e8030911372aa246c4e	toolchain-funcs	48b38a216afb92db6314d6c3187abea3	udev	a9a8d051efb42bfe884c1db82ce161de
-_md5_=c83e413c870017066e52ab4a46756642
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	systemd	9f063b2cc19c5e8030911372aa246c4e	toolchain-funcs	6198c04daba0e1307bd844df7d37f423	udev	a9a8d051efb42bfe884c1db82ce161de
+_md5_=194b2a60568e0c349a1b3c387bc0d12c
