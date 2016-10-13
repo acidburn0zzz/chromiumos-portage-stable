@@ -71,6 +71,9 @@ src_configure() {
 		$(use_enable postscript ijs) \
 		--with-fontdir="fonts/conf.avail" \
 		--with-pdftops=pdftops \
+		--with-pdftops-path="${EPREFIX}"/usr/bin/pdftops \
+		--with-pdftocairo-path="${EPREFIX}"/usr/bin/pdftocairo \
+		--with-acroread-path="${EPREFIX}"/usr/bin/acroread \
 		--enable-imagefilters \
 		$(use_with jpeg) \
 		$(use_with png) \
