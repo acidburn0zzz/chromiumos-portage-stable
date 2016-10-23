@@ -33,6 +33,7 @@ DEPEND="${RDEPEND}
 
 src_prepare() {
 	epatch "${FILESDIR}"/${PN}-0.118-PaX-support.patch
+	epatch "${FILESDIR}"/${PN}-0.166-fix-strtab-mismatch.patch
 	use static-libs || sed -i -e '/^lib_LIBRARIES/s:=.*:=:' -e '/^%.os/s:%.o$::' lib{asm,dw,elf}/Makefile.in
 	sed -i 's:-Werror::' */Makefile.in
 	# some patches touch both configure and configure.ac
