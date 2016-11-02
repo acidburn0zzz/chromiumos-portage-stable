@@ -51,7 +51,7 @@ RDEPEND="ldap? ( net-nds/openldap[${MULTILIB_USEDEP}] )
 		)
 	)
 	http2? ( net-libs/nghttp2[${MULTILIB_USEDEP}] )
-	idn? ( net-dns/libidn:0[static-libs?,${MULTILIB_USEDEP}] )
+	idn? ( net-dns/libidn2:0[static-libs?,${MULTILIB_USEDEP}] )
 	adns? ( net-dns/c-ares:0[${MULTILIB_USEDEP}] )
 	kerberos? ( >=virtual/krb5-0-r1[${MULTILIB_USEDEP}] )
 	metalink? ( >=media-libs/libmetalink-0.1.1[${MULTILIB_USEDEP}] )
@@ -205,7 +205,7 @@ multilib_src_configure() {
 		--disable-versioned-symbols \
 		--without-cyassl \
 		--without-darwinssl \
-		$(use_with idn libidn) \
+		$(use_with idn libidn2) \
 		$(use_with kerberos gssapi "${EPREFIX}"/usr) \
 		$(use_with metalink libmetalink) \
 		$(use_with http2 nghttp2) \
