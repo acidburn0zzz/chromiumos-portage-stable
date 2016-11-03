@@ -1,4 +1,4 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2016 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
@@ -24,20 +24,17 @@ RDEPEND="
 	libsamplerate? ( >=media-libs/libsamplerate-0.1.8-r1:=[${MULTILIB_USEDEP}] )
 	pulseaudio? ( >=media-sound/pulseaudio-2.1-r1[${MULTILIB_USEDEP}] )
 	speex? ( >=media-libs/speex-1.2_rc1-r1:=[${MULTILIB_USEDEP}] )
-	abi_x86_32? (
-		!<app-emulation/emul-linux-x86-soundlibs-20140406-r1
-		!app-emulation/emul-linux-x86-soundlibs[-abi_x86_32]
-	)
 "
 DEPEND="${RDEPEND}
 	virtual/pkgconfig"
 
-src_prepare() {
-	epatch "${FILESDIR}"/${PN}-1.0.23-automagic.patch
-	epatch "${FILESDIR}"/${PN}-1.0.28-libav10.patch
-	has_version '>=media-video/ffmpeg-2.8' && epatch "${FILESDIR}"/${PN}-1.0.29-ffmpeg29.patch
+PATCHES=(
+	"${FILESDIR}/${PN}-1.0.23-automagic.patch"
+	"${FILESDIR}/${PN}-1.0.28-libav10.patch"
+)
 
-	epatch_user
+src_prepare() {
+	default
 
 	# For some reasons the polyp/pulse plugin does fail with alsaplayer with a
 	# failed assert. As the code works just fine with asserts disabled, for now
