@@ -1,21 +1,20 @@
 # Copyright 1999-2016 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI="5"
 
 inherit eutils flag-o-matic
 if [[ ${PV} == "9999" ]] ; then
-	ESVN_REPO_URI="svn://svn.savannah.gnu.org/nano/trunk/nano"
-	inherit subversion autotools
+	EGIT_REPO_URI="git://git.sv.gnu.org/nano.git"
+	inherit git-r3 autotools
 else
 	MY_P=${PN}-${PV/_}
-	SRC_URI="http://www.nano-editor.org/dist/v${PV:0:3}/${MY_P}.tar.gz"
+	SRC_URI="https://www.nano-editor.org/dist/v${PV:0:3}/${MY_P}.tar.gz"
 	KEYWORDS="*"
 fi
 
 DESCRIPTION="GNU GPL'd Pico clone with more functionality"
-HOMEPAGE="http://www.nano-editor.org/ https://wiki.gentoo.org/wiki/Nano/Basics_Guide"
+HOMEPAGE="https://www.nano-editor.org/ https://wiki.gentoo.org/wiki/Nano/Basics_Guide"
 
 LICENSE="GPL-3"
 SLOT="0"
@@ -36,6 +35,7 @@ src_prepare() {
 	if [[ ${PV} == "9999" ]] ; then
 		eautoreconf
 	fi
+	epatch "${FILESDIR}"/${P}-tiny.patch #604000
 	epatch_user
 }
 
@@ -68,7 +68,8 @@ src_install() {
 	rm -rf "${D}"/trash
 
 	dodoc doc/nanorc.sample
-	dohtml doc/faq.html
+	docinto html
+	dodoc doc/faq.html
 	insinto /etc
 	newins doc/nanorc.sample nanorc
 	if ! use minimal ; then
