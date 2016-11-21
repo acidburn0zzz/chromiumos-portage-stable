@@ -9,5 +9,5 @@ LICENSE=BSD GPL-2
 RDEPEND=!<=net-misc/ntp-4.2.0-r2 !net-misc/ntp[-openntpd] selinux? ( sec-policy/selinux-ntp ) sys-apps/baselayout
 SLOT=0
 SRC_URI=mirror://openbsd/OpenNTPD/openntpd-5.7p3.tar.gz
-_eclasses_=autotools	999c8f6cf5d91495cb0779588f20716c	eutils	06133990e861be0fe60c2b428fd025d9	libtool	52d0e17251d04645ffaa61bfdd858944	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	systemd	9f063b2cc19c5e8030911372aa246c4e	toolchain-funcs	48b38a216afb92db6314d6c3187abea3	user	428413d4784b5a07274949c8354647d8
+_eclasses_=autotools	999c8f6cf5d91495cb0779588f20716c	eutils	06133990e861be0fe60c2b428fd025d9	libtool	52d0e17251d04645ffaa61bfdd858944	multilib	3972ca401cf7dbb430df9995f5d8d580	systemd	9f063b2cc19c5e8030911372aa246c4e	toolchain-funcs	6198c04daba0e1307bd844df7d37f423	user	c8f947561e8797a300801d0dd3625448
 _md5_=c64900b7f114e3c59bbe4a2db37d25e4
