@@ -65,6 +65,7 @@ RDEPEND="
 	>=dev-libs/libestr-0.1.9
 	>=dev-libs/liblogging-1.0.1:=[stdlog]
 	>=sys-libs/zlib-1.2.5
+	sys-apps/util-linux
 	dbi? ( >=dev-db/libdbi-0.8.3 )
 	elasticsearch? ( >=net-misc/curl-7.35.0 )
 	gcrypt? ( >=dev-libs/libgcrypt-1.5.3:= )
