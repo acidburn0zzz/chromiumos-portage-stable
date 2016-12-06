@@ -6,5 +6,5 @@ KEYWORDS=*
 LICENSE=GPL-2
 SLOT=0
 SRC_URI=http://storage.googleapis.com/chromeos-localmirror/distfiles/kobs-ng-3.0.35-4.1.0.tar.gz
-_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	toolchain-funcs	48b38a216afb92db6314d6c3187abea3	versionator	865bc8b2fc9fcfb6d520bdf5a110f5ed
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multilib	3972ca401cf7dbb430df9995f5d8d580	toolchain-funcs	6198c04daba0e1307bd844df7d37f423	versionator	865bc8b2fc9fcfb6d520bdf5a110f5ed
 _md5_=509a72ca5e62824f2bc6287d136db211

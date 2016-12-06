@@ -10,5 +10,5 @@ RDEPEND=>=dev-lang/jimtcl-0.76 cmsis-dap? ( dev-libs/hidapi ) usb? ( virtual/lib
 RESTRICT=strip
 SLOT=0
 SRC_URI=mirror://sourceforge/project/openocd/openocd/0.9.0/openocd-0.9.0.tar.gz
-_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	toolchain-funcs	48b38a216afb92db6314d6c3187abea3	udev	a9a8d051efb42bfe884c1db82ce161de
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	3972ca401cf7dbb430df9995f5d8d580	toolchain-funcs	6198c04daba0e1307bd844df7d37f423	udev	a9a8d051efb42bfe884c1db82ce161de
 _md5_=347384e7a6948fa3d646646d3708cd67
