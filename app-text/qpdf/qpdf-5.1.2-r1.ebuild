@@ -1,6 +1,6 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/app-text/qpdf/qpdf-5.1.2.ebuild,v 1.1 2014/06/09 18:33:38 radhermit Exp $
+# $Id$
 
 EAPI="5"
 
@@ -13,17 +13,18 @@ SRC_URI="mirror://sourceforge/qpdf/${P}.tar.gz"
 LICENSE="Artistic-2"
 SLOT="0/13" # subslot = libqpdf soname version
 KEYWORDS="*"
-IUSE="doc examples static-libs test"
+IUSE="doc examples perl static-libs test"
 
 RDEPEND="dev-libs/libpcre
-	sys-libs/zlib
-	>=dev-lang/perl-5.8"
+	sys-libs/zlib"
 DEPEND="${RDEPEND}
 	test? (
 		sys-apps/diffutils
 		media-libs/tiff
 		app-text/ghostscript-gpl
 	)"
+# Only need perl for the installed tools.
+RDEPEND+=" perl? ( >=dev-lang/perl-5.8 )"
 
 DOCS=( ChangeLog README TODO )
 
@@ -40,6 +41,11 @@ src_configure() {
 
 src_install() {
 	default
+
+	if ! use perl ; then
+		rm "${ED}"/usr/bin/fix-qdf || die
+		rm "${ED}"/usr/share/man/man1/fix-qdf.1 || die
+	fi
 
 	if use doc ; then
 		dodoc doc/qpdf-manual.pdf
