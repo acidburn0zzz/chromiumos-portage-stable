@@ -1,0 +1,7 @@
+DEFINED_PHASES=-
+DESCRIPTION=Virtual for version
+EAPI=5
+KEYWORDS=*
+RDEPEND=|| ( =dev-lang/perl-5.24* ~perl-core/version-0.991.600 ) dev-lang/perl:= !<perl-core/version-0.991.600 !>perl-core/version-0.991.600-r999
+SLOT=0
+_md5_=387d72fad2e861df17a06f658c5c0c5b

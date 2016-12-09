@@ -1,7 +1,0 @@
-DEFINED_PHASES=-
-DESCRIPTION=Virtual for Getopt-Long
-EAPI=5
-KEYWORDS=*
-RDEPEND=|| ( =dev-lang/perl-5.22* ~perl-core/Getopt-Long-2.450.0 ) !<perl-core/Getopt-Long-2.450.0 !>perl-core/Getopt-Long-2.450.0-r999
-SLOT=0
-_md5_=dd553a7716b2b28476e7bc31da3b53d1

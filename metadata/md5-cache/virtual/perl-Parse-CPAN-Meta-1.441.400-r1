@@ -1,7 +1,0 @@
-DEFINED_PHASES=-
-DESCRIPTION=Virtual for Parse-CPAN-Meta
-EAPI=5
-KEYWORDS=*
-RDEPEND=|| ( =dev-lang/perl-5.22* =dev-lang/perl-5.20* ~perl-core/Parse-CPAN-Meta-1.441.400 ) !<perl-core/Parse-CPAN-Meta-1.441.400 !>perl-core/Parse-CPAN-Meta-1.441.400-r999
-SLOT=0
-_md5_=a05bff60c70b764542787ebaa839e480
