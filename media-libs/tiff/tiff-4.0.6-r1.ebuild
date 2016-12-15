@@ -1,9 +1,9 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2016 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/media-libs/tiff/tiff-4.0.3-r6.ebuild,v 1.13 2014/06/18 19:58:32 mgorny Exp $
+# $Id$
 
 EAPI=5
-inherit eutils libtool multilib-minimal
+inherit autotools eutils libtool multilib-minimal
 
 DESCRIPTION="Tag Image File Format (TIFF) library"
 HOMEPAGE="http://www.remotesensing.org/libtiff/"
@@ -31,15 +31,13 @@ MULTILIB_WRAPPED_HEADERS=(
 	/usr/include/tiffconf.h
 )
 
-src_prepare() {
-	epatch "${FILESDIR}"/${PN}-4.0.3-tiff2pdf-colors.patch #145055
-	epatch "${FILESDIR}"/${P}-CVE-2012-{4447,4564}.patch #440944
-	epatch "${FILESDIR}"/${P}-CVE-2013-{1960,1961}.patch #468334
-	epatch "${FILESDIR}"/${P}-CVE-2013-{4231,4232}.patch #480466
-	epatch "${FILESDIR}"/${P}-CVE-2013-4244.patch #486590
-	epatch "${FILESDIR}"/${P}-libjpeg-turbo.patch
+PATCHES=(
+	"${FILESDIR}/${P}-gif2tiff_removal.patch" # 585274
+)
 
-	elibtoolize
+src_prepare() {
+	epatch "${PATCHES[@]}"
+	eautoreconf
 }
 
 multilib_src_configure() {
@@ -50,8 +48,7 @@ multilib_src_configure() {
 		$(use_enable jbig) \
 		$(use_enable lzma) \
 		$(use_enable cxx) \
-		--without-x \
-		--with-docdir="${EPREFIX}"/usr/share/doc/${PF}
+		--without-x
 
 	# remove useless subdirs
 	if ! multilib_is_native_abi ; then
@@ -66,9 +63,7 @@ multilib_src_configure() {
 
 multilib_src_test() {
 	if ! multilib_is_native_abi ; then
-		cd tools
-		emake
-		cd "${BUILD_DIR}"
+		emake -C tools
 	fi
 	emake check
 }
