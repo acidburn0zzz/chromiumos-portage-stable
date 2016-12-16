@@ -1,28 +1,34 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2016 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/app-arch/tar/tar-1.28.ebuild,v 1.2 2014/08/03 14:22:07 polynomial-c Exp $
 
-EAPI=4
+EAPI="5"
 
 inherit flag-o-matic eutils
 
 DESCRIPTION="Use this to make tarballs :)"
-HOMEPAGE="http://www.gnu.org/software/tar/"
+HOMEPAGE="https://www.gnu.org/software/tar/"
 SRC_URI="mirror://gnu/tar/${P}.tar.bz2
 	mirror://gnu-alpha/tar/${P}.tar.bz2"
 
 LICENSE="GPL-3+"
 SLOT="0"
 KEYWORDS="*"
-IUSE="acl minimal nls selinux static userland_GNU xattr"
+IUSE="acl elibc_glibc minimal nls selinux static userland_GNU xattr"
 
 RDEPEND="acl? ( virtual/acl )
 	selinux? ( sys-libs/libselinux )"
 DEPEND="${RDEPEND}
 	nls? ( >=sys-devel/gettext-0.10.35 )
-	xattr? ( sys-apps/attr )"
+	xattr? ( elibc_glibc? ( sys-apps/attr ) )"
+
+PATCHES=(
+	"${FILESDIR}/${P}-extract-pathname-bypass-upstream.patch" #598334
+)
 
 src_prepare() {
+	epatch "${PATCHES[@]}"
+	epatch_user
+
 	if ! use userland_GNU ; then
 		sed -i \
 			-e 's:/backup\.sh:/gbackup.sh:' \
@@ -46,7 +52,7 @@ src_configure() {
 }
 
 src_install() {
-	emake DESTDIR="${D}" install
+	default
 
 	local p=$(usex userland_GNU "" "g")
 	if [[ -z ${p} ]] ; then
@@ -63,7 +69,6 @@ src_install() {
 		dosym tar /bin/gtar
 	fi
 
-	dodoc AUTHORS ChangeLog* NEWS README* THANKS
 	mv "${ED}"/usr/sbin/${p}backup{,-tar} || die
 	mv "${ED}"/usr/sbin/${p}restore{,-tar} || die
 
