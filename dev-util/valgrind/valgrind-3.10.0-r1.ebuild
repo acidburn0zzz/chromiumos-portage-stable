@@ -37,8 +37,8 @@ src_prepare() {
 	# warning about executable stacks.
 	epatch "${FILESDIR}"/${PN}-3.10.0-non-exec-stack.patch
 
-	# glibc 2.19 fix
-	epatch "${FILESDIR}"/${PN}-3.9.0-glibc-2.19.patch
+	# glibc 2.23 fix
+	epatch "${FILESDIR}"/${PN}-3.10.0-glibc-2.23.patch
 
 	# Regenerate autotools files
 	eautoreconf
