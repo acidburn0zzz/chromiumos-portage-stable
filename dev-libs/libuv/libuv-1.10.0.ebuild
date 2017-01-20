@@ -1,10 +1,10 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2016 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-libs/libuv/libuv-1.4.2.ebuild,v 1.1 2015/03/05 02:18:42 hasufell Exp $
+# $Id$
 
 EAPI=5
 
-inherit eutils autotools multilib-minimal
+inherit autotools eutils multilib-minimal
 
 DESCRIPTION="Cross-platform asychronous I/O"
 HOMEPAGE="https://github.com/libuv/libuv"
@@ -14,25 +14,23 @@ LICENSE="BSD BSD-2 ISC MIT"
 SLOT="0/1"
 KEYWORDS="*"
 IUSE="static-libs"
+RESTRICT="test"
 
-DEPEND="
-	sys-devel/libtool
-	virtual/pkgconfig
-"
+DEPEND="sys-devel/libtool
+	virtual/pkgconfig[${MULTILIB_USEDEP}]"
 
 src_prepare() {
+	default
+
 	echo "m4_define([UV_EXTRA_AUTOMAKE_FLAGS], [serial-tests])" \
 		> m4/libuv-extra-automake-flags.m4 || die
-
-	sed -i \
-		-e '/CC_CHECK_CFLAGS_APPEND(\[-g\])/d' \
-		configure.ac || die "fixing CFLAGS failed!"
 
 	eautoreconf
 }
 
 multilib_src_configure() {
 	ECONF_SOURCE="${S}" econf \
+		cc_cv_cflags__g=no \
 		$(use_enable static-libs static)
 }
 
