@@ -1,0 +1,12 @@
+DEFINED_PHASES=compile install prepare
+DEPEND=net-libs/liblockfile
+DESCRIPTION=Programs to safely lock/unlock files and mailboxes
+EAPI=5
+HOMEPAGE=http://packages.debian.org/sid/lockfile-progs
+KEYWORDS=*
+LICENSE=GPL-2
+RDEPEND=net-libs/liblockfile
+SLOT=0
+SRC_URI=mirror://debian/pool/main/l/lockfile-progs/lockfile-progs_0.1.17.tar.gz
+_eclasses_=multilib	3972ca401cf7dbb430df9995f5d8d580	toolchain-funcs	6198c04daba0e1307bd844df7d37f423
+_md5_=2e28957925c1a69ad049ffddc7c72e4a
