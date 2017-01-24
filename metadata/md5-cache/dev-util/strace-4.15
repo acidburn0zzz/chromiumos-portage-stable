@@ -1,0 +1,13 @@
+DEFINED_PHASES=configure install prepare
+DEPEND=static? ( unwind? ( sys-libs/libunwind[static-libs(+)] ) ) aio? ( >=dev-libs/libaio-0.3.106 ) sys-kernel/linux-headers
+DESCRIPTION=A useful diagnostic, instructional, and debugging tool
+EAPI=5
+HOMEPAGE=https://sourceforge.net/projects/strace/
+IUSE=aio perl static unwind
+KEYWORDS=*
+LICENSE=BSD
+RDEPEND=!static? ( unwind? ( sys-libs/libunwind ) ) perl? ( dev-lang/perl )
+SLOT=0
+SRC_URI=mirror://sourceforge/strace/strace-4.15.tar.xz
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	3972ca401cf7dbb430df9995f5d8d580	toolchain-funcs	6198c04daba0e1307bd844df7d37f423
+_md5_=ac12ba3e2bd6ac59907e37e07f14ae26
