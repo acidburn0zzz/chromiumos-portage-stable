@@ -1,4 +1,4 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI="5"
@@ -27,6 +27,9 @@ pkg_setup() {
 
 src_prepare() {
 	epatch "${FILESDIR}"/${PN}-1.5.5-makefile-fixup.patch
+	epatch "${FILESDIR}"/${PN}-1.5.9-endian-check-{1,2}.patch #426424
+	epatch "${FILESDIR}"/${PN}-1.5.9-disable-tests.patch #519062 #522050
+	epatch "${FILESDIR}"/${PN}-1.5.9-header-extern-c.patch
 
 	# The lsb check is useless, so avoid spurious command not found messages.
 	sed -i -e 's,lsb_release,:,' tests/prepare.inc.sh || die
