@@ -1,4 +1,4 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2016 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
@@ -26,9 +26,6 @@ SLOT="0"
 IUSE=""
 
 src_prepare() {
-	epatch "${FILESDIR}"/${P}-parallel-build.patch
-	epatch "${FILESDIR}"/${P}-includes.patch
-	epatch "${FILESDIR}"/${P}-sysmacros.patch
 	epatch_user
 	restore_config .config
 }
@@ -57,5 +54,5 @@ src_test() {
 
 src_install() {
 	save_config .config
-	newbin toybox_unstripped toybox
+	newbin generated/unstripped/toybox toybox
 }
