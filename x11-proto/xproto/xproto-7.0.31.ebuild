@@ -1,10 +1,11 @@
-# Copyright 1999-2012 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/x11-proto/xproto/xproto-7.0.23-r1.ebuild,v 1.8 2012/08/26 18:30:41 armin76 Exp $
+# $Id$
 
-EAPI=4
+EAPI=5
 
 XORG_DOC=doc
+XORG_MULTILIB=yes
 inherit xorg-2
 
 DESCRIPTION="X.Org xproto protocol headers"
@@ -14,16 +15,11 @@ IUSE=""
 RDEPEND=""
 DEPEND="${RDEPEND}"
 
-PATCHES=(
-	"${FILESDIR}"/${PN}-7.0.23-Xmd_h_x32.patch
-)
-
-pkg_setup() {
-	xorg-2_pkg_setup
-
+src_configure() {
 	XORG_CONFIGURE_OPTIONS=(
 		$(use_enable doc specs)
 		$(use_with doc xmlto)
 		--without-fop
 	)
+	xorg-2_src_configure
 }
