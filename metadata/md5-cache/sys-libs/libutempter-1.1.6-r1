@@ -9,5 +9,5 @@ LICENSE=LGPL-2.1
 RDEPEND=!sys-apps/utempter sys-apps/baselayout
 SLOT=0
 SRC_URI=ftp://ftp.altlinux.org/pub/people/ldv/libutempter/libutempter-1.1.6.tar.bz2
-_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	toolchain-funcs	48b38a216afb92db6314d6c3187abea3	user	428413d4784b5a07274949c8354647d8
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	3972ca401cf7dbb430df9995f5d8d580	toolchain-funcs	6198c04daba0e1307bd844df7d37f423	user	c8f947561e8797a300801d0dd3625448
 _md5_=dad9dbca2bedcf4495e29093663a4392

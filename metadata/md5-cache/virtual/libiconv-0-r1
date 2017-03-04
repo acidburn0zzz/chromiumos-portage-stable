@@ -5,5 +5,5 @@ IUSE=elibc_glibc elibc_uclibc elibc_musl elibc_mintlib abi_x86_32 abi_x86_64 abi
 KEYWORDS=*
 RDEPEND=!elibc_glibc? ( !elibc_uclibc? ( !elibc_musl? ( !elibc_mintlib? ( >=dev-libs/libiconv-1.14-r1[abi_x86_32(-)?,abi_x86_64(-)?,abi_x86_x32(-)?,abi_mips_n32(-)?,abi_mips_n64(-)?,abi_mips_o32(-)?,abi_ppc_32(-)?,abi_ppc_64(-)?,abi_s390_32(-)?,abi_s390_64(-)?] ) ) ) )
 SLOT=0
-_eclasses_=multibuild	6d4858dc00f8bc51caf3f957f8430eb0	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	multilib-build	0983c7893df461213a05f791cc7dea6d	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multibuild	742139c87a9fa3766f0c2b155e5522bf	multilib	3972ca401cf7dbb430df9995f5d8d580	multilib-build	8fe2e81aeb36cdf8a6cc5f50443879cc	toolchain-funcs	6198c04daba0e1307bd844df7d37f423
 _md5_=66e34e6fc1c59a6e4b1f9c65745d4961

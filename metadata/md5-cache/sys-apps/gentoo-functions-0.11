@@ -1,0 +1,10 @@
+DEFINED_PHASES=install prepare
+DESCRIPTION=base functions required by all Gentoo systems
+EAPI=5
+HOMEPAGE=https://www.gentoo.org
+KEYWORDS=*
+LICENSE=GPL-2
+SLOT=0
+SRC_URI=https://github.com/gentoo/gentoo-functions/archive/0.11.tar.gz -> gentoo-functions-0.11.tar.gz
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	3972ca401cf7dbb430df9995f5d8d580	toolchain-funcs	6198c04daba0e1307bd844df7d37f423
+_md5_=0441c61caf2b4a3a0d29d5a726d7883a
