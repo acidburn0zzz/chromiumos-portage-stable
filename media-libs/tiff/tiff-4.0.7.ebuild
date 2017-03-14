@@ -1,12 +1,11 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=5
 inherit autotools eutils libtool multilib-minimal
 
 DESCRIPTION="Tag Image File Format (TIFF) library"
-HOMEPAGE="http://www.remotesensing.org/libtiff/"
+HOMEPAGE="http://libtiff.maptools.org"
 SRC_URI="http://download.osgeo.org/libtiff/${P}.tar.gz
 	ftp://ftp.remotesensing.org/pub/libtiff/${P}.tar.gz"
 
@@ -31,12 +30,12 @@ MULTILIB_WRAPPED_HEADERS=(
 	/usr/include/tiffconf.h
 )
 
-PATCHES=(
-	"${FILESDIR}/${P}-gif2tiff_removal.patch" # 585274
-)
-
 src_prepare() {
-	epatch "${PATCHES[@]}"
+	default
+
+	# tiffcp-thumbnail.sh fails as thumbnail binary doesn't get built anymore since tiff-4.0.7
+	sed '/tiffcp-thumbnail\.sh/d' -i test/Makefile.am || die
+
 	eautoreconf
 }
 
