@@ -1,6 +1,5 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2016 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-embedded/u-boot-tools/u-boot-tools-2014.01.ebuild,v 1.4 2014/05/03 14:44:01 zlogene Exp $
 
 EAPI="5"
 
@@ -18,16 +17,13 @@ IUSE=""
 
 S=${WORKDIR}/${MY_P}
 
-src_prepare() {
-	sed -i "s:-g ::" tools/Makefile || die
-	# Make sure we find local u-boot headers first #429302
-	ln -s ../include/image.h tools/ || die
-	epatch "${FILESDIR}"/u-boot-no-config.h.patch
-}
-
 src_compile() {
+	# Unset a few KBUILD variables. Bug #540476
+	unset KBUILD_OUTPUT KBUILD_SRC
+	emake defconfig
 	emake \
 		HOSTSTRIP=: \
+		STRIP=: \
 		HOSTCC="$(tc-getCC)" \
 		HOSTCFLAGS="${CFLAGS} ${CPPFLAGS}"' $(HOSTCPPFLAGS)' \
 		HOSTLDFLAGS="${LDFLAGS}" \
@@ -43,4 +39,5 @@ src_install() {
 	dosym fw_printenv /usr/bin/fw_setenv
 	insinto /etc
 	doins env/fw_env.config
+	doman "${S}/doc/mkimage.1"
 }

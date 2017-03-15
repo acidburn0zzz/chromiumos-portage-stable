@@ -1,9 +1,10 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI="5"
+
 PYTHON_COMPAT=( python2_7 )
+
 inherit eutils python-r1 toolchain-funcs
 
 MY_PV="${PV/_rc/-rc}"
@@ -18,16 +19,18 @@ SLOT="0"
 KEYWORDS="*"
 IUSE="aio glusterfs gnuplot gtk numa rbd rdma static zlib"
 
-DEPEND="aio? ( dev-libs/libaio )
-	glusterfs? ( sys-cluster/glusterfs )
-	gtk? (
-		dev-libs/glib:2
-		x11-libs/gtk+:2
-	)
-	numa? ( sys-process/numactl )
-	rbd? ( sys-cluster/ceph )
-	zlib? ( sys-libs/zlib )"
-RDEPEND="${DEPEND}
+# GTK+:2 does not offer static libaries.
+LIB_DEPEND="aio? ( dev-libs/libaio[static-libs(+)] )
+	glusterfs? ( sys-cluster/glusterfs[static-libs(+)] )
+	gtk? ( dev-libs/glib:2[static-libs(+)] )
+	numa? ( sys-process/numactl[static-libs(+)] )
+	rbd? ( sys-cluster/ceph[static-libs(+)] )
+	zlib? ( sys-libs/zlib[static-libs(+)] )"
+RDEPEND="!static? ( ${LIB_DEPEND//\[static-libs(+)]} )
+	gtk? ( x11-libs/gtk+:2 )"
+DEPEND="${RDEPEND}
+	static? ( ${LIB_DEPEND} )"
+RDEPEND+="
 	gnuplot? (
 		sci-visualization/gnuplot
 		${PYTHON_DEPS}
@@ -36,6 +39,8 @@ RDEPEND="${DEPEND}
 S="${WORKDIR}/${MY_P}"
 
 src_prepare() {
+	epatch "${FILESDIR}"/fio-2.2.13-libmtd.patch
+	epatch "${FILESDIR}"/fio-2.2.15-rdma.patch #542640
 	sed -i '/^DEBUGFLAGS/s: -D_FORTIFY_SOURCE=2::g' Makefile || die
 	epatch_user
 
@@ -59,6 +64,7 @@ src_configure() {
 		$(usex gtk '--enable-gfio' '') \
 		$(usex numa '' '--disable-numa') \
 		$(usex rbd '' '--disable-rbd') \
+		$(usex rdma '' '--disable-rdma') \
 		$(usex static '--build-static' '')
 	echo "$@"
 	"$@" || die 'configure failed'

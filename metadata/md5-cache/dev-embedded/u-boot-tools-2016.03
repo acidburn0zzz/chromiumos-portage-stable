@@ -1,0 +1,10 @@
+DEFINED_PHASES=compile install
+DESCRIPTION=utilities for working with Das U-Boot
+EAPI=5
+HOMEPAGE=http://www.denx.de/wiki/U-Boot/WebHome
+KEYWORDS=*
+LICENSE=GPL-2
+SLOT=0
+SRC_URI=ftp://ftp.denx.de/pub/u-boot/u-boot-2016.03.tar.bz2
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multilib	3972ca401cf7dbb430df9995f5d8d580	toolchain-funcs	6198c04daba0e1307bd844df7d37f423
+_md5_=70f915eae7b54029467fa7b79f6757d6
