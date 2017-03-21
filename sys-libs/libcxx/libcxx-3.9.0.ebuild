@@ -47,8 +47,7 @@ RDEPEND="
 DEPEND="${RDEPEND}
 	test? ( sys-devel/clang
 		$(python_gen_any_dep 'dev-python/lit[${PYTHON_USEDEP}]') )
-	app-arch/xz-utils
-	sys-devel/llvm"
+	app-arch/xz-utils"
 
 DOCS=( CREDITS.TXT )
 
