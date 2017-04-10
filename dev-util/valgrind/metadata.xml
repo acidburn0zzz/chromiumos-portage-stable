@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-	<maintainer>
+	<maintainer type="person">
 		<email>blueness@gentoo.org</email>
 		<name>Anthony G. Basile</name>
+	</maintainer>
+	<maintainer type="person">
+		<email>wizardedit@gentoo.org</email>
+		<name>Austin English</name>
 	</maintainer>
 	<longdescription>
 		Valgrind is a GPL'd tool to help you find memory-management problems

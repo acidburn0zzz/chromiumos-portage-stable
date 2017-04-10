@@ -1,8 +1,7 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2016 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-util/valgrind/valgrind-3.10.0.ebuild,v 1.1 2014/09/13 00:57:21 blueness Exp $
 
-EAPI="4"
+EAPI="5"
 inherit autotools eutils flag-o-matic toolchain-funcs multilib pax-utils
 
 DESCRIPTION="An open-source memory debugger for GNU/Linux"
@@ -35,10 +34,16 @@ src_prepare() {
 
 	# Don't build in empty assembly files for other platforms or we'll get a QA
 	# warning about executable stacks.
-	epatch "${FILESDIR}"/${PN}-3.10.0-non-exec-stack.patch
+	epatch "${FILESDIR}"/${PN}-3.10.1-non-exec-stack.patch
 
 	# glibc 2.23 fix
 	epatch "${FILESDIR}"/${PN}-3.10.0-glibc-2.23.patch
+
+	# valgrind works fine on linux-4, bug #543648
+	epatch "${FILESDIR}"/${PN}-3.10.1-linux-4.patch
+
+	# Allow users to test their own patches
+	epatch_user
 
 	# Regenerate autotools files
 	eautoreconf
