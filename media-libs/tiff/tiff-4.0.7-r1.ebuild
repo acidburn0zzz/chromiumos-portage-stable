@@ -1,7 +1,7 @@
 # Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=5
+EAPI="5"
 inherit autotools eutils libtool multilib-minimal
 
 DESCRIPTION="Tag Image File Format (TIFF) library"
@@ -26,12 +26,52 @@ DEPEND="${RDEPEND}"
 
 REQUIRED_USE="test? ( jpeg )" #483132
 
+PATCHES=(
+	"${FILESDIR}"/${P}-fax2tiff.patch #598938
+	"${FILESDIR}"/${P}-CVE-2016-10266.patch
+	"${FILESDIR}"/${P}-bug2598.patch
+	"${FILESDIR}"/${P}-bug2604.patch
+	"${FILESDIR}"/${P}-bug2608.patch
+	"${FILESDIR}"/${P}-CVE-2016-10267.patch
+	"${FILESDIR}"/${P}-bug2620.patch
+	"${FILESDIR}"/${P}-bug2621.patch
+	"${FILESDIR}"/${P}-bug2619.patch
+	"${FILESDIR}"/${P}-bug2594.patch
+	"${FILESDIR}"/${P}-bug2597.patch
+	"${FILESDIR}"/${P}-bug2599.patch
+	"${FILESDIR}"/${P}-bug2607.patch
+	"${FILESDIR}"/${P}-bug2610.patch
+	"${FILESDIR}"/${P}-bug2605.patch
+	"${FILESDIR}"/${P}-hylafax-hack.patch #612172
+	"${FILESDIR}"/${P}-bug2633-bug2634.patch
+	"${FILESDIR}"/${P}-bug2635.patch
+	"${FILESDIR}"/${P}-bug2627.patch
+	"${FILESDIR}"/${P}-bug2638.patch
+	"${FILESDIR}"/${P}-bug2639.patch
+	"${FILESDIR}"/${P}-bug2640.patch
+	"${FILESDIR}"/${P}-bug2653.patch
+	"${FILESDIR}"/${P}-bug2535.patch
+	"${FILESDIR}"/${P}-bug2644.patch
+	"${FILESDIR}"/${P}-bug2642-bug2643-bug2646-bug2647.patch
+	"${FILESDIR}"/${P}-bug2648.patch
+	"${FILESDIR}"/${P}-bug2650.patch
+	"${FILESDIR}"/${P}-bug2658.patch
+	"${FILESDIR}"/${P}-bug2650-2.patch
+	"${FILESDIR}"/${P}-bug2651.patch
+	"${FILESDIR}"/${P}-CVE-2017-5225.patch #610330
+	"${FILESDIR}"/${P}-bug2130.patch
+	"${FILESDIR}"/${P}-bug2659.patch
+	"${FILESDIR}"/${P}-bug2659-2.patch
+	"${FILESDIR}"/${P}-bug2631.patch
+	"${FILESDIR}"/${P}-bug2665.patch
+)
+
 MULTILIB_WRAPPED_HEADERS=(
 	/usr/include/tiffconf.h
 )
 
 src_prepare() {
-	default
+	epatch "${PATCHES[@]}"
 
 	# tiffcp-thumbnail.sh fails as thumbnail binary doesn't get built anymore since tiff-4.0.7
 	sed '/tiffcp-thumbnail\.sh/d' -i test/Makefile.am || die
