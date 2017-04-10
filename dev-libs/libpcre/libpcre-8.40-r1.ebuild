@@ -1,6 +1,5 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI="5"
 
@@ -42,9 +41,13 @@ MULTILIB_CHOST_TOOLS=(
 	/usr/bin/pcre-config
 )
 
+PATCHES=(
+	"${FILESDIR}"/${P}-pcregrep-multiline-{1,2}.patch
+	"${FILESDIR}"/${P}-jit-else.patch #609592
+)
+
 src_prepare() {
-	epatch "${FILESDIR}"/${P}-ZDI-CAN-3542.patch #575546
-	epatch "${FILESDIR}"/${P}-CVE-2016-1283.patch #570694
+	epatch "${PATCHES[@]}"
 	sed -i -e "s:-lpcre ::" libpcrecpp.pc.in || die
 	elibtoolize
 }
