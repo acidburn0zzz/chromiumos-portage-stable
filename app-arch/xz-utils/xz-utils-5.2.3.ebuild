@@ -1,11 +1,10 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/app-arch/xz-utils/xz-utils-5.2.0.ebuild,v 1.1 2014/12/22 11:41:31 lu_zero Exp $
 
 # Remember: we cannot leverage autotools in this ebuild in order
 #           to avoid circular deps with autotools
 
-EAPI="4"
+EAPI=5
 
 inherit eutils multilib toolchain-funcs libtool multilib-minimal
 
@@ -28,7 +27,7 @@ HOMEPAGE="http://tukaani.org/xz/"
 # See top-level COPYING file as it outlines the various pieces and their licenses.
 LICENSE="public-domain LGPL-2.1+ GPL-2+"
 SLOT="0"
-IUSE="nls static-libs +threads"
+IUSE="elibc_FreeBSD nls static-libs +threads"
 
 RDEPEND="!<app-arch/lzma-4.63
 	!app-arch/lzma-utils
@@ -46,6 +45,7 @@ src_prepare() {
 }
 
 multilib_src_configure() {
+	use elibc_FreeBSD && export ac_cv_header_sha256_h=no #545714
 	ECONF_SOURCE="${S}" econf \
 		$(use_enable nls) \
 		$(use_enable threads) \
@@ -55,7 +55,7 @@ multilib_src_configure() {
 
 multilib_src_install() {
 	default
-	multilib_is_native_abi && gen_usr_ldscript -a lzma
+	gen_usr_ldscript -a lzma
 }
 
 multilib_src_install_all() {
