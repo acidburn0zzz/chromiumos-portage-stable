@@ -64,6 +64,14 @@ PATCHES=(
 	"${FILESDIR}"/${P}-bug2659-2.patch
 	"${FILESDIR}"/${P}-bug2631.patch
 	"${FILESDIR}"/${P}-bug2665.patch
+	"${FILESDIR}"/${PN}-4.0.7-pdfium-0005-Leak-TIFFFetchStripThing.patch
+	"${FILESDIR}"/${PN}-4.0.7-pdfium-0006-HeapBufferOverflow-ChopUpSingleUncompressedStrip.patch
+	"${FILESDIR}"/${PN}-4.0.7-pdfium-0007-uninitialized-value.patch
+	"${FILESDIR}"/${PN}-4.0.7-pdfium-0008-HeapBufferOverflow-ChopUpSingleUncompressedStrip.patch
+	"${FILESDIR}"/${PN}-4.0.7-pdfium-0013-validate-refblackwhite.patch
+	"${FILESDIR}"/${PN}-4.0.7-pdfium-0017-safe_skews_in_gtTileContig.patch
+	"${FILESDIR}"/${PN}-4.0.7-pdfium-0018-fix-leak-in-PredictorSetupDecode.patch
+	"${FILESDIR}"/${PN}-4.0.7-pdfium-0021-oom-TIFFFillStrip.patch
 )
 
 MULTILIB_WRAPPED_HEADERS=(
