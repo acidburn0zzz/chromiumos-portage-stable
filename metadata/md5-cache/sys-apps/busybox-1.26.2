@@ -1,0 +1,15 @@
+DEFINED_PHASES=compile configure install postinst preinst prepare
+DEPEND=!static? ( selinux? ( sys-libs/libselinux ) ) pam? ( sys-libs/pam ) static? ( selinux? ( sys-libs/libselinux[static-libs(+)] ) ) >=sys-kernel/linux-headers-2.6.39
+DESCRIPTION=Utilities for rescue and embedded systems
+EAPI=5
+HOMEPAGE=https://www.busybox.net/
+IUSE=debug ipv6 livecd make-symlinks math mdev pam selinux sep-usr static syslog systemd savedconfig
+KEYWORDS=*
+LICENSE=GPL-2
+RDEPEND=!static? ( selinux? ( sys-libs/libselinux ) ) pam? ( sys-libs/pam ) mdev? ( !<sys-apps/openrc-0.13 )
+REQUIRED_USE=pam? ( !static )
+RESTRICT=test
+SLOT=0
+SRC_URI=https://www.busybox.net/downloads/busybox-1.26.2.tar.bz2
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	3972ca401cf7dbb430df9995f5d8d580	portability	536c5e70c5fb252ed3b769e04aa3f05b	savedconfig	973a6df1a0949eba28a185eac79de815	toolchain-funcs	6198c04daba0e1307bd844df7d37f423
+_md5_=3007bcb8419cf38fedc920d8b9d178de
