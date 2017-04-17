@@ -3,11 +3,11 @@ DEPEND=!static? ( acl? ( virtual/acl ) xattr? ( kernel_linux? ( sys-apps/attr ) 
 DESCRIPTION=File transfer program to keep remote files into sync
 EAPI=5
 HOMEPAGE=http://rsync.samba.org/
-IUSE=acl iconv ipv6 static xattr
+IUSE=acl iconv ipv6 static stunnel xattr
 KEYWORDS=*
 LICENSE=GPL-3
 RDEPEND=!static? ( acl? ( virtual/acl ) xattr? ( kernel_linux? ( sys-apps/attr ) ) >=dev-libs/popt-1.5 ) iconv? ( virtual/libiconv )
 SLOT=0
-SRC_URI=http://rsync.samba.org/ftp/rsync/src/rsync-3.1.1.tar.gz
-_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	prefix	21058c21ca48453d771df15500873ede	systemd	9f063b2cc19c5e8030911372aa246c4e	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
-_md5_=7b3635cde7192215dd7c01ad1aa0a2df
+SRC_URI=http://rsync.samba.org/ftp/rsync/src/rsync-3.1.2.tar.gz
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	3972ca401cf7dbb430df9995f5d8d580	prefix	21058c21ca48453d771df15500873ede	systemd	9f063b2cc19c5e8030911372aa246c4e	toolchain-funcs	6198c04daba0e1307bd844df7d37f423
+_md5_=44bcd92dd5633ad4ef7a8a7dac2051a8

@@ -1,6 +1,5 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/net-misc/rsync/rsync-3.1.1.ebuild,v 1.1 2014/07/07 07:51:31 polynomial-c Exp $
 
 EAPI="5"
 
@@ -8,17 +7,15 @@ inherit eutils flag-o-matic prefix systemd
 
 DESCRIPTION="File transfer program to keep remote files into sync"
 HOMEPAGE="http://rsync.samba.org/"
-SRC_URI="http://rsync.samba.org/ftp/rsync/src/${P/_/}.tar.gz"
+SRC_URI="http://rsync.samba.org/ftp/rsync/src/${P}.tar.gz"
+[[ "${PV}" = *_pre* ]] && SRC_URI="http://rsync.samba.org/ftp/rsync/src-previews/${P/_/}.tar.gz"
 
 LICENSE="GPL-3"
 SLOT="0"
+if [[ ${PV} != *_pre ]] ; then
 KEYWORDS="*"
-IUSE="acl iconv ipv6 static xattr"
-
-if [[ ${PV} = *pre* ]] ; then
-	SRC_URI="http://rsync.samba.org/ftp/rsync/src-previews/${P/_/}.tar.gz"
-	KEYWORDS="*"
 fi
+IUSE="acl iconv ipv6 static stunnel xattr"
 
 LIB_DEPEND="acl? ( virtual/acl[static-libs(+)] )
 	xattr? ( kernel_linux? ( sys-apps/attr[static-libs(+)] ) )
@@ -60,6 +57,12 @@ src_install() {
 	insinto /etc/xinetd.d
 	newins "${FILESDIR}"/rsyncd.xinetd-3.0.9-r1 rsyncd
 
+	# Install stunnel helpers
+	if use stunnel ; then
+		emake DESTDIR="${D}" install-ssl-client
+		emake DESTDIR="${D}" install-ssl-daemon
+	fi
+
 	# Install the useful contrib scripts
 	exeinto /usr/share/rsync
 	doexe support/*
@@ -76,5 +79,11 @@ pkg_postinst() {
 		ewarn "You have disabled chroot support in your rsyncd.conf.  This"
 		ewarn "is a security risk which you should fix.  Please check your"
 		ewarn "/etc/rsyncd.conf file and fix the setting 'use chroot'."
+	fi
+	if use stunnel ; then
+		einfo "Please install \">=net-misc/stunnel-4\" in order to use stunnel feature."
+		einfo
+		einfo "You maybe have to update the certificates configured in"
+		einfo "${EROOT}/etc/stunnel/rsync.conf"
 	fi
 }
