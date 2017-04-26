@@ -1,6 +1,5 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/app-admin/sudo/sudo-1.8.12.ebuild,v 1.1 2015/02/10 08:48:37 polynomial-c Exp $
 
 EAPI=5
 
@@ -23,7 +22,9 @@ SRC_URI="http://www.sudo.ws/sudo/dist/${uri_prefix}${MY_P}.tar.gz
 # 3-clause BSD license
 LICENSE="ISC BSD"
 SLOT="0"
-KEYWORDS="*"
+if [[ ${PV} != *_beta* ]] && [[ ${PV} != *_rc* ]] ; then
+	KEYWORDS="*"
+fi
 IUSE="ldap nls pam offensive selinux skey +sendmail"
 
 DEPEND="pam? ( virtual/pam )
@@ -50,6 +51,7 @@ REQUIRED_USE="pam? ( !skey ) skey? ( !pam )"
 MAKEOPTS+=" SAMPLES="
 
 src_prepare() {
+	default
 	elibtoolize
 }
 
@@ -128,7 +130,7 @@ src_install() {
 	default
 
 	if use ldap ; then
-		dodoc README.LDAP doc/schema.OpenLDAP
+		dodoc README.LDAP
 		dosbin plugins/sudoers/sudoers2ldif
 
 		cat <<-EOF > "${T}"/ldap.conf.sudo
@@ -137,12 +139,15 @@ src_install() {
 
 		# supported directives: host, port, ssl, ldap_version
 		# uri, binddn, bindpw, sudoers_base, sudoers_debug
-		# tls_{checkpeer,cacertfile,cacertdir,randfile,ciphers,cert,key
+		# tls_{checkpeer,cacertfile,cacertdir,randfile,ciphers,cert,key}
 		EOF
 
 		insinto /etc
 		doins "${T}"/ldap.conf.sudo
 		fperms 0440 /etc/ldap.conf.sudo
+
+		insinto /etc/openldap/schema
+		newins doc/schema.OpenLDAP sudo.schema
 	fi
 
 	pamd_mimic system-auth sudo auth account session
