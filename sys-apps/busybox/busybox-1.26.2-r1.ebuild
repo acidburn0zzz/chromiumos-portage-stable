@@ -1,27 +1,27 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-apps/busybox/busybox-1.23.1-r1.ebuild,v 1.6 2015/04/04 22:34:04 vapier Exp $
 
 # See `man savedconfig.eclass` for info on how to use USE=savedconfig.
 
-EAPI="4"
+EAPI="5"
 inherit eutils flag-o-matic savedconfig toolchain-funcs multilib
 
 DESCRIPTION="Utilities for rescue and embedded systems"
-HOMEPAGE="http://www.busybox.net/"
+HOMEPAGE="https://www.busybox.net/"
 if [[ ${PV} == "9999" ]] ; then
 	MY_P=${PN}
 	EGIT_REPO_URI="git://busybox.net/busybox.git"
 	inherit git-2
 else
 	MY_P=${PN}-${PV/_/-}
-	SRC_URI="http://www.busybox.net/downloads/${MY_P}.tar.bz2"
+	SRC_URI="https://www.busybox.net/downloads/${MY_P}.tar.bz2"
 	KEYWORDS="*"
 fi
 
-LICENSE="GPL-2"
+LICENSE="GPL-2" # GPL-2 only
 SLOT="0"
-IUSE="debug ipv6 livecd make-symlinks math mdev -pam selinux sep-usr +static syslog systemd"
+IUSE="debug ipv6 livecd make-symlinks math mdev pam selinux sep-usr static syslog systemd"
+REQUIRED_USE="pam? ( !static )"
 RESTRICT="test"
 
 COMMON_DEPEND="!static? ( selinux? ( sys-libs/libselinux ) )
@@ -30,23 +30,25 @@ DEPEND="${COMMON_DEPEND}
 	static? ( selinux? ( sys-libs/libselinux[static-libs(+)] ) )
 	>=sys-kernel/linux-headers-2.6.39"
 RDEPEND="${COMMON_DEPEND}
-mdev? ( !<sys-apps/openrc-0.13 )"
+	mdev? ( !<sys-apps/openrc-0.13 )"
 
 S=${WORKDIR}/${MY_P}
 
 busybox_config_option() {
 	local flag=$1 ; shift
-	if [[ ${flag} != [yn] ]] ; then
+	if [[ ${flag} != [yn] && ${flag} != \"* ]] ; then
 		busybox_config_option $(usex ${flag} y n) "$@"
 		return
 	fi
+	local expr
 	while [[ $# -gt 0 ]] ; do
-		if [[ ${flag} == "y" ]] ; then
-			sed -i -e "s:.*\<CONFIG_$1\>.*set:CONFIG_$1=y:g" .config
-		else
-			sed -i -e "s:CONFIG_$1=y:# CONFIG_$1 is not set:g" .config
-		fi
-		einfo $(grep "CONFIG_$1[= ]" .config || echo Could not find CONFIG_$1 ...)
+		case ${flag} in
+		y) expr="s:.*\<CONFIG_$1\>.*set:CONFIG_$1=y:g" ;;
+		n) expr="s:CONFIG_$1=y:# CONFIG_$1 is not set:g" ;;
+		*) expr="s:.*\<CONFIG_$1\>.*:CONFIG_$1=${flag}:g" ;;
+		esac
+		sed -i -e "${expr}" .config || die
+		einfo "$(grep "CONFIG_$1[= ]" .config || echo "Could not find CONFIG_$1 ...")"
 		shift
 	done
 }
@@ -66,8 +68,8 @@ src_prepare() {
 	use ppc64 && append-flags -mminimal-toc #130943
 
 	# patches go here!
-	epatch "${FILESDIR}"/${PN}-1.19.0-bb.patch
-	epatch "${FILESDIR}"/${P}-*.patch
+	epatch "${FILESDIR}"/${PN}-1.26.2-bb.patch
+#	epatch "${FILESDIR}"/${P}-*.patch
 	cp "${FILESDIR}"/ginit.c init/ || die
 
 	# flag cleanup
@@ -110,19 +112,25 @@ src_configure() {
 
 	# now turn off stuff we really don't want
 	busybox_config_option n DMALLOC
+	busybox_config_option n FEATURE_2_4_MODULES #607548
 	busybox_config_option n FEATURE_SUID_CONFIG
 	busybox_config_option n BUILD_AT_ONCE
 	busybox_config_option n BUILD_LIBBUSYBOX
 	busybox_config_option n FEATURE_CLEAN_UP
 	busybox_config_option n MONOTONIC_SYSCALL
-	busybox_config_option n START_STOP_DAEMON
 	busybox_config_option n USE_PORTABLE_CODE
 	busybox_config_option n WERROR
+	# triming the BSS size may be dangerous
+	busybox_config_option n FEATURE_USE_BSS_TAIL
 
 	# If these are not set and we are using a uclibc/busybox setup
 	# all calls to system() will fail.
 	busybox_config_option y ASH
+	busybox_config_option y SH_IS_ASH
 	busybox_config_option n HUSH
+
+	busybox_config_option '"/run"' PID_FILE_PATH
+	busybox_config_option '"/run/ifstate"' IFUPDOWN_IFSTATE_PATH
 
 	# disable ipv6 applets
 	if ! use ipv6; then
@@ -132,16 +140,14 @@ src_configure() {
 		busybox_config_option n UDHCPC6
 	fi
 
-	if use static && use pam ; then
-		ewarn "You cannot have USE='static pam'.  Assuming static is more important."
-	fi
-	busybox_config_option $(usex static n pam) PAM
+	busybox_config_option pam PAM
 	busybox_config_option static STATIC
 	busybox_config_option syslog {K,SYS}LOGD LOGGER
 	busybox_config_option systemd FEATURE_SYSTEMD
 	busybox_config_option math FEATURE_AWK_LIBM
 
 	# all the debug options are compiler related, so punt them
+	busybox_config_option n DEBUG_SANITIZE
 	busybox_config_option n DEBUG
 	busybox_config_option y NO_DEBUG_LIB
 	busybox_config_option n DMALLOC
