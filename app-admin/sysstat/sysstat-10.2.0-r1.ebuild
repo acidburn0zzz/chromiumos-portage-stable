@@ -43,6 +43,7 @@ src_prepare() {
 	fi
 	epatch "${FILESDIR}"/${PN}-10.0.4-flags.patch
 	epatch "${FILESDIR}"/${PN}-10.2.0-systemd.patch
+	epatch "${FILESDIR}"/sysstat-align.patch
 }
 
 src_configure() {
