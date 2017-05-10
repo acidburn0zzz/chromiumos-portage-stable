@@ -1,8 +1,7 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
-EAPI="4"
+EAPI="5"
 
 inherit multilib-minimal toolchain-funcs
 
@@ -12,7 +11,7 @@ SRC_URI="mirror://sourceforge/${PN}/${P}.tar.bz2
 	mirror://gentoo/${PN}-glibc-nfs.tar.xz"
 
 LICENSE="GPL-2"
-SLOT="0"
+SLOT="0/3" # subslot matches SONAME major
 KEYWORDS="*"
 IUSE="ipv6 kerberos static-libs"
 
@@ -20,19 +19,10 @@ RDEPEND="kerberos? ( >=virtual/krb5-0-r1[${MULTILIB_USEDEP}] )"
 DEPEND="${RDEPEND}
 	app-arch/xz-utils
 	>=virtual/pkgconfig-0-r1[${MULTILIB_USEDEP}]"
-RDEPEND="${RDEPEND}
-	abi_x86_32? (
-		!<=app-emulation/emul-linux-x86-baselibs-20140508-r7
-		!app-emulation/emul-linux-x86-baselibs[-abi_x86_32(-)]
-	)"
 
 src_unpack() {
 	unpack ${A}
 	cp -r tirpc "${S}"/ || die
-}
-
-src_prepare() {
-	epatch "${FILESDIR}"/${P}-stdarg.patch
 }
 
 multilib_src_configure() {

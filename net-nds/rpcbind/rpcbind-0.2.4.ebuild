@@ -1,6 +1,5 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI="5"
 
@@ -21,7 +20,7 @@ LICENSE="BSD"
 SLOT="0"
 IUSE="debug selinux systemd tcpd warmstarts"
 
-CDEPEND=">=net-libs/libtirpc-0.2.3:=
+CDEPEND=">=net-libs/libtirpc-1.0:=
 	systemd? ( sys-apps/systemd:= )
 	tcpd? ( sys-apps/tcp-wrappers )"
 DEPEND="${CDEPEND}
@@ -31,8 +30,6 @@ RDEPEND="${CDEPEND}
 
 src_prepare() {
 	[[ ${PV} == "9999" ]] && eautoreconf
-	epatch "${FILESDIR}"/${P}-libtirpc.patch
-	epatch "${FILESDIR}"/${P}-mem-corrupt.patch #560990
 	epatch_user
 }
 
