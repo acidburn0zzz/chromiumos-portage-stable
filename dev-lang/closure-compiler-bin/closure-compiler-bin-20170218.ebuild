@@ -1,7 +1,7 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="4"
+EAPI="5"
 
 inherit java-pkg-2
 
@@ -20,7 +20,7 @@ S=${WORKDIR}
 
 src_install() {
 	java-pkg_jarinto /opt/${PN}-${SLOT}/lib
-	java-pkg_newjar compiler.jar ${PN}.jar
+	java-pkg_newjar ${PN%-bin}-v${PV}.jar ${PN}.jar
 	java-pkg_dolauncher \
 		${PN%-bin} \
 		--jar /opt/${PN}-${SLOT}/lib/${PN}.jar \
