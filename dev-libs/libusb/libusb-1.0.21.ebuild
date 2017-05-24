@@ -1,12 +1,11 @@
 # Copyright 1999-2016 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=5
 inherit eutils toolchain-funcs multilib-minimal
 
 DESCRIPTION="Userspace access to USB devices"
-HOMEPAGE="http://libusb.info/"
+HOMEPAGE="http://libusb.info/ https://github.com/libusb/libusb"
 SRC_URI="https://github.com/${PN}/${PN}/releases/download/v${PV}/${P}.tar.bz2"
 
 LICENSE="LGPL-2.1"
@@ -14,11 +13,7 @@ SLOT="1"
 KEYWORDS="*"
 IUSE="debug doc examples static-libs test udev"
 
-RDEPEND="udev? ( >=virtual/libudev-208:=[${MULTILIB_USEDEP},static-libs?] )
-	abi_x86_32? (
-		!<=app-emulation/emul-linux-x86-baselibs-20130224-r7
-		!app-emulation/emul-linux-x86-baselibs[-abi_x86_32(-)]
-	)"
+RDEPEND="udev? ( >=virtual/libudev-208:=[${MULTILIB_USEDEP},static-libs?] )"
 DEPEND="${RDEPEND}
 	doc? ( app-doc/doxygen )
 	!udev? ( virtual/os-headers )"
@@ -33,8 +28,7 @@ multilib_src_configure() {
 }
 
 multilib_src_compile() {
-	# Bug 573802
-	emake -j1
+	emake
 
 	if multilib_is_native_abi; then
 		use doc && emake -C doc docs
