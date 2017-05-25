@@ -1,0 +1,14 @@
+DEFINED_PHASES=configure install prepare setup
+DEPEND=selinux? ( sys-libs/libselinux ) selinux? ( virtual/pkgconfig ) app-arch/xz-utils
+DESCRIPTION=Standard Linux networking tools
+EAPI=5
+HOMEPAGE=http://net-tools.sourceforge.net/
+IUSE=+arp +hostname ipv6 nis nls plipconfig selinux slattach static
+KEYWORDS=*
+LICENSE=GPL-2
+RDEPEND=selinux? ( sys-libs/libselinux ) hostname? ( !sys-apps/coreutils[hostname] ) !<sys-apps/openrc-0.9.9.3
+REQUIRED_USE=nis? ( hostname )
+SLOT=0
+SRC_URI=mirror://gentoo/net-tools-1.60_p20161110235919.tar.xz
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	6198c04daba0e1307bd844df7d37f423
+_md5_=330268da485b66b3945c936fe4ca74a2
