@@ -1,6 +1,5 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI="5"
 
@@ -25,7 +24,7 @@ RDEPEND="${DEPEND}
 S=${WORKDIR}
 
 src_prepare() {
-	epatch "${FILESDIR}"/${PN}-2016c-makefile.patch
+	epatch "${FILESDIR}"/${PN}-2016g-makefile.patch
 	tc-is-cross-compiler && cp -pR "${S}" "${S}"-native
 }
 
