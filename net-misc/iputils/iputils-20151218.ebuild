@@ -1,13 +1,12 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2016 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/net-misc/iputils/iputils-20121221-r2.ebuild,v 1.3 2015/05/04 02:35:57 vapier Exp $
 
 # For released versions, we precompile the man/html pages and store
 # them in a tarball on our mirrors.  This avoids ugly issues while
 # building stages, and when the jade/sgml packages are broken (which
 # seems to be more common than would be nice).
 
-EAPI="4"
+EAPI=5
 
 inherit flag-o-matic eutils toolchain-funcs fcaps
 if [[ ${PV} == "99999999" ]] ; then
@@ -15,29 +14,29 @@ if [[ ${PV} == "99999999" ]] ; then
 	inherit git-2
 else
 	SRC_URI="http://www.skbuff.net/iputils/iputils-s${PV}.tar.bz2
-		mirror://gentoo/iputils-s${PV}-manpages.tar.bz2"
+		https://dev.gentoo.org/~polynomial-c/iputils-s${PV}-manpages.tar.xz"
 	KEYWORDS="*"
 fi
 
 DESCRIPTION="Network monitoring tools including ping and ping6"
-HOMEPAGE="http://www.linuxfoundation.org/collaborate/workgroups/networking/iputils"
+HOMEPAGE="https://wiki.linuxfoundation.org/networking/iputils"
 
 LICENSE="BSD-4"
 SLOT="0"
-IUSE="arping caps clockdiff doc gnutls idn ipv6 rarpd rdisc SECURITY_HAZARD ssl static tftpd tracepath traceroute"
+IUSE="arping caps clockdiff doc gcrypt idn ipv6 libressl rarpd rdisc SECURITY_HAZARD ssl static tftpd tracepath traceroute"
 
 LIB_DEPEND="caps? ( sys-libs/libcap[static-libs(+)] )
 	idn? ( net-dns/libidn[static-libs(+)] )
 	ipv6? ( ssl? (
-		gnutls? (
-			net-libs/gnutls[openssl(+)]
-			net-libs/gnutls[static-libs(+)]
+		gcrypt? ( dev-libs/libgcrypt:0=[static-libs(+)] )
+		!gcrypt? (
+			!libressl? ( dev-libs/openssl:0[static-libs(+)] )
+			libressl? ( dev-libs/libressl[static-libs(+)] )
 		)
-		!gnutls? ( dev-libs/openssl:0[static-libs(+)] )
 	) )"
 RDEPEND="arping? ( !net-misc/arping )
 	rarpd? ( !net-misc/rarpd )
-	traceroute? ( !net-misc/traceroute )
+	traceroute? ( !net-analyzer/traceroute )
 	!static? ( ${LIB_DEPEND//\[static-libs(+)]} )"
 DEPEND="${RDEPEND}
 	static? ( ${LIB_DEPEND} )
@@ -53,19 +52,18 @@ fi
 
 S=${WORKDIR}/${PN}-s${PV}
 
+PATCHES=(
+	"${FILESDIR}"/021109-uclibc-no-ether_ntohost.patch
+	"${FILESDIR}"/${PN}-99999999-openssl.patch #335436
+	"${FILESDIR}"/${PN}-99999999-tftpd-syslog.patch
+	"${FILESDIR}"/${PN}-20121221-makefile.patch
+	"${FILESDIR}"/${PN}-20121221-parallel-doc.patch
+	"${FILESDIR}"/${PN}-20121221-strtod.patch #472592
+)
+
 src_prepare() {
-	epatch "${FILESDIR}"/021109-uclibc-no-ether_ntohost.patch
-	epatch "${FILESDIR}"/${PN}-20121221-openssl.patch #335436
-	epatch "${FILESDIR}"/${PN}-20121221-crypto-build.patch
-	epatch "${FILESDIR}"/${PN}-20100418-so_mark.patch #335347
-	epatch "${FILESDIR}"/${PN}-20121221-tftpd-setid.patch
-	epatch "${FILESDIR}"/${PN}-20121221-tftpd-syslog.patch
-	epatch "${FILESDIR}"/${PN}-20121221-makefile.patch
-	epatch "${FILESDIR}"/${PN}-20121221-parallel-doc.patch
-	epatch "${FILESDIR}"/${PN}-20121221-printf-size.patch
-	epatch "${FILESDIR}"/${PN}-20121221-owl-pingsock.diff
-	epatch "${FILESDIR}"/${PN}-20121221-strtod.patch #472592
-	use SECURITY_HAZARD && epatch "${FILESDIR}"/${PN}-20071127-nonroot-floodping.patch
+	use SECURITY_HAZARD && PATCHES+=( "${FILESDIR}"/${PN}-20071127-nonroot-floodping.patch )
+	epatch "${PATCHES[@]}"
 }
 
 src_configure() {
@@ -83,13 +81,22 @@ src_configure() {
 	use ipv6 || IPV6_TARGETS=()
 }
 
+ldflag_resolv() {
+	# See if the system includes a libresolv. #584132
+	echo "main(){}" > "${T}"/resolv.c
+	if ${CC} ${CFLAGS} ${LDFLAGS} "${T}"/resolv.c -lresolv -o "${T}"/resolv 2>/dev/null ; then
+		echo -lresolv
+	fi
+}
+
 src_compile() {
 	tc-export CC
 	emake \
 		USE_CAP=$(usex caps) \
 		USE_IDN=$(usex idn) \
-		USE_GNUTLS=$(usex gnutls) \
+		USE_GCRYPT=$(usex gcrypt) \
 		USE_CRYPTO=$(usex ssl) \
+		LDFLAG_RESOLV=$(ldflag_resolv) \
 		IPV4_TARGETS="${IPV4_TARGETS[*]}" \
 		IPV6_TARGETS="${IPV6_TARGETS[*]}"
 
@@ -101,7 +108,7 @@ src_compile() {
 src_install() {
 	into /
 	dobin ping $(usex ipv6 'ping6' '')
-	use ipv6 && dosym ping.8 "${EPREFIX}"/usr/share/man/man8/ping6.8
+	use ipv6 && dosym ping.8 /usr/share/man/man8/ping6.8
 	doman doc/ping.8
 
 	if use arping ; then
@@ -124,7 +131,7 @@ src_install() {
 
 	if use tracepath && use ipv6 ; then
 		dosbin tracepath6
-		dosym tracepath.8 "${EPREFIX}"/usr/share/man/man8/tracepath6.8
+		dosym tracepath.8 /usr/share/man/man8/tracepath6.8
 	fi
 
 	if use traceroute && use ipv6 ; then
