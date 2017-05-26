@@ -1,8 +1,7 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-process/psmisc/psmisc-22.20.ebuild,v 1.15 2013/02/24 17:53:00 ago Exp $
 
-EAPI="4"
+EAPI=5
 
 inherit eutils
 
@@ -15,7 +14,7 @@ SLOT="0"
 KEYWORDS="*"
 IUSE="ipv6 nls selinux X"
 
-RDEPEND=">=sys-libs/ncurses-5.7-r7
+RDEPEND=">=sys-libs/ncurses-5.7-r7:0=
 	nls? ( virtual/libintl )
 	selinux? ( sys-libs/libselinux )"
 DEPEND="${RDEPEND}
@@ -24,8 +23,13 @@ DEPEND="${RDEPEND}
 
 DOCS="AUTHORS ChangeLog NEWS README"
 
+PATCHES=(
+	"${FILESDIR}/${P}-fuser_typo_fix.patch"
+	"${FILESDIR}/${P}-sysmacros.patch"
+)
+
 src_prepare() {
-	epatch "${FILESDIR}"/${P}-selinux.patch #437332
+	epatch "${PATCHES[@]}"
 }
 
 src_configure() {
