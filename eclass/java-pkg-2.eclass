@@ -1,11 +1,5 @@
-# Eclass for Java packages
-#
-# Copyright (c) 2004-2005, Thomas Matthijs <axxo@gentoo.org>
-# Copyright (c) 2004-2015, Gentoo Foundation
-#
-# Licensed under the GNU General Public License, v2
-#
-# $Header: /var/cvsroot/gentoo-x86/eclass/java-pkg-2.eclass,v 1.40 2015/04/28 20:35:40 chewi Exp $
+# Copyright 2004-2015 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
 
 # @ECLASS: java-pkg-2.eclass
 # @MAINTAINER:
@@ -81,6 +75,9 @@ java-pkg-2_src_prepare() {
 
 java-pkg-2_src_compile() {
 	if [[ -e "${EANT_BUILD_XML:=build.xml}" ]]; then
+		# auto generate classpath
+		java-pkg_gen-cp EANT_GENTOO_CLASSPATH
+
 		[[ "${EANT_FILTER_COMPILER}" ]] && \
 			java-pkg_filter-compiler ${EANT_FILTER_COMPILER}
 		local antflags="${EANT_BUILD_TARGET:=jar}"
@@ -96,25 +93,6 @@ java-pkg-2_src_compile() {
 	fi
 }
 
-
-# @FUNCTION: java-pkg-2_supports-test
-# @INTERNAL
-# @DESCRIPTION:
-# test whether a build.xml has a test target.
-
-java-pkg-2_supports-test() {
-	python << EOF
-from xml.dom.minidom import parse
-import sys
-dom = parse("${1}")
-for elem in dom.getElementsByTagName('target'):
-	if elem.getAttribute('name') == 'test':
-			sys.exit(0)
-sys.exit(1)
-EOF
-	return $?
-}
-
 # @FUNCTION: java-pkg-2_src_test
 # @DESCRIPTION:
 # src_test, not exported.
@@ -122,7 +100,7 @@ EOF
 java-pkg-2_src_test() {
 	[[ -e "${EANT_BUILD_XML:=build.xml}" ]] || return
 
-	if [[ ${EANT_TEST_TARGET} ]] || java-pkg-2_supports-test ${EANT_BUILD_XML}; then
+	if [[ ${EANT_TEST_TARGET} ]] || < "${EANT_BUILD_XML}" tr -d "\n" | grep -Eq "<target\b[^>]*\bname=[\"']test[\"']"; then
 		local opts task_re junit_re pkg
 
 		if [[ ${EANT_TEST_JUNIT_INTO} ]]; then
