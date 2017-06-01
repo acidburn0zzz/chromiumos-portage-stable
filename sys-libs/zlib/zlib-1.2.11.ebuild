@@ -1,8 +1,7 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-libs/zlib/zlib-1.2.8-r1.ebuild,v 1.13 2014/01/17 04:23:20 vapier Exp $
 
-EAPI=4
+EAPI=5
 AUTOTOOLS_AUTO_DEPEND="no"
 
 inherit autotools toolchain-funcs multilib multilib-minimal
@@ -31,7 +30,12 @@ src_prepare() {
 		eautoreconf
 	fi
 
-	multilib_copy_sources
+	case ${CHOST} in
+	*-mingw*|mingw*)
+		# uses preconfigured Makefile rather than configure script
+		multilib_copy_sources
+		;;
+	esac
 }
 
 echoit() { echo "$@"; "$@"; }
@@ -42,7 +46,7 @@ multilib_src_configure() {
 		;;
 	*)      # not an autoconf script, so can't use econf
 		local uname=$("${EPREFIX}"/usr/share/gnuconfig/config.sub "${CHOST}" | cut -d- -f3) #347167
-		echoit ./configure \
+		echoit "${S}"/configure \
 			--shared \
 			--prefix="${EPREFIX}/usr" \
 			--libdir="${EPREFIX}/usr/$(get_libdir)" \
@@ -52,7 +56,10 @@ multilib_src_configure() {
 	esac
 
 	if use minizip ; then
-		cd contrib/minizip || die
+		local minizipdir="contrib/minizip"
+		mkdir -p "${BUILD_DIR}/${minizipdir}" || die
+		cd ${minizipdir} || die
+		ECONF_SOURCE="${S}/${minizipdir}" \
 		econf $(use_enable static-libs static)
 	fi
 }
@@ -62,7 +69,7 @@ multilib_src_compile() {
 	*-mingw*|mingw*)
 		emake -f win32/Makefile.gcc STRIP=true PREFIX=${CHOST}-
 		sed \
-			-e 's|@prefix@|${EPREFIX}/usr|g' \
+			-e 's|@prefix@|/usr|g' \
 			-e 's|@exec_prefix@|${prefix}|g' \
 			-e 's|@libdir@|${exec_prefix}/'$(get_libdir)'|g' \
 			-e 's|@sharedlibdir@|${exec_prefix}/'$(get_libdir)'|g' \
@@ -91,7 +98,8 @@ multilib_src_install() {
 			LIBRARY_PATH="${ED}/usr/$(get_libdir)" \
 			INCLUDE_PATH="${ED}/usr/include" \
 			SHARED_MODE=1
-		insinto /usr/share/pkgconfig
+		# overwrites zlib.pc created from win32/Makefile.gcc #620136
+		insinto /usr/$(get_libdir)/pkgconfig
 		doins zlib.pc
 		;;
 
