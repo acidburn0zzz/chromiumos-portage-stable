@@ -1,9 +1,8 @@
-# Copyright 1999-2011 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-libs/popt/popt-1.16-r1.ebuild,v 1.8 2011/05/01 12:13:02 xarthisius Exp $
 
-EAPI=3
-inherit eutils
+EAPI=5
+inherit eutils multilib-minimal libtool
 
 DESCRIPTION="Parse Options - Command line parser"
 HOMEPAGE="http://rpm5.org/"
@@ -14,24 +13,24 @@ SLOT="0"
 KEYWORDS="*"
 IUSE="nls static-libs"
 
-RDEPEND="nls? ( virtual/libintl )"
+RDEPEND="nls? ( >=virtual/libintl-0-r1[${MULTILIB_USEDEP}] )"
 DEPEND="nls? ( sys-devel/gettext )"
 
 src_prepare() {
 	epatch "${FILESDIR}"/fix-popt-pkgconfig-libdir.patch #349558
 	sed -i -e 's:lt-test1:test1:' testit.sh || die
+	elibtoolize
 }
 
-src_configure() {
+multilib_src_configure() {
+	ECONF_SOURCE=${S} \
 	econf \
 		--disable-dependency-tracking \
 		$(use_enable static-libs static) \
 		$(use_enable nls)
 }
 
-src_install() {
-	emake DESTDIR="${D}" install || die
-	dodoc CHANGES README || die
-
-	find "${ED}" -name '*.la' -exec rm -f {} +
+multilib_src_install_all() {
+	dodoc CHANGES README
+	prune_libtool_files --all
 }
