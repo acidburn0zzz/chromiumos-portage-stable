@@ -6,5 +6,5 @@ KEYWORDS=amd64 ppc ppc64 x86
 LICENSE=Apache-2.0
 SLOT=0
 SRC_URI=mirror://gentoo/sgabios-0.1_pre8.tar.xz http://dev.gentoo.org/~cardoe/distfiles/sgabios-0.1_pre8.tar.xz http://dev.gentoo.org/~cardoe/distfiles/sgabios-0.1_pre8-bins.tar.xz
-_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	6198c04daba0e1307bd844df7d37f423
 _md5_=5bac131b7308fbc01ee430d515fd15b4
