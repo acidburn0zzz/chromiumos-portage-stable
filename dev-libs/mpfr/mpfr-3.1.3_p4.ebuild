@@ -1,6 +1,5 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-libs/mpfr/mpfr-3.1.2_p10.ebuild,v 1.8 2015/05/30 15:33:28 zlogene Exp $
 
 EAPI="4"
 
