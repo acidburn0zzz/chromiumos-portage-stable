@@ -1,6 +1,5 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI="5"
 
@@ -16,9 +15,6 @@ HOMEPAGE="http://e2fsprogs.sourceforge.net/"
 SRC_URI="mirror://sourceforge/e2fsprogs/${PN}-${UP_PV}.tar.gz
 	mirror://kernel/linux/kernel/people/tytso/e2fsprogs/v${UP_PV}/${PN}-${UP_PV}.tar.gz
 	elibc_mintlib? ( mirror://gentoo/${PN}-1.42.9-mint-r1.patch.xz )"
-
-# Fix for bug #598100
-SRC_URI+=" http://git.kernel.org/cgit/fs/ext2/e2fsprogs.git/patch/?id=d33e690fe7a6cbeb51349d9f2c7fb16a6ebec9c2 -> ${PN}-1.43.3-missing_uninit_bg.patch"
 
 LICENSE="GPL-2 BSD"
 SLOT="0"
@@ -43,7 +39,6 @@ PATCHES=(
 	"${FILESDIR}"/${PN}-1.43-sysmacros.patch
 
 	# Upstream patches (can usually removed with next version bump)
-	"${DISTDIR}"/${P}-missing_uninit_bg.patch
 )
 
 src_prepare() {
