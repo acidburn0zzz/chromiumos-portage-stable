@@ -1,9 +1,8 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2016 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-python/pyxattr/pyxattr-0.5.3.ebuild,v 1.12 2015/04/08 08:04:59 mgorny Exp $
 
 EAPI=5
-PYTHON_COMPAT=( python{2_7,3_3,3_4} pypy )
+PYTHON_COMPAT=( python2_7 python3_{4,5} pypy )
 
 inherit distutils-r1 eutils
 
@@ -20,11 +19,14 @@ IUSE="doc test"
 RDEPEND="sys-apps/attr"
 DEPEND="${RDEPEND}
 	dev-python/setuptools[${PYTHON_USEDEP}]
-	doc? ( dev-python/sphinx[${PYTHON_USEDEP}] )
+	doc? ( >=dev-python/sphinx-1.3.1[${PYTHON_USEDEP}] )
 	test? ( dev-python/nose[${PYTHON_USEDEP}] )"
 
 python_prepare_all() {
 	sed -i -e 's:, "-Werror"::' setup.py || die
+	# Bug 548486
+	sed -e "s:html_theme = 'default':html_theme = 'classic':" \
+		-i doc/conf.py || die
 
 	distutils-r1_python_prepare_all
 }
