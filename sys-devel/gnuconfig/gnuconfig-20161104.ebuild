@@ -1,8 +1,7 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-devel/gnuconfig/gnuconfig-20140728.ebuild,v 1.1 2014/08/06 01:13:22 vapier Exp $
 
-EAPI="2"
+EAPI="5"
 
 inherit eutils
 if [[ ${PV} == "99999999" ]] ; then
@@ -16,7 +15,7 @@ else
 fi
 
 DESCRIPTION="Updated config.sub and config.guess file from GNU"
-HOMEPAGE="http://savannah.gnu.org/projects/config"
+HOMEPAGE="https://savannah.gnu.org/projects/config"
 
 LICENSE="GPL-2"
 SLOT="0"
