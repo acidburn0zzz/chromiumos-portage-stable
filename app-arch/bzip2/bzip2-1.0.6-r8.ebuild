@@ -1,11 +1,10 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/app-arch/bzip2/bzip2-1.0.6-r7.ebuild,v 1.2 2014/04/28 17:18:31 mgorny Exp $
 
 # XXX: atm, libbz2.a is always PIC :(, so it is always built quickly
 #      (since we're building shared libs) ...
 
-EAPI=4
+EAPI=5
 
 inherit eutils toolchain-funcs multilib multilib-minimal
 
@@ -18,20 +17,20 @@ SLOT="0"
 KEYWORDS="*"
 IUSE="static static-libs"
 
-RDEPEND="abi_x86_32? (
-		!<=app-emulation/emul-linux-x86-baselibs-20130224
-		!app-emulation/emul-linux-x86-baselibs[-abi_x86_32(-)]
-	)"
+PATCHES=(
+	"${FILESDIR}"/${PN}-1.0.4-makefile-CFLAGS.patch
+	"${FILESDIR}"/${PN}-1.0.6-saneso.patch
+	"${FILESDIR}"/${PN}-1.0.4-man-links.patch #172986
+	"${FILESDIR}"/${PN}-1.0.6-progress.patch
+	"${FILESDIR}"/${PN}-1.0.3-no-test.patch
+	"${FILESDIR}"/${PN}-1.0.4-POSIX-shell.patch #193365
+	"${FILESDIR}"/${PN}-1.0.6-mingw.patch #393573
+	"${FILESDIR}"/${PN}-1.0.6-out-of-tree-build.patch
+	"${FILESDIR}"/${PN}-1.0.6-CVE-2016-3189.patch #620466
+)
 
 src_prepare() {
-	epatch "${FILESDIR}"/${PN}-1.0.4-makefile-CFLAGS.patch
-	epatch "${FILESDIR}"/${PN}-1.0.6-saneso.patch
-	epatch "${FILESDIR}"/${PN}-1.0.4-man-links.patch #172986
-	epatch "${FILESDIR}"/${PN}-1.0.6-progress.patch
-	epatch "${FILESDIR}"/${PN}-1.0.3-no-test.patch
-	epatch "${FILESDIR}"/${PN}-1.0.4-POSIX-shell.patch #193365
-	epatch "${FILESDIR}"/${PN}-1.0.6-mingw.patch #393573
-	epatch "${FILESDIR}"/${PN}-1.0.6-out-of-tree-build.patch
+	epatch "${PATCHES[@]}"
 
 	# - Use right man path
 	# - Generate symlinks instead of hardlinks
