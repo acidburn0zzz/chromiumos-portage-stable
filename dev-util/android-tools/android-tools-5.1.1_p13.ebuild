@@ -1,6 +1,5 @@
 # Copyright 1999-2016 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=5
 inherit bash-completion-r1 eutils toolchain-funcs
@@ -22,10 +21,11 @@ mirror://gentoo/${MY_P}-f2fs-tools.tar.gz"
 LICENSE="Apache-2.0 BSD-2"
 SLOT="0"
 KEYWORDS="*"
-IUSE=""
+IUSE="libressl"
 
 RDEPEND="sys-libs/zlib:=
-	dev-libs/openssl:0=
+	!libressl? ( dev-libs/openssl:0= )
+	libressl? ( dev-libs/libressl:0= )
 	dev-libs/libpcre"
 DEPEND="${RDEPEND}"
 
@@ -51,10 +51,15 @@ src_prepare() {
 	sed -e 's|#include <dlfcn.h>|\0\n#include <stddef.h>\n#include <string.h>\n|' \
 		-i extras/f2fs_utils/f2fs_utils.c  || die
 	mv arch/*/trunk/Makefile ./ || die
+	sed -i '1i#include <sys/sysmacros.h>' core/adb/usb_linux.c || die #580058
+	sed -e 's|^#include <sys/cdefs.h>$|/*\0*/|' \
+		-e 's|^__BEGIN_DECLS$|#ifdef __cplusplus\nextern "C" {\n#endif|' \
+		-e 's|^__END_DECLS$|#ifdef __cplusplus\n}\n#endif|' \
+		-i extras/ext4_utils/sha1.{c,h} || die #580686
 	tc-export CC
 }
 
 src_install() {
-	default
+	emake DESTDIR="${ED}" install
 	newbashcomp arch/*/trunk/bash_completion fastboot
 }
