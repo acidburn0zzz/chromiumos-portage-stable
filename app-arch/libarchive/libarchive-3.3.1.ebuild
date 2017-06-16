@@ -35,13 +35,8 @@ DEPEND="${RDEPEND}
 		e2fsprogs? ( sys-fs/e2fsprogs )
 	)"
 
-PATCHES=(
-	"${FILESDIR}"/CVE-2017-5601.patch
-)
-
 src_prepare() {
 	default
-	epatch ${PATCHES[@]}
 	elibtoolize  # is required for Solaris sol2_ld linker fix
 }
 
@@ -72,12 +67,6 @@ multilib_src_configure() {
 		--disable-bsdcpio
 		--disable-bsdtar
 	); fi
-
-	# We disable lzmadec because we support the newer liblzma from xz-utils
-	# and not liblzmadec with this version.
-	myconf+=(
-		--without-lzmadec
-	)
 
 	ECONF_SOURCE="${S}" econf "${myconf[@]}"
 }
