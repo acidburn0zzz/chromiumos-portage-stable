@@ -1,10 +1,9 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
-EAPI="5"
+EAPI=5
 
-PYTHON_COMPAT=( python{3_3,3_4} )
+PYTHON_COMPAT=( python3_{4,5} )
 
 inherit flag-o-matic python-any-r1 toolchain-funcs eutils
 
@@ -18,7 +17,8 @@ KEYWORDS="*"
 IUSE="debug gnutls idn ipv6 libressl nls ntlm pcre +ssl static test uuid zlib"
 REQUIRED_USE=" ntlm? ( !gnutls ssl ) gnutls? ( ssl )"
 
-LIB_DEPEND="idn? ( net-dns/libidn[static-libs(+)] )
+# Force a newer libidn2 to avoid libunistring deps. #612498
+LIB_DEPEND="idn? ( >=net-dns/libidn2-0.14[static-libs(+)] )
 	pcre? ( dev-libs/libpcre[static-libs(+)] )
 	ssl? (
 		gnutls? ( net-libs/gnutls:0=[static-libs(+)] )
@@ -45,12 +45,23 @@ DEPEND="${RDEPEND}
 
 DOCS=( AUTHORS MAILING-LIST NEWS README doc/sample.wgetrc )
 
+PATCHES=(
+	"${FILESDIR}"/${P}-CRLF_injection.patch
+)
+
 pkg_setup() {
 	use test && python-any-r1_pkg_setup
 }
 
 src_prepare() {
-	epatch "${FILESDIR}"/${P}-progress-bar-segv.patch
+	epatch "${PATCHES[@]}"
+
+	# revert some hack that breaks linking, bug #585924
+	if [[ ${CHOST} == *-darwin* ]] || [[ ${CHOST} == *-solaris* ]] || [[ ${CHOST} == *-uclibc* ]]; then
+		sed -i \
+			-e 's/^  LIBICONV=$/:/' \
+			configure || die
+	fi
 }
 
 src_configure() {
@@ -63,18 +74,27 @@ src_configure() {
 		tc-export PKG_CONFIG
 		PKG_CONFIG+=" --static"
 	fi
+
+	# There is no flag that controls this.  libunistring-prefix only
+	# controls the search path (which is why we turn it off below).
+	# Further, libunistring is only needed w/older libidn2 installs,
+	# and since we force the latest, we can force off libunistring. #612498
+	ac_cv_libunistring=no \
 	econf \
 		--disable-assert \
 		--disable-rpath \
-		$(use_with ssl ssl $(usex gnutls gnutls openssl)) \
-		$(use_enable ssl opie) \
-		$(use_enable ssl digest) \
+		--without-included-libunistring \
+		--without-libunistring-prefix \
+		$(use_enable debug) \
 		$(use_enable idn iri) \
 		$(use_enable ipv6) \
 		$(use_enable nls) \
 		$(use_enable ntlm) \
 		$(use_enable pcre) \
-		$(use_enable debug) \
+		$(use_enable ssl digest) \
+		$(use_enable ssl opie) \
+		$(use_with idn libidn) \
+		$(use_with ssl ssl $(usex gnutls gnutls openssl)) \
 		$(use_with uuid libuuid) \
 		$(use_with zlib)
 }
