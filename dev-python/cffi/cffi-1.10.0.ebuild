@@ -1,12 +1,11 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=5
 
 # DO NOT ADD pypy to PYTHON_COMPAT
 # pypy bundles a modified version of cffi. Use python_gen_cond_dep instead.
-PYTHON_COMPAT=( python2_7 python3_{3,4,5} )
+PYTHON_COMPAT=( python2_7 python3_{4,5} )
 
 inherit distutils-r1
 
@@ -23,6 +22,8 @@ RDEPEND="
 	virtual/libffi
 	dev-python/pycparser[${PYTHON_USEDEP}]"
 DEPEND="${RDEPEND}
+	virtual/pkgconfig
+	doc? ( dev-python/sphinx[${PYTHON_USEDEP}] )
 	test? (	dev-python/pytest[${PYTHON_USEDEP}] )"
 
 # Avoid race on _configtest.c (distutils/command/config.py:_gen_temp_sourcefile)
@@ -33,7 +34,14 @@ python_compile_all() {
 }
 
 python_test() {
-	py.test -x -v --ignore testing/test_zintegration.py c/ testing/ || die "Testing failed with ${EPYTHON}"
+	einfo "$PYTHONPATH"
+	$PYTHON -c "import _cffi_backend as backend" || die
+	PYTHONPATH="${PYTHONPATH}" \
+	py.test -x -v \
+		--ignore testing/test_zintegration.py \
+		--ignore testing/embedding \
+		c/ testing/ \
+		|| die "Testing failed with ${EPYTHON}"
 }
 
 python_install_all() {
