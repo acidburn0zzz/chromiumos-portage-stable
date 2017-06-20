@@ -1,4 +1,4 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI="5"
@@ -29,19 +29,6 @@ src_prepare() {
 	# Changing Makefile.all.am to disable SSP
 	epatch "${FILESDIR}"/${PN}-3.7.0-fno-stack-protector.patch
 
-	# Yet more local labels, this time for ppc32 & ppc64
-	epatch "${FILESDIR}"/${PN}-3.6.0-local-labels.patch
-
-	# Don't build in empty assembly files for other platforms or we'll get a QA
-	# warning about executable stacks.
-	epatch "${FILESDIR}"/${PN}-3.10.1-non-exec-stack.patch
-
-	# glibc 2.23 fix
-	epatch "${FILESDIR}"/${PN}-3.10.0-glibc-2.23.patch
-
-	# valgrind works fine on linux-4, bug #543648
-	epatch "${FILESDIR}"/${PN}-3.10.1-linux-4.patch
-
 	# Allow users to test their own patches
 	epatch_user
 
@@ -57,14 +44,11 @@ src_configure() {
 
 	# -fomit-frame-pointer	"Assembler messages: Error: junk `8' after expression"
 	#                       while compiling insn_sse.c in none/tests/x86
-	# -fpie                 valgrind seemingly hangs when built with pie on
-	#                       amd64 (bug #102157)
 	# -fstack-protector     more undefined references to __guard and __stack_smash_handler
 	#                       because valgrind doesn't link to glibc (bug #114347)
 	# -m64 -mx32			for multilib-portage, bug #398825
 	# -ggdb3                segmentation fault on startup
 	filter-flags -fomit-frame-pointer
-	filter-flags -fpie
 	filter-flags -fstack-protector
 	filter-flags -m64 -mx32
 	replace-flags -ggdb3 -ggdb2
