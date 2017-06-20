@@ -1,6 +1,5 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI="5"
 
@@ -10,19 +9,16 @@ inherit eutils user flag-o-matic multilib autotools pam systemd versionator
 # and _p? releases.
 PARCH=${P/_}
 
-#HPN_PATCH="${PARCH}-hpnssh14v10.tar.xz"
+HPN_PATCH="${PARCH}-hpnssh14v12.tar.xz"
 SCTP_PATCH="${PN}-7.3_p1-sctp.patch.xz"
 LDAP_PATCH="${PN}-lpk-7.3p1-0.3.14.patch.xz"
-X509_VER="9.0" X509_PATCH="${PN}-${PV/_}+x509-${X509_VER}.diff.gz"
+X509_VER="9.2" X509_PATCH="${PN}-${PV/_}+x509-${X509_VER}.diff.gz"
 
 DESCRIPTION="Port of OpenBSD's free SSH release"
 HOMEPAGE="http://www.openssh.org/"
 SRC_URI="mirror://openbsd/OpenSSH/portable/${PARCH}.tar.gz
 	${SCTP_PATCH:+mirror://gentoo/${SCTP_PATCH}}
-	${HPN_PATCH:+hpn? (
-		mirror://gentoo/${HPN_PATCH}
-		mirror://sourceforge/hpnssh/${HPN_PATCH}
-	)}
+	${HPN_PATCH:+hpn? ( mirror://gentoo/${HPN_PATCH} )}
 	${LDAP_PATCH:+ldap? ( mirror://gentoo/${LDAP_PATCH} )}
 	${X509_PATCH:+X509? ( http://roumenpetrov.info/openssh/x509-${X509_VER}/${X509_PATCH} )}
 	"
@@ -31,12 +27,13 @@ LICENSE="BSD GPL-2"
 SLOT="0"
 KEYWORDS="*"
 # Probably want to drop ssl defaulting to on in a future version.
-IUSE="bindist debug ${HPN_PATCH:++}hpn kerberos kernel_linux ldap ldns libedit libressl livecd pam +pie sctp selinux skey ssh1 +ssl static X X509"
+IUSE="abi_mips_n32 bindist debug ${HPN_PATCH:++}hpn kerberos kernel_linux ldap ldns libedit libressl livecd pam +pie sctp selinux skey ssh1 +ssl static test X X509"
 REQUIRED_USE="ldns? ( ssl )
 	pie? ( !static )
 	ssh1? ( ssl )
 	static? ( !kerberos !pam )
-	X509? ( !ldap ssl )"
+	X509? ( !ldap ssl )
+	test? ( ssl )"
 
 LIB_DEPEND="
 	ldns? (
@@ -73,7 +70,7 @@ RDEPEND="${RDEPEND}
 
 S=${WORKDIR}/${PARCH}
 
-pkg_setup() {
+pkg_pretend() {
 	# this sucks, but i'd rather have people unable to `emerge -u openssh`
 	# than not be able to log in to their server any more
 	maybe_fail() { [[ -z ${!2} ]] && echo "$1" ; }
@@ -119,22 +116,31 @@ src_prepare() {
 		pushd .. >/dev/null
 		if use hpn ; then
 			pushd ${HPN_PATCH%.*.*} >/dev/null
-			epatch "${FILESDIR}"/${PN}-7.1_p1-hpn-x509-glue.patch
+			epatch "${FILESDIR}"/${P}-hpn-12-x509-9.2-glue.patch
 			popd >/dev/null
 		fi
 		epatch "${FILESDIR}"/${PN}-7.3_p1-sctp-x509-glue.patch
+		sed -i 's:PKIX_VERSION:SSH_X509:g' "${WORKDIR}"/${X509_PATCH%.*} || die
 		popd >/dev/null
 		epatch "${WORKDIR}"/${X509_PATCH%.*}
-		#epatch "${FILESDIR}"/${PN}-7.1_p2-x509-hpn14v10-glue.patch
-		#save_version X509
+		epatch "${FILESDIR}"/${P}-x509-9.2-warnings.patch
+		save_version X509
+	else
+		epatch "${FILESDIR}"/${P}-fix-ssh1-with-no-ssh1-host-key.patch #592122 inc in X509 patch
 	fi
+
 	if use ldap ; then
 		epatch "${WORKDIR}"/${LDAP_PATCH%.*}
 		save_version LPK
 	fi
+
 	epatch "${FILESDIR}"/${PN}-7.3_p1-GSSAPI-dns.patch #165444 integrated into gsskex
 	epatch "${FILESDIR}"/${PN}-6.7_p1-openssl-ignore-status.patch
 	epatch "${WORKDIR}"/${SCTP_PATCH%.*}
+	epatch "${FILESDIR}"/${P}-NEWKEYS_null_deref.patch #595342
+	epatch "${FILESDIR}"/${P}-Unregister-the-KEXINIT-handler-after-receive.patch #597360
+	use abi_mips_n32 && epatch "${FILESDIR}"/${PN}-7.3-mips-seccomp-n32.patch
+
 	if use hpn ; then
 		EPATCH_FORCE="yes" EPATCH_SUFFIX="patch" \
 			EPATCH_MULTI_MSG="Applying HPN patchset ..." \
@@ -154,6 +160,10 @@ src_prepare() {
 	use hppa && sed_args+=(
 		-e '/CFLAGS/s:-ftrapv:-fdisable-this-test:'
 		-e '/OSSH_CHECK_CFLAG_LINK.*-ftrapv/d'
+	)
+	# _XOPEN_SOURCE causes header conflicts on Solaris
+	[[ ${CHOST} == *-solaris* ]] && sed_args+=(
+		-e 's/-D_XOPEN_SOURCE//'
 	)
 	sed -i "${sed_args[@]}" configure{.ac,} || die
 
@@ -261,37 +271,32 @@ src_install() {
 }
 
 src_test() {
-	local t tests skipped failed passed shell
-	tests="interop-tests compat-tests"
-	skipped=""
-	shell=$(egetshell ${UID})
+	local t skipped=() failed=() passed=()
+	local tests=( interop-tests compat-tests )
+
+	local shell=$(egetshell "${UID}")
 	if [[ ${shell} == */nologin ]] || [[ ${shell} == */false ]] ; then
-		elog "Running the full OpenSSH testsuite"
-		elog "requires a usable shell for the 'portage'"
+		elog "Running the full OpenSSH testsuite requires a usable shell for the 'portage'"
 		elog "user, so we will run a subset only."
-		skipped="${skipped} tests"
+		skipped+=( tests )
 	else
-		tests="${tests} tests"
+		tests+=( tests )
 	fi
-	# It will also attempt to write to the homedir .ssh
+
+	# It will also attempt to write to the homedir .ssh.
 	local sshhome=${T}/homedir
 	mkdir -p "${sshhome}"/.ssh
-	for t in ${tests} ; do
+	for t in "${tests[@]}" ; do
 		# Some tests read from stdin ...
-		HOMEDIR="${sshhome}" \
+		HOMEDIR="${sshhome}" HOME="${sshhome}" \
 		emake -k -j1 ${t} </dev/null \
-			&& passed="${passed}${t} " \
-			|| failed="${failed}${t} "
+			&& passed+=( "${t}" ) \
+			|| failed+=( "${t}" )
 	done
-	einfo "Passed tests: ${passed}"
-	ewarn "Skipped tests: ${skipped}"
-	if [[ -n ${failed} ]] ; then
-		ewarn "Failed tests: ${failed}"
-		die "Some tests failed: ${failed}"
-	else
-		einfo "Failed tests: ${failed}"
-		return 0
-	fi
+
+	einfo "Passed tests: ${passed[*]}"
+	[[ ${#skipped[@]} -gt 0 ]] && ewarn "Skipped tests: ${skipped[*]}"
+	[[ ${#failed[@]}  -gt 0 ]] && die "Some tests failed: ${failed[*]}"
 }
 
 pkg_preinst() {
