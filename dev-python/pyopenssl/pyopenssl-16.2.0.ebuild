@@ -1,10 +1,9 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=5
 
-PYTHON_COMPAT=( python2_7 python3_{3,4,5} pypy )
+PYTHON_COMPAT=( python2_7 python3_{4,5} pypy{,3} )
 PYTHON_REQ_USE="threads(+)"
 
 inherit distutils-r1 flag-o-matic
@@ -23,35 +22,41 @@ SRC_URI="mirror://pypi/${MY_PN:0:1}/${MY_PN}/${MY_P}.tar.gz"
 LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="*"
-IUSE="doc examples"
+IUSE="doc examples test"
 
 RDEPEND="
 	>=dev-python/six-1.5.2[${PYTHON_USEDEP}]
-	>=dev-python/cryptography-0.7[${PYTHON_USEDEP}]"
+	>=dev-python/cryptography-1.3[${PYTHON_USEDEP}]"
 DEPEND="${RDEPEND}
-	doc? ( dev-python/sphinx[${PYTHON_USEDEP}] )"
+	doc? ( dev-python/sphinx[${PYTHON_USEDEP}] )
+	test? (
+		virtual/python-cffi[${PYTHON_USEDEP}]
+		>=dev-python/pytest-3.0.1[${PYTHON_USEDEP}] )"
 
 S=${WORKDIR}/${MY_P}
 
-PATCHES=(
-	"${FILESDIR}"/${P}-openssl-1.0.2-backport.patch
-	"${FILESDIR}"/${P}-openssl-1.0.2-backport-1.patch
-	"${FILESDIR}"/${P}-openssl-1.0.2-backport-2.patch
-)
+python_prepare_all() {
+	# Requires network access
+	sed -i -e 's/test_set_default_verify_paths/_&/' tests/test_ssl.py || die
+	distutils-r1_python_prepare_all
+}
 
 python_compile_all() {
 	use doc && emake -C doc html
 }
 
 python_test() {
-	esetup.py test
-
-	# https://bugs.launchpad.net/pyopenssl/+bug/1237953
-	rm -rf tmp* *.key *.pem || die
+	# FIXME: for some reason, no-ops on PyPy
+	py.test -v || die "Testing failed with ${EPYTHON}"
 }
 
 python_install_all() {
 	use doc && local HTML_DOCS=( doc/_build/html/. )
-	use examples && local EXAMPLES=( examples/. )
+	if use examples ; then
+		docinto examples
+		dodoc -r examples/*
+		docompress -x /usr/share/doc/${PF}/examples
+	fi
+
 	distutils-r1_python_install_all
 }
