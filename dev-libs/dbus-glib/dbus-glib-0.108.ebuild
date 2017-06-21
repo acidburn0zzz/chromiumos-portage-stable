@@ -11,19 +11,23 @@ SRC_URI="https://dbus.freedesktop.org/releases/${PN}/${P}.tar.gz"
 LICENSE="|| ( GPL-2 AFL-2.1 )"
 SLOT="0"
 KEYWORDS="*"
-IUSE="debug doc static-libs test"
+IUSE="debug static-libs test"
 
-CDEPEND=">=dev-libs/expat-2.1.0-r3[${MULTILIB_USEDEP}]
+CDEPEND="
+	>=dev-libs/expat-2.1.0-r3[${MULTILIB_USEDEP}]
 	>=dev-libs/glib-2.34.3:2[${MULTILIB_USEDEP}]
-	>=sys-apps/dbus-1.6.18-r1[${MULTILIB_USEDEP}]"
+	>=sys-apps/dbus-1.8[${MULTILIB_USEDEP}]
+"
 DEPEND="${CDEPEND}
+	>=dev-util/gtk-doc-am-1.14
 	virtual/pkgconfig
-	doc? ( >=dev-util/gtk-doc-1.4 )"
+"
 RDEPEND="${CDEPEND}
 	abi_x86_32? (
 		!<app-emulation/emul-linux-x86-baselibs-20131008-r8
 		!app-emulation/emul-linux-x86-baselibs[-abi_x86_32(-)]
-	)"
+	)
+"
 
 DOCS=( AUTHORS ChangeLog HACKING NEWS README )
 
@@ -40,14 +44,14 @@ multilib_src_configure() {
 	local myconf=(
 		--localstatedir="${EPREFIX}"/var
 		--enable-bash-completion
+		--disable-gtk-doc
 		$(use_enable debug asserts)
 		$(use_enable static-libs static)
-		$(multilib_native_use_enable doc gtk-doc)
 	)
 
 	ECONF_SOURCE="${S}" econf "${myconf[@]}"
 
-	use doc || ln -s "${S}"/doc/reference/html doc/reference/html #460042
+	ln -s "${S}"/doc/reference/html doc/reference/html #460042
 
 	if use test; then
 		set_TBD
