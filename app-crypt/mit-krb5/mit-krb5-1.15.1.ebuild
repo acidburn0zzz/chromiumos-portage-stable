@@ -1,11 +1,10 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=5
 
 PYTHON_COMPAT=( python2_7 )
-inherit autotools eutils flag-o-matic multilib-minimal python-any-r1 versionator
+inherit autotools flag-o-matic multilib-minimal python-any-r1 versionator
 
 MY_P="${P/mit-}"
 P_DIR=$(get_version_component_range 1-2)
@@ -16,7 +15,7 @@ SRC_URI="http://web.mit.edu/kerberos/dist/krb5/${P_DIR}/${MY_P}.tar.gz"
 LICENSE="openafs-krb5-a BSD MIT OPENLDAP BSD-2 HPND BSD-4 ISC RSA CC-BY-SA-3.0 || ( BSD-2 GPL-2+ )"
 SLOT="0"
 KEYWORDS="*"
-IUSE="doc +keyutils libressl openldap +pkinit selinux +threads test xinetd nls"
+IUSE="doc +keyutils libressl nls openldap +pkinit selinux +threads test xinetd"
 
 CDEPEND="
 	!!app-crypt/heimdal
@@ -57,14 +56,15 @@ MULTILIB_CHOST_TOOLS=(
 
 src_prepare() {
 	epatch "${FILESDIR}/${PN}-1.12_warn_cflags.patch"
-	epatch "${FILESDIR}/${PN}-config_LDFLAGS.patch"
-	epatch "${FILESDIR}/${PN}-1.14.2-redeclared-ttyname.patch"
-	epatch "${FILESDIR}/${PN}-1.14.4-add_disable_nls_switch.patch"
+	epatch -p2 "${FILESDIR}/${PN}-config_LDFLAGS.patch"
+	epatch -p0 "${FILESDIR}/${PN}-1.14.2-redeclared-ttyname.patch"
+	epatch "${FILESDIR}/${PN}-1.14.4-disable-nls.patch"
 
 	# Make sure we always use the system copies.
 	rm -rf util/{et,ss,verto}
 	sed -i 's:^[[:space:]]*util/verto$::' configure.in || die
 
+	eapply_user
 	eautoreconf
 }
 
@@ -83,9 +83,9 @@ multilib_src_configure() {
 	econf \
 		$(use_with openldap ldap) \
 		"$(multilib_native_use_with test tcl "${EPREFIX}/usr")" \
+		$(use_enable nls) \
 		$(use_enable pkinit) \
 		$(use_enable threads thread-support) \
-		$(use_enable nls) \
 		--without-hesiod \
 		--enable-shared \
 		--with-system-et \
@@ -119,7 +119,7 @@ multilib_src_install_all() {
 	dodoc README
 
 	if use doc; then
-		dohtml -r doc/html/*
+		dodoc -r doc/html
 		docinto pdf
 		dodoc doc/pdf/*.pdf
 	fi

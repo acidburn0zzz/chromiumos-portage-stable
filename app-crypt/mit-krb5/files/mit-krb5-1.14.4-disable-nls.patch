@@ -5,6 +5,11 @@ sets the ENABLE_NLS define appropriately.
 
 Default value is enabled to preserve current behavior.
 
+Patch by Zentaro Kavanagh <zentaro@google.com>
+https://crbug.com/654842
+
+https://github.com/krb5/krb5/pull/584
+
 --- src/configure.in
 +++ src/configure.in
 @@ -118,15 +118,22 @@
