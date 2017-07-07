@@ -1,9 +1,9 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="5"
+EAPI=5
 
-inherit eutils toolchain-funcs
+inherit base toolchain-funcs
 
 MY_P="u-boot-${PV/_/-}"
 DESCRIPTION="utilities for working with Das U-Boot"
@@ -16,6 +16,11 @@ KEYWORDS="*"
 IUSE=""
 
 S=${WORKDIR}/${MY_P}
+
+PATCHES=(
+	"${FILESDIR}/${PN}-2017.05-rsa-Fix-build-with-OpenSSL-1.1.x.patch"
+	"${FILESDIR}/${PN}-2017.05-tools-kwbimage-fix-build-with-OpenSSL-1.1.x.patch"
+)
 
 src_compile() {
 	# Unset a few KBUILD variables. Bug #540476
@@ -32,12 +37,12 @@ src_compile() {
 }
 
 src_install() {
-	cd tools
-	dobin bmp_logo gen_eth_addr img2srec mkimage
+	cd tools || die
+	dobin bmp_logo dumpimage fdtgrep gen_eth_addr img2srec mkenvimage mkimage
 	dobin easylogo/easylogo
 	dobin env/fw_printenv
 	dosym fw_printenv /usr/bin/fw_setenv
 	insinto /etc
 	doins env/fw_env.config
-	doman "${S}/doc/mkimage.1"
+	doman "${S}"/doc/mkimage.1
 }
