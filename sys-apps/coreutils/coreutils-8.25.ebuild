@@ -1,9 +1,8 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-apps/coreutils/coreutils-8.24.ebuild,v 1.2 2015/08/05 07:49:24 vapier Exp $
 
 # To generate the man pages, unpack the upstream tarball and run:
-# ./configure --enable-install-program=arch,coreutils
+# ./configure --enable-install-program=arch,coreutils,hostname,kill
 # make
 # cd ..
 # tar cf - coreutils-*/man/*.[0-9] | xz > coreutils-<ver>-man.tar.xz
@@ -13,18 +12,18 @@ EAPI="4"
 inherit eutils flag-o-matic toolchain-funcs
 
 PATCH_VER="1.1"
-DESCRIPTION="Standard GNU file utilities (chmod, cp, dd, dir, ls...), text utilities (sort, tr, head, wc..), and shell utilities (whoami, who,...)"
-HOMEPAGE="http://www.gnu.org/software/coreutils/"
+DESCRIPTION="Standard GNU utilities (chmod, cp, dd, ls, sort, tr, head, wc, who,...)"
+HOMEPAGE="https://www.gnu.org/software/coreutils/"
 SRC_URI="mirror://gnu/${PN}/${P}.tar.xz
 	mirror://gentoo/${P}-patches-${PATCH_VER}.tar.xz
-	http://dev.gentoo.org/~vapier/dist/${P}-patches-${PATCH_VER}.tar.xz
+	https://dev.gentoo.org/~vapier/dist/${P}-patches-${PATCH_VER}.tar.xz
 	mirror://gentoo/${P}-man.tar.xz
-	http://dev.gentoo.org/~vapier/dist/${P}-man.tar.xz"
+	https://dev.gentoo.org/~vapier/dist/${P}-man.tar.xz"
 
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="*"
-IUSE="acl caps gmp multicall nls selinux static userland_BSD vanilla xattr"
+IUSE="acl caps gmp hostname kill multicall nls selinux static userland_BSD vanilla xattr"
 
 LIB_DEPEND="acl? ( sys-apps/acl[static-libs] )
 	caps? ( sys-libs/libcap )
@@ -32,18 +31,23 @@ LIB_DEPEND="acl? ( sys-apps/acl[static-libs] )
 	xattr? ( !userland_BSD? ( sys-apps/attr[static-libs] ) )"
 RDEPEND="!static? ( ${LIB_DEPEND//\[static-libs]} )
 	selinux? ( sys-libs/libselinux )
-	nls? ( virtual/libintl )
+	nls? ( virtual/libintl )"
+DEPEND="${RDEPEND}
+	static? ( ${LIB_DEPEND} )
+	app-arch/xz-utils"
+RDEPEND+="
+	hostname? ( !sys-apps/net-tools[hostname] )
+	kill? (
+		!sys-apps/util-linux[kill]
+		!sys-process/procps[kill]
+	)
 	!app-misc/realpath
 	!<sys-apps/util-linux-2.13
 	!sys-apps/stat
 	!net-mail/base64
 	!sys-apps/mktemp
 	!<app-forensics/tct-1.18-r1
-	!<net-fs/netatalk-2.0.3-r4
-	!<sci-chemistry/ccp4-6.1.1"
-DEPEND="${RDEPEND}
-	static? ( ${LIB_DEPEND} )
-	app-arch/xz-utils"
+	!<net-fs/netatalk-2.0.3-r4"
 
 src_prepare() {
 	if ! use vanilla ; then
@@ -86,9 +90,9 @@ src_configure() {
 	econf \
 		--with-packager="Gentoo" \
 		--with-packager-version="${PVR} (p${PATCH_VER:-0})" \
-		--with-packager-bug-reports="http://bugs.gentoo.org/" \
-		--enable-install-program="arch" \
-		--enable-no-install-program="groups,hostname,kill,su,uptime" \
+		--with-packager-bug-reports="https://bugs.gentoo.org/" \
+		--enable-install-program="arch,$(usev hostname),$(usev kill)" \
+		--enable-no-install-program="groups,$(usev !hostname),$(usev !kill),su,uptime" \
 		--enable-largefile \
 		$(use caps || echo --disable-libcap) \
 		$(use_enable nls) \
@@ -142,6 +146,9 @@ src_install() {
 		local fhs="cat chgrp chmod chown cp date dd df echo false ln ls
 		           mkdir mknod mv pwd rm rmdir stty sync true uname"
 		mv ${fhs} ../../bin/ || die "could not move fhs bins"
+		if use kill; then
+			mv kill ../../bin/ || die
+		fi
 		# move critical binaries into /bin (common scripts)
 		local com="basename chroot cut dir dirname du env expr head mkfifo
 		           mktemp readlink seq sleep sort tail touch tr tty vdir wc yes"
