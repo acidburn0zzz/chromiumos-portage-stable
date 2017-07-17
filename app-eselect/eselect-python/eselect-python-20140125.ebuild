@@ -21,7 +21,8 @@ LICENSE="GPL-2"
 SLOT="0"
 IUSE=""
 
-RDEPEND=">=app-admin/eselect-1.2.3"
+RDEPEND=">=app-admin/eselect-1.2.3
+	!app-admin/eselect-python"
 
 src_unpack() {
 	if [[ ${PV} == "99999999" ]] ; then
