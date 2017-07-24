@@ -1,0 +1,13 @@
+DEFINED_PHASES=compile configure install prepare setup test unpack
+DEPEND=doc? ( app-doc/doxygen[dot,latex] ) test? ( dev-libs/gmp:0 dev-libs/mpfr:0 media-libs/freeglut media-libs/glew sci-libs/adolc sci-libs/cholmod sci-libs/fftw:3.0 sci-libs/pastix sci-libs/umfpack sci-libs/scotch sci-libs/spqr sci-libs/superlu dev-qt/qtcore:4 virtual/opengl virtual/pkgconfig ) sys-devel/make >=dev-util/cmake-2.8.12 test? ( virtual/fortran )
+DESCRIPTION=C++ template library for linear algebra
+EAPI=5
+HOMEPAGE=http://eigen.tuxfamily.org/
+IUSE=altivec debug doc openmp test cpu_flags_x86_sse2 cpu_flags_x86_sse3 cpu_flags_x86_sse4_1 cpu_flags_x86_sse4_2 cpu_flags_x86_ssse3
+KEYWORDS=*
+LICENSE=LGPL-2 GPL-3
+RDEPEND=!dev-cpp/eigen:0 test? ( virtual/fortran )
+SLOT=3
+SRC_URI=https://bitbucket.org/eigen/eigen/get/3.2.8.tar.bz2 -> eigen-3.2.8.tar.bz2
+_eclasses_=cmake-utils	9e0d156beee613940cde06d0bc00791b	eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	fortran-2	19652e219ec9b62d7d89735821d7afb6	multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	6198c04daba0e1307bd844df7d37f423	versionator	865bc8b2fc9fcfb6d520bdf5a110f5ed
+_md5_=6d010a6e3123400c0a64e2dc4663c7a8

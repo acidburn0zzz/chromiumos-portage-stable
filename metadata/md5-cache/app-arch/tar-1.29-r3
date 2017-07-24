@@ -1,0 +1,13 @@
+DEFINED_PHASES=configure install prepare
+DEPEND=acl? ( virtual/acl ) selinux? ( sys-libs/libselinux ) nls? ( >=sys-devel/gettext-0.10.35 ) xattr? ( elibc_glibc? ( sys-apps/attr ) )
+DESCRIPTION=Use this to make tarballs :)
+EAPI=5
+HOMEPAGE=https://www.gnu.org/software/tar/
+IUSE=acl elibc_glibc minimal nls selinux static userland_GNU xattr
+KEYWORDS=*
+LICENSE=GPL-3+
+RDEPEND=acl? ( virtual/acl ) selinux? ( sys-libs/libselinux )
+SLOT=0
+SRC_URI=mirror://gnu/tar/tar-1.29.tar.bz2 mirror://gnu-alpha/tar/tar-1.29.tar.bz2
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	6198c04daba0e1307bd844df7d37f423
+_md5_=ec9da1731ae505bf0805defa6416e916
