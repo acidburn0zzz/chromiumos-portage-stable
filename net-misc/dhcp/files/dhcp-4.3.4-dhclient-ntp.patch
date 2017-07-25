@@ -1,16 +1,15 @@
-diff -uNr dhcp-4.0.0.ORIG/client/clparse.c dhcp-4.0.0/client/clparse.c
---- dhcp-4.0.0.ORIG/client/clparse.c	2008-09-01 11:38:51.000000000 +0100
-+++ dhcp-4.0.0/client/clparse.c	2008-09-01 11:48:17.000000000 +0100
-@@ -37,7 +37,7 @@
+--- dhcp-4.3.4/client/clparse.c
++++ dhcp-4.3.4/client/clparse.c
+@@ -31,7 +31,7 @@
  
  struct client_config top_level_config;
  
 -#define NUM_DEFAULT_REQUESTED_OPTS	9
 +#define NUM_DEFAULT_REQUESTED_OPTS	10
- struct option *default_requested_options[NUM_DEFAULT_REQUESTED_OPTS + 1];
+ /* There can be 2 extra requested options for DHCPv4-over-DHCPv6. */
+ struct option *default_requested_options[NUM_DEFAULT_REQUESTED_OPTS + 2 + 1];
  
- static void parse_client_default_duid(struct parse *cfile);
-@@ -98,15 +98,20 @@
+@@ -107,15 +107,20 @@
  				dhcp_universe.code_hash, &code, 0, MDL);
  
  	/* 8 */
@@ -34,10 +33,9 @@ diff -uNr dhcp-4.0.0.ORIG/client/clparse.c dhcp-4.0.0/client/clparse.c
  	for (code = 0 ; code < NUM_DEFAULT_REQUESTED_OPTS ; code++) {
  		if (default_requested_options[code] == NULL)
  			log_fatal("Unable to find option definition for "
-diff -uNr dhcp-4.0.0.ORIG/client/scripts/bsdos dhcp-4.0.0/client/scripts/bsdos
---- dhcp-4.0.0.ORIG/client/scripts/bsdos	2008-09-01 11:38:51.000000000 +0100
-+++ dhcp-4.0.0/client/scripts/bsdos	2008-09-01 11:39:30.000000000 +0100
-@@ -29,6 +29,26 @@
+--- dhcp-4.3.4/client/scripts/bsdos
++++ dhcp-4.3.4/client/scripts/bsdos
+@@ -36,6 +36,26 @@
  
      mv /etc/resolv.conf.dhclient6 /etc/resolv.conf
    fi
@@ -64,10 +62,9 @@ diff -uNr dhcp-4.0.0.ORIG/client/scripts/bsdos dhcp-4.0.0/client/scripts/bsdos
  }
  
  # Must be used on exit.   Invokes the local dhcp client exit hooks, if any.
-diff -uNr dhcp-4.0.0.ORIG/client/scripts/freebsd dhcp-4.0.0/client/scripts/freebsd
---- dhcp-4.0.0.ORIG/client/scripts/freebsd	2008-09-01 11:38:51.000000000 +0100
-+++ dhcp-4.0.0/client/scripts/freebsd	2008-09-01 11:39:30.000000000 +0100
-@@ -73,6 +73,26 @@
+--- dhcp-4.3.4/client/scripts/freebsd
++++ dhcp-4.3.4/client/scripts/freebsd
+@@ -80,6 +80,26 @@
        fi
      fi
    fi
@@ -94,10 +91,9 @@ diff -uNr dhcp-4.0.0.ORIG/client/scripts/freebsd dhcp-4.0.0/client/scripts/freeb
  }
  
  # Must be used on exit.   Invokes the local dhcp client exit hooks, if any.
-diff -uNr dhcp-4.0.0.ORIG/client/scripts/linux dhcp-4.0.0/client/scripts/linux
---- dhcp-4.0.0.ORIG/client/scripts/linux	2008-09-01 11:38:51.000000000 +0100
-+++ dhcp-4.0.0/client/scripts/linux	2008-09-01 11:39:30.000000000 +0100
-@@ -55,6 +55,26 @@
+--- dhcp-4.3.4/client/scripts/linux
++++ dhcp-4.3.4/client/scripts/linux
+@@ -65,6 +65,26 @@
  
      mv /etc/resolv.conf.dhclient6 /etc/resolv.conf
    fi
@@ -124,10 +120,9 @@ diff -uNr dhcp-4.0.0.ORIG/client/scripts/linux dhcp-4.0.0/client/scripts/linux
  }
  
  # Must be used on exit.   Invokes the local dhcp client exit hooks, if any.
-diff -uNr dhcp-4.0.0.ORIG/client/scripts/netbsd dhcp-4.0.0/client/scripts/netbsd
---- dhcp-4.0.0.ORIG/client/scripts/netbsd	2008-09-01 11:38:51.000000000 +0100
-+++ dhcp-4.0.0/client/scripts/netbsd	2008-09-01 11:39:30.000000000 +0100
-@@ -29,6 +29,26 @@
+--- dhcp-4.3.4/client/scripts/netbsd
++++ dhcp-4.3.4/client/scripts/netbsd
+@@ -36,6 +36,26 @@
  
      mv /etc/resolv.conf.dhclient6 /etc/resolv.conf
    fi
@@ -154,10 +149,9 @@ diff -uNr dhcp-4.0.0.ORIG/client/scripts/netbsd dhcp-4.0.0/client/scripts/netbsd
  }
  
  # Must be used on exit.   Invokes the local dhcp client exit hooks, if any.
-diff -uNr dhcp-4.0.0.ORIG/client/scripts/openbsd dhcp-4.0.0/client/scripts/openbsd
---- dhcp-4.0.0.ORIG/client/scripts/openbsd	2008-09-01 11:38:51.000000000 +0100
-+++ dhcp-4.0.0/client/scripts/openbsd	2008-09-01 11:39:30.000000000 +0100
-@@ -29,6 +29,26 @@
+--- dhcp-4.3.4/client/scripts/openbsd
++++ dhcp-4.3.4/client/scripts/openbsd
+@@ -36,6 +36,26 @@
  
      mv /etc/resolv.conf.dhclient6 /etc/resolv.conf
    fi
@@ -184,9 +178,8 @@ diff -uNr dhcp-4.0.0.ORIG/client/scripts/openbsd dhcp-4.0.0/client/scripts/openb
  }
  
  # Must be used on exit.   Invokes the local dhcp client exit hooks, if any.
-diff -uNr dhcp-4.0.0.ORIG/client/scripts/solaris dhcp-4.0.0/client/scripts/solaris
---- dhcp-4.0.0.ORIG/client/scripts/solaris	2008-09-01 11:38:51.000000000 +0100
-+++ dhcp-4.0.0/client/scripts/solaris	2008-09-01 11:39:30.000000000 +0100
+--- dhcp-4.3.4/client/scripts/solaris
++++ dhcp-4.3.4/client/scripts/solaris
 @@ -17,6 +17,26 @@
  
      mv /etc/resolv.conf.dhclient /etc/resolv.conf

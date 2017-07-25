@@ -1,10 +1,12 @@
+resolvconf support in dhclient-script
+
 --- a/client/scripts/bsdos
 +++ b/client/scripts/bsdos
 @@ -1,40 +1,46 @@
  #!/bin/sh
  
  make_resolv_conf() {
-+  if [ x"$PEER_DNS" != x ] && [ x$"PEER_DNS" != xyes ]; then
++  if [ x"$PEER_DNS" != x ] && [ x"$PEER_DNS" != xyes ]; then
 +    return 0
 +  fi
 +  local conf=
@@ -40,7 +42,7 @@
        case $nameserver in
  	  fe80:*) zone_id="%$interface";;
  	  FE80:*) zone_id="%$interface";;
- 	  *)      zone_id='';;
+ 	  *)      zone_id="";;
        esac
 -      echo nameserver ${nameserver}$zone_id >> /etc/resolv.conf.dhclient6
 +      conf="${conf}nameserver ${nameserver}$zone_id\n"
@@ -65,7 +67,7 @@
  fi
  
  make_resolv_conf() {
-+  if [ x"$PEER_DNS" != x ] && [ x$"PEER_DNS" != xyes ]; then
++  if [ x"$PEER_DNS" != x ] && [ x"$PEER_DNS" != xyes ]; then
 +    return 0
 +  fi
 +  local conf=
@@ -132,7 +134,7 @@
  	case $nameserver in
  	    fe80:*) zone_id="%$interface";;
  	    FE80:*) zone_id="%$interface";;
- 	    *)      zone_id='';;
+ 	    *)      zone_id="";;
  	esac
 -	( echo nameserver ${nameserver}$zone_id >> /etc/resolv.conf.dhclient6 )
 -	exit_status=$?
@@ -169,7 +171,7 @@
  ip=/sbin/ip
  
  make_resolv_conf() {
-+  if [ x"$PEER_DNS" != x ] && [ x$"PEER_DNS" != xyes ]; then
++  if [ x"$PEER_DNS" != x ] && [ x"$PEER_DNS" != xyes ]; then
 +    return 0
 +  fi
 +  local conf=
@@ -241,7 +243,7 @@
 -    if [ "x$new_domain_search" != x ]; then
 -      echo search $new_domain_search >> /etc/resolv.conf.dhclient
 -    elif [ "x$new_domain_name" != x ]; then
-+  if [ x"$PEER_DNS" != x ] && [ x$"PEER_DNS" != xyes ]; then
++  if [ x"$PEER_DNS" != x ] && [ x"$PEER_DNS" != xyes ]; then
 +    return 0
 +  fi
 +  local conf=
@@ -275,7 +277,7 @@
        case $nameserver in
  	fe80:*) zone_id="%$interface";;
  	FE80:*) zone_id="%$interface";;
- 	*)      zone_id='';;
+ 	*)      zone_id="";;
        esac
 -      echo nameserver ${nameserver}$zone_id >> /etc/resolv.conf.dhclient6
 +      conf="${conf}nameserver ${nameserver}$zone_id\n"
@@ -305,7 +307,7 @@
 -    if [ x"$new_domain_search" != x ]; then
 -      echo search $new_domain_search >> /etc/resolv.conf.dhclient
 -    elif [ x"$new_domain_name" != x ]; then
-+  if [ x"$PEER_DNS" != x ] && [ x$"PEER_DNS" != xyes ]; then
++  if [ x"$PEER_DNS" != x ] && [ x"$PEER_DNS" != xyes ]; then
 +    return 0
 +  fi
 +  local conf=
@@ -339,7 +341,7 @@
        case $nameserver in
  	fe80:*) zone_id="%$interface";;
  	FE80:*) zone_id="%$interface";;
- 	*)      zone_id='';;
+ 	*)      zone_id="";;
        esac
 -      echo nameserver ${nameserver}$zone_id >> /etc/resolv.conf.dhclient6
 +      conf="${conf}nameserver ${nameserver}$zone_id\n"
@@ -364,7 +366,7 @@
  #!/bin/sh  
  
  make_resolv_conf() {
-+  if [ x"$PEER_DNS" != x ] && [ x$"PEER_DNS" != xyes ]; then
++  if [ x"$PEER_DNS" != x ] && [ x"$PEER_DNS" != xyes ]; then
 +    return 0
 +  fi
 +  local conf=

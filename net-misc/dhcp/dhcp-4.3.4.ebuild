@@ -1,10 +1,9 @@
-# Copyright 1999-2011 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/net-misc/dhcp/dhcp-4.2.2-r1.ebuild,v 1.2 2011/08/29 21:08:27 flameeyes Exp $
 
-EAPI="2"
+EAPI=5
 
-inherit eutils toolchain-funcs user
+inherit eutils systemd toolchain-funcs user
 
 MY_PV="${PV//_alpha/a}"
 MY_PV="${MY_PV//_beta/b}"
@@ -13,20 +12,30 @@ MY_PV="${MY_PV//_p/-P}"
 MY_P="${PN}-${MY_PV}"
 DESCRIPTION="ISC Dynamic Host Configuration Protocol (DHCP) client/server"
 HOMEPAGE="http://www.isc.org/products/DHCP"
-SRC_URI="ftp://ftp.isc.org/isc/dhcp/${MY_P}.tar.gz"
+SRC_URI="ftp://ftp.isc.org/isc/dhcp/${MY_P}.tar.gz
+	ftp://ftp.isc.org/isc/dhcp/${MY_PV}/${MY_P}.tar.gz"
 
-LICENSE="as-is BSD"
+LICENSE="ISC BSD SSLeay GPL-2" # GPL-2 only for init script
 SLOT="0"
 KEYWORDS="*"
-IUSE="+client ipv6 kernel_linux ldap selinux +server ssl vim-syntax"
+IUSE="+client ipv6 kernel_linux ldap libressl selinux +server ssl vim-syntax"
 
-DEPEND="selinux? ( sec-policy/selinux-dhcp )
-	kernel_linux? ( sys-apps/net-tools )
+DEPEND="
+	client? (
+		kernel_linux? (
+			ipv6? ( sys-apps/iproute2 )
+			sys-apps/net-tools
+		)
+	)
 	ldap? (
 		net-nds/openldap
-		ssl? ( dev-libs/openssl )
+		ssl? (
+			!libressl? ( dev-libs/openssl:0 )
+			libressl? ( dev-libs/libressl )
+		)
 	)"
 RDEPEND="${DEPEND}
+	selinux? ( sec-policy/selinux-dhcp )
 	vim-syntax? ( app-vim/dhcpd-syntax )"
 
 S="${WORKDIR}/${MY_P}"
@@ -38,29 +47,31 @@ src_unpack() {
 	unpack ./bind.tar.gz
 }
 
-src_prepare() {
+PATCHES=(
 	# Gentoo patches - these will probably never be accepted upstream
 	# Fix some permission issues
-	epatch "${FILESDIR}"/${PN}-3.0-fix-perms.patch
+	"${FILESDIR}/${PN}-3.0-fix-perms.patch"
+
 	# Enable dhclient to equery NTP servers
-	epatch "${FILESDIR}"/${PN}-4.0-dhclient-ntp.patch
-	# resolvconf support in dhclient-script
-	epatch "${FILESDIR}"/${PN}-4.2.2-dhclient-resolvconf.patch
+	"${FILESDIR}/${PN}-4.3.4-dhclient-ntp.patch"
+	"${FILESDIR}/${PN}-4.3.1-dhclient-resolvconf.patch"
+
 	# Stop downing the interface on Linux as that breaks link daemons
 	# such as wpa_supplicant and netplug
-	epatch "${FILESDIR}"/${PN}-3.0.3-dhclient-no-down.patch
-	epatch "${FILESDIR}"/${PN}-4.2.0-errwarn-message.patch
+	"${FILESDIR}/${PN}-3.0.3-dhclient-no-down.patch"
+
 	# Enable dhclient to get extra configuration from stdin
-	epatch "${FILESDIR}"/${PN}-4.2.2-dhclient-stdin-conf.patch
-	epatch "${FILESDIR}"/${PN}-4.2.2-nogateway.patch #265531
+	"${FILESDIR}/${PN}-4.2.2-dhclient-stdin-conf.patch"
+	"${FILESDIR}/${PN}-4.2.2-nogateway.patch" #265531
+	"${FILESDIR}/${PN}-4.2.4-quieter-ping.patch" #296921
+	"${FILESDIR}/${PN}-4.2.4-always-accept-4.patch" #437108
+	"${FILESDIR}/${PN}-4.2.5-iproute2-path.patch" #480636
+	"${FILESDIR}/${PN}-4.2.5-bindtodevice-inet6.patch" #471142
+	"${FILESDIR}/${PN}-4.3.3-ldap-ipv6-client-id.patch" #559832
+)
 
-	# NetworkManager support patches
-	# If they fail to apply to future versions they will be dropped
-	# Add dbus support to dhclient
-	epatch "${FILESDIR}"/${PN}-3.0.3-dhclient-dbus.patch
-
-	# Allow "dhcpd -6" to run on a system without SO_REUSEPORT support.
-	epatch "${FILESDIR}"/${PN}-4.2.2-Gracefully-handle-SO_REUSEPORT-command-failure.patch
+src_prepare() {
+	epatch "${PATCHES[@]}"
 
 	# Brand the version with Gentoo
 	sed -i \
@@ -80,9 +91,9 @@ src_prepare() {
 	sed -i -e '/LOGGER=/ s/-s -p user.notice //g' client/scripts/freebsd || die
 
 	# Remove these options from the sample config
-	sed -i \
-		-e "/\(script\|host-name\|domain-name\) / d" \
-		client/dhclient.conf || die
+	sed -i -r \
+		-e "/(script|host-name|domain-name) /d" \
+		client/dhclient.conf.example || die
 
 	if use client && ! use server ; then
 		sed -i -r \
@@ -113,7 +124,7 @@ src_prepare() {
 	binddir=${binddir}
 	GMAKE=${MAKE:-gmake}
 	EOF
-	epatch "${FILESDIR}"/${PN}-4.2.2-bind-disable.patch
+	epatch "${FILESDIR}"/${PN}-4.3.4-bind-disable.patch
 	cd bind-*/
 	epatch "${FILESDIR}"/${PN}-4.2.2-bind-parallel-build.patch #380717
 	epatch "${FILESDIR}"/${PN}-4.2.2-bind-build-flags.patch
@@ -143,33 +154,38 @@ src_configure() {
 	#define _PATH_DHCPD6_PID     "${r}/dhcpd6.pid"
 	#define _PATH_DHCLIENT_PID   "${r}/dhcpclient.pid"
 	#define _PATH_DHCLIENT6_PID  "${r}/dhcpclient6.pid"
-	#define _PATH_DHCRELAY_PID   "${r}/dhcprelay.pid"
-	#define _PATH_DHCRELAY6_PID  "${r}/dhcprelay6.pid"
+	#define _PATH_DHCRELAY_PID   "${r}/dhcrelay.pid"
+	#define _PATH_DHCRELAY6_PID  "${r}/dhcrelay6.pid"
 	EOF
 
 	econf \
 		--enable-paranoia \
+		--enable-early-chroot \
 		--sysconfdir=${e} \
 		$(use_enable ipv6 dhcpv6) \
 		$(use_with ldap) \
-		$(use ldap && use_with ssl ldapcrypto || echo --without-ldapcrypto)
+		$(use ldap && use_with ssl ldapcrypto || echo --without-ldapcrypto) \
+		--with-randomdev=/dev/urandom
 
-	# configure local bind cruft
+	# configure local bind cruft.  symtable option requires
+	# perl and we don't want to require that #383837.
 	cd bind/bind-*/ || die
 	eval econf \
-		$(sed -n '/ [.].configure /{s:^[^-]*::;s:>.*::;p}' ../Makefile) \
-		--without-make-clean
+		$(sed -n '/^bindconfig =/,/^$/{:a;N;$!ba;s,^[^-]*,,;s,\\\s*\n\s*--,--,g;s, @[[:upper:]]\+@,,g;P;D}' ../Makefile.in) \
+		--disable-symtable \
+		--without-make-clean \
+		--with-randomdev=/dev/urandom
 }
 
 src_compile() {
 	# build local bind cruft first
-	emake -C bind/bind-*/lib/export install || die
+	emake -C bind/bind-*/lib/export install
 	# then build standard dhcp code
-	emake || die
+	emake AR="$(tc-getAR)"
 }
 
 src_install() {
-	emake install DESTDIR="${D}" || die
+	default
 
 	dodoc README RELNOTES doc/{api+protocol,IANA-arp-parameters}
 	dohtml doc/References.html
@@ -181,45 +197,65 @@ src_install() {
 
 		exeinto /sbin
 		if use kernel_linux ; then
-			newexe "${S}"/client/scripts/linux dhclient-script || die
+			newexe "${S}"/client/scripts/linux dhclient-script
 		else
-			newexe "${S}"/client/scripts/freebsd dhclient-script || die
+			newexe "${S}"/client/scripts/freebsd dhclient-script
 		fi
 	fi
 
 	if [[ -e server/dhcpd ]] ; then
 		if use ldap ; then
 			insinto /etc/openldap/schema
-			doins contrib/ldap/dhcp.* || die
-			dosbin contrib/ldap/dhcpd-conf-to-ldap || die
+			doins contrib/ldap/dhcp.*
+			dosbin contrib/ldap/dhcpd-conf-to-ldap
 		fi
 
-		newinitd "${FILESDIR}"/dhcpd.init3 dhcpd || die
-		newconfd "${FILESDIR}"/dhcpd.conf dhcpd || die
-		newinitd "${FILESDIR}"/dhcrelay.init2 dhcrelay || die
-		newconfd "${FILESDIR}"/dhcrelay.conf dhcrelay || die
+		newinitd "${FILESDIR}"/dhcpd.init5 dhcpd
+		newconfd "${FILESDIR}"/dhcpd.conf2 dhcpd
+		newinitd "${FILESDIR}"/dhcrelay.init3 dhcrelay
+		newconfd "${FILESDIR}"/dhcrelay.conf dhcrelay
+		newinitd "${FILESDIR}"/dhcrelay.init3 dhcrelay6
+		newconfd "${FILESDIR}"/dhcrelay6.conf dhcrelay6
 
-		keepdir /var/{lib,run}/dhcp
+		systemd_newtmpfilesd "${FILESDIR}"/dhcpd.tmpfiles dhcpd.conf
+		systemd_dounit "${FILESDIR}"/dhcpd4.service
+		systemd_dounit "${FILESDIR}"/dhcpd6.service
+		systemd_dounit "${FILESDIR}"/dhcrelay4.service
+		systemd_dounit "${FILESDIR}"/dhcrelay6.service
+		systemd_install_serviced "${FILESDIR}"/dhcrelay4.service.conf
+		systemd_install_serviced "${FILESDIR}"/dhcrelay6.service.conf
+
+		sed -i "s:#@slapd@:$(usex ldap slapd ''):" "${ED}"/etc/init.d/* || die #442560
 	fi
+
+	# the default config files aren't terribly useful #384087
+	local f
+	for f in "${ED}"/etc/dhcp/*.conf.example ; do
+		mv "${f}" "${f%.example}" || die
+	done
+	sed -i '/^[^#]/s:^:#:' "${ED}"/etc/dhcp/*.conf || die
 }
 
 pkg_preinst() {
 	enewgroup dhcp
 	enewuser dhcp -1 -1 /var/lib/dhcp dhcp
 
-	# Keep the user files over the sample ones
-	local f
-	for f in dhclient dhcpd ; do
-		f="/etc/dhcp/${f}.conf"
-		if [ -e "${ROOT}"${f} ] ; then
-			cp -p "${ROOT}"${f} "${D}"${f}
+	# Keep the user files over the sample ones.  The
+	# hashing is to ignore the crappy defaults #384087.
+	local f h
+	for f in dhclient:da7c8496a96452190aecf9afceef4510 dhcpd:10979e7b71134bd7f04d2a60bd58f070 ; do
+		h=${f#*:}
+		f="/etc/dhcp/${f%:*}.conf"
+		if [ -e "${EROOT}"${f} ] ; then
+			case $(md5sum "${EROOT}"${f}) in
+				${h}*) ;;
+				*) cp -p "${EROOT}"${f} "${ED}"${f};;
+			esac
 		fi
 	done
 }
 
 pkg_postinst() {
-	chown -R dhcp:dhcp "${ROOT}"/var/{lib,run}/dhcp
-
 	if [[ -e "${ROOT}"/etc/init.d/dhcp ]] ; then
 		ewarn
 		ewarn "WARNING: The dhcp init script has been renamed to dhcpd"
@@ -227,42 +263,4 @@ pkg_postinst() {
 		ewarn "and dhcp should be removed from the default runlevel"
 		ewarn
 	fi
-
-	einfo "You can edit /etc/conf.d/dhcpd to customize dhcp settings."
-	einfo
-	einfo "If you would like to run dhcpd in a chroot, simply configure the"
-	einfo "DHCPD_CHROOT directory in /etc/conf.d/dhcpd and then run:"
-	einfo "  emerge --config =${PF}"
-}
-
-pkg_config() {
-	local CHROOT="$(
-		sed -n -e 's/^[[:blank:]]\?DHCPD_CHROOT="*\([^#"]\+\)"*/\1/p' \
-		"${ROOT}"/etc/conf.d/dhcpd
-	)"
-
-	if [[ -z ${CHROOT} ]]; then
-		eerror "CHROOT not defined in /etc/conf.d/dhcpd"
-		return 1
-	fi
-
-	CHROOT="${ROOT}/${CHROOT}"
-
-	if [[ -d ${CHROOT} ]] ; then
-		ewarn "${CHROOT} already exists - aborting"
-		return 0
-	fi
-
-	ebegin "Setting up the chroot directory"
-	mkdir -m 0755 -p "${CHROOT}/"{dev,etc,var/lib,var/run/dhcp}
-	cp /etc/{localtime,resolv.conf} "${CHROOT}"/etc
-	cp -R /etc/dhcp "${CHROOT}"/etc
-	cp -R /var/lib/dhcp "${CHROOT}"/var/lib
-	ln -s ../../var/lib/dhcp "${CHROOT}"/etc/dhcp/lib
-	chown -R dhcp:dhcp "${CHROOT}"/var/{lib,run}/dhcp
-	eend 0
-
-	local logger="$(best_version virtual/logger)"
-	einfo "To enable logging from the dhcpd server, configure your"
-	einfo "logger (${logger}) to listen on ${CHROOT}/dev/log"
 }
