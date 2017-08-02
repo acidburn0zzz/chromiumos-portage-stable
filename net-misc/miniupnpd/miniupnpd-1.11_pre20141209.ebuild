@@ -16,7 +16,7 @@ SRC_URI="http://miniupnp.free.fr/files/${MY_P}.tar.gz"
 LICENSE="BSD"
 SLOT="0"
 KEYWORDS="*"
-IUSE=""
+IUSE="strict"
 
 RDEPEND=">=net-firewall/iptables-1.4.6
 	net-libs/libnfnetlink"
@@ -42,7 +42,13 @@ src_configure() {
 
 	sed -i -r \
 		-e '/#define ENABLE_MANUFACTURER_INFO_CONFIGURATION/s:(/[*]|[*]/)::g' \
-		 config.h || die
+		config.h || die
+
+	if use strict; then
+		sed -i -r \
+			-e '/#define UPNP_STRICT/s:(/[*]|[*]/)::g' \
+			config.h || die
+	fi
 }
 
 src_compile() {
