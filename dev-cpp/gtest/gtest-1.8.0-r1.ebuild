@@ -27,6 +27,7 @@ RDEPEND=""
 PATCHES=(
 	"${FILESDIR}/configure-fix-pthread-linking.patch" #371647
 	"${FILESDIR}/${P}-makefile-am.patch"
+	"${FILESDIR}/${P}-threadlocal-api.patch"
 )
 
 src_prepare() {

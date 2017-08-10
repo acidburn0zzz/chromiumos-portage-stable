@@ -1,0 +1,17 @@
+Fixes crash with gtest when libc++ is enabled. Crash root cause
+is missing "default" visibility for ThreadLocal class. ThreadLocal
+class objects use typeinfo (typeid()) requiring "default" visibility.
+Upstream gtest bug: https://github.com/google/googletest/issues/1207
+
+diff -Nuar old/googletest/include/gtest/internal/gtest-port.h new/googletest/include/gtest/internal/gtest-port.h
+--- old/googletest/include/gtest/internal/gtest-port.h
++++ new/googletest/include/gtest/internal/gtest-port.h
+@@ -2027,7 +2027,7 @@
+ 
+ // Implements thread-local storage on pthreads-based systems.
+ template <typename T>
+-class ThreadLocal {
++class GTEST_API_ ThreadLocal {
+  public:
+   ThreadLocal()
+       : key_(CreateKey()), default_factory_(new DefaultValueHolderFactory()) {}
