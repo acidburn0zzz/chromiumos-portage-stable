@@ -1,12 +1,11 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 # Note: Keep version bumps in sync with dev-libs/libintl.
 
 EAPI="5"
 
-inherit eutils mono-env libtool java-pkg-opt-2 multilib-minimal
+inherit epatch epunt-cxx ltprune mono-env libtool java-pkg-opt-2 multilib-minimal
 
 DESCRIPTION="GNU locale utilities"
 HOMEPAGE="https://www.gnu.org/software/gettext/"
@@ -32,7 +31,7 @@ DEPEND=">=virtual/libiconv-0-r1[${MULTILIB_USEDEP}]
 	dev-libs/expat
 	acl? ( virtual/acl )
 	ncurses? ( sys-libs/ncurses:0= )
-	java? ( >=virtual/jdk-1.4 )"
+	java? ( >=virtual/jdk-1.4:= )"
 RDEPEND="${DEPEND}
 	!git? ( cvs? ( dev-vcs/cvs ) )
 	git? ( dev-vcs/git )
@@ -110,27 +109,27 @@ multilib_src_install() {
 }
 
 multilib_src_install_all() {
-	use nls || rm -r "${D}"/usr/share/locale
+	use nls || rm -r "${ED}"/usr/share/locale
 	use static-libs || prune_libtool_files --all
 
-	rm -f "${D}"/usr/share/locale/locale.alias "${D}"/usr/lib/charset.alias
+	rm -f "${ED}"/usr/share/locale/locale.alias "${ED}"/usr/lib/charset.alias
 
 	if use java ; then
-		java-pkg_dojar "${D}"/usr/share/${PN}/*.jar
-		rm -f "${D}"/usr/share/${PN}/*.jar
-		rm -f "${D}"/usr/share/${PN}/*.class
+		java-pkg_dojar "${ED}"/usr/share/${PN}/*.jar
+		rm -f "${ED}"/usr/share/${PN}/*.jar
+		rm -f "${ED}"/usr/share/${PN}/*.class
 		if use doc ; then
-			java-pkg_dojavadoc "${D}"/usr/share/doc/${PF}/javadoc2
-			rm -rf "${D}"/usr/share/doc/${PF}/javadoc2
+			java-pkg_dojavadoc "${ED}"/usr/share/doc/${PF}/javadoc2
+			rm -rf "${ED}"/usr/share/doc/${PF}/javadoc2
 		fi
 	fi
 
 	if use doc ; then
-		dohtml "${D}"/usr/share/doc/${PF}/*.html
+		dohtml "${ED}"/usr/share/doc/${PF}/*.html
 	else
-		rm -rf "${D}"/usr/share/doc/${PF}/{csharpdoc,examples,javadoc2,javadoc1}
+		rm -rf "${ED}"/usr/share/doc/${PF}/{csharpdoc,examples,javadoc2,javadoc1}
 	fi
-	rm -f "${D}"/usr/share/doc/${PF}/*.html
+	rm -f "${ED}"/usr/share/doc/${PF}/*.html
 
 	dodoc AUTHORS ChangeLog NEWS README THANKS
 }
