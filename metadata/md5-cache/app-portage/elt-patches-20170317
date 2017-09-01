@@ -1,0 +1,10 @@
+DEFINED_PHASES=install
+DEPEND=app-arch/xz-utils
+DESCRIPTION=Collection of patches for libtool.eclass
+EAPI=5
+HOMEPAGE=https://gitweb.gentoo.org/proj/elt-patches.git/
+KEYWORDS=*
+LICENSE=GPL-2
+SLOT=0
+SRC_URI=https://dev.gentoo.org/~mgorny/dist/elt-patches-20170317.tar.xz
+_md5_=473b6152f06cbe12567d66ff0ca7e3cb
