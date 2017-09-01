@@ -5,5 +5,5 @@ KEYWORDS=*
 LICENSE=GPL-2
 SLOT=0
 SRC_URI=http://dl.bytesex.org/cvs-snapshots/input-20051128-143821.tar.gz mirror://debian/pool/main/i/input-utils/input-utils_0.0.20051128-4.diff.gz
-_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multilib	3bf24e6abb9b76d9f6c20600f0b716bf	toolchain-funcs	48b38a216afb92db6314d6c3187abea3
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	6198c04daba0e1307bd844df7d37f423
 _md5_=af13393bc1cf8ee77b2c68f3f37166bb

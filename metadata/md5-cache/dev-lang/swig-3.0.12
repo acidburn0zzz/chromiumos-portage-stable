@@ -1,0 +1,13 @@
+DEFINED_PHASES=configure install
+DEPEND=pcre? ( dev-libs/libpcre ) ccache? ( sys-libs/zlib )
+DESCRIPTION=Simplified Wrapper and Interface Generator
+EAPI=5
+HOMEPAGE=http://www.swig.org/
+IUSE=ccache doc pcre
+KEYWORDS=*
+LICENSE=GPL-3+ BSD BSD-2
+RDEPEND=pcre? ( dev-libs/libpcre ) ccache? ( sys-libs/zlib )
+RESTRICT=test
+SLOT=0
+SRC_URI=mirror://sourceforge/swig/swig-3.0.12.tar.gz
+_md5_=24b8b18027ca3354d183af16884578d2

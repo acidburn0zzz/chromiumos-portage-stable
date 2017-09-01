@@ -1,0 +1,13 @@
+DEFINED_PHASES=install postinst prepare test
+DEPEND=app-arch/xz-utils
+DESCRIPTION=Programmable Completion for bash
+EAPI=5
+HOMEPAGE=https://github.com/scop/bash-completion
+KEYWORDS=*
+LICENSE=GPL-2
+PDEPEND=>=app-shells/gentoo-bashcomp-20140911
+RDEPEND=>=app-shells/bash-4.3_p30-r1 sys-apps/miscfiles !app-eselect/eselect-bashcomp
+SLOT=0
+SRC_URI=https://github.com/scop/bash-completion/releases/download/2.4/bash-completion-2.4.tar.xz https://bitbucket.org/mgorny/bashcomp2/downloads/bashcomp-2.0.2.tar.gz
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	6198c04daba0e1307bd844df7d37f423	versionator	865bc8b2fc9fcfb6d520bdf5a110f5ed
+_md5_=5b9a723efac237851cb05910d4d84d62

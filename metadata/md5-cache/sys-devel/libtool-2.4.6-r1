@@ -1,0 +1,13 @@
+DEFINED_PHASES=configure install prepare test unpack
+DEPEND=sys-devel/gnuconfig >=sys-devel/autoconf-2.69 >=sys-devel/automake-1.13 dev-libs/libltdl:0 app-arch/xz-utils !<sys-devel/gettext-0.18.1.1-r3 || ( >=sys-devel/automake-1.13:1.13 >=sys-devel/automake-1.15:1.15 ) >=sys-devel/autoconf-2.69
+DESCRIPTION=A shared library tool for developers
+EAPI=4
+HOMEPAGE=http://www.gnu.org/software/libtool/
+IUSE=vanilla
+KEYWORDS=*
+LICENSE=GPL-2
+RDEPEND=sys-devel/gnuconfig >=sys-devel/autoconf-2.69 >=sys-devel/automake-1.13 dev-libs/libltdl:0
+SLOT=2
+SRC_URI=mirror://gnu/libtool/libtool-2.4.6.tar.xz
+_eclasses_=autotools	999c8f6cf5d91495cb0779588f20716c	eutils	06133990e861be0fe60c2b428fd025d9	libtool	52d0e17251d04645ffaa61bfdd858944	multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	6198c04daba0e1307bd844df7d37f423	unpacker	04385b0f181c42fa9c18ec0e31729d1f
+_md5_=000e0e9c10022c0c761476baff33e485

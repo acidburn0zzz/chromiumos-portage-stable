@@ -1,0 +1,9 @@
+DEFINED_PHASES=install postinst unpack
+DESCRIPTION=Eselect module for management of multiple Python versions
+HOMEPAGE=http://www.gentoo.org/proj/en/Python/
+KEYWORDS=*
+LICENSE=GPL-2
+RDEPEND=>=app-admin/eselect-1.2.3 !app-admin/eselect-python
+SLOT=0
+SRC_URI=mirror://gentoo/eselect-python-20140125.tar.bz2 http://dev.gentoo.org/~floppym/dist/eselect-python-20140125.tar.bz2
+_md5_=ea7e70850a4325d9a7a4c250634e08fc
