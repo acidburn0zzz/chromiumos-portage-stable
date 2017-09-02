@@ -3,7 +3,7 @@
 
 EAPI="5"
 
-inherit flag-o-matic
+inherit eutils flag-o-matic
 
 DESCRIPTION="Stressful Application Test"
 HOMEPAGE="https://github.com/stressapptest/stressapptest"
@@ -16,6 +16,10 @@ IUSE="debug"
 
 RDEPEND="dev-libs/libaio"
 DEPEND="${RDEPEND}"
+
+src_prepare() {
+	epatch "${FILESDIR}"/${PN}-gnu_cxx-namespace.patch
+}
 
 src_configure() {
 	# Matches the configure & sat.cc logic.
