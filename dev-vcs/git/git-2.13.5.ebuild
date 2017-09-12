@@ -37,18 +37,19 @@ if [[ ${PV} != *9999 ]]; then
 			doc? (
 			${SRC_URI_KORG}/${PN}-htmldocs-${DOC_VER}.tar.${SRC_URI_SUFFIX}
 			)"
+	[[ "${PV}" = *_rc* ]] || \
 	KEYWORDS="*"
 fi
 
 LICENSE="GPL-2"
 SLOT="0"
-IUSE="+blksha1 +curl cgi doc emacs +gpg highlight +iconv libressl libsecret mediawiki mediawiki-experimental +nls +pcre +perl +python ppcsha1 tk +threads +webdav xinetd cvs subversion test"
+IUSE="+blksha1 +curl cgi doc emacs gnome-keyring +gpg highlight +iconv libressl mediawiki mediawiki-experimental +nls +pcre +perl +python ppcsha1 tk +threads +webdav xinetd cvs subversion test"
 
 # Common to both DEPEND and RDEPEND
 CDEPEND="
+	gnome-keyring? ( app-crypt/libsecret )
 	!libressl? ( dev-libs/openssl:0= )
 	libressl? ( dev-libs/libressl:= )
-	libsecret? ( app-crypt/libsecret )
 	sys-libs/zlib
 	pcre? ( dev-libs/libpcre )
 	perl? ( dev-lang/perl:=[-build(-)] )
@@ -358,7 +359,7 @@ src_compile() {
 		cd "${S}"
 	fi
 
-	if use libsecret ; then
+	if use gnome-keyring ; then
 		cd "${S}"/contrib/credential/libsecret
 		git_emake || die "emake git-credential-libsecret failed"
 	fi
@@ -366,6 +367,9 @@ src_compile() {
 	cd "${S}"/contrib/subtree || die
 	git_emake
 	use doc && git_emake doc
+
+	cd "${S}"/contrib/diff-highlight || die
+	git_emake
 
 	if use mediawiki ; then
 		cd "${S}"/contrib/mw-to-git
@@ -453,7 +457,7 @@ src_install() {
 	doexe contrib/contacts/git-contacts
 	dodoc contrib/contacts/git-contacts.txt
 
-	if use libsecret ; then
+	if use gnome-keyring ; then
 		cd "${S}"/contrib/credential/libsecret
 		dobin git-credential-libsecret
 	fi
@@ -552,7 +556,7 @@ src_install() {
 }
 
 src_test() {
-	local disabled="t9128-git-svn-cmd-branch.sh"
+	local disabled=""
 	local tests_cvs="t9200-git-cvsexportcommit.sh \
 					t9400-git-cvsserver-server.sh \
 					t9401-git-cvsserver-crlf.sh \
