@@ -54,6 +54,7 @@ src_prepare() {
 	epatch "${FILESDIR}/${PN}-1.8.2-gstoraster.patch"
 	epatch "${FILESDIR}/${PN}-1.8.2-configure-PKG_CONFIG.patch"
 	epatch "${FILESDIR}/${PN}-1.8.2-gstoraster-path-lookup.patch"
+	epatch "${FILESDIR}/${PN}-1.8.2-foomatic-rip-sig-pipe.patch"
 	eautoreconf
 }
 
