@@ -17,6 +17,8 @@ case ${EAPI} in
 	*) die "EAPI=${EAPI:-0} is not supported" ;;
 esac
 
+inherit toolchain-funcs
+
 EXPORT_FUNCTIONS src_unpack src_compile src_install
 
 IUSE="${IUSE} debug"
@@ -106,6 +108,9 @@ cargo_gen_config() {
 	[source.crates-io]
 	replace-with = "gentoo"
 	local-registry = "/nonexistant"
+
+	[target.${CHOST}]
+	linker = "$(tc-getCC)"
 	EOF
 }
 
@@ -116,8 +121,10 @@ cargo_src_compile() {
 	debug-print-function ${FUNCNAME} "$@"
 
 	export CARGO_HOME="${ECARGO_HOME}"
+	export TARGET_CC="$(tc-getCC)"
+	export CARGO_TARGET_DIR="${WORKDIR}"
 
-	cargo build -v $(usex debug "" --release) \
+	cargo build -v $(usex debug "" --release) --target="${CHOST}" \
 		|| die "cargo build failed"
 }
 
