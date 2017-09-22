@@ -26,7 +26,7 @@ RDEPEND="!sys-libs/com_err
 DEPEND="nls? ( sys-devel/gettext )
 	virtual/pkgconfig"
 
-S=${WORKDIR}/${P%_pre*}
+S="${WORKDIR}/${P%_pre*}"
 
 PATCHES=(
 	"${FILESDIR}"/${PN}-1.42.13-fix-build-cflags.patch #516854

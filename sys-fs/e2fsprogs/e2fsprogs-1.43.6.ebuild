@@ -30,13 +30,12 @@ DEPEND="${RDEPEND}
 	virtual/pkgconfig
 	sys-apps/texinfo"
 
-S=${WORKDIR}/${P%_pre*}
+S="${WORKDIR}/${P%_pre*}"
 
 PATCHES=(
 	"${FILESDIR}"/${PN}-1.41.8-makefile.patch
 	"${FILESDIR}"/${PN}-1.40-fbsd.patch
 	"${FILESDIR}"/${PN}-1.42.13-fix-build-cflags.patch #516854
-	"${FILESDIR}"/${PN}-1.43-sysmacros.patch
 
 	# Upstream patches (can usually removed with next version bump)
 )
@@ -66,24 +65,25 @@ src_prepare() {
 
 src_configure() {
 	# Keep the package from doing silly things #261411
-	export VARTEXFONTS=${T}/fonts
+	export VARTEXFONTS="${T}/fonts"
 
 	# needs open64() prototypes and friends
 	append-cppflags -D_GNU_SOURCE
 
-	ac_cv_path_LDCONFIG=: \
-	econf \
-		--with-root-prefix="${EPREFIX}/" \
-		--enable-symlink-install \
-		$(tc-is-static-only || echo --enable-elf-shlibs) \
-		$(tc-has-tls || echo --disable-tls) \
-		--without-included-gettext \
-		$(use_enable fuse fuse2fs) \
-		$(use_enable nls) \
-		--disable-libblkid \
-		--disable-libuuid \
-		--disable-fsck \
+	local myeconfargs=(
+		--with-root-prefix="${EPREFIX}/"
+		--enable-symlink-install
+		$(tc-is-static-only || echo --enable-elf-shlibs)
+		$(tc-has-tls || echo --disable-tls)
+		--without-included-gettext
+		$(use_enable fuse fuse2fs)
+		$(use_enable nls)
+		--disable-libblkid
+		--disable-libuuid
+		--disable-fsck
 		--disable-uuidd
+	)
+	ac_cv_path_LDCONFIG=: econf "${myeconfargs[@]}"
 	if [[ ${CHOST} != *-uclibc ]] && grep -qs 'USE_INCLUDED_LIBINTL.*yes' config.{log,status} ; then
 		eerror "INTL sanity check failed, aborting build."
 		eerror "Please post your ${S}/config.log file as an"
@@ -129,7 +129,7 @@ src_install() {
 
 		# filefrag is linux only
 		rm \
-			"${ED}"/usr/sbin/filefrag \
-			"${ED}"/usr/share/man/man8/filefrag.8 || die
+			"${ED%/}"/usr/sbin/filefrag \
+			"${ED%/}"/usr/share/man/man8/filefrag.8 || die
 	fi
 }
