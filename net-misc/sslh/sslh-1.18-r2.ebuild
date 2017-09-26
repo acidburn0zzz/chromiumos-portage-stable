@@ -29,6 +29,7 @@ S=${WORKDIR}/${MY_P}
 PATCHES=(
 	"${FILESDIR}/${PN}-1.18-version-deps.patch"
 	"${FILESDIR}/${PN}-1.18-systemd-generator.patch"
+	"${FILESDIR}/${PN}-1.18-adb.patch"
 )
 
 src_prepare() {
