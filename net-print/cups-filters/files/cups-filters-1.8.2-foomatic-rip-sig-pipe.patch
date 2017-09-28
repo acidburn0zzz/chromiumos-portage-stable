@@ -1,3 +1,19 @@
+foomatic-rip failure status fix
+
+Changes execution of renderer thread in the foomatic-rip package to fail
+whenever any of its individual sub-comands fails.
+
+Parent process now ignores SIGPIPE calls from upstream/downstream CUPS filters,
+per https://www.cups.org/doc/api-filter.html, while correctly noting child
+process failures and exiting accordingly.
+
+NOTE: Child processes still abort on SIGPIPE. It is now the responsibility
+of the parent to note this crash and exit gracefully.
+
+Reported here:
+
+  https://bugs.linuxfoundation.org/show_bug.cgi?id=1412  
+
 diff -u filter/foomatic-rip/foomaticrip.c filter-new/foomatic-rip/foomaticrip.c
 --- filter/foomatic-rip/foomaticrip.c	2015-10-20 07:59:20.000000000 -0700
 +++ filter-new/foomatic-rip/foomaticrip.c	2017-09-26 10:37:23.747220621 -0700
