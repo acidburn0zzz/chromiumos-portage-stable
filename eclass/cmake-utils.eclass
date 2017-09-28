@@ -161,7 +161,7 @@ _cmake_use_me_now() {
 	local arg=$2
 	[[ ! -z $3 ]] && arg=$3
 
-	[[ ${EAPI} == [2345] ]] || die "${FUNCNAME[1]} is banned in EAPI 6 and later"
+	[[ ${EAPI} == [2345] ]] || die "${FUNCNAME[1]} is banned in EAPI 6 and later: use -D$1<related_CMake_variable>=\"\$(usex $2)\" instead"
 
 	local uper capitalised x
 	[[ -z $2 ]] && die "cmake-utils_use-$1 <USE flag> [<flag name>]"
@@ -184,7 +184,7 @@ _cmake_use_me_now_inverted() {
 	[[ ! -z $3 ]] && arg=$3
 
 	if [[ ${EAPI} != [2345] && "${FUNCNAME[1]}" != cmake-utils_use_find_package ]] ; then
-		die "${FUNCNAME[1]} is banned in EAPI 6 and later"
+		die "${FUNCNAME[1]} is banned in EAPI 6 and later: use -D$1<related_CMake_variable>=\"\$(usex $2)\" instead"
 	fi
 
 	local uper capitalised x
@@ -262,15 +262,18 @@ _cmake_generator_to_use() {
 # @FUNCTION: cmake_comment_add_subdirectory
 # @USAGE: <subdirectory>
 # @DESCRIPTION:
-# Comment out an add_subdirectory call in CMakeLists.txt in the current directory
+# Comment out one or more add_subdirectory calls in CMakeLists.txt in the current directory
 cmake_comment_add_subdirectory() {
 	if [[ -z ${1} ]]; then
-		die "comment_add_subdirectory must be passed the directory name to comment"
+		die "comment_add_subdirectory must be passed at least one directory name to comment"
 	fi
 
 	if [[ -e "CMakeLists.txt" ]]; then
-		sed -e "/add_subdirectory[[:space:]]*([[:space:]]*${1//\//\\/}[[:space:]]*)/I s/^/#DONOTCOMPILE /" \
-			-i CMakeLists.txt || die "failed to comment add_subdirectory(${1})"
+		local d
+		for d in $@; do
+			sed -e "/add_subdirectory[[:space:]]*([[:space:]]*${d//\//\\/}[[:space:]]*)/I s/^/#DONOTCOMPILE /" \
+				-i CMakeLists.txt || die "failed to comment add_subdirectory(${d})"
+		done
 	fi
 }
 
@@ -514,21 +517,29 @@ enable_cmake-utils_src_configure() {
 		includes="<INCLUDES>"
 	fi
 	cat > "${build_rules}" <<- _EOF_ || die
-		SET (CMAKE_AR $(type -P $(tc-getAR)) CACHE FILEPATH "Archive manager" FORCE)
 		SET (CMAKE_ASM_COMPILE_OBJECT "<CMAKE_C_COMPILER> <DEFINES> ${includes} ${CFLAGS} <FLAGS> -o <OBJECT> -c <SOURCE>" CACHE STRING "ASM compile command" FORCE)
 		SET (CMAKE_C_COMPILE_OBJECT "<CMAKE_C_COMPILER> <DEFINES> ${includes} ${CPPFLAGS} <FLAGS> -o <OBJECT> -c <SOURCE>" CACHE STRING "C compile command" FORCE)
 		SET (CMAKE_CXX_COMPILE_OBJECT "<CMAKE_CXX_COMPILER> <DEFINES> ${includes} ${CPPFLAGS} <FLAGS> -o <OBJECT> -c <SOURCE>" CACHE STRING "C++ compile command" FORCE)
 		SET (CMAKE_Fortran_COMPILE_OBJECT "<CMAKE_Fortran_COMPILER> <DEFINES> ${includes} ${FCFLAGS} <FLAGS> -o <OBJECT> -c <SOURCE>" CACHE STRING "Fortran compile command" FORCE)
-		SET (CMAKE_RANLIB $(type -P $(tc-getRANLIB)) CACHE FILEPATH "Archive index generator" FORCE)
-		SET (PKG_CONFIG_EXECUTABLE $(type -P $(tc-getPKG_CONFIG)) CACHE FILEPATH "pkg-config executable" FORCE)
 	_EOF_
 
+	local myCC=$(tc-getCC) myCXX=$(tc-getCXX) myFC=$(tc-getFC)
+
+	# !!! IMPORTANT NOTE !!!
+	# Single slash below is intentional. CMake is weird and wants the
+	# CMAKE_*_VARIABLES split into two elements: the first one with
+	# compiler path, and the second one with all command-line options,
+	# space separated.
 	local toolchain_file=${BUILD_DIR}/gentoo_toolchain.cmake
 	cat > ${toolchain_file} <<- _EOF_ || die
-		SET (CMAKE_C_COMPILER $(tc-getCC))
-		SET (CMAKE_CXX_COMPILER $(tc-getCXX))
-		SET (CMAKE_Fortran_COMPILER $(tc-getFC))
+		SET (CMAKE_C_COMPILER "${myCC/ /;}")
+		SET (CMAKE_CXX_COMPILER "${myCXX/ /;}")
+		SET (CMAKE_Fortran_COMPILER "${myFC/ /;}")
+		SET (CMAKE_AR $(type -P $(tc-getAR)) CACHE FILEPATH "Archive manager" FORCE)
+		SET (CMAKE_RANLIB $(type -P $(tc-getRANLIB)) CACHE FILEPATH "Archive index generator" FORCE)
 	_EOF_
+
+	local -x PKG_CONFIG=$(tc-getPKG_CONFIG)
 
 	if tc-is-cross-compiler; then
 		local sysname
@@ -590,10 +601,25 @@ enable_cmake-utils_src_configure() {
 	local common_config=${BUILD_DIR}/gentoo_common_config.cmake
 	local libdir=$(get_libdir)
 	cat > "${common_config}" <<- _EOF_ || die
+		SET (CMAKE_GENTOO_BUILD ON CACHE BOOL "Indicate Gentoo package build")
 		SET (LIB_SUFFIX ${libdir/lib} CACHE STRING "library path suffix" FORCE)
 		SET (CMAKE_INSTALL_LIBDIR ${libdir} CACHE PATH "Output directory for libraries")
 	_EOF_
 	[[ "${NOCOLOR}" = true || "${NOCOLOR}" = yes ]] && echo 'SET (CMAKE_COLOR_MAKEFILE OFF CACHE BOOL "pretty colors during make" FORCE)' >> "${common_config}"
+
+	# Wipe the default optimization flags out of CMake
+	if [[ ${CMAKE_BUILD_TYPE} != Gentoo ]] && ! has "${EAPI}" 2 3 4 5; then
+		cat >> ${common_config} <<- _EOF_ || die
+			SET (CMAKE_ASM_FLAGS_${CMAKE_BUILD_TYPE^^} "" CACHE STRING "")
+			SET (CMAKE_C_FLAGS_${CMAKE_BUILD_TYPE^^} "" CACHE STRING "")
+			SET (CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE^^} "" CACHE STRING "")
+			SET (CMAKE_Fortran_FLAGS_${CMAKE_BUILD_TYPE^^} "" CACHE STRING "")
+			SET (CMAKE_EXE_LINKER_FLAGS_${CMAKE_BUILD_TYPE^^} "" CACHE STRING "")
+			SET (CMAKE_MODULE_LINKER_FLAGS_${CMAKE_BUILD_TYPE^^} "" CACHE STRING "")
+			SET (CMAKE_SHARED_LINKER_FLAGS_${CMAKE_BUILD_TYPE^^} "" CACHE STRING "")
+			SET (CMAKE_STATIC_LINKER_FLAGS_${CMAKE_BUILD_TYPE^^} "" CACHE STRING "")
+		_EOF_
+	fi
 
 	# Convert mycmakeargs to an array, for backwards compatibility
 	# Make the array a local variable since <=portage-2.1.6.x does not
@@ -628,7 +654,7 @@ enable_cmake-utils_src_configure() {
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${PREFIX}"
 		"${mycmakeargs_local[@]}"
 		-DCMAKE_BUILD_TYPE="${CMAKE_BUILD_TYPE}"
-		-DCMAKE_INSTALL_DO_STRIP=OFF
+		$([[ ${EAPI} == [2345] ]] && echo -DCMAKE_INSTALL_DO_STRIP=OFF)
 		-DCMAKE_USER_MAKE_RULES_OVERRIDE="${build_rules}"
 		-DCMAKE_TOOLCHAIN_FILE="${toolchain_file}"
 		"${MYCMAKEARGS}"
@@ -751,6 +777,7 @@ enable_cmake-utils_src_test() {
 
 	[[ -n ${TEST_VERBOSE} ]] && myctestargs+=( --extra-verbose --output-on-failure )
 
+	echo ctest "${myctestargs[@]}" "$@"
 	if ctest "${myctestargs[@]}" "$@" ; then
 		einfo "Tests succeeded."
 		popd > /dev/null || die
