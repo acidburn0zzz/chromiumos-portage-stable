@@ -1,0 +1,88 @@
+commit 619d9b5e6848a72350126ea9c1e413fd133181e3
+Author: Denys Vlasenko <vda.linux@googlemail.com>
+Date:   Fri Jul 28 15:28:33 2017 +0200
+
+    ash: less hackish implementation of evaltreenr()
+    
+    Defining a function alias with __attribute__ ((alias("evaltree"),__noreturn__))
+    is not that usual, and clang had a bug which made it misunderstand
+    this construct.
+    
+    Switch to:
+    ALWAYS_INLINE NORETURN evaltreenr() { evaltree(); unreachable(); }
+    
+    Older gcc's do not know unreachable(), on them we pay the price of having
+    a few extra calls to abort():
+    
+    function                                             old     new   delta
+    evalsubshell                                         151     156      +5
+    evalpipe                                             357     362      +5
+    argstr                                              1141    1144      +3
+    
+    On newer gcc, code size does not change.
+    
+    Signed-off-by: Denys Vlasenko <vda.linux@googlemail.com>
+
+diff --git a/include/platform.h b/include/platform.h
+index 8210e5c49..ea49c7e92 100644
+--- a/include/platform.h
++++ b/include/platform.h
+@@ -45,6 +45,13 @@
+ 
+ #define UNUSED_PARAM __attribute__ ((__unused__))
+ #define NORETURN __attribute__ ((__noreturn__))
++
++#if __GNUC_PREREQ(4,5)
++# define bb_unreachable(altcode) __builtin_unreachable()
++#else
++# define bb_unreachable(altcode) altcode
++#endif
++
+ /* "The malloc attribute is used to tell the compiler that a function
+  * may be treated as if any non-NULL pointer it returns cannot alias
+  * any other pointer valid when the function returns. This will often
+diff --git a/shell/ash.c b/shell/ash.c
+index f74fbd72f..1f5a8dae0 100644
+--- a/shell/ash.c
++++ b/shell/ash.c
+@@ -6137,6 +6137,19 @@ struct backcmd {                /* result of evalbackcmd */
+ #define EV_TESTED  02           /* exit status is checked; ignore -e flag */
+ static int evaltree(union node *, int);
+ 
++/* An evaltree() which is known to never return.
++ * Used to use an alias:
++ * static int evaltreenr(union node *, int) __attribute__((alias("evaltree"),__noreturn__));
++ * but clang was reported to "transfer" noreturn-ness to evaltree() as well.
++ */
++static ALWAYS_INLINE NORETURN void
++evaltreenr(union node *n, int flags)
++{
++	evaltree(n, flags);
++	bb_unreachable(abort());
++	/* NOTREACHED */
++}
++
+ static void FAST_FUNC
+ evalbackcmd(union node *n, struct backcmd *result)
+ {
+@@ -6173,7 +6186,7 @@ evalbackcmd(union node *n, struct backcmd *result)
+  */
+ 		eflag = 0;
+ 		ifsfree();
+-		evaltree(n, EV_EXIT); /* actually evaltreenr... */
++		evaltreenr(n, EV_EXIT);
+ 		/* NOTREACHED */
+ 	}
+ 	/* parent */
+@@ -8796,11 +8809,6 @@ evaltree(union node *n, int flags)
+ 	return exitstatus;
+ }
+ 
+-#if !defined(__alpha__) || (defined(__GNUC__) && __GNUC__ >= 3)
+-static
+-#endif
+-int evaltreenr(union node *, int) __attribute__ ((alias("evaltree"),__noreturn__));
+-
+ static int
+ skiploop(void)
+ {

@@ -69,6 +69,7 @@ src_prepare() {
 
 	# patches go here!
 	epatch "${FILESDIR}"/${PN}-1.26.2-bb.patch
+	epatch "${FILESDIR}"/${PN}-1.27.2-clang.patch
 #	epatch "${FILESDIR}"/${P}-*.patch
 	cp "${FILESDIR}"/ginit.c init/ || die
 
