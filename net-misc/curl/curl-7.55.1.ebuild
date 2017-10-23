@@ -1,6 +1,5 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI="5"
 
@@ -14,7 +13,7 @@ LICENSE="MIT"
 SLOT="0"
 KEYWORDS="*"
 IUSE="adns http2 idn ipv6 kerberos ldap metalink rtmp samba ssh ssl static-libs test threads"
-IUSE+=" curl_ssl_axtls curl_ssl_gnutls curl_ssl_libressl curl_ssl_mbedtls curl_ssl_nss +curl_ssl_openssl curl_ssl_polarssl curl_ssl_winssl"
+IUSE+=" curl_ssl_axtls curl_ssl_gnutls curl_ssl_libressl curl_ssl_mbedtls curl_ssl_nss +curl_ssl_openssl curl_ssl_winssl"
 IUSE+=" elibc_Winnt"
 
 #lead to lots of false negatives, bug #285669
@@ -23,7 +22,7 @@ RESTRICT="test"
 RDEPEND="ldap? ( net-nds/openldap[${MULTILIB_USEDEP}] )
 	ssl? (
 		curl_ssl_axtls? (
-			net-libs/axtls[${MULTILIB_USEDEP}]
+			net-libs/axtls:0=[${MULTILIB_USEDEP}]
 			app-misc/ca-certificates
 		)
 		curl_ssl_gnutls? (
@@ -43,10 +42,6 @@ RDEPEND="ldap? ( net-nds/openldap[${MULTILIB_USEDEP}] )
 		)
 		curl_ssl_nss? (
 			dev-libs/nss:0[${MULTILIB_USEDEP}]
-			app-misc/ca-certificates
-		)
-		curl_ssl_polarssl? (
-			net-libs/polarssl:0=[${MULTILIB_USEDEP}]
 			app-misc/ca-certificates
 		)
 	)
@@ -93,7 +88,6 @@ REQUIRED_USE="
 			curl_ssl_mbedtls
 			curl_ssl_nss
 			curl_ssl_openssl
-			curl_ssl_polarssl
 			curl_ssl_winssl
 		)
 	)"
@@ -110,10 +104,10 @@ MULTILIB_CHOST_TOOLS=(
 )
 
 src_prepare() {
-	epatch \
-		"${FILESDIR}"/${PN}-7.30.0-prefix.patch \
-		"${FILESDIR}"/${PN}-respect-cflags-3.patch \
-		"${FILESDIR}"/${PN}-fix-gnutls-nettle.patch
+	epatch "${FILESDIR}"/${PN}-7.30.0-prefix.patch
+	epatch "${FILESDIR}"/${PN}-respect-cflags-3.patch
+	epatch "${FILESDIR}"/${PN}-fix-gnutls-nettle.patch
+	epatch "${FILESDIR}"/${P}-fix-build.patch
 
 	sed -i '/LD_LIBRARY_PATH=/d' configure.ac || die #382241
 
@@ -144,9 +138,6 @@ multilib_src_configure() {
 		elif use curl_ssl_nss; then
 			einfo "SSL provided by nss"
 			myconf+=( --with-nss )
-		elif use curl_ssl_polarssl; then
-			einfo "SSL provided by polarssl"
-			myconf+=( --with-polarssl )
 		elif use curl_ssl_openssl; then
 			einfo "SSL provided by openssl"
 			myconf+=( --with-ssl --with-ca-path="${EPREFIX}"/etc/ssl/certs )
@@ -202,6 +193,7 @@ multilib_src_configure() {
 		--disable-sspi \
 		$(use_enable static-libs static) \
 		$(use_enable threads threaded-resolver) \
+		$(use_enable threads pthreads) \
 		--disable-versioned-symbols \
 		--without-cyassl \
 		--without-darwinssl \
