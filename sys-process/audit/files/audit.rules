@@ -1,4 +1,4 @@
-# Copyright 1999-2011 Gentoo Foundation
+# Copyright 1999-2005 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 #
 # This file contains the auditctl rules that are loaded
@@ -13,13 +13,12 @@
 # Feel free to add below this line. See auditctl man page
 
 # The following rule would cause all of the syscalls listed to be ignored in logging.
--a exit,never -F arch=b32 -S read -S write -S open -S fstat -S mmap -S brk -S munmap -S nanosleep -S fcntl -S close -S dup2 -S rt_sigaction -S stat
--a exit,never -F arch=b64 -S read -S write -S open -S fstat -S mmap -S brk -S munmap -S nanosleep -S fcntl -S close -S dup2 -S rt_sigaction -S stat
+# -a entry,never -S read -S write -S open -S fstat -S fstat64 -S mmap -S brk -S munmap -S _llseek -S nanosleep -S fcntl64 -S close -S dup2 -S rt_sigaction -S stat64 -S stat
 
 # The following rule would cause the capture of all systems not caught above.
-# -a exit,always -S all
+# -a entry,always -S all
 
 # Increase the buffers to survive stress events
--b 8192
+-b 256
 
 # vim:ft=conf:
