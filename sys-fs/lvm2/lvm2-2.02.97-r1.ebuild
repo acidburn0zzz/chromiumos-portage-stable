@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/sys-fs/lvm2/lvm2-2.02.97-r1.ebuild,v 1.17 2013/08/06 18:08:30 axs Exp $
 
-EAPI=4
+EAPI=5
 inherit eutils multilib toolchain-funcs autotools linux-info udev
 
 DESCRIPTION="User-land utilities for LVM2 (device-mapper) software."
