@@ -151,6 +151,14 @@ src_configure() {
 		fi
 	fi
 
+	# Setup BUILDCXX/CXXFLAGS to compile utility cf_gen natively on build
+	# system when cross compiling.
+	tc-export_build_env BUILD_CXX
+	export BUILDCXX=${BUILD_CXX}
+	export BUILDCXXFLAGS=${BUILD_CXXFLAGS}
+
+	tc-is-cross-compiler && export squid_cv_gnu_atomics=no
+
 	tc-export CC AR
 
 	econf \
@@ -177,11 +185,11 @@ src_configure() {
 		--enable-icmp \
 		--enable-follow-x-forwarded-for \
 		--with-large-files \
+		--with-build-environment=default \
 		--disable-strict-error-checking \
 		--disable-arch-native \
 		--with-ltdl-includedir=/usr/include \
 		--with-ltdl-libdir=/usr/$(get_libdir) \
-		--host=${CTARGET} \
 		$(use_with caps libcap) \
 		$(use_enable ipv6) \
 		$(use_enable snmp) \
