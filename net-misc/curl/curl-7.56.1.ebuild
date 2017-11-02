@@ -107,7 +107,6 @@ src_prepare() {
 	epatch "${FILESDIR}"/${PN}-7.30.0-prefix.patch
 	epatch "${FILESDIR}"/${PN}-respect-cflags-3.patch
 	epatch "${FILESDIR}"/${PN}-fix-gnutls-nettle.patch
-	epatch "${FILESDIR}"/${P}-fix-build.patch
 
 	sed -i '/LD_LIBRARY_PATH=/d' configure.ac || die #382241
 
@@ -189,7 +188,6 @@ multilib_src_configure() {
 		--without-libpsl \
 		--enable-manual \
 		--enable-proxy \
-		--disable-soname-bump \
 		--disable-sspi \
 		$(use_enable static-libs static) \
 		$(use_enable threads threaded-resolver) \
