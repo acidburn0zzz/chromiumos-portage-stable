@@ -98,6 +98,7 @@ src_prepare() {
 	if [[ ${PV} == "9999" ]] ; then
 		eautoreconf
 	else
+		epatch "${FILESDIR}/${P}"-libcxx.patch
 		default
 	fi
 }
