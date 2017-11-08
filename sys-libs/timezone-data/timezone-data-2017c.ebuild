@@ -1,9 +1,9 @@
 # Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="5"
+EAPI=5
 
-inherit eutils toolchain-funcs flag-o-matic
+inherit toolchain-funcs flag-o-matic
 
 code_ver=${PV}
 data_ver=${PV}
@@ -24,7 +24,9 @@ RDEPEND="${DEPEND}
 S=${WORKDIR}
 
 src_prepare() {
-	epatch "${FILESDIR}"/${PN}-2016g-makefile.patch
+# Use epatch instead of eapply because CrOS portage still uses EAPI=5.
+	epatch "${FILESDIR}"/${PN}-2017c-makefile.patch
+	default
 	tc-is-cross-compiler && cp -pR "${S}" "${S}"-native
 }
 
@@ -80,8 +82,8 @@ src_install() {
 	local zic=""
 	tc-is-cross-compiler && zic="zic=${S}-native/zic"
 	_emake install ${zic} DESTDIR="${D}"
-	dodoc CONTRIBUTING README NEWS Theory
-	dohtml *.htm
+	dodoc CONTRIBUTING README NEWS
+	dodoc *.htm
 }
 
 get_TIMEZONE() {
@@ -115,7 +117,7 @@ pkg_preinst() {
 	fi
 }
 
-pkg_config() {
+configure_tz_data() {
 	# make sure the /etc/localtime file does not get stale #127899
 	local tz src="${EROOT}etc/timezone" etc_lt="${EROOT}etc/localtime"
 
@@ -151,6 +153,10 @@ pkg_config() {
 	cp -f "${EROOT}"/usr/share/zoneinfo/"${tz}" "${etc_lt}"
 }
 
+pkg_config() {
+	configure_tz_data
+}
+
 pkg_postinst() {
-	pkg_config
+	configure_tz_data
 }
