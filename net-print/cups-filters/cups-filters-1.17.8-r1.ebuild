@@ -5,7 +5,7 @@ EAPI=5
 
 GENTOO_DEPEND_ON_PERL=no
 
-inherit perl-module systemd flag-o-matic
+inherit perl-module systemd flag-o-matic autotools
 
 if [[ "${PV}" == "9999" ]] ; then
 	inherit bzr autotools
@@ -49,9 +49,14 @@ DEPEND="${RDEPEND}
 	test? ( media-fonts/dejavu )
 "
 
+PATCHES=(
+	"${FILESDIR}/${PN}-1.17.8-pdftops-path.patch"
+)
+
 src_prepare() {
 	default
-	[[ "${PV}" == "9999" ]] && eautoreconf
+	epatch "${PATCHES[@]}"
+	eautoreconf
 
 	# Bug #626800
 	append-cxxflags -std=c++11
