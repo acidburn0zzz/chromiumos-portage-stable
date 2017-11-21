@@ -3,9 +3,9 @@
 
 EAPI=5
 
-PYTHON_COMPAT=( python3_{4,5} )
+PYTHON_COMPAT=( python3_{4,5,6} )
 
-inherit flag-o-matic python-any-r1 toolchain-funcs eutils
+inherit flag-o-matic python-any-r1 toolchain-funcs
 
 DESCRIPTION="Network utility to retrieve files from the WWW"
 HOMEPAGE="https://www.gnu.org/software/wget/"
@@ -47,6 +47,10 @@ DOCS=( AUTHORS MAILING-LIST NEWS README doc/sample.wgetrc )
 
 PATCHES=(
 	"${FILESDIR}"/${P}-CRLF_injection.patch
+	"${FILESDIR}"/${PN}-1.19.1-fix-Perl-warnings-in-tests.patch
+	"${FILESDIR}"/${PN}-1.19.1-fix-Python-test-suite.patch
+	"${FILESDIR}"/${PN}-1.19.1-CVE-2017-13089.patch
+	"${FILESDIR}"/${PN}-1.19.1-CVE-2017-13090.patch
 )
 
 pkg_setup() {
@@ -99,10 +103,6 @@ src_configure() {
 		$(use_with zlib)
 }
 
-src_test() {
-	emake check
-}
-
 src_install() {
 	default
 
@@ -110,5 +110,6 @@ src_install() {
 		-e "s:/usr/local/etc:${EPREFIX}/etc:g" \
 		"${ED}"/etc/wgetrc \
 		"${ED}"/usr/share/man/man1/wget.1 \
-		"${ED}"/usr/share/info/wget.info
+		"${ED}"/usr/share/info/wget.info \
+		|| die
 }
