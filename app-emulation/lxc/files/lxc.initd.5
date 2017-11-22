@@ -1,15 +1,16 @@
-#!/sbin/runscript
-# Copyright 1999-2012 Gentoo Foundation
+#!/sbin/openrc-run
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/app-emulation/lxc/files/lxc.initd.2,v 1.6 2012/11/14 02:15:10 flameeyes Exp $
 
 CONTAINER=${SVCNAME#*.}
 
+LXC_PATH=`lxc-config lxc.lxcpath`
+
 lxc_get_configfile() {
-	if [ -f "/etc/lxc/${CONTAINER}.conf" ]; then
-		echo "/etc/lxc/${CONTAINER}.conf"
-	elif [ -f "/etc/lxc/${CONTAINER}/config" ]; then
-		echo "/etc/lxc/${CONTAINER}/config"
+	if [ -f "${LXC_PATH}/${CONTAINER}.conf" ]; then
+		echo "${LXC_PATH}/${CONTAINER}.conf"
+	elif [ -f "${LXC_PATH}/${CONTAINER}/config" ]; then
+		echo "${LXC_PATH}/${CONTAINER}/config"
 	else
 		eerror "Unable to find a suitable configuration file."
 		eerror "If you set up the container in a non-standard"
@@ -22,6 +23,16 @@ lxc_get_configfile() {
 
 lxc_get_var() {
 	awk 'BEGIN { FS="[ \t]*=[ \t]*" } $1 == "'$1'" { print $2; exit }' ${CONFIGFILE}
+}
+
+lxc_get_net_link_type() {
+	awk 'BEGIN { FS="[ \t]*=[ \t]*"; _link=""; _type="" }
+		$1 == "lxc.network.type" {_type=$2;}
+		$1 == "lxc.network.link" {_link=$2;}
+		{if(_link != "" && _type != ""){
+			printf("%s:%s\n", _link, _type );
+			_link=""; _type="";
+		}; }' <${CONFIGFILE}
 }
 
 checkconfig() {
@@ -49,30 +60,26 @@ depend() {
 
 	config ${CONFIGFILE}
 	need localmount
+	use lxcfs
 
-	# find out which network interface the container is linked to,
-	# and then require that to be enabled, so that the
-	# dependencies are correct.
-	netif=$(lxc_get_var lxc.network.link)
-
-	# when the network type is set to phys, we can make use of a
-	# network service (for instance to set it up before we disable
-	# the net_admin capability), but we might also not set it up
-	# at all on the host and leave the net_admin capable service
-	# to take care of it.
-	nettype=$(lxc_get_var lxc.network.type)
-
-	if [ -n "${netif}" ]; then
-	    case "${nettype}" in
-		phys)	use net.${netif} ;;
-		*)	need net.${netif} ;;
-	    esac
-	fi
+	local _x _if
+	for _x in $(lxc_get_net_link_type); do
+		_if=${_x%:*}
+		case "${_x##*:}" in
+			# when the network type is set to phys, we can make use of a
+			# network service (for instance to set it up before we disable
+			# the net_admin capability), but we might also not set it up
+			# at all on the host and leave the net_admin capable service
+			# to take care of it.
+			phys)	use net.${_if} ;;
+			*)	need net.${_if} ;;
+		esac
+	done
 }
 
 start() {
 	checkconfig || return 1
-	rm /var/log/lxc/${CONTAINER}.log
+	rm -f /var/log/lxc/${CONTAINER}.log
 
 	rootpath=$(lxc_get_var lxc.rootfs)
 
@@ -86,7 +93,7 @@ start() {
 	esac
 
 	ebegin "Starting ${CONTAINER}"
-	env -i ${setarch} $(type -p lxc-start) -l WARN -n ${CONTAINER} -f ${CONFIGFILE} -d -o /var/log/lxc/${CONTAINER}.log
+	env -i ${setarch} $(which lxc-start) -l WARN -n ${CONTAINER} -f ${CONFIGFILE} -d -o /var/log/lxc/${CONTAINER}.log
 	sleep 0.5
 
 	# lxc-start -d will _always_ report a correct startup, even if it
@@ -104,29 +111,8 @@ stop() {
 	    return 0
 	fi
 
-	init_pid=$(lxc-info -n ${CONTAINER} --pid | awk '{ print $2 }')
-
-	if [ "${init_pid}" = "-1" ]; then
-	    ewarn "${CONTAINER} doesn't seem to be running."
-	    return 0
-	fi
-
-	ebegin "Shutting down system in ${CONTAINER}"
-	kill -PWR ${init_pid}
-	eend $?
-
-	TIMEOUT=${TIMEOUT:-30}
-	i=0
-	while [ -n "$(pgrep -P ${init_pid})" -a $i -lt ${TIMEOUT} ]; do
-		sleep 1
-		i=$(expr $i + 1)
-	done
-
-	if [ -n "${missingprocs}" ]; then
-		ewarn "Something failed to properly shut down in ${CONTAINER}"
-	fi
-
+	# 10s should be enough to shut everything down
 	ebegin "Stopping ${CONTAINER}"
-	lxc-stop -n ${CONTAINER}
+	lxc-stop -t 10 -n ${CONTAINER}
 	eend $?
 }
