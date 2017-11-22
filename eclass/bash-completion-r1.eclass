@@ -1,6 +1,5 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/eclass/bash-completion-r1.eclass,v 1.10 2013/09/10 19:12:17 ssuominen Exp $
 
 # @ECLASS: bash-completion-r1.eclass
 # @MAINTAINER:
@@ -26,7 +25,7 @@
 inherit toolchain-funcs
 
 case ${EAPI:-0} in
-	0|1|2|3|4|5) ;;
+	0|1|2|3|4|5|6) ;;
 	*) die "EAPI ${EAPI} unsupported (yet)."
 esac
 
@@ -36,17 +35,18 @@ esac
 # First argument is name of the string in bash-completion.pc
 # Second argument is the fallback directory if the string is not found
 # @EXAMPLE:
-# _bash-completion-r1_get_bashdir completionsdir /usr/share/bash-completion/completions
+# _bash-completion-r1_get_bashdir completionsdir /usr/share/bash-completion
 _bash-completion-r1_get_bashdir() {
 	debug-print-function ${FUNCNAME} "${@}"
 
-	if $(tc-getPKG_CONFIG) --exists bash-completion; then
-		local path="$($(tc-getPKG_CONFIG) --variable=$1 bash-completion)"
+	if $(tc-getPKG_CONFIG) --exists bash-completion &>/dev/null; then
+		local path
+		path=$($(tc-getPKG_CONFIG) --variable="${1}" bash-completion) || die
 		# we need to return unprefixed, so strip from what pkg-config returns
 		# to us, bug #477692
 		echo "${path#${EPREFIX}}"
 	else
-		echo $2
+		echo "${2}"
 	fi
 }
 
@@ -57,11 +57,7 @@ _bash-completion-r1_get_bashdir() {
 _bash-completion-r1_get_bashcompdir() {
 	debug-print-function ${FUNCNAME} "${@}"
 
-	if has_version '>=app-shells/bash-completion-2.1-r1'; then
-		_bash-completion-r1_get_bashdir completionsdir /usr/share/bash-completion/completions
-	else
-		_bash-completion-r1_get_bashdir completionsdir /usr/share/bash-completion
-	fi
+	_bash-completion-r1_get_bashdir completionsdir /usr/share/bash-completion/completions
 }
 
 # @FUNCTION: _bash-completion-r1_get_helpersdir
@@ -119,4 +115,21 @@ newbashcomp() {
 		insinto "$(_bash-completion-r1_get_bashcompdir)"
 		newins "${@}"
 	)
+}
+
+# @FUNCTION: bashcomp_alias
+# @USAGE: <basename> <alias>...
+# @DESCRIPTION:
+# Alias <basename> completion to one or more commands (<alias>es).
+bashcomp_alias() {
+	debug-print-function ${FUNCNAME} "${@}"
+
+	[[ ${#} -lt 2 ]] && die "Usage: ${FUNCNAME} <basename> <alias>..."
+	local base=${1} f
+	shift
+
+	for f; do
+		dosym "${base}" "$(_bash-completion-r1_get_bashcompdir)/${f}" \
+			|| return
+	done
 }
