@@ -113,6 +113,12 @@ src_prepare() {
 	epatch_user
 	eprefixify curl-config.in
 	eautoreconf
+
+	if [[ ${CHOST} == *-darwin17 ]] ; then
+		# https://bugs.gentoo.org/show_bug.cgi?id=637252
+		sed -i -e '/-Werror=partial-availability/s/Werror/Wno-error/g' \
+			configure || die
+	fi
 }
 
 multilib_src_configure() {
@@ -200,6 +206,7 @@ multilib_src_configure() {
 		$(use_with metalink libmetalink) \
 		$(use_with http2 nghttp2) \
 		$(use_with rtmp librtmp) \
+		--without-brotli \
 		--without-spnego \
 		--without-winidn \
 		--with-zlib \
