@@ -1,46 +1,48 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-python/numpy/numpy-1.7.1.ebuild,v 1.12 2013/12/29 09:08:14 hattya Exp $
 
 EAPI=5
 
-PYTHON_COMPAT=( python{2_6,2_7,3_2,3_3} )
+PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
+PYTHON_REQ_USE="threads(+)"
 
 FORTRAN_NEEDED=lapack
 
 inherit distutils-r1 eutils flag-o-matic fortran-2 multilib toolchain-funcs versionator
 
-#DOC_PV="${PV}"
-# upstream is lagging on docs
-DOC_PV=1.7.0
+DOC_PV="1.9.1"
+DOC_P="${PN}-${DOC_PV}"
 
 DESCRIPTION="Fast array and numerical python library"
 HOMEPAGE="http://numpy.scipy.org/"
-SRC_URI="mirror://sourceforge/numpy/${P}.tar.gz
+SRC_URI="mirror://pypi/${PN:0:1}/${PN}/${P}.tar.gz
 	doc? (
-		http://docs.scipy.org/doc/${P}/${PN}-html-${DOC_PV}.zip
-		http://docs.scipy.org/doc/${P}/${PN}-ref-${DOC_PV}.pdf
-		http://docs.scipy.org/doc/${P}/${PN}-user-${DOC_PV}.pdf
+		http://docs.scipy.org/doc/${DOC_P}/${PN}-html-${DOC_PV}.zip
+		http://docs.scipy.org/doc/${DOC_P}/${PN}-ref-${DOC_PV}.pdf
+		http://docs.scipy.org/doc/${DOC_P}/${PN}-user-${DOC_PV}.pdf
 	)"
-
+# It appears the docs haven't been upgraded, still @ 1.8.1
 LICENSE="BSD"
 SLOT="0"
 KEYWORDS="*"
 IUSE="doc lapack test"
 
-RDEPEND="
-	dev-python/setuptools[${PYTHON_USEDEP}]
+RDEPEND="dev-python/setuptools[${PYTHON_USEDEP}]
 	lapack? ( virtual/cblas virtual/lapack )"
 DEPEND="${RDEPEND}
 	doc? ( app-arch/unzip )
 	lapack? ( virtual/pkgconfig )
-	test? ( >=dev-python/nose-0.10[${PYTHON_USEDEP}] )"
+	test? ( dev-python/nose[${PYTHON_USEDEP}] )"
 
 # Uses distutils.command.config.
 DISTUTILS_IN_SOURCE_BUILD=1
 
+PATCHES=(
+	"${FILESDIR}"/${P}-no-hardcode-blas.patch
+)
+
 src_unpack() {
-	unpack ${P}.tar.gz
+	default
 	if use doc; then
 		unzip -qo "${DISTDIR}"/${PN}-html-${DOC_PV}.zip -d html || die
 	fi
@@ -48,25 +50,22 @@ src_unpack() {
 
 pc_incdir() {
 	$(tc-getPKG_CONFIG) --cflags-only-I $@ | \
-		sed -e 's/^-I//' -e 's/[ ]*-I/:/g' -e 's/[ ]*$//'
+		sed -e 's/^-I//' -e 's/[ ]*-I/:/g' -e 's/[ ]*$//' -e 's|^:||'
 }
 
 pc_libdir() {
 	$(tc-getPKG_CONFIG) --libs-only-L $@ | \
-		sed -e 's/^-L//' -e 's/[ ]*-L/:/g' -e 's/[ ]*$//'
+		sed -e 's/^-L//' -e 's/[ ]*-L/:/g' -e 's/[ ]*$//' -e 's|^:||'
 }
 
 pc_libs() {
 	$(tc-getPKG_CONFIG) --libs-only-l $@ | \
-		sed -e 's/[ ]-l*\(pthread\|m\)[ ]*//g' \
-		-e 's/^-l//' -e 's/[ ]*-l/,/g' -e 's/[ ]*$//'
+		sed -e 's/[ ]-l*\(pthread\|m\)\([ ]\|$\)//g' \
+		-e 's/^-l//' -e 's/[ ]*-l/,/g' -e 's/[ ]*$//' \
+		| tr ',' '\n' | sort -u | tr '\n' ',' | sed -e 's|,$||'
 }
 
 python_prepare_all() {
-	epatch "${FILESDIR}"/${PN}-1.7.0-atlas.patch
-	# applied upstream
-	epatch "${FILESDIR}"/${PN}-1.7.1-distutils-python33.patch
-
 	if use lapack; then
 		append-ldflags "$($(tc-getPKG_CONFIG) --libs-only-other cblas lapack)"
 		local libdir="${EPREFIX}"/usr/$(get_libdir)
@@ -99,8 +98,8 @@ python_prepare_all() {
 	# only one fortran to link with:
 	# linking with cblas and lapack library will force
 	# autodetecting and linking to all available fortran compilers
+	append-fflags -fPIC
 	if use lapack; then
-		append-fflags -fPIC
 		NUMPY_FCONFIG="config_fc --noopt --noarch"
 		# workaround bug 335908
 		[[ $(tc-getFC) == *gfortran* ]] && NUMPY_FCONFIG+=" --fcompiler=gnu95"
@@ -122,7 +121,7 @@ python_test() {
 	cd "${TMPDIR}" || die
 	${EPYTHON} -c "
 import numpy, sys
-r = numpy.test(verbose=3)
+r = numpy.test(label='full', verbose=3)
 sys.exit(0 if r.wasSuccessful() else 1)" || die "Tests fail with ${EPYTHON}"
 }
 
@@ -135,13 +134,13 @@ python_install_all() {
 
 	dodoc COMPATIBILITY DEV_README.txt THANKS.txt
 
-	docinto f2py
-	dodoc numpy/f2py/docs/*.txt
-	doman numpy/f2py/f2py.1
-
 	if use doc; then
 		dohtml -r "${WORKDIR}"/html/*
-		insinto /usr/share/doc/${PF}
-		doins "${DISTDIR}"/${PN}-{user,ref}-${DOC_PV}.pdf
+		dodoc "${DISTDIR}"/${PN}-{user,ref}-${DOC_PV}.pdf
 	fi
+
+	# absent in 1.9
+	#docinto f2py
+	#dodoc numpy/f2py/docs/*.txt
+	#doman numpy/f2py/f2py.1
 }
