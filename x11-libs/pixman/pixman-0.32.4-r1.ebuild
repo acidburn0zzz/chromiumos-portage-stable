@@ -28,5 +28,14 @@ src_configure() {
 		--disable-gtk
 		--disable-libpng
 	)
+	# Pixman can't be built with clang's integrated assembler.
+	# Fallback to GNU assembler. Note that it has to be set with
+	# modifying CCASFLAGS (changing CFLAGS doesn't work with pixman).
+	# https://crbug.com/793487
+	CCASFLAGS+=" -fno-integrated-as"
 	xorg-2_src_configure
+}
+
+src_prepare() {
+	epatch "${FILESDIR}"/pixman-clang.patch
 }
