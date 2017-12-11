@@ -1,12 +1,11 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=5
-PYTHON_COMPAT=( python2_7 python3_{3,4,5} )
+PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
 PYTHON_REQ_USE="xml"
 
-inherit libtool flag-o-matic eutils python-r1 autotools prefix multilib-minimal
+inherit libtool flag-o-matic ltprune python-r1 autotools prefix multilib-minimal
 
 DESCRIPTION="Version 2 of the library to manipulate XML files"
 HOMEPAGE="http://www.xmlsoft.org/"
@@ -15,6 +14,7 @@ LICENSE="MIT"
 SLOT="2"
 KEYWORDS="*"
 IUSE="debug examples icu ipv6 lzma python readline static-libs test"
+REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
 XSTS_HOME="http://www.w3.org/XML/2004/xml-schema-test-suite"
 XSTS_NAME_1="xmlschema2002-01-16"
@@ -36,7 +36,7 @@ RDEPEND="
 	python? ( ${PYTHON_DEPS} )
 	readline? ( sys-libs/readline:= )
 "
-DEPEND="${EDEPEND}
+DEPEND="${RDEPEND}
 	dev-util/gtk-doc-am
 	virtual/pkgconfig
 	hppa? ( >=sys-devel/binutils-2.15.92.0.2 )
@@ -52,7 +52,7 @@ src_unpack() {
 	# ${A} isn't used to avoid unpacking of test tarballs into $WORKDIR,
 	# as they are needed as tarballs in ${S}/xstc instead and not unpacked
 	unpack ${P/_rc/-rc}.tar.gz
-	cd "${S}"
+	cd "${S}" || die
 
 	if use test; then
 		cp "${DISTDIR}/${XSTS_TARBALL_1}" \
@@ -76,10 +76,6 @@ src_prepare() {
 	# Fix build for Windows platform
 	# https://bugzilla.gnome.org/show_bug.cgi?id=760456
 	eapply "${FILESDIR}"/${PN}-2.8.0_rc1-winnt.patch
-
-	# Disable programs that we don't actually install.
-	# https://bugzilla.gnome.org/show_bug.cgi?id=760457
-	eapply "${FILESDIR}"/${PN}-2.9.2-disable-tests.patch
 
 	# Fix python detection, bug #567066
 	# https://bugzilla.gnome.org/show_bug.cgi?id=760458
@@ -146,7 +142,7 @@ multilib_src_compile() {
 }
 
 multilib_src_test() {
-	default
+	emake check
 	multilib_is_native_abi && use python && python_foreach_impl libxml2_py_emake test
 }
 
