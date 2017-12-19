@@ -36,6 +36,8 @@ PATCHES=(
 	"${FILESDIR}"/${PN}-4.0.7-pdfium-0018-fix-leak-in-PredictorSetupDecode.patch
 	"${FILESDIR}"/${PN}-4.0.7-pdfium-0021-oom-TIFFFillStrip.patch
 	"${FILESDIR}"/${PN}-4.0.8-CVE-2017-9936.patch
+	"${FILESDIR}"/${PN}-4.0.8-CVE-2017-13726.patch
+	"${FILESDIR}"/${PN}-4.0.8-CVE-2017-13727.patch
 )
 
 MULTILIB_WRAPPED_HEADERS=(
