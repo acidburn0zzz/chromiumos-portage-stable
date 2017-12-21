@@ -1,0 +1,12 @@
+diff -r -u lshw-B.02.17.orig/src/core/scsi.cc lshw-B.02.17/src/core/scsi.cc
+--- lshw-B.02.17.orig/src/core/scsi.cc	2017-12-21 12:41:23.318512670 -0800
++++ lshw-B.02.17/src/core/scsi.cc	2017-12-21 12:43:07.210763849 -0800
+@@ -29,7 +29,7 @@
+ 
+ __ID("@(#) $Id: scsi.cc 2518 2013-03-13 20:52:25Z lyonel $");
+ 
+-#define SG_X "/dev/sg*"
++#define SG_X "/dev/sg[0-9]*"
+ #define SG_MAJOR 21
+ 
+ #ifndef SCSI_IOCTL_GET_PCI

@@ -34,7 +34,8 @@ S=${WORKDIR}/${MY_P}
 src_prepare() {
 	epatch \
 		"${FILESDIR}"/${P}-gentoo.patch \
-		"${FILESDIR}"/${P}-fat.patch
+		"${FILESDIR}"/${P}-fat.patch \
+		"${FILESDIR}"/${P}-sgx.patch
 	# correct gettext behavior
 	if [[ -n "${LINGUAS+x}" ]] ; then
 		local langs
