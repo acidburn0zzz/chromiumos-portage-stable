@@ -25,7 +25,13 @@ RDEPEND="!static? ( ${LIB_DEPEND//\[static-libs(+)]} )
 DEPEND="${RDEPEND}
 	static? ( ${LIB_DEPEND} )"
 
-PATCHES=( "${FILESDIR}"/${PN}-3.1.2-CVE-2017-16548.patch )
+PATCHES=(
+	"${FILESDIR}"/${PN}-3.1.2-CVE-2017-16548.patch
+	"${FILESDIR}"/${PN}-3.1.2-CVE-2017-17433.patch
+	"${FILESDIR}"/${PN}-3.1.2-CVE-2017-17434-part1.patch
+	"${FILESDIR}"/${PN}-3.1.2-CVE-2017-17434-part2.patch
+	"${FILESDIR}"/${PN}-3.1.2-CVE-2017-17433-fixup.patch
+)
 
 S=${WORKDIR}/${P/_/}
 
