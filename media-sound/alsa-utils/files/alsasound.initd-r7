@@ -1,6 +1,5 @@
-#!/sbin/runscript
-# $Id$
-# Copyright 1999-2014 Gentoo Foundation
+#!/sbin/openrc-run
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 alsastatedir=/var/lib/alsa
@@ -25,7 +24,7 @@ restore() {
 		return 0
 	fi
 
-	local cards="$(sed -n -e 's/ *\([[:digit:]]*\) .*/\1/p' /proc/asound/cards)"
+	local cards="$(sed -n -e 's/^ *\([[:digit:]]*\) .*/\1/p' /proc/asound/cards)"
 	local CARDNUM
 	for cardnum in ${cards}; do
 		[ -e /dev/snd/controlC${cardnum} ] || sleep 2
@@ -42,7 +41,7 @@ restore() {
 		local procfile=${ossfile##${alsastatedir}/oss}
 		procfile="$(echo "${procfile}" | sed -e 's,_,/,g')"
 		if [ -e /proc/asound/"${procfile}"/oss ] ; then
-		    cat "${ossfile}" > /proc/asound/"${procfile}"/oss 
+		    cat "${ossfile}" > /proc/asound/"${procfile}"/oss
 		fi
 	done
 
