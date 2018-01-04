@@ -3,10 +3,11 @@ DEPEND=>=net-firewall/iptables-1.4.6 net-libs/libnfnetlink sys-apps/util-linux s
 DESCRIPTION=MiniUPnP IGD Daemon
 EAPI=5
 HOMEPAGE=http://miniupnp.free.fr/
+IUSE=strict
 KEYWORDS=*
 LICENSE=BSD
 RDEPEND=>=net-firewall/iptables-1.4.6 net-libs/libnfnetlink
 SLOT=0
 SRC_URI=http://miniupnp.free.fr/files/miniupnpd-1.9.20141209.tar.gz
 _eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	6198c04daba0e1307bd844df7d37f423
-_md5_=1483e8c813225337cc618d65b82842ad
+_md5_=1163da19492de1d31d23d1ed5452a116
