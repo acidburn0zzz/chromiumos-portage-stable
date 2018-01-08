@@ -1,11 +1,12 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=5
 
+MY_P=llvm-${PV/_/}.src
 DESCRIPTION="Common files shared between multiple slots of LLVM"
 HOMEPAGE="https://llvm.org/"
-SRC_URI="https://releases.llvm.org/${PV/_//}/llvm-${PV/_/}.src.tar.xz"
+SRC_URI="https://releases.llvm.org/${PV/_//}/${MY_P}.tar.xz"
 
 LICENSE="UoI-NCSA"
 SLOT="0"
@@ -14,7 +15,12 @@ IUSE=""
 
 RDEPEND="!sys-devel/llvm:0"
 
-S=${WORKDIR}/llvm-${PV/_/}.src
+S=${WORKDIR}/${MY_P}
+
+src_unpack() {
+	einfo "Unpacking parts of ${MY_P}.tar.xz ..."
+	tar -xJf "${DISTDIR}/${MY_P}.tar.xz" "${MY_P}/utils/vim" || die
+}
 
 src_configure() { :; }
 src_compile() { :; }
