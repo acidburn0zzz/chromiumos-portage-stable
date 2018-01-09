@@ -1,1 +1,0 @@
-tiff-4.0.8.ebuild
