@@ -3,7 +3,7 @@
 # $Header: /var/cvsroot/gentoo-x86/dev-python/pyparsing/pyparsing-2.0.1.ebuild,v 1.11 2013/09/26 17:31:39 ago Exp $
 
 EAPI=5
-PYTHON_COMPAT=( python{2_6,2_7,3_2,3_3} pypy2_0 )
+PYTHON_COMPAT=( python{2_6,2_7,3_2,3_3,3_4,3_5,3_6} pypy2_0 )
 
 inherit distutils-r1
 
