@@ -4,7 +4,7 @@
 
 EAPI="5"
 
-inherit eutils
+inherit autotools eutils
 
 DESCRIPTION="A command-line program that does structural, content-preserving transformations on PDF files"
 HOMEPAGE="http://qpdf.sourceforge.net/"
@@ -34,6 +34,7 @@ src_prepare() {
 }
 
 src_configure() {
+	eautoreconf
 	econf \
 		$(use_enable static-libs static) \
 		$(use_enable test test-compare-images)
