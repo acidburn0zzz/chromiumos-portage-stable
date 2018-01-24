@@ -1,16 +1,13 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=5
 
 inherit cmake-utils flag-o-matic
 
-MY_P="${PN}${PV}"
-
 DESCRIPTION="Geometry library"
-HOMEPAGE="http://www.qhull.org/"
-SRC_URI="${HOMEPAGE}/download/${P}-src.tgz"
+HOMEPAGE="http://www.qhull.org"
+SRC_URI="${HOMEPAGE}/download/${PN}-2015-src-7.2.0.tgz -> ${P}.tar.gz"
 
 SLOT="0"
 LICENSE="BSD"
@@ -20,24 +17,16 @@ IUSE="doc static-libs"
 DOCS=( Announce.txt File_id.diz README.txt REGISTER.txt )
 
 PATCHES=(
-	"${FILESDIR}"/${P}-64bit.patch
-	"${FILESDIR}"/${P}-format-security.patch
+	"${FILESDIR}"/${PN}-2012.1-64bit.patch
 	)
 
 src_configure() {
 	append-flags -fno-strict-aliasing
 	mycmakeargs+=(
 		-DLIB_INSTALL_DIR="${EPREFIX}"/usr/$(get_libdir)
-		-DDOC_INSTALL_DIR="${EPREFIX}"/usr/share/doc/${PF}/html
+		-DDOC_INSTALL_DIR="${EPREFIX}"/usr/share/doc/${P}/html
 	)
 	cmake-utils_src_configure
-}
-
-pkg_preinst() {
-	# See https://bugs.gentoo.org/show_bug.cgi?id=435006
-	# If qhull-2010 is installed we need to remove its include dir so
-	# that it can be replaced with a symlink in this version.
-	rm -rf "${EROOT}"usr/include/qhull || die
 }
 
 src_install() {
@@ -45,7 +34,7 @@ src_install() {
 	# compatibility with previous installs
 	dosym libqhull /usr/include/qhull
 	if ! use doc; then
-		rm -rf "${ED}"/usr/share/doc/${PF}/html || die
+		rm -rf "${ED}"/usr/share/doc/${P}/html || die
 	fi
 	if ! use static-libs; then
 		rm -f "${ED}"/usr/$(get_libdir)/lib*.a || die
