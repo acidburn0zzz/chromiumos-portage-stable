@@ -1,6 +1,5 @@
 DEFINED_PHASES=install
 DESCRIPTION=Provides /etc/mime.types file
-EAPI=0
 HOMEPAGE=http://www.gentoo.org/
 KEYWORDS=*
 LICENSE=GPL-2

@@ -1,6 +1,5 @@
 DEFINED_PHASES=install postinst unpack
 DESCRIPTION=Eselect module for management of multiple Python versions
-EAPI=0
 HOMEPAGE=http://www.gentoo.org/proj/en/Python/
 KEYWORDS=*
 LICENSE=GPL-2

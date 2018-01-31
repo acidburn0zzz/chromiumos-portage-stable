@@ -1,7 +1,6 @@
 DEFINED_PHASES=compile install postinst postrm prerm unpack
 DEPEND=>=app-arch/unzip-5.41 >=app-text/sgml-common-0.6.3-r2
 DESCRIPTION=Docbook SGML DTD 4.3
-EAPI=0
 HOMEPAGE=http://www.docbook.org/sgml/
 KEYWORDS=*
 LICENSE=as-is

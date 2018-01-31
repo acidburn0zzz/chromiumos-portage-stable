@@ -1,6 +1,5 @@
 DEFINED_PHASES=compile install unpack
 DESCRIPTION=Provides lockspool utility
-EAPI=0
 HOMEPAGE=http://www.openbsd.org/
 KEYWORDS=*
 LICENSE=BSD

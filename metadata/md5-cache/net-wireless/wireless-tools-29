@@ -1,7 +1,6 @@
 DEFINED_PHASES=compile install unpack
 DEPEND=sys-apps/sed
 DESCRIPTION=A collection of tools to configure IEEE 802.11 wireless LAN cards
-EAPI=0
 HOMEPAGE=http://www.hpl.hp.com/personal/Jean_Tourrilhes/Linux/Tools.html
 IUSE=multicall nls
 KEYWORDS=*

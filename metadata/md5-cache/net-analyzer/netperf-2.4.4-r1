@@ -1,7 +1,6 @@
 DEFINED_PHASES=install unpack
 DEPEND=!<sys-devel/gettext-0.18.1.1-r3 || ( >=sys-devel/automake-1.13 >=sys-devel/automake-1.15 ) >=sys-devel/autoconf-2.69 >=sys-devel/libtool-2.4
 DESCRIPTION=Network performance benchmark including tests for TCP, UDP, sockets, ATM and more.
-EAPI=0
 HOMEPAGE=http://www.netperf.org/
 KEYWORDS=*
 LICENSE=netperf

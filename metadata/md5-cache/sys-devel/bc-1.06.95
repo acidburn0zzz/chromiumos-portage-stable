@@ -1,7 +1,6 @@
 DEFINED_PHASES=compile install
 DEPEND=readline? ( >=sys-libs/readline-4.1 >=sys-libs/ncurses-5.2 ) libedit? ( dev-libs/libedit ) sys-devel/flex
 DESCRIPTION=Handy console-based calculator utility
-EAPI=0
 HOMEPAGE=http://www.gnu.org/software/bc/bc.html
 IUSE=libedit readline static
 KEYWORDS=*

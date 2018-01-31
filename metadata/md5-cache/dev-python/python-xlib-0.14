@@ -1,7 +1,6 @@
 DEFINED_PHASES=compile install postinst postrm test unpack
 DEPEND=doc? ( virtual/latex-base >=sys-apps/texinfo-4.8-r2 ) dev-lang/python
 DESCRIPTION=A fully functional X client library for Python, written in Python
-EAPI=0
 HOMEPAGE=http://python-xlib.sourceforge.net/
 IUSE=doc
 KEYWORDS=*

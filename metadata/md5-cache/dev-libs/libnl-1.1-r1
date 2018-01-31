@@ -1,6 +1,5 @@
 DEFINED_PHASES=install unpack
 DESCRIPTION=A library for applications dealing with netlink socket
-EAPI=0
 HOMEPAGE=http://people.suug.ch/~tgr/libnl/
 KEYWORDS=*
 LICENSE=LGPL-2.1

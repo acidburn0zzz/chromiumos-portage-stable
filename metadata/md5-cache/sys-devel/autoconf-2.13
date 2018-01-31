@@ -1,7 +1,6 @@
 DEFINED_PHASES=compile install unpack
 DEPEND=>=sys-apps/texinfo-4.3 sys-devel/autoconf-wrapper =sys-devel/m4-1.4* dev-lang/perl
 DESCRIPTION=Used to create autoconfiguration files
-EAPI=0
 HOMEPAGE=http://www.gnu.org/software/autoconf/autoconf.html
 KEYWORDS=*
 LICENSE=GPL-2

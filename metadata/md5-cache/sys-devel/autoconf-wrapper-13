@@ -1,6 +1,5 @@
 DEFINED_PHASES=install
 DESCRIPTION=wrapper for autoconf to manage multiple autoconf versions
-EAPI=0
 HOMEPAGE=http://www.gentoo.org/
 KEYWORDS=*
 LICENSE=GPL-2

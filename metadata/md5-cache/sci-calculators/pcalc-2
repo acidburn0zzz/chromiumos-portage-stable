@@ -1,6 +1,5 @@
 DEFINED_PHASES=compile install
 DESCRIPTION=the programmers calculator
-EAPI=0
 HOMEPAGE=http://pcalc.sourceforge.net/
 KEYWORDS=*
 LICENSE=GPL-2

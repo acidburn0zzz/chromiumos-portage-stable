@@ -1,6 +1,5 @@
 DEFINED_PHASES=-
 DESCRIPTION=Virtual for command-line pagers
-EAPI=0
 KEYWORDS=*
 RDEPEND=|| ( sys-apps/less sys-apps/more sys-apps/most sys-apps/util-linux app-text/lv )
 SLOT=0
