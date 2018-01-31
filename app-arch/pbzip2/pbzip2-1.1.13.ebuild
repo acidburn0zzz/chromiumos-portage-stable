@@ -1,13 +1,12 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/app-arch/pbzip2/pbzip2-1.1.8.ebuild,v 1.11 2014/01/18 01:43:37 vapier Exp $
 
-EAPI=4
+EAPI=5
 
 inherit flag-o-matic eutils
 
 DESCRIPTION="Parallel bzip2 (de)compressor using libbz2"
-HOMEPAGE="http://compression.ca/pbzip2/"
+HOMEPAGE="http://compression.ca/pbzip2/ https://launchpad.net/pbzip2"
 SRC_URI="https://launchpad.net/pbzip2/${PV:0:3}/${PV}/+download/${P}.tar.gz"
 
 LICENSE="BZIP2"
@@ -23,16 +22,16 @@ DEPEND="${RDEPEND}
 	static? ( ${LIB_DEPEND} )"
 
 src_prepare() {
-	epatch "${FILESDIR}"/${PN}-1.1.6-makefile.patch
+	# https://bugs.launchpad.net/pbzip2/+bug/1746369
+	sed -i 's:"PRIuMAX":" PRIuMAX ":g' *.cpp || die
+	epatch "${FILESDIR}"/${PN}-1.1.10-makefile.patch
 	tc-export CXX
 	use static && append-ldflags -static
 }
 
 src_install() {
-	dobin pbzip2
+	emake DESTDIR="${ED}" install
 	dodoc AUTHORS ChangeLog README
-	doman pbzip2.1
-	dosym pbzip2 /usr/bin/pbunzip2
 
 	if use symlink ; then
 		local s
