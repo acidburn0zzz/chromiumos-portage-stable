@@ -1,9 +1,8 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/app-text/opensp/opensp-1.5.2-r3.ebuild,v 1.18 2014/06/25 19:55:40 pacho Exp $
 
 EAPI=5
-inherit eutils flag-o-matic
+inherit eutils flag-o-matic autotools
 
 MY_P=${P/opensp/OpenSP}
 
@@ -31,12 +30,14 @@ RDEPEND=""
 S=${WORKDIR}/${MY_P}
 
 src_prepare() {
-	epatch \
-		"${FILESDIR}"/${PN}-1.5-gcc34.patch \
-		"${FILESDIR}"/${P}-fix-segfault.patch
+	epatch "${FILESDIR}"/${P}-fix-segfault.patch
+	epatch "${FILESDIR}"/${P}-c11-using.patch
+	use prefix && eautoreconf
 }
 
 src_configure() {
+	export CONFIG_SHELL=${BASH}  # configure needs bash
+
 	# The following filters are taken from openjade's ebuild. See bug #100828.
 	# Please note!  Opts are disabled.  If you know what you're doing
 	# feel free to remove this line.  It may cause problems with
