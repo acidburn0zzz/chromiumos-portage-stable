@@ -1,6 +1,7 @@
 DEFINED_PHASES=compile install setup unpack
 DEPEND=virtual/opengl virtual/glu !media-libs/glut !<sys-devel/gettext-0.18.1.1-r3 || ( >=sys-devel/automake-1.13 >=sys-devel/automake-1.15 ) >=sys-devel/autoconf-2.69 >=sys-devel/libtool-2.4
 DESCRIPTION=A completely OpenSourced alternative to the OpenGL Utility Toolkit (GLUT) library
+EAPI=0
 HOMEPAGE=http://freeglut.sourceforge.net/
 KEYWORDS=*
 LICENSE=MIT

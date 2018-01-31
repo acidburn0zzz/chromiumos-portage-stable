@@ -1,5 +1,6 @@
 DEFINED_PHASES=install
 DESCRIPTION=Utility to change the binutils version being used
+EAPI=0
 HOMEPAGE=http://www.gentoo.org/
 KEYWORDS=*
 LICENSE=GPL-2

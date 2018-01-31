@@ -1,5 +1,6 @@
 DEFINED_PHASES=-
 DESCRIPTION=Virtual for user account management utilities
+EAPI=0
 KEYWORDS=*
 RDEPEND=!prefix? ( || ( >=sys-apps/shadow-4.1 sys-apps/hardened-shadow ) )
 SLOT=0

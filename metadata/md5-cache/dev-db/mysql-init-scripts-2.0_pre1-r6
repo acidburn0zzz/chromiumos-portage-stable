@@ -1,6 +1,7 @@
 DEFINED_PHASES=install postinst
 DEPEND=virtual/pkgconfig
 DESCRIPTION=Gentoo MySQL init scripts.
+EAPI=0
 HOMEPAGE=http://www.gentoo.org/
 KEYWORDS=*
 LICENSE=GPL-2

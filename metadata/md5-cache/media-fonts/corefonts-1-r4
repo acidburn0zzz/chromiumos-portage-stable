@@ -1,6 +1,7 @@
 DEFINED_PHASES=install postinst postrm setup unpack
 DEPEND=app-arch/cabextract X? ( x11-apps/mkfontdir media-fonts/encodings ) >=media-libs/fontconfig-2.4.0
 DESCRIPTION=Microsoft's TrueType core fonts
+EAPI=0
 HOMEPAGE=http://corefonts.sourceforge.net/
 IUSE=X X
 KEYWORDS=*

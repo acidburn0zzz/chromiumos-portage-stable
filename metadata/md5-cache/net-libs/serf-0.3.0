@@ -1,6 +1,7 @@
 DEFINED_PHASES=compile install unpack
 DEPEND=dev-libs/apr dev-libs/apr-util dev-libs/openssl sys-libs/zlib !<sys-devel/gettext-0.18.1.1-r3 || ( >=sys-devel/automake-1.13 >=sys-devel/automake-1.15 ) >=sys-devel/autoconf-2.69 >=sys-devel/libtool-2.4
 DESCRIPTION=HTTP client library
+EAPI=0
 HOMEPAGE=http://code.google.com/p/serf/
 KEYWORDS=*
 LICENSE=Apache-2.0

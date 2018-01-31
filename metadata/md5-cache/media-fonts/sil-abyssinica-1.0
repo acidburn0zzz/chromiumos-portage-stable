@@ -1,6 +1,7 @@
 DEFINED_PHASES=install postinst postrm setup
 DEPEND=X? ( x11-apps/mkfontdir media-fonts/encodings ) >=media-libs/fontconfig-2.4.0
 DESCRIPTION=SIL Opentype Unicode fonts for Ethiopic languages
+EAPI=0
 HOMEPAGE=http://scripts.sil.org/AbyssinicaSIL
 IUSE=doc X
 KEYWORDS=*

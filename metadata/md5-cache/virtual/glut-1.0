@@ -1,5 +1,6 @@
 DEFINED_PHASES=-
 DESCRIPTION=Virtual for OpenGL utility toolkit
+EAPI=0
 KEYWORDS=*
 RDEPEND=media-libs/freeglut
 SLOT=0
