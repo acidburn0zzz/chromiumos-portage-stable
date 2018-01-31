@@ -1,6 +1,7 @@
 DEFINED_PHASES=-
 DEPEND=|| ( sys-devel/bison dev-util/yacc )
 DESCRIPTION=virtual for yacc (yet another compiler compiler)
+EAPI=0
 KEYWORDS=*
 RDEPEND=|| ( sys-devel/bison dev-util/yacc )
 SLOT=0

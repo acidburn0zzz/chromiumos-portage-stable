@@ -1,5 +1,6 @@
 DEFINED_PHASES=-
 DESCRIPTION=Virtual for Serif/Sans/Monospace font packages
+EAPI=0
 KEYWORDS=*
 RDEPEND=|| ( media-fonts/dejavu media-fonts/ttf-bitstream-vera media-fonts/liberation-fonts media-fonts/droid media-fonts/freefont-ttf media-fonts/corefonts )
 SLOT=0

@@ -1,5 +1,6 @@
 DEFINED_PHASES=install
 DESCRIPTION=An eselect module to manage /etc/fonts/conf.d symlinks.
+EAPI=0
 HOMEPAGE=http://www.gentoo.org
 KEYWORDS=*
 LICENSE=GPL-2

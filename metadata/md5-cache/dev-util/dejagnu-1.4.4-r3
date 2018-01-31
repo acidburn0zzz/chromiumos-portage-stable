@@ -1,6 +1,7 @@
 DEFINED_PHASES=install test unpack
 DEPEND=dev-lang/tcl dev-tcltk/expect
 DESCRIPTION=framework for testing other programs
+EAPI=0
 HOMEPAGE=http://www.gnu.org/software/dejagnu/
 IUSE=doc
 KEYWORDS=*
