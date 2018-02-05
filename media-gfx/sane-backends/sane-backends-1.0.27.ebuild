@@ -1,10 +1,8 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
-EAPI="5"
-
-inherit eutils flag-o-matic multilib multilib-minimal udev user toolchain-funcs
+EAPI=6
+inherit flag-o-matic ltprune multilib-minimal systemd toolchain-funcs udev user
 
 # gphoto and v4l are handled by their usual USE flags.
 # The pint backend was disabled because I could not get it to compile.
@@ -94,7 +92,7 @@ IUSE_SANE_BACKENDS="
 	umax_pp
 	xerox_mfp"
 
-IUSE="avahi doc gphoto2 ipv6 nls snmp systemd threads usb v4l xinetd"
+IUSE="gphoto2 ipv6 snmp systemd threads usb v4l xinetd zeroconf"
 
 for backend in ${IUSE_SANE_BACKENDS}; do
 	case ${backend} in
@@ -131,7 +129,7 @@ case ${PV} in
 	;;
 *)
 	MY_P=${P}
-	FRS_ID="4146"
+	FRS_ID="4224"
 	SRC_URI="https://alioth.debian.org/frs/download.php/file/${FRS_ID}/${P}.tar.gz"
 	;;
 esac
@@ -149,7 +147,6 @@ RDEPEND="
 		>=virtual/jpeg-0-r2:0=[${MULTILIB_USEDEP}]
 		>=media-libs/tiff-3.9.7-r1:0=[${MULTILIB_USEDEP}]
 	)
-	avahi? ( >=net-dns/avahi-0.6.31-r2[${MULTILIB_USEDEP}] )
 	sane_backends_canon_pp? ( >=sys-libs/libieee1284-0.2.11-r3[${MULTILIB_USEDEP}] )
 	sane_backends_hpsj5s? ( >=sys-libs/libieee1284-0.2.11-r3[${MULTILIB_USEDEP}] )
 	sane_backends_mustek_pp? ( >=sys-libs/libieee1284-0.2.11-r3[${MULTILIB_USEDEP}] )
@@ -162,19 +159,19 @@ RDEPEND="
 	xinetd? ( sys-apps/xinetd )
 	snmp? ( net-analyzer/net-snmp )
 	systemd? ( sys-apps/systemd:0= )
+	zeroconf? ( >=net-dns/avahi-0.6.31-r2[${MULTILIB_USEDEP}] )
 "
 
 DEPEND="${RDEPEND}
 	v4l? ( sys-kernel/linux-headers )
-	doc? (
-		virtual/latex-base
-		dev-texlive/texlive-latexextra
-	)
-	>=virtual/pkgconfig-0-r1[${MULTILIB_USEDEP}]"
+	>=sys-devel/gettext-0.18.1
+	>=virtual/pkgconfig-0-r1[${MULTILIB_USEDEP}]
+"
 
 # We now use new syntax construct (SUBSYSTEMS!="usb|usb_device)
 RDEPEND="${RDEPEND}
-	!<sys-fs/udev-114"
+	!<sys-fs/udev-114
+"
 
 MULTILIB_CHOST_TOOLS=(
 	/usr/bin/sane-config
@@ -186,14 +183,18 @@ pkg_setup() {
 }
 
 src_prepare() {
+	default
+
 	cat >> backend/dll.conf.in <<-EOF
 	# Add support for the HP-specific backend.  Needs net-print/hplip installed.
 	hpaio
 	# Add support for the Epson-specific backend.  Needs media-gfx/iscan installed.
 	epkowa
 	EOF
-	epatch "${FILESDIR}"/${PN}-1.0.24-saned_pidfile_location.patch
-	epatch "${FILESDIR}"/${PN}-1.0.25-disable-usb-tests.patch
+
+	eapply "${FILESDIR}"/${PN}-1.0.24-saned_pidfile_location.patch
+	eapply "${FILESDIR}"/${PN}-1.0.27-disable-usb-tests.patch
+
 	if [[ ${PV} == "9999" ]] ; then
 		mv configure.{in,ac} || die
 		AT_NOELIBTOOLIZE=yes eautoreconf
@@ -207,7 +208,7 @@ src_prepare() {
 }
 
 src_configure() {
-	append-flags -fno-strict-aliasing
+	append-flags -fno-strict-aliasing # bug?????
 
 	# if LINGUAS is set, just use the listed and supported localizations.
 	if [[ ${LINGUAS+set} == "set" ]]; then
@@ -232,16 +233,13 @@ multilib_src_configure() {
 	done
 
 	local myconf=(
-		$(use_enable usb libusb_1_0)
+		$(use_with usb)
 		$(multilib_native_use_with snmp)
 	)
 
 	# you can only enable this backend, not disable it...
 	if use sane_backends_pnm; then
 		myconf+=( --enable-pnm-backend )
-	fi
-	if ! use doc; then
-		myconf+=( --disable-latex )
 	fi
 	if use sane_backends_mustek_pp; then
 		myconf+=( --enable-parport-directio )
@@ -258,10 +256,9 @@ multilib_src_configure() {
 		$(use_with gphoto2) \
 		$(multilib_native_use_with systemd) \
 		$(use_with v4l) \
-		$(use_enable avahi) \
 		$(use_enable ipv6) \
-		$(use_enable nls translations) \
 		$(use_enable threads pthread) \
+		$(use_enable zeroconf avahi) \
 		"${myconf[@]}"
 }
 
@@ -319,6 +316,11 @@ multilib_src_install_all() {
 	fperms g+w /var/lib/lock/sane
 	dodir /etc/env.d
 
+	if use systemd; then
+		systemd_newunit "${FILESDIR}"/saned_at.service "saned@.service"
+		systemd_newunit "${FILESDIR}"/saned.socket saned.socket
+	fi
+
 	if use usb; then
 		exeinto /etc/hotplug/usb
 		doexe tools/hotplug/libusbscanner
@@ -326,7 +328,7 @@ multilib_src_install_all() {
 	fi
 
 	dodoc NEWS AUTHORS ChangeLog* PROBLEMS README README.linux
-	prune_libtool_files --all
+	prune_libtool_files --modules
 	if use xinetd; then
 		insinto /etc/xinetd.d
 		doins "${FILESDIR}"/saned
