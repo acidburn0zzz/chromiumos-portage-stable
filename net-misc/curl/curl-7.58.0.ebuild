@@ -1,4 +1,4 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI="5"
@@ -12,7 +12,7 @@ SRC_URI="https://curl.haxx.se/download/${P}.tar.bz2"
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS="*"
-IUSE="adns http2 idn ipv6 kerberos ldap metalink rtmp samba ssh ssl static-libs test threads"
+IUSE="adns brotli http2 idn ipv6 kerberos ldap metalink rtmp samba ssh ssl static-libs test threads"
 IUSE+=" curl_ssl_axtls curl_ssl_gnutls curl_ssl_libressl curl_ssl_mbedtls curl_ssl_nss +curl_ssl_openssl curl_ssl_winssl"
 IUSE+=" elibc_Winnt"
 
@@ -20,6 +20,7 @@ IUSE+=" elibc_Winnt"
 RESTRICT="test"
 
 RDEPEND="ldap? ( net-nds/openldap[${MULTILIB_USEDEP}] )
+	brotli? ( app-arch/brotli:= )
 	ssl? (
 		curl_ssl_axtls? (
 			net-libs/axtls:0=[${MULTILIB_USEDEP}]
@@ -206,7 +207,7 @@ multilib_src_configure() {
 		$(use_with metalink libmetalink) \
 		$(use_with http2 nghttp2) \
 		$(use_with rtmp librtmp) \
-		--without-brotli \
+		$(use_with brotli) \
 		--without-spnego \
 		--without-winidn \
 		--with-zlib \
