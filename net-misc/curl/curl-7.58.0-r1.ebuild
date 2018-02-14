@@ -1,7 +1,7 @@
 # Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="6"
+EAPI="5"
 
 inherit autotools eutils prefix multilib-minimal
 
@@ -105,13 +105,13 @@ MULTILIB_CHOST_TOOLS=(
 )
 
 src_prepare() {
-	eapply "${FILESDIR}"/${PN}-7.30.0-prefix.patch
-	eapply "${FILESDIR}"/${PN}-respect-cflags-3.patch
-	eapply "${FILESDIR}"/${PN}-fix-gnutls-nettle.patch
+	epatch "${FILESDIR}"/${PN}-7.30.0-prefix.patch
+	epatch "${FILESDIR}"/${PN}-respect-cflags-3.patch
+	epatch "${FILESDIR}"/${PN}-fix-gnutls-nettle.patch
 
 	sed -i '/LD_LIBRARY_PATH=/d' configure.ac || die #382241
 
-	eapply_user
+	epatch_user
 	eprefixify curl-config.in
 	eautoreconf
 
