@@ -1,8 +1,7 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
-EAPI="4"
+EAPI="5"
 
 inherit eutils flag-o-matic toolchain-funcs multilib
 
@@ -39,16 +38,23 @@ SRC_URI="mirror://gnu/bash/${MY_P}.tar.gz $(patches)"
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="*"
-IUSE="afs bashlogger examples mem-scramble +net nls plugins +readline vanilla"
+IUSE="afs bashlogger examples mem-scramble +net nls plugins +readline"
 
-DEPEND=">=sys-libs/ncurses-5.2-r2
-	readline? ( >=sys-libs/readline-${READLINE_VER} )
+DEPEND=">=sys-libs/ncurses-5.2-r2:0=
+	readline? ( >=sys-libs/readline-${READLINE_VER}:0= )
 	nls? ( virtual/libintl )"
 RDEPEND="${DEPEND}
 	!<sys-apps/portage-2.1.6.7_p1
 	!<sys-apps/paludis-0.26.0_alpha5"
 # we only need yacc when the .y files get patched (bash42-005)
 DEPEND+=" virtual/yacc"
+
+PATCHES=(
+	"${FILESDIR}"/${PN}-4.3-mapfile-improper-array-name-validation.patch
+	"${FILESDIR}"/${PN}-4.3-arrayfunc.patch
+	"${FILESDIR}"/${PN}-4.3-protos.patch
+	"${FILESDIR}"/${PN}-4.4-popd-offset-overflow.patch #600174
+)
 
 S=${WORKDIR}/${MY_P}
 
@@ -83,10 +89,7 @@ src_prepare() {
 	sed -i -r '/^(HS|RL)USER/s:=.*:=:' doc/Makefile.in || die
 	touch -r . doc/*
 
-	epatch "${FILESDIR}"/${PN}-4.3-compat-lvl.patch
-	epatch "${FILESDIR}"/${PN}-4.3-append-process-segfault.patch
-	epatch "${FILESDIR}"/${PN}-4.3-mapfile-improper-array-name-validation.patch
-	epatch "${FILESDIR}"/${PN}-4.3-arrayfunc.patch
+	epatch "${PATCHES[@]}"
 
 	epatch_user
 }
@@ -95,14 +98,15 @@ src_configure() {
 	local myconf=()
 
 	# For descriptions of these, see config-top.h
-	# bashrc/#26952 bash_logout/#90488 ssh/#24762
+	# bashrc/#26952 bash_logout/#90488 ssh/#24762 mktemp/#574426
 	append-cppflags \
-		-DDEFAULT_PATH_VALUE=\'\"/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\"\' \
-		-DSTANDARD_UTILS_PATH=\'\"/bin:/usr/bin:/sbin:/usr/sbin\"\' \
-		-DSYS_BASHRC=\'\"/etc/bash/bashrc\"\' \
-		-DSYS_BASH_LOGOUT=\'\"/etc/bash/bash_logout\"\' \
+		-DDEFAULT_PATH_VALUE=\'\"${EPREFIX}/usr/local/sbin:${EPREFIX}/usr/local/bin:${EPREFIX}/usr/sbin:${EPREFIX}/usr/bin:${EPREFIX}/sbin:${EPREFIX}/bin\"\' \
+		-DSTANDARD_UTILS_PATH=\'\"${EPREFIX}/bin:${EPREFIX}/usr/bin:${EPREFIX}/sbin:${EPREFIX}/usr/sbin\"\' \
+		-DSYS_BASHRC=\'\"${EPREFIX}/etc/bash/bashrc\"\' \
+		-DSYS_BASH_LOGOUT=\'\"${EPREFIX}/etc/bash/bash_logout\"\' \
 		-DNON_INTERACTIVE_LOGIN_SHELLS \
 		-DSSH_SOURCE_BASHRC \
+		-DUSE_MKTEMP -DUSE_MKSTEMP \
 		$(use bashlogger && echo -DSYSLOG_HISTORY)
 
 	# Don't even think about building this statically without
