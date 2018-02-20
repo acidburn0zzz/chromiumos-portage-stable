@@ -33,6 +33,9 @@ RESTRICT="test"
 
 src_prepare() {
 	epatch_user
+	epatch "${FILESDIR}/libsepol-2.7-add-ability-to-redeclare-types-attributes.patch"
+	epatch "${FILESDIR}/libsepol-2.7-keep-attributes-used-by-generated-attributes-in-neverallow-rules.patch"
+	epatch "${FILESDIR}/libsepol-2.7-create-new-keep-field-for-type-attribute-sets.patch"
 	multilib_copy_sources
 }
 

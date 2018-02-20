@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI="5"
-inherit toolchain-funcs
+inherit eutils
 
 MY_P="${P//_/-}"
 MY_RELEASEDATE="20170804"
@@ -37,6 +37,10 @@ RDEPEND="
 # tests are not meant to be run outside of the
 # full SELinux userland repo
 RESTRICT="test"
+
+src_prepare() {
+	epatch "${FILESDIR}/secilc-2.7-add-ability-to-redeclare-types-attributes.patch"
+}
 
 src_compile() {
 	tc-export CC
