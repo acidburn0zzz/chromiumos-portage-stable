@@ -1,6 +1,5 @@
-# Copyright 1999-2012 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/eclass/udev.eclass,v 1.11 2013/03/24 15:52:01 ssuominen Exp $
 
 # @ECLASS: udev.eclass
 # @MAINTAINER:
@@ -13,9 +12,8 @@
 # @CODE
 # inherit udev
 #
-# # In this example 196 is the first version with udev.bin hwdb database,
-# # and we also link against libgudev
-# RDEPEND=">=virtual/udev-196[hwdb,gudev]"
+# # Example of the eclass usage:
+# RDEPEND="virtual/udev"
 # DEPEND="${RDEPEND}"
 #
 # src_configure() {
@@ -29,10 +27,13 @@
 # }
 # @CODE
 
+if [[ -z ${_UDEV_ECLASS} ]]; then
+_UDEV_ECLASS=1
+
 inherit toolchain-funcs
 
 case ${EAPI:-0} in
-	0|1|2|3|4|5) ;;
+	0|1|2|3|4|5|6) ;;
 	*) die "${ECLASS}.eclass API in EAPI ${EAPI} not yet established."
 esac
 
@@ -57,7 +58,8 @@ _udev_get_udevdir() {
 udev_get_udevdir() {
 	debug-print-function ${FUNCNAME} "${@}"
 
-	echo "$(_udev_get_udevdir)"
+	eerror "This ebuild should be using the get_udevdir() function instead of the deprecated udev_get_udevdir()"
+	die "Deprecated function call: udev_get_udevdir(), please report to (overlay) maintainers."
 }
 
 # @FUNCTION: get_udevdir
@@ -113,3 +115,5 @@ udev_reload() {
 		eend $?
 	fi
 }
+
+fi
