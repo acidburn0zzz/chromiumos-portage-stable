@@ -1,19 +1,18 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
-EAPI=5
+EAPI="5"
 
 inherit eutils flag-o-matic toolchain-funcs
 
 DESCRIPTION="Super-useful stream editor"
 HOMEPAGE="http://sed.sourceforge.net/"
-SRC_URI="mirror://gnu/sed/${P}.tar.bz2"
+SRC_URI="mirror://gnu/sed/${P}.tar.xz"
 
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="*"
-IUSE="acl nls selinux static"
+IUSE="acl forced-sandbox nls selinux static"
 
 RDEPEND="acl? ( virtual/acl )
 	nls? ( virtual/libintl )
@@ -29,19 +28,23 @@ src_bootstrap_sed() {
 		./bootstrap.sh || die "couldnt bootstrap"
 		cp sed/sed "${T}"/ || die "couldnt copy"
 		export PATH="${PATH}:${T}"
-		make clean || die "couldnt clean"
+		emake clean
 	fi
 }
 
 src_prepare() {
-	epatch "${FILESDIR}"/${PN}-4.1.5-alloca.patch
-
-	# don't use sed before bootstrap if we have to recover a broken host sed
+	# Don't use sed before bootstrap if we have to recover a broken host sed.
 	src_bootstrap_sed
-	# this has to be after the bootstrap portion
-	sed -i \
-		-e '/docdir =/s:=.*/doc:= $(datadir)/doc/'${PF}'/html:' \
-		doc/Makefile.in || die "sed html doc"
+
+	if use forced-sandbox ; then
+		# Upstream doesn't want to add a configure flag for this.
+		# https://lists.gnu.org/archive/html/bug-sed/2018-03/msg00001.html
+		sed -i \
+			-e '/^bool sandbox = false;/s:false:true:' \
+			sed/sed.c || die
+		# Make sure the sed took.
+		grep -q '^bool sandbox = true;' sed/sed.c || die "forcing sandbox failed"
+	fi
 }
 
 src_configure() {
@@ -52,13 +55,12 @@ src_configure() {
 		myconf+=( --program-prefix=g )
 	fi
 
-	# Should be able to drop this hack in next release. #333887
-	tc-is-cross-compiler && export gl_cv_func_working_acl_get_file=yes
 	export ac_cv_search_setfilecon=$(usex selinux -lselinux)
 	export ac_cv_header_selinux_{context,selinux}_h=$(usex selinux)
 	use static && append-ldflags -static
-	econf \
-		$(use_enable acl) \
-		$(use_enable nls) \
-		"${myconf[@]}"
+	myconf+=(
+		$(use_enable acl)
+		$(use_enable nls)
+	)
+	econf "${myconf[@]}"
 }
