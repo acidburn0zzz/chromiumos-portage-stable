@@ -190,7 +190,7 @@ src_configure() {
 	fi
 
 	local udevdir="${EPREFIX}/lib/udev/rules.d"
-	use udev && udevdir="${EPREFIX}/$(udev_get_udevdir)/rules.d"
+	use udev && udevdir="${EPREFIX}/$(get_udevdir)/rules.d"
 
 	econf \
 		$(use_enable readline) \
