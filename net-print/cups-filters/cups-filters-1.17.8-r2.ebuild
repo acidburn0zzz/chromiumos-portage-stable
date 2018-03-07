@@ -19,8 +19,14 @@ HOMEPAGE="https://wiki.linuxfoundation.org/openprinting/cups-filters"
 
 LICENSE="MIT GPL-2"
 SLOT="0"
-IUSE="dbus +foomatic ipp_autosetup jpeg ldap pclm pdf perl png +postscript static-libs test tiff zeroconf"
+# TODO (https://crbug.com/819691): Remove ssl USE flag after the cups-filters
+# configure script has been updated to remove dependency on gnutls. See
+# (https://crbug.com/819700).
+IUSE="dbus +foomatic ipp_autosetup jpeg ldap pclm pdf perl png +postscript +ssl static-libs test tiff zeroconf"
 
+# TODO (https://crbug.com/819691): Remove gnutls dependency after the
+# cups-filters configure script has been updated to remove dependency on gnutls.
+# See (https://crbug.com/819700).
 RDEPEND="
 	>=app-text/poppler-0.32:=[cxx,jpeg?,lcms,tiff?,utils]
 	>=app-text/qpdf-3.0.2:=
@@ -41,6 +47,7 @@ RDEPEND="
 	perl? ( dev-lang/perl:= )
 	png? ( media-libs/libpng:0= )
 	postscript? ( >=app-text/ghostscript-gpl-9.09[cups] )
+	ssl? ( net-libs/gnutls )
 	tiff? ( media-libs/tiff:0 )
 	zeroconf? ( net-dns/avahi[dbus] )
 "
