@@ -10,5 +10,5 @@ RDEPEND=sane_backends_dc210? ( >=virtual/jpeg-0-r2:0=[abi_x86_32(-)?,abi_x86_64(
 REQUIRED_USE=sane_backends_mustek_usb2? ( threads ) sane_backends_kvs40xx? ( threads )
 SLOT=0
 SRC_URI=https://alioth.debian.org/frs/download.php/file/4146/sane-backends-1.0.25.tar.gz
-_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multibuild	742139c87a9fa3766f0c2b155e5522bf	multilib	97f470f374f2e94ccab04a2fb21d811e	multilib-build	8fe2e81aeb36cdf8a6cc5f50443879cc	multilib-minimal	0224dee31c0f98405d572e14ad6dee65	toolchain-funcs	6198c04daba0e1307bd844df7d37f423	udev	a9a8d051efb42bfe884c1db82ce161de	user	c8f947561e8797a300801d0dd3625448
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multibuild	742139c87a9fa3766f0c2b155e5522bf	multilib	97f470f374f2e94ccab04a2fb21d811e	multilib-build	8fe2e81aeb36cdf8a6cc5f50443879cc	multilib-minimal	0224dee31c0f98405d572e14ad6dee65	toolchain-funcs	6198c04daba0e1307bd844df7d37f423	udev	d91cac2c73b94629cad2daea66e0d182	user	c8f947561e8797a300801d0dd3625448
 _md5_=cc1f7b18a1b8c43a88886d898e3cb51b
