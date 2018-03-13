@@ -1,7 +1,6 @@
-#!/sbin/runscript
-# Copyright 1999-2013 Gentoo Foundation
+#!/sbin/openrc-run
+# Copyright 1999-2016 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-fs/lvm2/files/device-mapper.rc-2.02.95-r2,v 1.2 2013/04/09 11:00:26 ssuominen Exp $
 
 depend() {
 	# As of .67-r1, we call ALL lvm start/stop scripts with --sysinit, that
@@ -19,19 +18,55 @@ dm_in_proc() {
 	return ${retval}
 }
 
+# char **build_dmsetup_command(volume)
+#
+# Returns complete dmsetup command given single volume name
+build_dmsetup_command() {
+	local count dmsetup_cmd
+	
+	# Number of lines mentioning volume name
+	count=$(grep -v -e '^[[:space:]]*\(#\|$\)' /etc/dmtab | grep -c ${1})
+	
+	# If there's just one line:
+	if [ ${count} -eq 1 ] ; then
+		echo "echo $(grep -v -e '^[[:space:]]*\(#\|$\)' /etc/dmtab | \
+			  grep ${1} | awk '{$1=""; print $0}') | /sbin/dmsetup create ${1}"
+			  
+	# For all cases with more lines:
+	elif [ ${count} -gt 1 ] ; then
+		for c in $( seq 1 ${count} ) ; do
+			if [ ${c} -eq 1 ] ; then
+				# Heavy escaping in awk-statement because we cannot use apostrophes
+				dmsetup_cmd="echo -e $(grep -v -e '^[[:space:]]*\(#\|$\)' /etc/dmtab | \
+							 grep ${1} | awk NR==${c}\ \{\$1=\"\"\;\ print\ \$0\})"
+			else
+				# Append starting with newline
+				dmsetup_cmd="${dmsetup_cmd}\\\\n \
+							 $(grep -v -e '^[[:space:]]*\(#\|$\)' /etc/dmtab | \
+							 grep ${1} | awk NR==${c}\ \{\$1=\"\"\;\ print\ \$0\})"
+			fi
+		done
+		echo "${dmsetup_cmd} | /sbin/dmsetup create ${1}"
+	fi
+
+	return 0
+}
+
 # char **get_new_dm_volumes(void)
 #
-#   Return dmsetup commands to setup volumes
+#   Return unique volumes from /etc/dmtab
 get_new_dm_volumes() {
-	local volume params
+	local volume
 
 	# Filter comments and blank lines
 	grep -v -e '^[[:space:]]*\(#\|$\)' /etc/dmtab | \
-	while read volume params ; do
+	awk '{ print $1 }' | \
+	uniq | \
+	while read volume ; do
 		# If it exists, skip it
 		dmvolume_exists "${volume%:}" && continue
-		# Assemble the command to run to create volume
-		echo "echo ${params} | /sbin/dmsetup create ${volume%:}"
+
+		echo "${volume%:}"
 	done
 
 	return 0
@@ -88,15 +123,15 @@ start() {
 	if [ -x /sbin/dmsetup -a -c /dev/mapper/control -a -f /etc/dmtab ] ; then
 		[ -n "$(get_new_dm_volumes)" ] && \
 			einfo " Setting up device-mapper volumes:"
-	
+		
 		get_new_dm_volumes | \
 		while read x ; do
 			[ -n "${x}" ] || continue
-	
+			
 			volume="${x##* }"
-	
+			
 			ebegin "  Creating volume: ${volume}"
-			if ! eval "${x}" >/dev/null 2>/dev/null ; then
+			if ! eval $(build_dmsetup_command ${volume}) >/dev/null 2>/dev/null ; then
 				eend 1 "  Error creating volume: ${volume}"
 				# dmsetup still adds an empty volume in some cases,
 				#  so lets remove it
