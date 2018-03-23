@@ -1,7 +1,7 @@
 # Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="5"
+EAPI=6
 
 PYTHON_COMPAT=( python2_7 )
 
@@ -18,6 +18,7 @@ LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="*"
 IUSE="aio glusterfs gnuplot gtk numa rbd rdma static zlib"
+REQUIRED_USE="gnuplot? ( ${PYTHON_REQUIRED_USE} )"
 
 # GTK+:2 does not offer static libaries.
 LIB_DEPEND="aio? ( dev-libs/libaio[static-libs(+)] )
@@ -25,6 +26,10 @@ LIB_DEPEND="aio? ( dev-libs/libaio[static-libs(+)] )
 	gtk? ( dev-libs/glib:2[static-libs(+)] )
 	numa? ( sys-process/numactl[static-libs(+)] )
 	rbd? ( sys-cluster/ceph[static-libs(+)] )
+	rdma? (
+		sys-fabric/libibverbs[static-libs(+)]
+		sys-fabric/librdmacm[static-libs(+)]
+	)
 	zlib? ( sys-libs/zlib[static-libs(+)] )"
 RDEPEND="!static? ( ${LIB_DEPEND//\[static-libs(+)]} )
 	gtk? ( x11-libs/gtk+:2 )"
@@ -38,11 +43,12 @@ RDEPEND+="
 
 S="${WORKDIR}/${MY_P}"
 
+PATCHES=(
+	"${FILESDIR}"/fio-2.2.13-libmtd.patch
+)
+
 src_prepare() {
-	epatch "${FILESDIR}"/fio-2.2.13-libmtd.patch
-	epatch "${FILESDIR}"/fio-2.2.15-rdma.patch #542640
 	sed -i '/^DEBUGFLAGS/s: -D_FORTIFY_SOURCE=2::g' Makefile || die
-	epatch_user
 
 	# Many checks don't have configure flags.
 	sed -i \
@@ -50,16 +56,19 @@ src_prepare() {
 		-e '/if compile_prog "" "-lz" "zlib" *; *then/  '"s::if $(usex zlib true false) ; then:" \
 		-e '/if compile_prog "" "-laio" "libaio" ; then/'"s::if $(usex aio true false) ; then:" \
 		configure || die
+	default
 }
 
 src_configure() {
 	chmod g-w "${T}"
 	# not a real configure script
+	# TODO: pmem
 	set -- \
 	./configure \
 		--disable-optimizations \
 		--extra-cflags="${CFLAGS} ${CPPFLAGS}" \
 		--cc="$(tc-getCC)" \
+		--disable-pmem \
 		$(usex glusterfs '' '--disable-gfapi') \
 		$(usex gtk '--enable-gfio' '') \
 		$(usex numa '' '--disable-numa') \
@@ -78,7 +87,10 @@ src_install() {
 	emake install DESTDIR="${D}" prefix="${EPREFIX}/usr" mandir="${EPREFIX}/usr/share/man"
 
 	if use gnuplot ; then
-		python_replicate_script "${ED}/usr/bin/fio2gnuplot"
+		python_replicate_script \
+			"${ED}/usr/bin/fio2gnuplot" \
+			"${ED}/usr/bin/fiologparser_hist.py" \
+			"${ED}/usr/bin/fiologparser.py"
 	else
 		rm "${ED}"/usr/bin/{fio2gnuplot,fio_generate_plots} || die
 		rm "${ED}"/usr/share/man/man1/{fio2gnuplot,fio_generate_plots}.1 || die
