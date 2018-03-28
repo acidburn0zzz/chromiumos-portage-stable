@@ -1,31 +1,41 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
-EAPI=5
+EAPI=6
 PYTHON_COMPAT=( python2_7 )
 PYTHON_REQ_USE="threads(+)"
 
 inherit waf-utils multilib-minimal python-single-r1
 
 DESCRIPTION="Samba tevent library"
-HOMEPAGE="http://tevent.samba.org/"
-SRC_URI="http://samba.org/ftp/tevent/${P}.tar.gz"
+HOMEPAGE="https://tevent.samba.org/"
+SRC_URI="https://www.samba.org/ftp/tevent/${P}.tar.gz"
 
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="*"
-IUSE="python"
+IUSE="elibc_glibc python"
 
-RDEPEND=">=sys-libs/talloc-2.1.8[${MULTILIB_USEDEP}]
+RDEPEND=">=sys-libs/talloc-2.1.11[${MULTILIB_USEDEP}]
 	python? ( ${PYTHON_DEPS} )"
 
 DEPEND="${RDEPEND}
 	>=virtual/pkgconfig-0-r1[${MULTILIB_USEDEP}]
+	elibc_glibc? (
+		net-libs/libtirpc[${MULTILIB_USEDEP}]
+		|| (
+			net-libs/rpcsvc-proto
+			<sys-libs/glibc-2.26[rpc(+)]
+		)
+	)
 	${PYTHON_DEPS}
 "
 # build system does not work with python3
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
+
+#PATCHES=(
+#	"${FILESDIR}"/talloc-disable-python.patch
+#)
 
 WAF_BINARY="${S}/buildtools/bin/waf"
 
@@ -40,6 +50,8 @@ src_prepare() {
 
 multilib_src_configure() {
 	waf-utils_src_configure \
+		--bundled-libraries=NONE \
+		--builtin-libraries=NONE \
 		$(multilib_native_usex python '' '--disable-python')
 }
 
