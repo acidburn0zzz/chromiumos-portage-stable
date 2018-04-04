@@ -1,0 +1,84 @@
+From 1cc3d1a5fa18f652fcf38a0dad971d562c89c2ad Mon Sep 17 00:00:00 2001
+From: Daniel Becker <razzfazz@gmail.com>
+Date: Fri, 11 Dec 2015 18:08:18 -0800
+Subject: [PATCH] advertise correct service and device versions when IGDv2 is
+ enabled
+
+---
+ miniupnpd/minissdp.c | 26 +++++++++++++-------------
+ miniupnpd/upnpsoap.c |  4 ++++
+ 2 files changed, 17 insertions(+), 13 deletions(-)
+
+diff --git a/miniupnpd/minissdp.c b/miniupnpd/minissdp.c
+index e879d15..6f7008e 100644
+--- a/miniupnpd/minissdp.c
++++ b/miniupnpd/minissdp.c
+@@ -469,14 +469,6 @@ SendSSDPResponse(int s, const struct sockaddr * addr,
+ 	}
+ }
+
+-#ifndef IGD_V2
+-#define IGD_VER 1
+-#define WANIPC_VER 1
+-#else
+-#define IGD_VER 2
+-#define WANIPC_VER 2
+-#endif
+-
+ static struct {
+ 	const char * s;
+ 	const int version;
+@@ -484,11 +476,22 @@ static struct {
+ } const known_service_types[] =
+ {
+ 	{"upnp:rootdevice", 0, uuidvalue_igd},
+-	{"urn:schemas-upnp-org:device:InternetGatewayDevice:", IGD_VER, uuidvalue_igd},
++#ifdef IGD_V2
++	{"urn:schemas-upnp-org:device:InternetGatewayDevice:", 2, uuidvalue_igd},
++	{"urn:schemas-upnp-org:device:WANConnectionDevice:", 2, uuidvalue_wcd},
++	{"urn:schemas-upnp-org:device:WANDevice:", 2, uuidvalue_wan},
++	{"urn:schemas-upnp-org:service:WANIPConnection:", 2, uuidvalue_wcd},
++	{"urn:schemas-upnp-org:service:DeviceProtection:", 1, uuidvalue_igd},
++#ifdef ENABLE_6FC_SERVICE
++	{"urn:schemas-upnp-org:service:WANIPv6FirewallControl:", 1, uuidvalue_wcd},
++#endif
++#else
++	{"urn:schemas-upnp-org:device:InternetGatewayDevice:", 1, uuidvalue_igd},
+ 	{"urn:schemas-upnp-org:device:WANConnectionDevice:", 1, uuidvalue_wcd},
+ 	{"urn:schemas-upnp-org:device:WANDevice:", 1, uuidvalue_wan},
++	{"urn:schemas-upnp-org:service:WANIPConnection:", 1, uuidvalue_wcd},
++#endif
+ 	{"urn:schemas-upnp-org:service:WANCommonInterfaceConfig:", 1, uuidvalue_wan},
+-	{"urn:schemas-upnp-org:service:WANIPConnection:", WANIPC_VER, uuidvalue_wcd},
+ #ifndef UPNP_STRICT
+ 	/* We use WAN IP Connection, not PPP connection,
+ 	 * but buggy control points may try to use WanPPPConnection
+@@ -498,9 +501,6 @@ static struct {
+ #ifdef ENABLE_L3F_SERVICE
+ 	{"urn:schemas-upnp-org:service:Layer3Forwarding:", 1, uuidvalue_igd},
+ #endif
+-#ifdef ENABLE_6FC_SERVICE
+-	{"url:schemas-upnp-org:service:WANIPv6FirewallControl:", 1, uuidvalue_wcd},
+-#endif
+ /* we might want to support urn:schemas-wifialliance-org:device:WFADevice:1
+  * urn:schemas-wifialliance-org:device:WFADevice:1
+  * in the future */
+diff --git a/miniupnpd/upnpsoap.c b/miniupnpd/upnpsoap.c
+index 07aa373..6ed0a9b 100644
+--- a/miniupnpd/upnpsoap.c
++++ b/miniupnpd/upnpsoap.c
+@@ -1126,7 +1126,11 @@ GetDefaultConnectionService(struct upnphttp * h, const char * action, const char
+ 	static const char resp[] =
+ 		"<u:%sResponse "
+ 		"xmlns:u=\"urn:schemas-upnp-org:service:Layer3Forwarding:1\">"
++#ifdef IGD_V2
++		"<NewDefaultConnectionService>%s:WANConnectionDevice:2,"
++#else
+ 		"<NewDefaultConnectionService>%s:WANConnectionDevice:1,"
++#endif
+ 		SERVICE_ID_WANIPC "</NewDefaultConnectionService>"
+ 		"</u:%sResponse>";
+ 	/* example from UPnP_IGD_Layer3Forwarding 1.0.pdf :
+-- 
+1.9.1
+
