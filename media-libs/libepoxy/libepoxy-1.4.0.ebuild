@@ -32,6 +32,7 @@ IUSE="test"
 
 DEPEND="${PYTHON_DEPS}
 	media-libs/mesa[egl,${MULTILIB_USEDEP}]
+	x11-drivers/opengles-headers
 	x11-misc/util-macros
 	x11-libs/libX11[${MULTILIB_USEDEP}]"
 RDEPEND=""
