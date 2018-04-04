@@ -16,7 +16,7 @@ SRC_URI="http://miniupnp.free.fr/files/${MY_P}.tar.gz"
 LICENSE="BSD"
 SLOT="0"
 KEYWORDS="*"
-IUSE="strict"
+IUSE="strict igdv2"
 
 RDEPEND=">=net-firewall/iptables-1.4.6
 	net-libs/libnfnetlink"
@@ -28,6 +28,9 @@ S="${WORKDIR}/${MY_P}"
 
 src_prepare() {
 	epatch "${FILESDIR}"/${PN}-1.10-build.patch
+	if use igdv2; then
+		epatch "${FILESDIR}"/${PN}-1.10-UPSTREAM-advertise-correct-service-and-device-versions-when-I.patch
+	fi
 	mv Makefile.linux Makefile || die
 }
 
@@ -47,6 +50,12 @@ src_configure() {
 	if use strict; then
 		sed -i -r \
 			-e '/#define UPNP_STRICT/s:(/[*]|[*]/)::g' \
+			config.h || die
+	fi
+
+	if use igdv2; then
+		sed -i -r \
+			-e '/#define IGD_V2/s:(/[*]|[*]/)::g' \
 			config.h || die
 	fi
 }
