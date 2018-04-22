@@ -11,5 +11,5 @@ REQUIRED_USE=smart? ( sudo )
 RESTRICT=test
 SLOT=0
 SRC_URI=mirror://sourceforge/nagiosplug/nagios-plugins-1.4.16.tar.gz http://dev.gentoo.org/~flameeyes/nagios-plugins/nagios-plugins-1.4.16-patches-2.tar.xz
-_eclasses_=autotools	999c8f6cf5d91495cb0779588f20716c	eutils	06133990e861be0fe60c2b428fd025d9	libtool	52d0e17251d04645ffaa61bfdd858944	multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	6198c04daba0e1307bd844df7d37f423	user	c34e477e48e0fab7c78667707d7fa6a7
+_eclasses_=autotools	999c8f6cf5d91495cb0779588f20716c	eutils	06133990e861be0fe60c2b428fd025d9	libtool	52d0e17251d04645ffaa61bfdd858944	multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	6198c04daba0e1307bd844df7d37f423	user	c8f947561e8797a300801d0dd3625448
 _md5_=4481cef84c1a9edb5c2798b273b74da7

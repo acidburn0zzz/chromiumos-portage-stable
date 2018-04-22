@@ -9,5 +9,5 @@ LICENSE=GPL-2
 RDEPEND=|| ( >=sys-apps/groff-1.19.2-r1 app-doc/heirloom-doctools ) !sys-apps/man-db !<app-arch/lzma-4.63 lzma? ( app-arch/xz-utils ) selinux? ( sec-policy/selinux-makewhatis ) sys-apps/baselayout
 SLOT=0
 SRC_URI=http://primates.ximian.com/~flucifredi/man/man-1.6g.tar.gz
-_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	6198c04daba0e1307bd844df7d37f423	user	c34e477e48e0fab7c78667707d7fa6a7
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	6198c04daba0e1307bd844df7d37f423	user	c8f947561e8797a300801d0dd3625448
 _md5_=fb323be03de16fe1c606e00f7c6d9c0d
