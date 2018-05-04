@@ -3,13 +3,21 @@
 
 EAPI="5"
 
+XORG_EAUTORECONF="yes"
+
 inherit xorg-2
 
 DESCRIPTION="Intel GPU userland tools"
 
+HOMEPAGE="https://01.org/linuxgraphics https://cgit.freedesktop.org/xorg/app/intel-gpu-tools/"
+SRC_URI="https://www.x.org/releases/individual/app/${P}.tar.xz"
 KEYWORDS="*"
-IUSE="alsa glib gsl sound test-programs udev unwind valgrind video_cards_amdgpu video_cards_intel video_cards_nouveau X xrandr xv"
-REQUIRED_USE="test-programs? ( sound? ( alsa gsl ) )"
+LICENSE="MIT"
+SLOT="0"
+IUSE="alsa chamelium doc glib gsl sound test-programs valgrind video_cards_amdgpu video_cards_intel video_cards_nouveau X xrandr xv"
+REQUIRED_USE="
+	test-programs? ( sound? ( alsa gsl ) )
+	chamelium? ( glib gsl )"
 RESTRICT="test"
 
 X86_RDEPEND="
@@ -20,15 +28,16 @@ X86_RDEPEND="
 	)"
 X86_DEPEND="x11-base/xorg-proto"
 RDEPEND="sys-apps/kmod:=
+	sys-libs/llvm-libunwind:=
 	sys-process/procps:=
+	virtual/libudev:=
 	>=x11-libs/cairo-1.12.0[X?]
 	>=x11-libs/libdrm-2.4.82[video_cards_amdgpu?,video_cards_intel?,video_cards_nouveau?]
 	>=x11-libs/libpciaccess-0.10
 	alsa? ( media-libs/alsa-lib:= )
+	chamelium? ( dev-libs/xmlrpc-c )
 	glib? ( dev-libs/glib:2 )
 	gsl? ( sci-libs/gsl )
-	udev? ( virtual/libudev:= )
-	unwind? ( sys-libs/libunwind )
 	valgrind? ( dev-util/valgrind )
 	video_cards_intel? ( sys-libs/zlib:= )
 	xrandr? ( >=x11-libs/libXrandr-1.3 )
@@ -36,24 +45,28 @@ RDEPEND="sys-apps/kmod:=
 	x86? ( ${X86_RDEPEND} )"
 DEPEND="${RDEPEND}
 	amd64? ( ${X86_DEPEND} )
-	x86? ( ${X86_DEPEND} )"
+	x86? ( ${X86_DEPEND} )
+	doc? ( >=dev-util/gtk-doc-1.25-r1 )"
+
+PATCHES=(
+	"${FILESDIR}"/${P}-KBL-ICL-PCI-IDs.patch
+)
 
 src_configure() {
-	sed -i -E \
-		-e "s:\<alsa=(no|yes):alsa=$(usex alsa):g" \
-		-e "s:\<glib=(no|yes):glib=$(usex glib):g" \
-		-e "s:\<gsl=(no|yes):gsl=$(usex gsl):g" \
-		-e "s:\<udev=(no|yes):udev=$(usex udev):g" \
-		-e "s:\<have_valgrind=(no|yes):have_valgrind=$(usex valgrind):g" \
-		-e "s:\<enable_overlay_xvlib=(no|yes):enable_overlay_xvlib=$(usex xv):g" \
-		configure || die
+	# Since llvm-libunwind doesn't build .pc files, it won't be
+	# detected by pkg-config, which is used by the Makefile. So,
+	# to remedy this, we need to specify the llvm-libunwind CFLAGS
+	# and what shared libraries to use for llvm-libunwind.
+	export LIBUNWIND_CFLAGS=${CFLAGS} # CFLAGS is provided in make.defaults and overlays
+	export LIBUNWIND_LIBS="-lunwind"  # Searches for libunwind.so* and libunwind.a*
 	XORG_CONFIGURE_OPTIONS=(
-		$(usex test-programs $(use_enable sound audio) --disable-audio)
-		$(use_enable test-programs tests)
-		$(use_with unwind libunwind)
-		$(use_enable video_cards_amdgpu amdgpu)
-		$(use_enable video_cards_intel intel)
-		$(use_enable video_cards_nouveau nouveau)
+	$(usex test-programs $(use_enable sound audio) --disable-audio)
+	$(use_enable chamelium)
+	$(use_enable doc gtk-doc)
+	$(use_enable test-programs tests)
+	$(use_enable video_cards_amdgpu amdgpu)
+	$(use_enable video_cards_intel intel)
+	$(use_enable video_cards_nouveau nouveau)
 	)
 	xorg-2_src_configure
 }

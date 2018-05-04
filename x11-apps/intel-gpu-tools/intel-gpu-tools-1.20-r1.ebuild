@@ -1,1 +1,0 @@
-intel-gpu-tools-1.20.ebuild
