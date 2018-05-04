@@ -1,10 +1,9 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=5
 
-inherit flag-o-matic eutils
+inherit flag-o-matic
 
 DESCRIPTION="Standard tool to compile source trees"
 HOMEPAGE="https://www.gnu.org/software/make/make.html"
@@ -23,18 +22,29 @@ RDEPEND="${CDEPEND}
 
 PATCHES=(
 	"${FILESDIR}"/${PN}-3.82-darwin-library_search-dylib.patch
+	"${FILESDIR}"/${PN}-4.2-default-cxx.patch
+	"${FILESDIR}"/${PN}-4.2.1-perl526.patch
+	"${FILESDIR}"/${PN}-4.2.1-glob-internals.patch
 )
 
 src_prepare() {
-	epatch "${PATCHES[@]}"
+	default
+	# These patches require special handling as they modify configure.ac
+	# which in turn triggers maintainer-mode when being applied the
+	# usual way.
+	epatch -Z "${FILESDIR}"/${PN}-4.2.1-glob-v2.patch \
+		"${FILESDIR}"/${P}-guile-2.2.patch
+	epatch -Z ${PATCHES[@]}
 }
 
 src_configure() {
 	use static && append-ldflags -static
-	econf \
-		--program-prefix=g \
-		$(use_with guile) \
+	local myeconfargs=(
+		--program-prefix=g
+		$(use_with guile)
 		$(use_enable nls)
+	)
+	econf "${myeconfargs[@]}"
 }
 
 src_install() {
