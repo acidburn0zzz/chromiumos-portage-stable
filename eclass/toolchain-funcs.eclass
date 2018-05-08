@@ -1,6 +1,5 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 # @ECLASS: toolchain-funcs.eclass
 # @MAINTAINER:
@@ -41,7 +40,13 @@ _tc-getPROG() {
 	export ${var}="${prog[*]}"
 	echo "${!var}"
 }
-tc-getBUILD_PROG() { _tc-getPROG CBUILD "BUILD_$1 $1_FOR_BUILD HOST$1" "${@:2}"; }
+tc-getBUILD_PROG() {
+	local vars="BUILD_$1 $1_FOR_BUILD HOST$1"
+	# respect host vars if not cross-compiling
+	# https://bugs.gentoo.org/630282
+	tc-is-cross-compiler || vars+=" $1"
+	_tc-getPROG CBUILD "${vars}" "${@:2}"
+}
 tc-getPROG() { _tc-getPROG CHOST "$@"; }
 
 # @FUNCTION: tc-getAR
@@ -169,8 +174,8 @@ tc-getBUILD_PKG_CONFIG() { tc-getBUILD_PROG PKG_CONFIG pkg-config "$@"; }
 tc-export() {
 	local var
 	for var in "$@" ; do
-		[[ $(type -t tc-get${var}) != "function" ]] && die "tc-export: invalid export variable '${var}'"
-		eval tc-get${var} > /dev/null
+		[[ $(type -t "tc-get${var}") != "function" ]] && die "tc-export: invalid export variable '${var}'"
+		"tc-get${var}" > /dev/null
 	done
 }
 
@@ -242,13 +247,21 @@ tc-stack-grows-down() {
 # Export common build related compiler settings.
 tc-export_build_env() {
 	tc-export "$@"
-	# Some build envs will initialize vars like:
-	# : ${BUILD_LDFLAGS:-${LDFLAGS}}
-	# So make sure all variables are non-empty. #526734
-	: ${BUILD_CFLAGS:=-O1 -pipe}
-	: ${BUILD_CXXFLAGS:=-O1 -pipe}
-	: ${BUILD_CPPFLAGS:= }
-	: ${BUILD_LDFLAGS:= }
+	if tc-is-cross-compiler; then
+		# Some build envs will initialize vars like:
+		# : ${BUILD_LDFLAGS:-${LDFLAGS}}
+		# So make sure all variables are non-empty. #526734
+		: ${BUILD_CFLAGS:=-O1 -pipe}
+		: ${BUILD_CXXFLAGS:=-O1 -pipe}
+		: ${BUILD_CPPFLAGS:= }
+		: ${BUILD_LDFLAGS:= }
+	else
+		# https://bugs.gentoo.org/654424
+		: ${BUILD_CFLAGS:=${CFLAGS}}
+		: ${BUILD_CXXFLAGS:=${CXXFLAGS}}
+		: ${BUILD_CPPFLAGS:=${CPPFLAGS}}
+		: ${BUILD_LDFLAGS:=${LDFLAGS}}
+	fi
 	export BUILD_{C,CXX,CPP,LD}FLAGS
 
 	# Some packages use XXX_FOR_BUILD.
@@ -421,6 +434,27 @@ tc-has-openmp() {
 	return ${ret}
 }
 
+# @FUNCTION: tc-check-openmp
+# @DESCRIPTION:
+# Test for OpenMP support with the current compiler and error out with
+# a clear error message, telling the user how to rectify the missing
+# OpenMP support that has been requested by the ebuild. Using this function
+# to test for OpenMP support should be preferred over tc-has-openmp and
+# printing a custom message, as it presents a uniform interface to the user.
+tc-check-openmp() {
+	if ! tc-has-openmp; then
+		eerror "Your current compiler does not support OpenMP!"
+
+		if tc-is-gcc; then
+			eerror "Enable OpenMP support by building sys-devel/gcc with USE=\"openmp\"."
+		elif tc-is-clang; then
+			eerror "OpenMP support in sys-devel/clang is provided by sys-libs/libomp."
+		fi
+
+		die "Active compiler does not have required support for OpenMP"
+	fi
+}
+
 # @FUNCTION: tc-has-tls
 # @USAGE: [-s|-c|-l] [toolchain prefix]
 # @DESCRIPTION:
@@ -552,7 +586,7 @@ tc-endian() {
 	case ${host} in
 		aarch64*be)	echo big;;
 		aarch64)	echo little;;
-		alpha*)		echo big;;
+		alpha*)		echo little;;
 		arm*b*)		echo big;;
 		arm*)		echo little;;
 		cris*)		echo little;;
@@ -769,6 +803,73 @@ gcc-specs-stack-check() {
 	local directive
 	directive=$(gcc-specs-directive cc1)
 	[[ "${directive/\{!fno-stack-check:}" != "${directive}" ]]
+}
+
+
+# @FUNCTION: tc-enables-pie
+# @RETURN: Truth if the current compiler generates position-independent code (PIC) which can be linked into executables
+# @DESCRIPTION:
+# Return truth if the current compiler generates position-independent code (PIC)
+# which can be linked into executables.
+tc-enables-pie() {
+	local ret="$($(tc-getCC) ${CPPFLAGS} ${CFLAGS} -E -P - <<-EOF 2> /dev/null | grep '^true$'
+		#if defined(__PIE__)
+		true
+		#endif
+		EOF
+	)"
+	[[ ${ret} == true ]]
+}
+
+# @FUNCTION: tc-enables-ssp
+# @RETURN: Truth if the current compiler enables stack smashing protection (SSP) on at least minimal level
+# @DESCRIPTION:
+# Return truth if the current compiler enables stack smashing protection (SSP)
+# on level corresponding to any of the following options:
+#  -fstack-protector
+#  -fstack-protector-strong
+#  -fstack-protector-all
+tc-enables-ssp() {
+	local ret="$($(tc-getCC) ${CPPFLAGS} ${CFLAGS} -E -P - <<-EOF 2> /dev/null | grep '^true$'
+		#if defined(__SSP__) || defined(__SSP_STRONG__) || defined(__SSP_ALL__)
+		true
+		#endif
+		EOF
+	)"
+	[[ ${ret} == true ]]
+}
+
+# @FUNCTION: tc-enables-ssp-strong
+# @RETURN: Truth if the current compiler enables stack smashing protection (SSP) on at least middle level
+# @DESCRIPTION:
+# Return truth if the current compiler enables stack smashing protection (SSP)
+# on level corresponding to any of the following options:
+#  -fstack-protector-strong
+#  -fstack-protector-all
+tc-enables-ssp-strong() {
+	local ret="$($(tc-getCC) ${CPPFLAGS} ${CFLAGS} -E -P - <<-EOF 2> /dev/null | grep '^true$'
+		#if defined(__SSP_STRONG__) || defined(__SSP_ALL__)
+		true
+		#endif
+		EOF
+	)"
+	[[ ${ret} == true ]]
+}
+
+# @FUNCTION: tc-enables-ssp-all
+# @RETURN: Truth if the current compiler enables stack smashing protection (SSP) on maximal level
+# @DESCRIPTION:
+# Return truth if the current compiler enables stack smashing protection (SSP)
+# on level corresponding to any of the following options:
+#  -fstack-protector-all
+tc-enables-ssp-all() {
+	local ret="$($(tc-getCC) ${CPPFLAGS} ${CFLAGS} -E -P - <<-EOF 2> /dev/null | grep '^true$'
+		#if defined(__SSP_ALL__)
+		true
+		#endif
+		EOF
+	)"
+	[[ ${ret} == true ]]
 }
 
 
