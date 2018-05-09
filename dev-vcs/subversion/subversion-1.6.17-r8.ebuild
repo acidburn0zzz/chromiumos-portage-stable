@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/dev-vcs/subversion/subversion-1.6.17-r7.ebuild,v 1.7 2011/11/06 16:07:18 ranger Exp $
 
-EAPI="3"
+EAPI="5"
 SUPPORT_PYTHON_ABIS="1"
 RESTRICT_PYTHON_ABIS="3.* *-jython"
 WANT_AUTOMAKE="none"
