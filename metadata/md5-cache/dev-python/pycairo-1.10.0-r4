@@ -1,5 +1,5 @@
-DEFINED_PHASES=compile configure install prepare test unpack
-DEPEND=python_targets_python2_7? ( >=dev-lang/python-2.7.5-r2:2.7[threads(+)] ) python_targets_python3_3? ( >=dev-lang/python-3.3.2-r2:3.3[threads(+)] ) python_targets_python3_4? ( dev-lang/python:3.4[threads(+)] ) >=dev-lang/python-exec-2:=[python_targets_python2_7(-)?,python_targets_python3_3(-)?,python_targets_python3_4(-)?,-python_single_target_python2_7(-),-python_single_target_python3_3(-),-python_single_target_python3_4(-)] >=x11-libs/cairo-1.10.0[svg?,xcb?] xcb? ( x11-libs/xpyb ) virtual/pkgconfig test? ( dev-python/pytest[python_targets_python2_7(-)?,python_targets_python3_3(-)?,python_targets_python3_4(-)?,-python_single_target_python2_7(-),-python_single_target_python3_3(-),-python_single_target_python3_4(-)] ) dev-lang/python !dev-lang/python[-threads]
+DEFINED_PHASES=compile configure install prepare test
+DEPEND=python_targets_python2_7? ( >=dev-lang/python-2.7.5-r2:2.7[threads(+)] ) python_targets_python3_3? ( >=dev-lang/python-3.3.2-r2:3.3[threads(+)] ) python_targets_python3_4? ( dev-lang/python:3.4[threads(+)] ) >=dev-lang/python-exec-2:=[python_targets_python2_7(-)?,python_targets_python3_3(-)?,python_targets_python3_4(-)?,-python_single_target_python2_7(-),-python_single_target_python3_3(-),-python_single_target_python3_4(-)] >=x11-libs/cairo-1.10.0[svg?,xcb?] xcb? ( x11-libs/xpyb ) virtual/pkgconfig test? ( dev-python/pytest[python_targets_python2_7(-)?,python_targets_python3_3(-)?,python_targets_python3_4(-)?,-python_single_target_python2_7(-),-python_single_target_python3_3(-),-python_single_target_python3_4(-)] )
 DESCRIPTION=Python bindings for the cairo library
 EAPI=5
 HOMEPAGE=http://cairographics.org/pycairo/ http://pypi.python.org/pypi/pycairo
@@ -10,5 +10,5 @@ RDEPEND=python_targets_python2_7? ( >=dev-lang/python-2.7.5-r2:2.7[threads(+)] )
 REQUIRED_USE=|| ( python_targets_python2_7 python_targets_python3_3 python_targets_python3_4 )
 SLOT=0
 SRC_URI=http://cairographics.org/releases/py2cairo-1.10.0.tar.bz2 http://cairographics.org/releases/pycairo-1.10.0.tar.bz2
-_eclasses_=base	ec46b36a6f6fd1d0b505a33e0b74e413	eutils	06133990e861be0fe60c2b428fd025d9	multibuild	742139c87a9fa3766f0c2b155e5522bf	multilib	97f470f374f2e94ccab04a2fb21d811e	multiprocessing	e32940a7b2a9992ad217eccddb84d548	python-r1	9f6eda21d15d6a8f665d7996a4e0f4e3	python-utils-r1	ec7e05a608c9ab8ae4d180d10bd61600	toolchain-funcs	6198c04daba0e1307bd844df7d37f423	waf-utils	ea5e8ddb08ce6b8d48b76ad71b4548f1
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multibuild	742139c87a9fa3766f0c2b155e5522bf	multilib	97f470f374f2e94ccab04a2fb21d811e	multiprocessing	e32940a7b2a9992ad217eccddb84d548	python-r1	9f6eda21d15d6a8f665d7996a4e0f4e3	python-utils-r1	ec7e05a608c9ab8ae4d180d10bd61600	toolchain-funcs	6198c04daba0e1307bd844df7d37f423	waf-utils	0af0bf9207f47292d40e888b9687763c
 _md5_=187668cdd5b0ad544e834fc6bd1e94c9
