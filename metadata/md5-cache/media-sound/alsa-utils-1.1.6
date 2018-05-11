@@ -1,0 +1,13 @@
+DEFINED_PHASES=configure install postinst
+DEPEND=>=media-libs/alsa-lib-1.1.6 libsamplerate? ( media-libs/libsamplerate ) ncurses? ( >=sys-libs/ncurses-5.7-r7:0= ) bat? ( sci-libs/fftw:= ) virtual/pkgconfig doc? ( app-text/xmlto ) virtual/pkgconfig virtual/pkgconfig
+DESCRIPTION=Advanced Linux Sound Architecture Utils (alsactl, alsamixer, etc.)
+EAPI=6
+HOMEPAGE=https://alsa-project.org/
+IUSE=bat doc +libsamplerate +ncurses nls selinux
+KEYWORDS=*
+LICENSE=GPL-2
+RDEPEND=>=media-libs/alsa-lib-1.1.6 libsamplerate? ( media-libs/libsamplerate ) ncurses? ( >=sys-libs/ncurses-5.7-r7:0= ) bat? ( sci-libs/fftw:= ) selinux? ( sec-policy/selinux-alsa )
+SLOT=0.9
+SRC_URI=mirror://alsaproject/utils/alsa-utils-1.1.6.tar.bz2
+_eclasses_=multilib	97f470f374f2e94ccab04a2fb21d811e	systemd	8f5286f89e265842f5b5189666eae88b	toolchain-funcs	fa02994d0beba88681127d93da4411ec	udev	d91cac2c73b94629cad2daea66e0d182
+_md5_=c897c3bcc3a4408ce8c2c12ee3f91858

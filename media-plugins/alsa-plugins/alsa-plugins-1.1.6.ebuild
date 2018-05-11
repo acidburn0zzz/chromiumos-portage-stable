@@ -1,9 +1,8 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
-EAPI=5
-inherit autotools eutils flag-o-matic multilib multilib-minimal
+EAPI=6
+inherit autotools flag-o-matic multilib multilib-minimal
 
 DESCRIPTION="ALSA extra plugins"
 HOMEPAGE="http://www.alsa-project.org/"
@@ -12,7 +11,7 @@ SRC_URI="mirror://alsaproject/plugins/${P}.tar.bz2"
 LICENSE="GPL-2 LGPL-2.1"
 SLOT="0"
 KEYWORDS="*"
-IUSE="debug ffmpeg jack libav libsamplerate pulseaudio speex"
+IUSE="arcam_av debug ffmpeg jack libav libsamplerate +mix oss pulseaudio speex +usb_stream"
 
 RDEPEND="
 	>=media-libs/alsa-lib-${PV}:=[${MULTILIB_USEDEP}]
@@ -20,20 +19,23 @@ RDEPEND="
 		libav? ( media-video/libav:= )
 		!libav? ( media-video/ffmpeg:0= )
 	)
-	jack? ( >=media-sound/jack-audio-connection-kit-0.121.3-r1[${MULTILIB_USEDEP}] )
+	jack? ( virtual/jack[${MULTILIB_USEDEP}] )
 	libsamplerate? ( >=media-libs/libsamplerate-0.1.8-r1:=[${MULTILIB_USEDEP}] )
 	pulseaudio? ( >=media-sound/pulseaudio-2.1-r1[${MULTILIB_USEDEP}] )
-	speex? ( >=media-libs/speex-1.2_rc1-r1:=[${MULTILIB_USEDEP}] )
+	speex? (
+		>=media-libs/speex-1.2.0:=[${MULTILIB_USEDEP}]
+		media-libs/speexdsp[${MULTILIB_USEDEP}]
+	)
 "
 DEPEND="${RDEPEND}
 	virtual/pkgconfig"
 
 PATCHES=(
-	"${FILESDIR}/${PN}-1.0.23-automagic.patch"
+	"${FILESDIR}/${PN}-1.1.5-optional_plugins.patch"
 )
 
 src_prepare() {
-	epatch "${PATCHES[@]}"
+	default
 
 	# For some reasons the polyp/pulse plugin does fail with alsaplayer with a
 	# failed assert. As the code works just fine with asserts disabled, for now
@@ -48,16 +50,19 @@ src_prepare() {
 multilib_src_configure() {
 	use debug || append-cppflags -DNDEBUG
 
-	local myspeex=no
-	use speex && myspeex=lib
-
-	ECONF_SOURCE=${S} \
-	econf \
-		$(use_enable ffmpeg avcodec) \
-		$(use_enable jack) \
-		$(use_enable libsamplerate samplerate) \
-		$(use_enable pulseaudio) \
-		--with-speex=${myspeex}
+	local myeconfargs=(
+		--with-speex="$(usex speex lib no)"
+		$(use_enable arcam_av arcamav)
+		$(use_enable ffmpeg avcodec)
+		$(use_enable jack)
+		$(use_enable libsamplerate samplerate)
+		$(use_enable mix)
+		$(use_enable oss)
+		$(use_enable pulseaudio)
+		$(use_enable speex speexdsp)
+		$(use_enable usb_stream usbstream)
+	)
+	ECONF_SOURCE="${S}" econf "${myeconfargs[@]}"
 }
 
 multilib_src_install_all() {
@@ -81,10 +86,10 @@ multilib_src_install_all() {
 		# seems to work fine without any path
 		sed -i \
 			-e "s:/usr/lib/alsa-lib/::" \
-			"${ED}"/usr/share/alsa/alsa.conf.d/51-pulseaudio-probe.conf || die #410261
+			"${ED%/}"/usr/share/alsa/alsa.conf.d/51-pulseaudio-probe.conf || die #410261
 	fi
 
-	prune_libtool_files --all
+	find "${ED}" \( -name '*.a' -o -name '*.la' \) -delete || die
 }
 
 pkg_postinst() {

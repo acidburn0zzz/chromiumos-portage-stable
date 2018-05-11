@@ -1,5 +1,5 @@
 #!/sbin/openrc-run
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2016 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 alsastatedir=/var/lib/alsa
@@ -24,7 +24,7 @@ restore() {
 		return 0
 	fi
 
-	local cards="$(sed -n -e 's/^ *\([[:digit:]]*\) .*/\1/p' /proc/asound/cards)"
+	local cards="$(sed -n -e 's/ *\([[:digit:]]*\) .*/\1/p' /proc/asound/cards)"
 	local CARDNUM
 	for cardnum in ${cards}; do
 		[ -e /dev/snd/controlC${cardnum} ] || sleep 2
