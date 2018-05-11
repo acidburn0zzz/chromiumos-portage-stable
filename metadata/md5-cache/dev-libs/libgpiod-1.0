@@ -7,5 +7,5 @@ KEYWORDS=*
 LICENSE=LGPL-2.1
 SLOT=0/1
 SRC_URI=https://dev.gentoo.org/~blueness/libgpiod/libgpiod-1.0.tar.gz
-_eclasses_=multibuild	742139c87a9fa3766f0c2b155e5522bf	multilib	97f470f374f2e94ccab04a2fb21d811e	multilib-build	8fe2e81aeb36cdf8a6cc5f50443879cc	multilib-minimal	0224dee31c0f98405d572e14ad6dee65	toolchain-funcs	6198c04daba0e1307bd844df7d37f423
+_eclasses_=multibuild	742139c87a9fa3766f0c2b155e5522bf	multilib	97f470f374f2e94ccab04a2fb21d811e	multilib-build	8fe2e81aeb36cdf8a6cc5f50443879cc	multilib-minimal	0224dee31c0f98405d572e14ad6dee65	toolchain-funcs	fa02994d0beba88681127d93da4411ec
 _md5_=e2c26714894571112b6559ea3a6dd109

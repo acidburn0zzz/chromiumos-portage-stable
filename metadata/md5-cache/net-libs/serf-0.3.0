@@ -8,5 +8,5 @@ LICENSE=Apache-2.0
 RDEPEND=dev-libs/apr dev-libs/apr-util dev-libs/openssl sys-libs/zlib
 SLOT=0
 SRC_URI=http://serf.googlecode.com/files/serf-0.3.0.tar.bz2
-_eclasses_=autotools	999c8f6cf5d91495cb0779588f20716c	eutils	06133990e861be0fe60c2b428fd025d9	libtool	52d0e17251d04645ffaa61bfdd858944	multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	6198c04daba0e1307bd844df7d37f423
+_eclasses_=autotools	999c8f6cf5d91495cb0779588f20716c	eutils	06133990e861be0fe60c2b428fd025d9	libtool	52d0e17251d04645ffaa61bfdd858944	multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	fa02994d0beba88681127d93da4411ec
 _md5_=03a7f33caec39e42cb53923e20a12e91

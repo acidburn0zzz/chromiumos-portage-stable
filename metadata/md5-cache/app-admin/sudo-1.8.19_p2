@@ -10,5 +10,5 @@ RDEPEND=pam? ( virtual/pam ) skey? ( >=sys-auth/skey-1.1.5-r1 ) ldap? ( >=net-nd
 REQUIRED_USE=pam? ( !skey ) skey? ( !pam )
 SLOT=0
 SRC_URI=http://www.sudo.ws/sudo/dist/sudo-1.8.19p2.tar.gz ftp://ftp.sudo.ws/pub/sudo/sudo-1.8.19p2.tar.gz
-_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	libtool	52d0e17251d04645ffaa61bfdd858944	multilib	97f470f374f2e94ccab04a2fb21d811e	pam	3f746974e1cc47cabe3bd488c08cdc8e	toolchain-funcs	6198c04daba0e1307bd844df7d37f423
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	libtool	52d0e17251d04645ffaa61bfdd858944	multilib	97f470f374f2e94ccab04a2fb21d811e	pam	3f746974e1cc47cabe3bd488c08cdc8e	toolchain-funcs	fa02994d0beba88681127d93da4411ec
 _md5_=5526e16ed81d83a893289bcb8f21e26b

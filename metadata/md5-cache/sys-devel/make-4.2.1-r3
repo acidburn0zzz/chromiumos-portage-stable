@@ -9,5 +9,5 @@ LICENSE=GPL-3+
 RDEPEND=guile? ( >=dev-scheme/guile-1.8:= ) nls? ( virtual/libintl )
 SLOT=0
 SRC_URI=mirror://gnu//make/make-4.2.1.tar.bz2
-_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	6198c04daba0e1307bd844df7d37f423
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	fa02994d0beba88681127d93da4411ec
 _md5_=e0b9464133aa8a54b798510ef2b37dd8

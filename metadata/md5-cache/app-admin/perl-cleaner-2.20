@@ -7,5 +7,5 @@ LICENSE=GPL-2
 RDEPEND=app-shells/bash dev-lang/perl || ( ( sys-apps/portage app-portage/portage-utils ) sys-apps/pkgcore sys-apps/paludis )
 SLOT=0
 SRC_URI=mirror://gentoo/perl-cleaner-2.20.tar.bz2 https://dev.gentoo.org/~dilfridge/distfiles/perl-cleaner-2.20.tar.bz2
-_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multilib	97f470f374f2e94ccab04a2fb21d811e	prefix	21058c21ca48453d771df15500873ede	toolchain-funcs	6198c04daba0e1307bd844df7d37f423
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multilib	97f470f374f2e94ccab04a2fb21d811e	prefix	21058c21ca48453d771df15500873ede	toolchain-funcs	fa02994d0beba88681127d93da4411ec
 _md5_=4b0ee9445c7a9546d1983db529c27af8

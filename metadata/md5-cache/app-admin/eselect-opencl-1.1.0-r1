@@ -8,5 +8,5 @@ LICENSE=GPL-2
 RDEPEND=>=app-admin/eselect-1.2.4
 SLOT=0
 SRC_URI=http://dev.gentoo.org/~xarthisius/distfiles//opencl.h.1.1.xz http://dev.gentoo.org/~xarthisius/distfiles//cl_platform.h.1.1.xz http://dev.gentoo.org/~xarthisius/distfiles//cl.h.1.1.xz http://dev.gentoo.org/~xarthisius/distfiles//cl_ext.h.1.1.xz http://dev.gentoo.org/~xarthisius/distfiles//cl_gl.h.1.1.xz http://dev.gentoo.org/~xarthisius/distfiles//cl_gl_ext.h.1.1.xz http://dev.gentoo.org/~xarthisius/distfiles//cl.hpp.1.1.xz http://dev.gentoo.org/~xarthisius/distfiles//eselect-opencl-1.1.0-r1.tar.xz
-_eclasses_=multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	6198c04daba0e1307bd844df7d37f423
+_eclasses_=multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	fa02994d0beba88681127d93da4411ec
 _md5_=9b9221e13948d5c0d0158f806d39a277

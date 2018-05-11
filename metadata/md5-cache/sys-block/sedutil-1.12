@@ -6,5 +6,5 @@ KEYWORDS=*
 LICENSE=GPL-3+
 SLOT=0
 SRC_URI=https://github.com/Drive-Trust-Alliance/sedutil/archive/1.12.tar.gz -> sedutil-1.12.tar.gz
-_eclasses_=multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	6198c04daba0e1307bd844df7d37f423
+_eclasses_=multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	fa02994d0beba88681127d93da4411ec
 _md5_=5289af681067d67edb6e2aa0503387f6

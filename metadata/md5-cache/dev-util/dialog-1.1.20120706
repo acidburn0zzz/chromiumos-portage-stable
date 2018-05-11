@@ -9,5 +9,5 @@ LICENSE=GPL-2
 RDEPEND=>=sys-libs/ncurses-5.2-r5 unicode? ( sys-libs/ncurses[unicode] )
 SLOT=0
 SRC_URI=ftp://invisible-island.net/dialog/dialog-1.1-20120706.tgz
-_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	6198c04daba0e1307bd844df7d37f423
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	fa02994d0beba88681127d93da4411ec
 _md5_=fde716d6e2ce131bc04568eecd2ab95e
