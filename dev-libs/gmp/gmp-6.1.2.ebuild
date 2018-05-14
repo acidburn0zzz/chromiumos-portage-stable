@@ -1,6 +1,5 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI="5"
 
@@ -10,7 +9,7 @@ MY_PV=${PV/_p*}
 MY_PV=${MY_PV/_/-}
 MY_P=${PN}-${MY_PV}
 PLEVEL=${PV/*p}
-DESCRIPTION="Library for arithmetic on arbitrary precision integers, rational numbers, and floating-point numbers"
+DESCRIPTION="Library for arbitrary-precision arithmetic on different type of numbers"
 HOMEPAGE="http://gmplib.org/"
 SRC_URI="ftp://ftp.gmplib.org/pub/${MY_P}/${MY_P}.tar.xz
 	mirror://gnu/${PN}/${MY_P}.tar.xz
@@ -38,14 +37,22 @@ src_prepare() {
 	# note: we cannot run autotools here as gcc depends on this package
 	elibtoolize
 
+	epatch "${FILESDIR}"/${PN}-6.1.0-noexecstack-detect.patch
+
+	# https://bugs.gentoo.org/536894
+	if [[ ${CHOST} == *-darwin* ]] ; then
+		epatch "${FILESDIR}"/${PN}-6.1.2-gcc-apple-4.0.1.patch
+	fi
+
 	# GMP uses the "ABI" env var during configure as does Gentoo (econf).
 	# So, to avoid patching the source constantly, wrap things up.
 	mv configure configure.wrapped || die
 	cat <<-\EOF > configure
-	#!/bin/sh
+	#!/usr/bin/env sh
 	exec env ABI="${GMPABI}" "$0.wrapped" "$@"
 	EOF
-	chmod a+rx configure
+	# Patches to original configure might have lost the +x bit.
+	chmod a+rx configure{,.wrapped}
 }
 
 multilib_src_configure() {
@@ -62,6 +69,11 @@ multilib_src_configure() {
 		[onx]32)      GMPABI=${ABI};;
 	esac
 	export GMPABI
+
+	#367719
+	if [[ ${CHOST} == *-mint* ]]; then
+		filter-flags -O?
+	fi
 
 	tc-export CC
 	ECONF_SOURCE="${S}" econf \
@@ -95,9 +107,9 @@ multilib_src_install() {
 	emake DESTDIR="${D}" install
 
 	# should be a standalone lib
-	rm -f "${D}"/usr/$(get_libdir)/libgmp.la
+	rm -f "${ED}"/usr/$(get_libdir)/libgmp.la
 	# this requires libgmp
-	local la="${D}/usr/$(get_libdir)/libgmpxx.la"
+	local la="${ED}/usr/$(get_libdir)/libgmpxx.la"
 	use static-libs \
 		&& sed -i 's:/[^ ]*/libgmp.la:-lgmp:' "${la}" \
 		|| rm -f "${la}"
@@ -105,5 +117,5 @@ multilib_src_install() {
 
 multilib_src_install_all() {
 	einstalldocs
-	use doc && cp "${DISTDIR}"/gmp-man-${MY_PV}.pdf "${D}"/usr/share/doc/${PF}/
+	use doc && cp "${DISTDIR}"/gmp-man-${MY_PV}.pdf "${ED}"/usr/share/doc/${PF}/
 }
