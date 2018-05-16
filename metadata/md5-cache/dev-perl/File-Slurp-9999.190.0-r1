@@ -1,0 +1,12 @@
+DEFINED_PHASES=compile configure install prepare test unpack
+DEPEND=|| ( >=dev-lang/perl-5.16 <dev-lang/perl-5.16[-build] )
+DESCRIPTION=Efficient Reading/Writing of Complete Files
+EAPI=5
+HOMEPAGE=http://search.cpan.org/dist/File-Slurp/
+KEYWORDS=*
+LICENSE=|| ( Artistic GPL-1 GPL-2 GPL-3 )
+RDEPEND=|| ( >=dev-lang/perl-5.16 <dev-lang/perl-5.16[-build] )
+SLOT=0
+SRC_URI=mirror://cpan/authors/id/U/UR/URI/File-Slurp-9999.19.tar.gz
+_eclasses_=base	ec46b36a6f6fd1d0b505a33e0b74e413	eutils	06133990e861be0fe60c2b428fd025d9	multilib	97f470f374f2e94ccab04a2fb21d811e	multiprocessing	e32940a7b2a9992ad217eccddb84d548	perl-module	d93571ca1c77e98760e5aa406388b02d	toolchain-funcs	fa02994d0beba88681127d93da4411ec
+_md5_=a113ca956bbdd63352334b71c3230c71
