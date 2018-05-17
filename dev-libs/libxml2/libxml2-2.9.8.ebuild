@@ -1,13 +1,13 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=5
+EAPI=6
 PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
 PYTHON_REQ_USE="xml"
 
 inherit libtool flag-o-matic ltprune python-r1 autotools prefix multilib-minimal
 
-DESCRIPTION="Version 2 of the library to manipulate XML files"
+DESCRIPTION="XML C parser and toolkit"
 HOMEPAGE="http://www.xmlsoft.org/"
 
 LICENSE="MIT"
@@ -75,7 +75,7 @@ src_prepare() {
 
 	# Fix build for Windows platform
 	# https://bugzilla.gnome.org/show_bug.cgi?id=760456
-	eapply "${FILESDIR}"/${PN}-2.8.0_rc1-winnt.patch
+	# eapply "${FILESDIR}"/${PN}-2.8.0_rc1-winnt.patch
 
 	# Fix python detection, bug #567066
 	# https://bugzilla.gnome.org/show_bug.cgi?id=760458
