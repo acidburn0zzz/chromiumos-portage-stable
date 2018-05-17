@@ -42,10 +42,10 @@ STRIP_COMPLETIONS=(
 )
 
 src_prepare() {
-	eapply "${WORKDIR}/${BASHCOMP_P}/${PN}"-2.1_p*.patch
+	epatch "${WORKDIR}/${BASHCOMP_P}/${PN}"-2.1_p*.patch
 	# Bug 543100, update bug 601194
-	eapply "${FILESDIR}/${PN}-2.1-escape-characters-r1.patch"
-	eapply_user
+	epatch "${FILESDIR}/${PN}-2.1-escape-characters-r1.patch"
+	epatch_user
 }
 
 src_test() { :; } # Skip testsuite because of interactive shell wrt #477066
