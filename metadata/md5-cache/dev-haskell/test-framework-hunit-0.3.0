@@ -1,0 +1,13 @@
+DEFINED_PHASES=compile install postinst prerm setup
+DEPEND=>=dev-haskell/extensible-exceptions-0.1.1:=[profile?] <dev-haskell/extensible-exceptions-0.2.0:=[profile?] >=dev-haskell/hunit-1.2:=[profile?] <dev-haskell/hunit-2:=[profile?] >=dev-haskell/test-framework-0.2.0:=[profile?] >=dev-lang/ghc-6.10.4:= >=dev-haskell/cabal-1.2.3 doc? ( dev-haskell/haddock ) >=dev-haskell/cabal-1.1.4
+DESCRIPTION=HUnit support for the test-framework package
+EAPI=5
+HOMEPAGE=https://batterseapower.github.com/test-framework/
+IUSE=test doc profile
+KEYWORDS=*
+LICENSE=BSD
+RDEPEND=>=dev-haskell/extensible-exceptions-0.1.1:=[profile?] <dev-haskell/extensible-exceptions-0.2.0:=[profile?] >=dev-haskell/hunit-1.2:=[profile?] <dev-haskell/hunit-2:=[profile?] >=dev-haskell/test-framework-0.2.0:=[profile?] >=dev-lang/ghc-6.10.4:= dev-lang/ghc
+SLOT=0/0.3.0
+SRC_URI=mirror://hackage/packages/archive/test-framework-hunit/0.3.0/test-framework-hunit-0.3.0.tar.gz
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	ghc-package	a0576f38fd872706ee22bf4f6c0c6152	haskell-cabal	fde11633d9b6632dafa46c1f669b2a78	multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	fa02994d0beba88681127d93da4411ec	versionator	865bc8b2fc9fcfb6d520bdf5a110f5ed
+_md5_=52ffb9ae0018edb40467630631f4c34a

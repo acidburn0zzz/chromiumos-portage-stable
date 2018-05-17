@@ -1,0 +1,13 @@
+DEFINED_PHASES=compile install postinst prepare prerm setup
+DEPEND=>=dev-haskell/transformers-0.4:=[profile?] >=dev-lang/ghc-7.4.1:= >=dev-haskell/cabal-1.6 doc? ( dev-haskell/haddock ) >=dev-haskell/cabal-1.1.4
+DESCRIPTION=Monad classes, using functional dependencies
+EAPI=5
+HOMEPAGE=https://github.com/ekmett/mtl
+IUSE=doc profile
+KEYWORDS=*
+LICENSE=BSD
+RDEPEND=>=dev-haskell/transformers-0.4:=[profile?] >=dev-lang/ghc-7.4.1:= dev-lang/ghc
+SLOT=0/2.2.1
+SRC_URI=mirror://hackage/packages/archive/mtl/2.2.1/mtl-2.2.1.tar.gz
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	ghc-package	a0576f38fd872706ee22bf4f6c0c6152	haskell-cabal	fde11633d9b6632dafa46c1f669b2a78	multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	fa02994d0beba88681127d93da4411ec	versionator	865bc8b2fc9fcfb6d520bdf5a110f5ed
+_md5_=a37483476ac89179bec5872d85fe4d04

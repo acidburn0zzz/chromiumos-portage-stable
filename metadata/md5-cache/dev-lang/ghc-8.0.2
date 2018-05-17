@@ -1,0 +1,15 @@
+DEFINED_PHASES=compile configure install postinst postrm preinst prepare prerm pretend setup unpack
+DEPEND=>=dev-lang/perl-5.6.1 dev-libs/gmp:0= sys-libs/ncurses:0=[unicode] !ghcmakebinary? ( virtual/libffi:= ) binary? ( !prefix? ( elibc_glibc? ( >=sys-libs/glibc-2.17 ) ) sys-libs/ncurses:0/6 ) doc? ( app-text/docbook-xml-dtd:4.2 app-text/docbook-xml-dtd:4.5 app-text/docbook-xsl-stylesheets dev-python/sphinx >=dev-libs/libxslt-1.1.2 ) !ghcbootstrap? ( !prefix? ( elibc_glibc? ( >=sys-libs/glibc-2.17 ) ) ) !<sys-devel/gettext-0.18.1.1-r3 || ( >=sys-devel/automake-1.13:1.13 >=sys-devel/automake-1.15:1.15 ) >=sys-devel/autoconf-2.69 >=sys-devel/libtool-2.4
+DESCRIPTION=The Glasgow Haskell Compiler
+EAPI=5
+HOMEPAGE=http://www.haskell.org/ghc/
+IUSE=doc ghcbootstrap ghcmakebinary +gmp +profile binary
+KEYWORDS=*
+LICENSE=BSD
+PDEPEND=!ghcbootstrap? ( =app-admin/haskell-updater-1.2* )
+RDEPEND=>=dev-lang/perl-5.6.1 dev-libs/gmp:0= sys-libs/ncurses:0=[unicode] !ghcmakebinary? ( virtual/libffi:= ) binary? ( !prefix? ( elibc_glibc? ( >=sys-libs/glibc-2.17 ) ) sys-libs/ncurses:0/6 )
+REQUIRED_USE=?? ( ghcbootstrap binary )
+SLOT=0/8.0.2
+SRC_URI=!binary? ( http://downloads.haskell.org/~ghc/8.0.2/ghc-8.0.2-src.tar.xz ) !ghcbootstrap? ( alpha? ( http://code.haskell.org/~slyfox/ghc-alpha/ghc-bin-8.0.2-alpha.tbz2 ) arm64? ( http://code.haskell.org/~slyfox/ghc-arm64/ghc-bin-8.0.2-arm64.tbz2 ) amd64? ( https://slyfox.uni.cx/~slyfox/distfiles/ghc-bin-8.0.2-x86_64-pc-linux-gnu.tbz2 ) ia64? ( http://code.haskell.org/~slyfox/ghc-ia64/ghc-bin-8.0.2-ia64.tbz2 ) ppc? ( http://code.haskell.org/~slyfox/ghc-ppc/ghc-bin-8.0.2-ppc.tbz2 ) ppc64? ( http://code.haskell.org/~slyfox/ghc-ppc64/ghc-bin-8.0.2-ppc64.tbz2 ) x86? ( https://slyfox.uni.cx/~slyfox/distfiles/ghc-bin-8.0.2-i686-pc-linux-gnu.tbz2 ) )
+_eclasses_=autotools	999c8f6cf5d91495cb0779588f20716c	bash-completion-r1	8e447753aaf658afa609fbf961d80ab7	check-reqs	a7f404bfb16e0a996700c5d3ac4edad3	eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	ghc-package	a0576f38fd872706ee22bf4f6c0c6152	libtool	52d0e17251d04645ffaa61bfdd858944	multilib	97f470f374f2e94ccab04a2fb21d811e	pax-utils	3551398d6ede2b572568832730cc2a45	prefix	21058c21ca48453d771df15500873ede	toolchain-funcs	fa02994d0beba88681127d93da4411ec	versionator	865bc8b2fc9fcfb6d520bdf5a110f5ed
+_md5_=f49cb408ef78fdd712e2109bef448339

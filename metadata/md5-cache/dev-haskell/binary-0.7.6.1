@@ -1,0 +1,14 @@
+DEFINED_PHASES=compile install postinst prerm setup
+DEPEND=>=dev-lang/ghc-7.4.1:= >=dev-haskell/cabal-1.8 test? ( dev-haskell/hunit >=dev-haskell/quickcheck-2.8 >=dev-haskell/random-1.0.1.0 dev-haskell/test-framework >=dev-haskell/test-framework-quickcheck2-0.3 ) doc? ( dev-haskell/haddock ) >=dev-haskell/cabal-1.1.4
+DESCRIPTION=Binary serialisation for Haskell values using lazy ByteStrings
+EAPI=5
+HOMEPAGE=https://github.com/kolmodin/binary
+IUSE=test doc profile
+KEYWORDS=*
+LICENSE=BSD
+RDEPEND=>=dev-lang/ghc-7.4.1:= dev-lang/ghc
+RESTRICT=test
+SLOT=0/0.7.6.1
+SRC_URI=mirror://hackage/packages/archive/binary/0.7.6.1/binary-0.7.6.1.tar.gz
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	ghc-package	a0576f38fd872706ee22bf4f6c0c6152	haskell-cabal	fde11633d9b6632dafa46c1f669b2a78	multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	fa02994d0beba88681127d93da4411ec	versionator	865bc8b2fc9fcfb6d520bdf5a110f5ed
+_md5_=a3a71b1ff1acd7fe74a9043d37df8b4b

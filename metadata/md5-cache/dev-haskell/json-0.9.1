@@ -1,0 +1,13 @@
+DEFINED_PHASES=compile configure install postinst prerm setup
+DEPEND=dev-haskell/mtl:=[profile?] dev-haskell/text:=[profile?] >=dev-lang/ghc-7.4.1:= generic? ( >=dev-haskell/syb-0.3.3:=[profile?] ) parsec? ( dev-haskell/parsec:=[profile?] ) >=dev-haskell/cabal-1.6 doc? ( dev-haskell/haddock ) >=dev-haskell/cabal-1.1.4
+DESCRIPTION=Support for serialising Haskell to and from JSON
+EAPI=5
+HOMEPAGE=http://hackage.haskell.org/package/json
+IUSE=+generic mapdict +parsec +pretty doc profile
+KEYWORDS=*
+LICENSE=BSD
+RDEPEND=dev-haskell/mtl:=[profile?] dev-haskell/text:=[profile?] >=dev-lang/ghc-7.4.1:= generic? ( >=dev-haskell/syb-0.3.3:=[profile?] ) parsec? ( dev-haskell/parsec:=[profile?] ) dev-lang/ghc
+SLOT=0/0.9.1
+SRC_URI=mirror://hackage/packages/archive/json/0.9.1/json-0.9.1.tar.gz
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	ghc-package	a0576f38fd872706ee22bf4f6c0c6152	haskell-cabal	fde11633d9b6632dafa46c1f669b2a78	multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	fa02994d0beba88681127d93da4411ec	versionator	865bc8b2fc9fcfb6d520bdf5a110f5ed
+_md5_=3687a395493dfe7beaaa2fb1e328b8ea

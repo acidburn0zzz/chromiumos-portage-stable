@@ -1,0 +1,12 @@
+DEFINED_PHASES=compile configure install postinst prepare prerm setup
+DEPEND=>=dev-lang/ghc-6.12.1
+DESCRIPTION=Rebuild Haskell dependencies in Gentoo
+EAPI=5
+HOMEPAGE=http://haskell.org/haskellwiki/Gentoo#haskell-updater
+KEYWORDS=*
+LICENSE=GPL-2
+RDEPEND=|| ( >=sys-apps/portage-2.1.6 sys-apps/pkgcore sys-apps/paludis )
+SLOT=0
+SRC_URI=mirror://hackage/packages/archive/haskell-updater/1.2.10/haskell-updater-1.2.10.tar.gz
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	ghc-package	a0576f38fd872706ee22bf4f6c0c6152	haskell-cabal	fde11633d9b6632dafa46c1f669b2a78	multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	fa02994d0beba88681127d93da4411ec	versionator	865bc8b2fc9fcfb6d520bdf5a110f5ed
+_md5_=c8d267616f32936385ce3122573d97d8

@@ -1,0 +1,14 @@
+DEFINED_PHASES=compile configure install postinst prerm setup
+DEPEND=>=dev-lang/ghc-7.8.1:=
+DESCRIPTION=A framework for packaging Haskell software
+EAPI=6
+HOMEPAGE=http://www.haskell.org/cabal/
+IUSE=test profile
+KEYWORDS=*
+LICENSE=BSD
+RDEPEND=>=dev-lang/ghc-7.8.1:= dev-lang/ghc
+RESTRICT=test
+SLOT=0/1.24.2.0
+SRC_URI=mirror://hackage/packages/archive/Cabal/1.24.2.0/Cabal-1.24.2.0.tar.gz
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	ghc-package	a0576f38fd872706ee22bf4f6c0c6152	haskell-cabal	fde11633d9b6632dafa46c1f669b2a78	multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	fa02994d0beba88681127d93da4411ec	versionator	865bc8b2fc9fcfb6d520bdf5a110f5ed
+_md5_=f44532a1ba5c117e2d10da347043e0b3
