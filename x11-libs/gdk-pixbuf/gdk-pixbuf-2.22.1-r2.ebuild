@@ -4,7 +4,8 @@
 
 EAPI="3"
 
-inherit gnome.org multilib libtool autotools
+# TODO(crbug.com/845181): Upgrade to upstream once needed eclasses are updated.
+inherit gnome.org multilib libtool autotools eutils
 
 DESCRIPTION="Image loading library for GTK+"
 HOMEPAGE="http://www.gtk.org/"
