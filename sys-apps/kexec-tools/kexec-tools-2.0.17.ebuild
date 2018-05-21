@@ -1,18 +1,23 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-apps/kexec-tools/kexec-tools-2.0.9-r1.ebuild,v 1.1 2015/04/15 08:37:14 vapier Exp $
 
-EAPI=5
+EAPI=6
 
-inherit autotools-utils linux-info systemd
+if [[ ${PV} == "9999" ]] ; then
+	inherit git-r3 autotools
+	EGIT_REPO_URI="https://git.kernel.org/pub/scm/utils/kernel/kexec/kexec-tools.git"
+else
+	SRC_URI="mirror://kernel/linux/utils/kernel/kexec/${P}.tar.xz"
+	KEYWORDS="*"
+fi
+
+inherit flag-o-matic libtool linux-info systemd toolchain-funcs
 
 DESCRIPTION="Load another kernel from the currently executing Linux kernel"
-HOMEPAGE="http://kernel.org/pub/linux/utils/kernel/kexec/"
-SRC_URI="mirror://kernel/linux/utils/kernel/kexec/${P}.tar.xz"
+HOMEPAGE="https://kernel.org/pub/linux/utils/kernel/kexec/"
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="*"
 IUSE="booke lzma xen zlib"
 
 REQUIRED_USE="lzma? ( zlib )"
@@ -27,12 +32,21 @@ CONFIG_CHECK="~KEXEC"
 PATCHES=(
 	"${FILESDIR}"/${PN}-2.0.4-disable-kexec-test.patch
 	"${FILESDIR}"/${PN}-2.0.4-out-of-source.patch
-	"${FILESDIR}"/${PN}-2.0.9-hardened.patch
 )
 
 pkg_setup() {
 	# GNU Make's $(COMPILE.S) passes ASFLAGS to $(CCAS), CCAS=$(CC)
 	export ASFLAGS="${CCASFLAGS}"
+}
+
+src_prepare() {
+	default
+	if [[ ${PV} == "9999" ]] ; then
+		eautoreconf
+	else
+		elibtoolize
+	fi
+	filter-flags '-mindirect-branch=thunk*'
 }
 
 src_configure() {
@@ -42,15 +56,15 @@ src_configure() {
 		$(use_with xen)
 		$(use_with zlib)
 	)
-	autotools-utils_src_configure
+	econf "${myeconfargs[@]}"
 }
 
 src_install() {
-	autotools-utils_src_install
+	default
 
 	dodoc "${FILESDIR}"/README.Gentoo
 
-	newinitd "${FILESDIR}"/kexec.init-2.0.4-r2 kexec
+	newinitd "${FILESDIR}"/kexec.init-2.0.13-r1 kexec
 	newconfd "${FILESDIR}"/kexec.conf-2.0.4 kexec
 
 	insinto /etc
