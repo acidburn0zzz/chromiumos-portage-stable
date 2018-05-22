@@ -1,13 +1,11 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-libs/libxslt/libxslt-1.1.28-r4.ebuild,v 1.11 2015/04/08 17:51:55 mgorny Exp $
 
-EAPI=5
-
+EAPI=6
 PYTHON_COMPAT=( python2_7 )
 PYTHON_REQ_USE="xml"
 
-inherit autotools eutils python-r1 toolchain-funcs multilib-minimal
+inherit autotools ltprune python-r1 toolchain-funcs multilib-minimal
 
 DESCRIPTION="XSLT libraries and tools"
 HOMEPAGE="http://www.xmlsoft.org/"
@@ -16,19 +14,16 @@ SRC_URI="ftp://xmlsoft.org/${PN}/${P}.tar.gz"
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS="*"
-IUSE="crypt debug python static-libs"
 
+IUSE="crypt debug examples python static-libs elibc_Darwin"
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
-RDEPEND=">=dev-libs/libxml2-2.9.1-r5:2[${MULTILIB_USEDEP}]
+RDEPEND="
+	>=dev-libs/libxml2-2.9.1-r5:2[${MULTILIB_USEDEP}]
 	crypt?  ( >=dev-libs/libgcrypt-1.5.3:0=[${MULTILIB_USEDEP}] )
 	python? (
 		${PYTHON_DEPS}
 		dev-libs/libxml2:2[python,${PYTHON_USEDEP}] )
-	abi_x86_32? (
-		!<=app-emulation/emul-linux-x86-baselibs-20131008-r20
-		!app-emulation/emul-linux-x86-baselibs[-abi_x86_32(-)]
-	)
 "
 DEPEND="${RDEPEND}"
 
@@ -36,19 +31,19 @@ MULTILIB_CHOST_TOOLS=(
 	/usr/bin/xslt-config
 )
 
+MULTILIB_WRAPPED_HEADERS=(
+	/usr/include/libxslt/xsltconfig.h
+)
+
 src_prepare() {
+	default
+
 	DOCS=( AUTHORS ChangeLog FEATURES NEWS README TODO )
 
-	# https://bugzilla.gnome.org/show_bug.cgi?id=684621
-	epatch "${FILESDIR}"/${PN}.m4-${PN}-1.1.26.patch
-
-	epatch "${FILESDIR}"/${PN}-1.1.26-disable_static_modules.patch
-
-	# use AC_PATH_TOOL for libgcrypt-config for sane cross-compile and multilib support
-	# https://bugzilla.gnome.org/show_bug.cgi?id=725635
-	# same for xml2-config
-	# https://bugs.gentoo.org/show_bug.cgi?id=518728
-	epatch "${FILESDIR}"/${PN}-1.1.28-AC_PATH_TOOL.patch
+	# Simplify python setup
+	# https://bugzilla.gnome.org/show_bug.cgi?id=758095
+	eapply "${FILESDIR}"/${PV}-simplify-python.patch
+	eapply "${FILESDIR}"/${PN}-1.1.28-disable-static-modules.patch
 
 	eautoreconf
 	# If eautoreconf'd with new autoconf, then epunt_cxx is not necessary
@@ -61,25 +56,25 @@ src_prepare() {
 
 multilib_src_configure() {
 	libxslt_configure() {
-		ECONF_SOURCE=${S} econf \
-			$(use_enable static-libs static) \
+		ECONF_SOURCE="${S}" econf \
 			--with-html-dir="${EPREFIX}"/usr/share/doc/${PF} \
 			--with-html-subdir=html \
 			$(use_with crypt crypto) \
 			$(use_with debug) \
 			$(use_with debug mem-debug) \
+			$(use_enable static-libs static) \
 			"$@"
 	}
 
 	libxslt_py_configure() {
 		mkdir -p "${BUILD_DIR}" || die # ensure python build dirs exist
-		run_in_build_dir libxslt_configure "--with-python=${PYTHON}" # odd build system
+		run_in_build_dir libxslt_configure --with-python
 	}
 
 	libxslt_configure --without-python # build python bindings separately
 
 	if multilib_is_native_abi && use python; then
-		python_parallel_foreach_impl libxslt_py_configure
+		python_foreach_impl libxslt_py_configure
 	fi
 }
 
@@ -98,9 +93,20 @@ multilib_src_install() {
 	emake DESTDIR="${D}" install
 
 	if multilib_is_native_abi && use python; then
-		libxslt_foreach_py_emake DESTDIR="${D}" install
+		libxslt_foreach_py_emake \
+			DESTDIR="${D}" \
+			docsdir="${EPREFIX}"/usr/share/doc/${PF}/python \
+			EXAMPLE_DIR="${EPREFIX}"/usr/share/doc/${PF}/python/examples \
+			install
 		python_foreach_impl python_optimize
-		mv "${ED}"/usr/share/doc/${PN}-python-${PV} "${ED}"/usr/share/doc/${PF}/python
+	fi
+}
+
+multilib_src_install_all() {
+	einstalldocs
+
+	if ! use examples && use python; then
+		rm -r "${ED}"/usr/share/doc/${PF}/python/examples || die
 	fi
 
 	prune_libtool_files --modules
