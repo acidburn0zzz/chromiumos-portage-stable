@@ -1,0 +1,10 @@
+DEFINED_PHASES=install prepare
+DESCRIPTION=killproc and assorted tools for boot scripts
+EAPI=5
+HOMEPAGE=http://ftp.suse.com/pub/projects/init/
+KEYWORDS=*
+LICENSE=GPL-2
+SLOT=0
+SRC_URI=ftp://ftp.suse.com/pub/projects/init/killproc-2.13.tar.gz
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	fa02994d0beba88681127d93da4411ec
+_md5_=b43e17b69e15f90f978562574184646a
