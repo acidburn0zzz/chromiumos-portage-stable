@@ -1,15 +1,13 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
-EAPI=5
+EAPI=6
 
-inherit eutils toolchain-funcs multilib
+inherit toolchain-funcs multilib
 
 DESCRIPTION="xfs filesystem utilities"
-HOMEPAGE="http://oss.sgi.com/projects/xfs/"
-SRC_URI="ftp://oss.sgi.com/projects/xfs/cmd_tars/${P}.tar.gz
-	ftp://oss.sgi.com/projects/xfs/previous/cmd_tars/${P}.tar.gz"
+HOMEPAGE="https://xfs.wiki.kernel.org/"
+SRC_URI="https://www.kernel.org/pub/linux/utils/fs/xfs/${PN}/${P}.tar.xz"
 
 LICENSE="LGPL-2.1"
 SLOT="0"
@@ -30,9 +28,9 @@ DEPEND="${RDEPEND}
 	nls? ( sys-devel/gettext )"
 
 PATCHES=(
-	"${FILESDIR}"/${PN}-4.3.0-sharedlibs.patch
-	"${FILESDIR}"/${PN}-4.3.0-cross-compile.patch
-	"${FILESDIR}"/${PN}-4.5.0-linguas.patch
+	"${FILESDIR}"/${PN}-4.12.0-sharedlibs.patch
+	"${FILESDIR}"/${PN}-4.7.0-libxcmd-link.patch
+	"${FILESDIR}"/${PN}-4.9.0-underlinking.patch
 )
 
 pkg_setup() {
@@ -43,7 +41,7 @@ pkg_setup() {
 }
 
 src_prepare() {
-	epatch "${PATCHES[@]}"
+	default
 
 	# LLDFLAGS is used for programs, so apply -all-static when USE=static is enabled.
 	# Clear out -static from all flags since we want to link against dynamic xfs libs.
@@ -54,16 +52,11 @@ src_prepare() {
 	find -name Makefile -exec \
 		sed -i -r -e '/^LLDFLAGS [+]?= -static(-libtool-libs)?$/d' {} +
 
-	# libdisk has broken blkid conditional checking
-	sed -i \
-		-e '/LIB_SUBDIRS/s:libdisk::' \
-		Makefile || die
-
-	# TODO: write a patch for configure.in to use pkg-config for the uuid-part
+	# TODO: Write a patch for configure.ac to use pkg-config for the uuid-part.
 	if use static && use readline ; then
 		sed -i \
-			-e 's|-lreadline|\0 -lncurses|' \
-			-e 's|-lblkid|\0 -luuid|' \
+			-e 's|-lreadline|& -lncurses|' \
+			-e 's|-lblkid|& -luuid|' \
 			configure || die
 	fi
 }
@@ -72,22 +65,19 @@ src_configure() {
 	export DEBUG=-DNDEBUG
 	export OPTIMIZER=${CFLAGS}
 	unset PLATFORM # if set in user env, this breaks configure
-	tc-export_build_env BUILD_CC
 
-	local myconf
+	local myconf=(
+		$(use_enable nls gettext)
+		$(use_enable readline)
+		$(usex readline --disable-editline $(use_enable libedit editline))
+	)
 	if use static || use static-libs ; then
-		myconf+=" --enable-static"
+		myconf+=( --enable-static )
 	else
-		myconf+=" --disable-static"
+		myconf+=( --disable-static )
 	fi
 
-	econf \
-		--bindir=/usr/bin \
-		--libexecdir=/usr/$(get_libdir) \
-		$(use_enable nls gettext) \
-		$(use_enable readline) \
-		$(usex readline --disable-editline $(use_enable libedit editline)) \
-		${myconf}
+	econf "${myconf[@]}"
 
 	MAKEOPTS+=" V=1"
 }
@@ -98,7 +88,7 @@ src_install() {
 	emake -j1 DIST_ROOT="${ED}" install-dev
 
 	# handle is for xfsdump, the rest for xfsprogs
-	gen_usr_ldscript -a xfs xlog
+	gen_usr_ldscript -a handle xcmd xfs xlog
 	# removing unnecessary .la files if not needed
 	use static-libs || find "${ED}" -name '*.la' -delete
 }
