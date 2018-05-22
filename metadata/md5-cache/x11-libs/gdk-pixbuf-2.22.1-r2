@@ -11,4 +11,4 @@ RDEPEND=>=dev-libs/glib-2.25.15 >=media-libs/libpng-1.2.44 introspection? ( >=de
 SLOT=2
 SRC_URI=mirror://gnome/sources/gdk-pixbuf/2.22/gdk-pixbuf-2.22.1.tar.bz2
 _eclasses_=autotools	999c8f6cf5d91495cb0779588f20716c	eutils	06133990e861be0fe60c2b428fd025d9	gnome.org	8fef8f967214f56e08fa92d61163d891	libtool	52d0e17251d04645ffaa61bfdd858944	multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	fa02994d0beba88681127d93da4411ec	versionator	865bc8b2fc9fcfb6d520bdf5a110f5ed
-_md5_=bf077331fa3811c0a48e453bcc8a69bc
+_md5_=2e6ae0e4f2137530f2fa34c283c9cdb8
