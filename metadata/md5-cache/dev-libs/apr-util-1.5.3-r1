@@ -10,5 +10,5 @@ RDEPEND=dev-libs/expat >=dev-libs/apr-1.4.6:1 berkdb? ( >=sys-libs/db-4 ) freetd
 RESTRICT=test
 SLOT=1
 SRC_URI=mirror://apache/apr/apr-util-1.5.3.tar.bz2
-_eclasses_=autotools	999c8f6cf5d91495cb0779588f20716c	db-use	8d7baa3efc7c38c7d5c5e7353c5460dc	eutils	06133990e861be0fe60c2b428fd025d9	libtool	52d0e17251d04645ffaa61bfdd858944	multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	fa02994d0beba88681127d93da4411ec	versionator	865bc8b2fc9fcfb6d520bdf5a110f5ed
+_eclasses_=autotools	999c8f6cf5d91495cb0779588f20716c	db-use	8d7baa3efc7c38c7d5c5e7353c5460dc	estack	43ddf5aaffa7a8d0482df54d25a66a1f	eutils	06133990e861be0fe60c2b428fd025d9	libtool	52d0e17251d04645ffaa61bfdd858944	multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	fa02994d0beba88681127d93da4411ec	versionator	26ca8a8bd95d6a74122c08ba98a4ee72
 _md5_=f32ce3be249ba0711ed2b699991eaf68

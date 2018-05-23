@@ -9,5 +9,5 @@ LICENSE=|| ( MPL-2.0 GPL-2 LGPL-2.1 )
 RDEPEND=abi_x86_32? ( !<=app-emulation/emul-linux-x86-baselibs-20140508-r12 !app-emulation/emul-linux-x86-baselibs[-abi_x86_32(-)] )
 SLOT=0
 SRC_URI=https://archive.mozilla.org/pub/nspr/releases/v4.14/src/nspr-4.14.tar.gz
-_eclasses_=autotools	999c8f6cf5d91495cb0779588f20716c	eutils	06133990e861be0fe60c2b428fd025d9	libtool	52d0e17251d04645ffaa61bfdd858944	multibuild	742139c87a9fa3766f0c2b155e5522bf	multilib	97f470f374f2e94ccab04a2fb21d811e	multilib-build	8fe2e81aeb36cdf8a6cc5f50443879cc	multilib-minimal	0224dee31c0f98405d572e14ad6dee65	toolchain-funcs	fa02994d0beba88681127d93da4411ec	versionator	865bc8b2fc9fcfb6d520bdf5a110f5ed
+_eclasses_=autotools	999c8f6cf5d91495cb0779588f20716c	estack	43ddf5aaffa7a8d0482df54d25a66a1f	eutils	06133990e861be0fe60c2b428fd025d9	libtool	52d0e17251d04645ffaa61bfdd858944	multibuild	742139c87a9fa3766f0c2b155e5522bf	multilib	97f470f374f2e94ccab04a2fb21d811e	multilib-build	8fe2e81aeb36cdf8a6cc5f50443879cc	multilib-minimal	0224dee31c0f98405d572e14ad6dee65	toolchain-funcs	fa02994d0beba88681127d93da4411ec	versionator	26ca8a8bd95d6a74122c08ba98a4ee72
 _md5_=a904996e53ab9c8d3ccf4b829647c618

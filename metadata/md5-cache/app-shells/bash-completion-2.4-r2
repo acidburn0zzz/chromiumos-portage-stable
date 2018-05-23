@@ -9,5 +9,5 @@ PDEPEND=>=app-shells/gentoo-bashcomp-20140911
 RDEPEND=>=app-shells/bash-4.3_p30-r1 sys-apps/miscfiles !app-eselect/eselect-bashcomp
 SLOT=0
 SRC_URI=https://github.com/scop/bash-completion/releases/download/2.4/bash-completion-2.4.tar.xz https://bitbucket.org/mgorny/bashcomp2/downloads/bashcomp-2.0.2.tar.gz
-_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	fa02994d0beba88681127d93da4411ec	versionator	865bc8b2fc9fcfb6d520bdf5a110f5ed
+_eclasses_=estack	43ddf5aaffa7a8d0482df54d25a66a1f	versionator	26ca8a8bd95d6a74122c08ba98a4ee72
 _md5_=2c8853afec45adf83abe9c0348077d76
