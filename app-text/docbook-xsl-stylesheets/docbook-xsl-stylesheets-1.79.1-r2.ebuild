@@ -1,15 +1,18 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/app-text/docbook-xsl-stylesheets/docbook-xsl-stylesheets-1.78.0.ebuild,v 1.14 2014/01/18 11:45:54 vapier Exp $
 
-EAPI=5
+EAPI=6
+
+USE_RUBY="ruby22 ruby23 ruby24 ruby25"
+
+inherit ruby-single
 
 DOCBOOKDIR="/usr/share/sgml/${PN/-//}"
 MY_PN="${PN%-stylesheets}"
 MY_P="${MY_PN}-${PV}"
 
 DESCRIPTION="XSL Stylesheets for Docbook"
-HOMEPAGE="http://wiki.docbook.org/topic/DocBookXslStylesheets"
+HOMEPAGE="https://github.com/docbook/wiki/wiki"
 SRC_URI="mirror://sourceforge/docbook/${MY_P}.tar.bz2"
 
 LICENSE="BSD"
@@ -18,13 +21,30 @@ KEYWORDS="*"
 IUSE="ruby"
 
 RDEPEND=">=app-text/build-docbook-catalog-1.1
-	ruby? ( dev-lang/ruby )"
-DEPEND=""
+	ruby? ( ${RUBY_DEPS} )"
 
 S="${WORKDIR}/${MY_P}"
 
 # Makefile is broken since 1.76.0
 RESTRICT=test
+
+PATCHES=(
+	"${FILESDIR}"/nonrecursive-string-subst.patch
+)
+
+src_prepare() {
+	default
+
+	# Delete the unnecessary Java-related stuff and other tools as they
+	# bloat the stage3 tarballs massively. See bug #575818.
+	rm -rv extensions/ tools/ || die
+	find \( -name build.xml -o -name build.properties \) \
+		-printf "removed %p\n" -delete || die
+
+	if ! use ruby; then
+		rm -rv epub/ || die
+	fi
+}
 
 # The makefile runs tests, not builds.
 src_compile() { :; }
@@ -42,8 +62,8 @@ src_install() {
 	doins VERSION VERSION.xsl
 
 	local i
-	for i in $(find . -maxdepth 1 -mindepth 1 -type d -exec basename {} \;); do
-		[[ "$i" == "epub" ]] && ! use ruby && continue
+	for i in */; do
+		i=${i%/}
 
 		cd "${S}"/${i}
 		for doc in ChangeLog README; do
