@@ -1,13 +1,13 @@
 DEFINED_PHASES=compile configure install prepare test unpack
-DEPEND=virtual/perl-libnet dev-perl/IO-Socket-SSL virtual/perl-ExtUtils-MakeMaker test? ( virtual/perl-Test-Simple ) || ( >=dev-lang/perl-5.16 <dev-lang/perl-5.16[-build] )
+DEPEND=virtual/perl-libnet dev-perl/IO-Socket-SSL virtual/perl-ExtUtils-MakeMaker test? ( virtual/perl-Test-Simple ) dev-lang/perl:=[-build(-)]
 DESCRIPTION=SSL support for Net::SMTP
 EAPI=5
 HOMEPAGE=http://search.cpan.org/dist/Net-SMTP-SSL/
 IUSE=test
 KEYWORDS=*
-LICENSE=|| ( Artistic GPL-1 GPL-2 GPL-3 )
-RDEPEND=virtual/perl-libnet dev-perl/IO-Socket-SSL || ( >=dev-lang/perl-5.16 <dev-lang/perl-5.16[-build] )
+LICENSE=|| ( Artistic GPL-1+ )
+RDEPEND=virtual/perl-libnet dev-perl/IO-Socket-SSL dev-lang/perl:=[-build(-)]
 SLOT=0
 SRC_URI=mirror://cpan/authors/id/R/RJ/RJBS/Net-SMTP-SSL-1.03.tar.gz
-_eclasses_=base	ec46b36a6f6fd1d0b505a33e0b74e413	eutils	06133990e861be0fe60c2b428fd025d9	multilib	97f470f374f2e94ccab04a2fb21d811e	multiprocessing	e32940a7b2a9992ad217eccddb84d548	perl-module	d93571ca1c77e98760e5aa406388b02d	toolchain-funcs	fa02994d0beba88681127d93da4411ec
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multilib	97f470f374f2e94ccab04a2fb21d811e	multiprocessing	e32940a7b2a9992ad217eccddb84d548	perl-functions	01e8c68d5a528bbcda4d3c60205983df	perl-module	863b35d127db98823d439f8d73c2d011	toolchain-funcs	fa02994d0beba88681127d93da4411ec	unpacker	04385b0f181c42fa9c18ec0e31729d1f
 _md5_=df0670d8d5a4e6f70cf3d8d21c66492d

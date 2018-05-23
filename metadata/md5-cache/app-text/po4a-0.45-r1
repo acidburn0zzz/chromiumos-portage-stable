@@ -1,13 +1,13 @@
 DEFINED_PHASES=compile configure install prepare test unpack
-DEPEND=dev-perl/SGMLSpm >=sys-devel/gettext-0.13 app-text/openjade dev-libs/libxslt dev-perl/Locale-gettext dev-perl/TermReadKey dev-perl/Text-WrapI18N >=virtual/perl-Module-Build-0.380.0 app-text/docbook-xsl-stylesheets app-text/docbook-xml-dtd:4.1.2 test? ( app-text/docbook-sgml-dtd app-text/docbook-sgml-utils virtual/tex-base ) || ( >=dev-lang/perl-5.16 <dev-lang/perl-5.16[-build] )
+DEPEND=dev-perl/SGMLSpm >=sys-devel/gettext-0.13 app-text/openjade dev-libs/libxslt dev-perl/Locale-gettext dev-perl/TermReadKey dev-perl/Text-WrapI18N >=virtual/perl-Module-Build-0.380.0 app-text/docbook-xsl-stylesheets app-text/docbook-xml-dtd:4.1.2 test? ( app-text/docbook-sgml-dtd app-text/docbook-sgml-utils virtual/tex-base ) dev-lang/perl:=[-build(-)]
 DESCRIPTION=Tools for helping translation of documentation
 EAPI=5
 HOMEPAGE=http://po4a.alioth.debian.org
 IUSE=test
 KEYWORDS=*
 LICENSE=GPL-2
-RDEPEND=dev-perl/SGMLSpm >=sys-devel/gettext-0.13 app-text/openjade dev-libs/libxslt dev-perl/Locale-gettext dev-perl/TermReadKey dev-perl/Text-WrapI18N || ( >=dev-lang/perl-5.16 <dev-lang/perl-5.16[-build] )
+RDEPEND=dev-perl/SGMLSpm >=sys-devel/gettext-0.13 app-text/openjade dev-libs/libxslt dev-perl/Locale-gettext dev-perl/TermReadKey dev-perl/Text-WrapI18N dev-lang/perl:=[-build(-)]
 SLOT=0
 SRC_URI=mirror://debian/pool/main/p/po4a/po4a_0.45.orig.tar.gz
-_eclasses_=base	ec46b36a6f6fd1d0b505a33e0b74e413	eutils	06133990e861be0fe60c2b428fd025d9	multilib	97f470f374f2e94ccab04a2fb21d811e	multiprocessing	e32940a7b2a9992ad217eccddb84d548	perl-app	20b0a51a72b6d2c8ac53ccab1605737f	perl-module	d93571ca1c77e98760e5aa406388b02d	toolchain-funcs	fa02994d0beba88681127d93da4411ec
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multilib	97f470f374f2e94ccab04a2fb21d811e	multiprocessing	e32940a7b2a9992ad217eccddb84d548	perl-app	20b0a51a72b6d2c8ac53ccab1605737f	perl-functions	01e8c68d5a528bbcda4d3c60205983df	perl-module	863b35d127db98823d439f8d73c2d011	toolchain-funcs	fa02994d0beba88681127d93da4411ec	unpacker	04385b0f181c42fa9c18ec0e31729d1f
 _md5_=d27d5965afd3a306e4a6d4294d345e58
