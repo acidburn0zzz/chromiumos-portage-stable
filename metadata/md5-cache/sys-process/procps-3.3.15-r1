@@ -1,0 +1,13 @@
+DEFINED_PHASES=configure install test
+DEPEND=elogind? ( sys-auth/elogind ) ncurses? ( >=sys-libs/ncurses-5.7-r7:=[unicode?] ) selinux? ( sys-libs/libselinux ) systemd? ( sys-apps/systemd ) elogind? ( virtual/pkgconfig ) ncurses? ( virtual/pkgconfig ) systemd? ( virtual/pkgconfig ) test? ( dev-util/dejagnu )
+DESCRIPTION=standard informational utilities and process-handling tools
+EAPI=6
+HOMEPAGE=http://procps-ng.sourceforge.net/ https://gitlab.com/procps-ng/procps
+IUSE=elogind +kill modern-top +ncurses nls selinux static-libs systemd test unicode
+KEYWORDS=*
+LICENSE=GPL-2
+RDEPEND=elogind? ( sys-auth/elogind ) ncurses? ( >=sys-libs/ncurses-5.7-r7:=[unicode?] ) selinux? ( sys-libs/libselinux ) systemd? ( sys-apps/systemd ) kill? ( !sys-apps/coreutils[kill] !sys-apps/util-linux[kill] ) !<sys-apps/sysvinit-2.88-r6
+SLOT=0/6
+SRC_URI=mirror://sourceforge/procps-ng/procps-ng-3.3.15.tar.xz
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	fa02994d0beba88681127d93da4411ec
+_md5_=f2f7fac4320a0703cb52f0ead1187834
