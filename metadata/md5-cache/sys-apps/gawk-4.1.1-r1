@@ -9,5 +9,5 @@ LICENSE=GPL-2
 RDEPEND=mpfr? ( dev-libs/mpfr ) readline? ( sys-libs/readline )
 SLOT=0
 SRC_URI=mirror://gnu/gawk/gawk-4.1.1.tar.xz
-_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	fa02994d0beba88681127d93da4411ec
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607
 _md5_=e290b67e924e156ec37c5841dd9e481a

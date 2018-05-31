@@ -11,5 +11,5 @@ REQUIRED_USE=curl_ssl_winssl? ( elibc_Winnt ) threads? ( !adns ) ssl? ( ^^ ( cur
 RESTRICT=test
 SLOT=0
 SRC_URI=https://curl.haxx.se/download/curl-7.58.0.tar.bz2
-_eclasses_=autotools	999c8f6cf5d91495cb0779588f20716c	eutils	06133990e861be0fe60c2b428fd025d9	libtool	52d0e17251d04645ffaa61bfdd858944	multibuild	742139c87a9fa3766f0c2b155e5522bf	multilib	97f470f374f2e94ccab04a2fb21d811e	multilib-build	8fe2e81aeb36cdf8a6cc5f50443879cc	multilib-minimal	0224dee31c0f98405d572e14ad6dee65	prefix	21058c21ca48453d771df15500873ede	toolchain-funcs	fa02994d0beba88681127d93da4411ec
+_eclasses_=autotools	999c8f6cf5d91495cb0779588f20716c	eutils	06133990e861be0fe60c2b428fd025d9	libtool	52d0e17251d04645ffaa61bfdd858944	multibuild	742139c87a9fa3766f0c2b155e5522bf	multilib	97f470f374f2e94ccab04a2fb21d811e	multilib-build	8fe2e81aeb36cdf8a6cc5f50443879cc	multilib-minimal	0224dee31c0f98405d572e14ad6dee65	prefix	21058c21ca48453d771df15500873ede	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607
 _md5_=3300ddeccd570cd17d7d3c9675c752a1

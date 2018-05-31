@@ -8,5 +8,5 @@ LICENSE=LGPL-2
 RDEPEND=dev-lang/python
 SLOT=0
 SRC_URI=http://people.freedesktop.org/~lanius/pyxdg-0.18.tar.gz
-_eclasses_=distutils	ad9e4720eb3e69090dd968b152fc611b	eutils	06133990e861be0fe60c2b428fd025d9	multilib	97f470f374f2e94ccab04a2fb21d811e	python	efc1c55fc44c5b7272fc2ffba73c3e6f	toolchain-funcs	fa02994d0beba88681127d93da4411ec
+_eclasses_=distutils	ad9e4720eb3e69090dd968b152fc611b	eutils	06133990e861be0fe60c2b428fd025d9	multilib	97f470f374f2e94ccab04a2fb21d811e	python	efc1c55fc44c5b7272fc2ffba73c3e6f	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607
 _md5_=5bacff1b5ff6dccb4601d90e662c57b7

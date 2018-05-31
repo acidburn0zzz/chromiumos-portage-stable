@@ -7,5 +7,5 @@ KEYWORDS=*
 LICENSE=BZIP2
 SLOT=0
 SRC_URI=http://www.bzip.org/1.0.6/bzip2-1.0.6.tar.gz
-_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multibuild	742139c87a9fa3766f0c2b155e5522bf	multilib	97f470f374f2e94ccab04a2fb21d811e	multilib-build	8fe2e81aeb36cdf8a6cc5f50443879cc	multilib-minimal	0224dee31c0f98405d572e14ad6dee65	toolchain-funcs	fa02994d0beba88681127d93da4411ec
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multibuild	742139c87a9fa3766f0c2b155e5522bf	multilib	97f470f374f2e94ccab04a2fb21d811e	multilib-build	8fe2e81aeb36cdf8a6cc5f50443879cc	multilib-minimal	0224dee31c0f98405d572e14ad6dee65	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607
 _md5_=05e0c8ee006d2a93d72806dcb4962c56
