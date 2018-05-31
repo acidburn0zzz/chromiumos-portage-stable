@@ -1,25 +1,40 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=5
+EAPI=6
 
 BASHCOMP_P=bashcomp-2.0.2
 inherit versionator
 
 DESCRIPTION="Programmable Completion for bash"
 HOMEPAGE="https://github.com/scop/bash-completion"
-SRC_URI="https://github.com/scop/bash-completion/releases/download/${PV}/${P}.tar.xz
+SRC_URI="
+	https://github.com/scop/bash-completion/releases/download/${PV}/${P}.tar.xz
 	https://bitbucket.org/mgorny/bashcomp2/downloads/${BASHCOMP_P}.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="*"
-IUSE=""
+IUSE="test"
+# Multiple test failures, need to investigate the exact problem
+RESTRICT="test"
 
-RDEPEND=">=app-shells/bash-4.3_p30-r1
+# completion collision with net-fs/mc
+RDEPEND="
+	>=app-shells/bash-4.3_p30-r1
 	sys-apps/miscfiles
-	!app-eselect/eselect-bashcomp"
-DEPEND="app-arch/xz-utils"
+	!app-eselect/eselect-bashcomp
+	!!net-fs/mc"
+
+DEPEND="
+	app-arch/xz-utils
+	test? (
+		${RDEPEND}
+		app-misc/dtach
+		dev-util/dejagnu
+		dev-tcltk/tcllib
+	)"
+
 PDEPEND=">=app-shells/gentoo-bashcomp-20140911"
 
 # Remove unwanted completions.
@@ -42,13 +57,35 @@ STRIP_COMPLETIONS=(
 )
 
 src_prepare() {
-	epatch "${WORKDIR}/${BASHCOMP_P}/${PN}"-2.1_p*.patch
+	eapply "${WORKDIR}/${BASHCOMP_P}/${PN}"-2.1_p*.patch
 	# Bug 543100, update bug 601194
-	epatch "${FILESDIR}/${PN}-2.1-escape-characters-r1.patch"
-	epatch_user
+	eapply "${FILESDIR}/${PN}-2.1-escape-characters-r1.patch"
+	eapply_user
+
+	# Remove implicit completions for vim.
+	# https://bugs.gentoo.org/649986
+	sed -i -e 's/vi vim gvim rvim view rview rgvim rgview gview//' \
+		bash_completion || die
+	rm test/completion/vi.exp || die
 }
 
-src_test() { :; } # Skip testsuite because of interactive shell wrt #477066
+src_test() {
+	# Tests need an interactive shell, #477066
+	# idea stolen from:
+	# http://pkgs.fedoraproject.org/cgit/rpms/bash-completion.git/tree/bash-completion.spec
+
+	# real-time output of the log ;-)
+	touch "${T}/dtach-test.log" || die
+	tail -f "${T}/dtach-test.log" &
+	local tail_pid=${!}
+
+	nonfatal dtach -N "${T}/dtach.sock" \
+		bash -c 'emake check &> "${T}"/dtach-test.log; echo ${?} > "${T}"/dtach-test.out'
+
+	kill "${tail_pid}"
+	[[ -f ${T}/dtach-test.out ]] || die "Unable to run tests"
+	[[ $(<"${T}"/dtach-test.out) == 0 ]] || die "Tests failed"
+}
 
 src_install() {
 	# work-around race conditions, bug #526996
