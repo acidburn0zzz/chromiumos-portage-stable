@@ -1,6 +1,5 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-util/gtk-doc-am/gtk-doc-am-1.20.ebuild,v 1.13 2014/05/03 15:56:03 vapier Exp $
 
 EAPI=5
 GNOME_ORG_MODULE="gtk-doc"
@@ -8,20 +7,17 @@ GNOME_ORG_MODULE="gtk-doc"
 inherit gnome.org
 
 DESCRIPTION="Automake files from gtk-doc"
-HOMEPAGE="http://www.gtk.org/gtk-doc/"
+HOMEPAGE="https://www.gtk.org/gtk-doc/"
 
 LICENSE="GPL-2 FDL-1.1"
 SLOT="0"
 KEYWORDS="*"
-IUSE=""
 
-RDEPEND=">=dev-lang/perl-5.6"
+RDEPEND=">=dev-lang/perl-5.18"
 DEPEND="${RDEPEND}
-	!<dev-util/gtk-doc-${GNOME_ORG_PVP}"
-# pkg-config is used by gtkdoc-rebase at runtime
-# PDEPEND to avoid circular deps, bug 368301
-PDEPEND="virtual/pkgconfig"
-
+	virtual/pkgconfig
+	!<dev-util/gtk-doc-${GNOME_ORG_PVP}
+"
 # This ebuild doesn't even compile anything, causing tests to fail when updating (bug #316071)
 RESTRICT="test"
 
@@ -30,7 +26,7 @@ src_configure() {
 	local PERL=$(type -P perl)
 
 	test -n "${PERL}" || die "Perl not found!"
-	"${PERL}" -e "require v5.6.0" || die "perl >= 5.6.0 is required for gtk-doc"
+	"${PERL}" -e "require v5.18.0" || die "perl >= 5.18.0 is required for gtk-doc"
 
 	# Replicate AC_SUBST
 	sed -e "s:@PERL@:${PERL}:g" -e "s:@VERSION@:${PV}:g" \
@@ -42,9 +38,7 @@ src_compile() {
 }
 
 src_install() {
-	fperms +x gtkdoc-rebase
-	exeinto /usr/bin/
-	doexe gtkdoc-rebase
+	dobin gtkdoc-rebase
 
 	insinto /usr/share/aclocal
 	doins gtk-doc.m4

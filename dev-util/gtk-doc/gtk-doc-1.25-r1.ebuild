@@ -1,27 +1,25 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-util/gtk-doc/gtk-doc-1.20.ebuild,v 1.12 2014/04/21 10:29:08 ago Exp $
 
 EAPI=5
-GCONF_DEBUG="yes"
-PYTHON_COMPAT=( python{2_6,2_7} )
+PYTHON_COMPAT=( python2_7 )
 
-inherit eutils elisp-common gnome2 python-single-r1 readme.gentoo
+inherit eutils elisp-common gnome2 python-single-r1 readme.gentoo-r1
 
 DESCRIPTION="GTK+ Documentation Generator"
-HOMEPAGE="http://www.gtk.org/gtk-doc/"
+HOMEPAGE="https://www.gtk.org/gtk-doc/"
 
 LICENSE="GPL-2 FDL-1.1"
 SLOT="0"
 KEYWORDS="*"
-IUSE="debug doc emacs highlight vim test"
+
+IUSE="debug doc emacs highlight vim"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
-# dev-tex/tex4ht blocker needed due bug #315287
 RDEPEND="
+	${PYTHON_DEPS}
 	>=dev-libs/glib-2.6:2
-	>=dev-lang/perl-5.6
-	>=app-text/openjade-1.3.1
+	>=dev-lang/perl-5.18
 	dev-libs/libxslt
 	>=dev-libs/libxml2-2.3.6:2
 	~app-text/docbook-xml-dtd-4.3
@@ -33,14 +31,11 @@ RDEPEND="
 		vim? ( || ( app-editors/vim app-editors/gvim ) )
 		!vim? ( dev-util/source-highlight )
 	)
-	!!<dev-tex/tex4ht-20090611_p1038-r1
 "
 DEPEND="${RDEPEND}
 	~dev-util/gtk-doc-am-${PV}
 	app-text/yelp-tools
-	>=app-text/scrollkeeper-0.3.14
 	virtual/pkgconfig
-	test? ( app-text/scrollkeeper-dtd )
 "
 
 pkg_setup() {
@@ -52,26 +47,24 @@ pkg_setup() {
 }
 
 src_prepare() {
-	# Always disable fop; it is unreliable enough that gtk-doc upstream
-	# commented it out by default, and if it's autodetected, it causes build
-	# failures in other packages, bug #403165
-	sed -e 's:test -n "@FOP@":test -n "":' \
-		-i gtkdoc-mkpdf.in || die "sed failed"
-
-	# Remove global Emacs keybindings.
-	epatch "${FILESDIR}/${PN}-1.8-emacs-keybindings.patch"
+	# Remove global Emacs keybindings, bug #184588
+	eapply "${FILESDIR}"/${PN}-1.8-emacs-keybindings.patch
 
 	gnome2_src_prepare
 }
 
 src_configure() {
+	local myconf
 	if use vim; then
-		G2CONF="${G2CONF} $(use_with highlight highlight vim)"
+		myconf="${myconf} $(use_with highlight highlight vim)"
 	else
-		G2CONF="${G2CONF} $(use_with highlight highlight source-highlight)"
+		myconf="${myconf} $(use_with highlight highlight source-highlight)"
 	fi
 
-	gnome2_src_configure --with-xml-catalog="${EPREFIX}/etc/xml/catalog"
+	gnome2_src_configure \
+		--with-xml-catalog="${EPREFIX}"/etc/xml/catalog \
+		$(use_enable debug) \
+		${myconf}
 }
 
 src_compile() {
@@ -103,6 +96,7 @@ src_install() {
 }
 
 pkg_postinst() {
+	gnome2_pkg_postinst
 	if use emacs; then
 		elisp-site-regen
 		readme.gentoo_print_elog
@@ -110,5 +104,6 @@ pkg_postinst() {
 }
 
 pkg_postrm() {
+	gnome2_pkg_postrm
 	use emacs && elisp-site-regen
 }
