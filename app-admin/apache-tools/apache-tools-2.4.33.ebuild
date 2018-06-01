@@ -1,68 +1,78 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/app-admin/apache-tools/apache-tools-2.4.7-r1.ebuild,v 1.3 2014/01/31 08:24:41 vapier Exp $
 
-EAPI=5
+EAPI=6
 inherit flag-o-matic eutils multilib toolchain-funcs
 
 DESCRIPTION="Useful Apache tools - htdigest, htpasswd, ab, htdbm"
-HOMEPAGE="http://httpd.apache.org/"
+HOMEPAGE="https://httpd.apache.org/"
 SRC_URI="mirror://apache/httpd/httpd-${PV}.tar.bz2"
 
 LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="*"
-IUSE="ssl"
+IUSE="libressl ssl"
 RESTRICT="test"
 
-RDEPEND=">=dev-libs/apr-1.5.0:1
-	dev-libs/apr-util:1
+RDEPEND=">=dev-libs/apr-1.5.0:1=
+	dev-libs/apr-util:1=
+	dev-libs/expat
 	dev-libs/libpcre
-	ssl? ( dev-libs/openssl )"
+	kernel_linux? ( sys-apps/util-linux )
+	ssl? (
+		!libressl? ( dev-libs/openssl:0= )
+		libressl? ( dev-libs/libressl:0= )
+	)"
 
 DEPEND="${RDEPEND}
 	sys-devel/libtool"
 
 S="${WORKDIR}/httpd-${PV}"
 
+PATCHES=(
+	"${FILESDIR}/${PN}-2.4.7-Makefile.patch" #459446
+)
+
 src_prepare() {
-	epatch "${FILESDIR}"/${PN}-2.4.7-Makefile.patch #459446
+	default
 
 	# This package really should upgrade to using pcre's .pc file.
 	cat <<-\EOF >"${T}"/pcre-config
-	#!/bin/sh
-	[ "${flag}" = "--version" ] && set -- --modversion
-	exec ${PKG_CONFIG} libpcre "$@"
+	#!/bin/bash
+	flags=()
+	for flag; do
+		if [[ ${flag} == "--version" ]]; then
+			flags+=( --modversion )
+		else
+			flags+=( "${flag}" )
+		fi
+	done
+	exec ${PKG_CONFIG} libpcre "${flags[@]}"
 	EOF
 	chmod a+x "${T}"/pcre-config
 }
 
 src_configure() {
-	local myconf=()
-
 	# Brain dead check.
 	tc-is-cross-compiler && export ap_cv_void_ptr_lt_long="no"
 
 	tc-export PKG_CONFIG
 
-	# Instead of filtering --as-needed (bug #128505), append --no-as-needed
-	append-ldflags $(no-as-needed)
-
-	use ssl && myconf+=( --with-ssl="${EPREFIX}"/usr --enable-ssl )
-
-	# econf overwrites the stuff from config.layout, so we have to put them into
-	# our myconf line too
+	local myeconfargs=(
+		--libexecdir="${EPREFIX}"/usr/$(get_libdir)/apache2/modules
+		--sbindir="${EPREFIX}"/usr/sbin
+		--with-perl="${EPREFIX}"/usr/bin/perl
+		--with-expat="${EPREFIX}"/usr
+		--with-z="${EPREFIX}"/usr
+		--with-apr="${SYSROOT}${EPREFIX}"/usr
+		--with-apr-util="${SYSROOT}${EPREFIX}"/usr
+		--with-pcre="${T}"/pcre-config
+		$(use_enable ssl)
+		$(usex ssl '--with-ssl="${EPREFIX}"/usr' '')
+	)
+	# econf overwrites the stuff from config.layout.
 	ac_cv_path_PKGCONFIG=${PKG_CONFIG} \
-	econf \
-		--libexecdir="${EPREFIX}"/usr/$(get_libdir)/apache2/modules \
-		--sbindir="${EPREFIX}"/usr/sbin \
-		--with-perl="${EPREFIX}"/usr/bin/perl \
-		--with-expat="${EPREFIX}"/usr \
-		--with-z="${EPREFIX}"/usr \
-		--with-apr="${SYSROOT}${EPREFIX}"/usr \
-		--with-apr-util="${SYSROOT}${EPREFIX}"/usr \
-		--with-pcre="${T}"/pcre-config \
-		"${myconf[@]}"
+	econf "${myeconfargs[@]}"
 	sed -i \
 		-e '/^LTFLAGS/s:--silent::' \
 		build/rules.mk build/config_vars.mk || die
@@ -80,15 +90,15 @@ src_install() {
 
 	# Providing compatiblity symlinks for #177697 (which we'll stop to install
 	# at some point).
-	pushd "${ED}"/usr/sbin >/dev/null
+	pushd "${ED%/}"/usr/sbin >/dev/null || die
 	local i
 	for i in *; do
 		dosym ${i} /usr/sbin/${i}2
 	done
-	popd >/dev/null
+	popd >/dev/null || die
 
 	# Provide a symlink for ab-ssl
-	if use ssl; then
+	if use ssl ; then
 		dosym ab /usr/bin/ab-ssl
 		dosym ab /usr/bin/ab2-ssl
 	fi
