@@ -1,7 +1,7 @@
 # Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI="6"
 
 inherit autotools flag-o-matic systemd
 if [[ ${PV} == "9999" ]] ; then
@@ -47,7 +47,10 @@ RDEPEND="${DEPEND}
 
 REQUIRED_USE="( caps? ( daemon ) )"
 
-PATCHES=( "${FILESDIR}"/${P}-fix-build-on-musl.patch )
+PATCHES=(
+	"${FILESDIR}"/${P}-fix-build-on-musl.patch
+	"${FILESDIR}"/${P}-set-broadcast-nsid.patch
+)
 
 src_prepare() {
 	default
