@@ -1,0 +1,14 @@
+DEFINED_PHASES=configure install postinst prepare
+DEPEND=caps? ( static? ( sys-libs/libcap-ng[static-libs] ) !static? ( sys-libs/libcap-ng ) ) kernel_FreeBSD? ( sys-freebsd/freebsd-lib[usb] ) selinux? ( sys-libs/libselinux ) !<sys-devel/gettext-0.18.1.1-r3 || ( >=sys-devel/automake-1.13:1.13 >=sys-devel/automake-1.15:1.15 ) >=sys-devel/autoconf-2.69 >=sys-devel/libtool-2.4 virtual/pkgconfig
+DESCRIPTION=Tools to monitor storage systems to provide advanced warning of disk degradation
+EAPI=6
+HOMEPAGE=https://www.smartmontools.org
+IUSE=caps +daemon selinux static update_drivedb
+KEYWORDS=*
+LICENSE=GPL-2
+RDEPEND=caps? ( static? ( sys-libs/libcap-ng[static-libs] ) !static? ( sys-libs/libcap-ng ) ) kernel_FreeBSD? ( sys-freebsd/freebsd-lib[usb] ) selinux? ( sys-libs/libselinux ) daemon? ( virtual/mailx ) selinux? ( sec-policy/selinux-smartmon ) update_drivedb? ( app-crypt/gnupg || ( net-misc/curl net-misc/wget www-client/lynx dev-vcs/subversion ) )
+REQUIRED_USE=( caps? ( daemon ) )
+SLOT=0
+SRC_URI=mirror://sourceforge/smartmontools/smartmontools-6.6.tar.gz
+_eclasses_=autotools	999c8f6cf5d91495cb0779588f20716c	eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	libtool	52d0e17251d04645ffaa61bfdd858944	multilib	97f470f374f2e94ccab04a2fb21d811e	systemd	8f5286f89e265842f5b5189666eae88b	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607
+_md5_=0ba674ae005a39a959be72efd0dc19ac
