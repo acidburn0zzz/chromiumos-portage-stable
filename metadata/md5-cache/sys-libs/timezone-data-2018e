@@ -1,13 +1,13 @@
-DEFINED_PHASES=compile config configure install postinst preinst prepare
+DEFINED_PHASES=compile config configure install postinst preinst prepare test
 DEPEND=nls? ( virtual/libintl )
 DESCRIPTION=Timezone data (/usr/share/zoneinfo) and utilities (tzselect/zic/zdump)
-EAPI=5
+EAPI=6
 HOMEPAGE=http://www.iana.org/time-zones http://www.twinsun.com/tz/tz-link.htm
 IUSE=nls leaps_timezone elibc_FreeBSD
 KEYWORDS=*
 LICENSE=BSD public-domain
 RDEPEND=nls? ( virtual/libintl ) !sys-libs/glibc[vanilla(+)]
 SLOT=0
-SRC_URI=http://www.iana.org/time-zones/repository/releases/tzdata2017c.tar.gz http://www.iana.org/time-zones/repository/releases/tzcode2017c.tar.gz
+SRC_URI=http://www.iana.org/time-zones/repository/releases/tzdata2018e.tar.gz http://www.iana.org/time-zones/repository/releases/tzcode2018e.tar.gz
 _eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607
-_md5_=80cf57837052fc504bcfc0147cb01fa4
+_md5_=eb71729558bd6add6bf22917b59615c0
