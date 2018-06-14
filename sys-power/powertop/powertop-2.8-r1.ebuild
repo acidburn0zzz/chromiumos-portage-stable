@@ -4,7 +4,7 @@
 
 EAPI="5"
 
-inherit eutils linux-info
+inherit eutils linux-info autotools
 if [[ ${PV} == "9999" ]] ; then
 	EGIT_REPO_URI="git://github.com/fenrus75/powertop.git"
 	inherit git-2 autotools
@@ -95,12 +95,11 @@ pkg_setup() {
 }
 
 src_prepare() {
-	if [[ ${PV} == "9999" ]] ; then
-		eautoreconf
-	else
-		epatch "${FILESDIR}/${P}"-libcxx.patch
-		default
-	fi
+	epatch "${FILESDIR}"/${P}-libcxx.patch
+	epatch "${FILESDIR}"/${P}-ncurses_tinfo.patch
+
+	# Call eautoreconf since ncurses patch touches configure.ac
+	eautoreconf
 }
 
 src_configure() {
