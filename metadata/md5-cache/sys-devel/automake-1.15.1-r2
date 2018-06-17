@@ -1,0 +1,13 @@
+DEFINED_PHASES=install prepare setup
+DEPEND=dev-lang/perl >=sys-devel/automake-wrapper-10 >=sys-devel/autoconf-2.69:* sys-devel/gnuconfig sys-apps/help2man test? ( || ( >=dev-lang/python-2.7.5-r2:2.7 ) )
+DESCRIPTION=Used to generate Makefile.in from Makefile.am
+EAPI=5
+HOMEPAGE=https://www.gnu.org/software/automake/
+IUSE=test
+KEYWORDS=*
+LICENSE=GPL-2
+RDEPEND=dev-lang/perl >=sys-devel/automake-wrapper-10 >=sys-devel/autoconf-2.69:* sys-devel/gnuconfig
+SLOT=1.15
+SRC_URI=mirror://gnu/automake/automake-1.15.1.tar.xz https://alpha.gnu.org/pub/gnu/automake/automake-1.15.1.tar.xz
+_eclasses_=estack	43ddf5aaffa7a8d0482df54d25a66a1f	eutils	06133990e861be0fe60c2b428fd025d9	multilib	97f470f374f2e94ccab04a2fb21d811e	python-any-r1	8eb13cdf35f6e43c48107b911900b2cc	python-utils-r1	ec7e05a608c9ab8ae4d180d10bd61600	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607	versionator	26ca8a8bd95d6a74122c08ba98a4ee72
+_md5_=456fd08cb25cd38d2ac110ca25c1fa4a
