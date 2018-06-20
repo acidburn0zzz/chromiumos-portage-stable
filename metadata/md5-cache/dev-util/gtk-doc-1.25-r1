@@ -1,0 +1,14 @@
+DEFINED_PHASES=compile configure install postinst postrm preinst prepare setup unpack
+DEPEND=>=dev-lang/python-2.7.5-r2:2.7 >=dev-lang/python-exec-2:=[python_targets_python2_7(-)?,-python_single_target_jython2_7(-),-python_single_target_pypy(-),-python_single_target_pypy3(-),-python_single_target_python3_3(-),-python_single_target_python3_4(-),-python_single_target_python3_5(-),-python_single_target_python3_6(-),python_single_target_python2_7(+)] >=dev-libs/glib-2.6:2 >=dev-lang/perl-5.18 dev-libs/libxslt >=dev-libs/libxml2-2.3.6:2 ~app-text/docbook-xml-dtd-4.3 app-text/docbook-xsl-stylesheets ~app-text/docbook-sgml-dtd-3.0 >=app-text/docbook-dsssl-stylesheets-1.40 emacs? ( virtual/emacs ) highlight? ( vim? ( || ( app-editors/vim app-editors/gvim ) ) !vim? ( dev-util/source-highlight ) ) ~dev-util/gtk-doc-am-1.25 app-text/yelp-tools virtual/pkgconfig app-arch/xz-utils >=sys-apps/sed-4
+DESCRIPTION=GTK+ Documentation Generator
+EAPI=5
+HOMEPAGE=https://www.gtk.org/gtk-doc/
+IUSE=debug doc emacs highlight vim debug python_targets_python2_7
+KEYWORDS=*
+LICENSE=GPL-2 FDL-1.1
+RDEPEND=>=dev-lang/python-2.7.5-r2:2.7 >=dev-lang/python-exec-2:=[python_targets_python2_7(-)?,-python_single_target_jython2_7(-),-python_single_target_pypy(-),-python_single_target_pypy3(-),-python_single_target_python3_3(-),-python_single_target_python3_4(-),-python_single_target_python3_5(-),-python_single_target_python3_6(-),python_single_target_python2_7(+)] >=dev-libs/glib-2.6:2 >=dev-lang/perl-5.18 dev-libs/libxslt >=dev-libs/libxml2-2.3.6:2 ~app-text/docbook-xml-dtd-4.3 app-text/docbook-xsl-stylesheets ~app-text/docbook-sgml-dtd-3.0 >=app-text/docbook-dsssl-stylesheets-1.40 emacs? ( virtual/emacs ) highlight? ( vim? ( || ( app-editors/vim app-editors/gvim ) ) !vim? ( dev-util/source-highlight ) )
+REQUIRED_USE=python_targets_python2_7
+SLOT=0
+SRC_URI=mirror://gnome/sources/gtk-doc/1.25/gtk-doc-1.25.tar.xz
+_eclasses_=elisp-common	3322f14f031ddc95feccd9089c9adc59	estack	43ddf5aaffa7a8d0482df54d25a66a1f	eutils	06133990e861be0fe60c2b428fd025d9	fdo-mime	9c46e30acd923ff12e325dbe96bb98b9	gnome.org	8fef8f967214f56e08fa92d61163d891	gnome2	7976d3f4d0c0816c67033d3dcd4d9472	gnome2-utils	794d2847b4af390a1e020924876c8297	libtool	52d0e17251d04645ffaa61bfdd858944	multilib	97f470f374f2e94ccab04a2fb21d811e	python-single-r1	b5dad7f67cf34a3328b6083f0339f36b	python-utils-r1	ec7e05a608c9ab8ae4d180d10bd61600	readme.gentoo-r1	6f03e110529650f57fc7d1fb908b8986	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607	versionator	26ca8a8bd95d6a74122c08ba98a4ee72
+_md5_=6e0c431752a4fa8ce2829df874dbf7e7

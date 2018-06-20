@@ -1,14 +1,13 @@
 DEFINED_PHASES=compile configure install
-DEPEND=>=dev-lang/perl-5.6 !<dev-util/gtk-doc-1.20 app-arch/xz-utils
+DEPEND=>=dev-lang/perl-5.18 virtual/pkgconfig !<dev-util/gtk-doc-1.25 app-arch/xz-utils
 DESCRIPTION=Automake files from gtk-doc
 EAPI=5
-HOMEPAGE=http://www.gtk.org/gtk-doc/
+HOMEPAGE=https://www.gtk.org/gtk-doc/
 KEYWORDS=*
 LICENSE=GPL-2 FDL-1.1
-PDEPEND=virtual/pkgconfig
-RDEPEND=>=dev-lang/perl-5.6
+RDEPEND=>=dev-lang/perl-5.18
 RESTRICT=test
 SLOT=0
-SRC_URI=mirror://gnome/sources/gtk-doc/1.20/gtk-doc-1.20.tar.xz
+SRC_URI=mirror://gnome/sources/gtk-doc/1.25/gtk-doc-1.25.tar.xz
 _eclasses_=estack	43ddf5aaffa7a8d0482df54d25a66a1f	gnome.org	8fef8f967214f56e08fa92d61163d891	versionator	26ca8a8bd95d6a74122c08ba98a4ee72
-_md5_=8c0e09b8a72a3bc60b4539958630a4ad
+_md5_=514dcdf84ba1edc441361a6736b93d0d
