@@ -1,0 +1,14 @@
+DEFINED_PHASES=compile configure install postinst prepare
+DEPEND=arping? ( !net-misc/arping ) rarpd? ( !net-misc/rarpd ) traceroute? ( !net-analyzer/traceroute ) !static? ( caps? ( sys-libs/libcap ) idn? ( net-dns/libidn:= ) ipv6? ( ssl? ( gcrypt? ( dev-libs/libgcrypt:0= ) nettle? ( dev-libs/nettle ) openssl? ( !libressl? ( dev-libs/openssl:0= ) libressl? ( dev-libs/libressl:0= ) ) ) ) ) static? ( caps? ( sys-libs/libcap[static-libs(+)] ) idn? ( net-dns/libidn:=[static-libs(+)] ) ipv6? ( ssl? ( gcrypt? ( dev-libs/libgcrypt:0=[static-libs(+)] ) nettle? ( dev-libs/nettle[static-libs(+)] ) openssl? ( !libressl? ( dev-libs/openssl:0=[static-libs(+)] ) libressl? ( dev-libs/libressl:0=[static-libs(+)] ) ) ) ) ) virtual/os-headers filecaps? ( sys-libs/libcap )
+DESCRIPTION=Network monitoring tools including ping and ping6
+EAPI=6
+HOMEPAGE=https://wiki.linuxfoundation.org/networking/iputils
+IUSE=+arping caps clockdiff doc gcrypt idn ipv6 libressl nettle +openssl rarpd rdisc SECURITY_HAZARD ssl static tftpd tracepath traceroute +filecaps
+KEYWORDS=*
+LICENSE=BSD GPL-2+ rdisc
+RDEPEND=arping? ( !net-misc/arping ) rarpd? ( !net-misc/rarpd ) traceroute? ( !net-analyzer/traceroute ) !static? ( caps? ( sys-libs/libcap ) idn? ( net-dns/libidn:= ) ipv6? ( ssl? ( gcrypt? ( dev-libs/libgcrypt:0= ) nettle? ( dev-libs/nettle ) openssl? ( !libressl? ( dev-libs/openssl:0= ) libressl? ( dev-libs/libressl:0= ) ) ) ) )
+REQUIRED_USE=ipv6? ( ssl? ( ^^ ( gcrypt nettle openssl ) ) )
+SLOT=0
+SRC_URI=https://github.com/iputils/iputils/archive/67e7d0daf1f231cc708217e6aec2f8d5ce7aeacf.tar.gz -> iputils-20171016_pre.tar.gz https://dev.gentoo.org/~whissi/dist/iputils/iputils-manpages-20171016_pre.tar.xz
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	fcaps	eeefea88d5fef2853d4c1e3770340302	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607
+_md5_=f3b074f32eb8854c2202e398273f15ed

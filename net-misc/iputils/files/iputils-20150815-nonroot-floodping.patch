@@ -1,6 +1,6 @@
---- iputils-s20071127/ping_common.h.orig	2008-06-10 11:16:06.000000000 +0100
-+++ iputils-s20071127/ping_common.h	2008-06-10 11:16:18.000000000 +0100
-@@ -28,7 +28,7 @@
+--- iputils-s20150815/ping.h
++++ iputils-s20150815/ping.h
+@@ -61,7 +61,7 @@
  
  #define	MAXWAIT		10		/* max seconds to wait for response */
  #define MININTERVAL	10		/* Minimal interpacket gap */
