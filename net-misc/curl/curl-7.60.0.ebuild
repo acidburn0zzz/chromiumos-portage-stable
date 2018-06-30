@@ -53,11 +53,7 @@ RDEPEND="ldap? ( net-nds/openldap[${MULTILIB_USEDEP}] )
 	metalink? ( >=media-libs/libmetalink-0.1.1[${MULTILIB_USEDEP}] )
 	rtmp? ( media-video/rtmpdump[${MULTILIB_USEDEP}] )
 	ssh? ( net-libs/libssh2[static-libs?,${MULTILIB_USEDEP}] )
-	sys-libs/zlib[${MULTILIB_USEDEP}]
-	abi_x86_32? (
-		!<=app-emulation/emul-linux-x86-baselibs-20140508-r13
-		!app-emulation/emul-linux-x86-baselibs[-abi_x86_32(-)]
-	)"
+	sys-libs/zlib[${MULTILIB_USEDEP}]"
 
 # Do we need to enforce the same ssl backend for curl and rtmpdump? Bug #423303
 #	rtmp? (
@@ -125,6 +121,7 @@ src_prepare() {
 multilib_src_configure() {
 	# We make use of the fact that later flags override earlier ones
 	# So start with all ssl providers off until proven otherwise
+	# TODO: in the future, we may want to add wolfssl (https://www.wolfssl.com/)
 	local myconf=()
 	myconf+=( --without-axtls --without-gnutls --without-mbedtls --without-nss --without-polarssl --without-ssl --without-winssl )
 	myconf+=( --without-ca-fallback --with-ca-bundle="${EPREFIX}"/etc/ssl/certs/ca-certificates.crt  )
@@ -210,6 +207,7 @@ multilib_src_configure() {
 		$(use_with brotli) \
 		--without-spnego \
 		--without-winidn \
+		--without-wolfssl \
 		--with-zlib \
 		"${myconf[@]}"
 
