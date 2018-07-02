@@ -3,7 +3,7 @@
 
 EAPI="5"
 
-inherit multilib-minimal toolchain-funcs
+inherit autotools multilib-minimal toolchain-funcs eutils
 
 DESCRIPTION="Transport Independent RPC library (SunRPC replacement)"
 HOMEPAGE="http://libtirpc.sourceforge.net/"
@@ -20,9 +20,18 @@ DEPEND="${RDEPEND}
 	app-arch/xz-utils
 	>=virtual/pkgconfig-0-r1[${MULTILIB_USEDEP}]"
 
-src_unpack() {
-	unpack ${A}
-	cp -r tirpc "${S}"/ || die
+PATCHES=(
+	"${FILESDIR}/${PN}-1.0.2-bcopy-to-memmove.patch"
+	"${FILESDIR}/${PN}-1.0.2-bzero-to-memset.patch"
+	"${FILESDIR}/${PN}-1.0.2-glibc-2.26.patch"
+	"${FILESDIR}/${PN}-1.0.2-exports.patch"
+)
+
+src_prepare() {
+	cp -r "${WORKDIR}"/tirpc "${S}"/ || die
+	epatch "${PATCHES[@]}"
+	epatch_user
+	eautoreconf
 }
 
 multilib_src_configure() {
