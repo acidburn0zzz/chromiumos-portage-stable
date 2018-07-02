@@ -1,13 +1,12 @@
-DEFINED_PHASES=compile install postinst postrm preinst unpack
-DEPEND=>=dev-libs/glib-2 dev-util/pkgconfig sys-devel/flex >=sys-apps/sed-4
+DEFINED_PHASES=compile configure install postinst postrm preinst prepare unpack
+DEPEND=>=dev-libs/glib-2.4:2 sys-devel/flex virtual/pkgconfig virtual/yacc app-arch/xz-utils >=sys-apps/sed-4
 DESCRIPTION=Preprocessor for making GTK+ objects with inline C code
-EAPI=0
-HOMEPAGE=http://www.5z.com/jirka/gob.html
-IUSE=debug
+EAPI=5
+HOMEPAGE=http://www.jirka.org/gob.html
 KEYWORDS=*
-LICENSE=GPL-2
-RDEPEND=>=dev-libs/glib-2
+LICENSE=GPL-2+
+RDEPEND=>=dev-libs/glib-2.4:2
 SLOT=2
-SRC_URI=mirror://gnome/sources/gob2/2.0/gob2-2.0.15.tar.bz2
+SRC_URI=mirror://gnome/sources/gob2/2.0/gob2-2.0.20.tar.xz
 _eclasses_=estack	43ddf5aaffa7a8d0482df54d25a66a1f	eutils	06133990e861be0fe60c2b428fd025d9	fdo-mime	9c46e30acd923ff12e325dbe96bb98b9	gnome.org	8fef8f967214f56e08fa92d61163d891	gnome2	7976d3f4d0c0816c67033d3dcd4d9472	gnome2-utils	794d2847b4af390a1e020924876c8297	libtool	52d0e17251d04645ffaa61bfdd858944	multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607	versionator	26ca8a8bd95d6a74122c08ba98a4ee72
-_md5_=3e3f4fe2b6c478c2535828dde323c9a9
+_md5_=b36c99b968aab63ff23ae476ad04721a
