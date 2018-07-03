@@ -1,8 +1,9 @@
-# Copyright 1999-2012 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-libs/lzo/lzo-2.06.ebuild,v 1.13 2012/04/26 15:55:52 aballier Exp $
 
-EAPI=4
+EAPI=6
+
+inherit multilib-minimal toolchain-funcs
 
 DESCRIPTION="An extremely fast compression and decompression library"
 HOMEPAGE="http://www.oberhumer.com/opensource/lzo/"
@@ -13,17 +14,19 @@ SLOT="2"
 KEYWORDS="*"
 IUSE="examples static-libs"
 
-src_configure() {
+multilib_src_configure() {
+	ECONF_SOURCE=${S} \
 	econf \
-		--docdir="${EPREFIX}"/usr/share/doc/${PF} \
 		--enable-shared \
 		$(use_enable static-libs static)
 }
 
-src_install() {
+multilib_src_install() {
 	emake DESTDIR="${D}" install
+	gen_usr_ldscript -a lzo2
+}
 
-	dodoc BUGS ChangeLog README THANKS doc/*
+multilib_src_install_all() {
 	rm "${ED}"/usr/share/doc/${PF}/COPYING || die
 
 	if use examples; then
@@ -31,5 +34,5 @@ src_install() {
 		dodoc examples/*.{c,h}
 	fi
 
-	find "${ED}" -name '*.la' -exec rm -f {} +
+	find "${ED}" -name '*.la' -delete || die
 }
