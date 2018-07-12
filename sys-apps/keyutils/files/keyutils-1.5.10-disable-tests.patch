@@ -2,18 +2,18 @@ disable tests that mess with system wide settings
 
 https://bugs.gentoo.org/519062
 
---- a/tests/bugzillas/bz1031154/runtest.sh
-+++ b/tests/bugzillas/bz1031154/runtest.sh
-@@ -11,6 +11,8 @@
- result=PASS
+--- keyutils-1.5.10/tests/bugzillas/bz1031154/runtest.sh
++++ keyutils-1.5.10/tests/bugzillas/bz1031154/runtest.sh
+@@ -27,6 +27,8 @@
+ 
  echo "++++ BEGINNING TEST" >$OUTPUTFILE
  
-+if false; then
++if false ; then
 +
  # we need a reference time to scan the audit log from so as not to pick up old
  # results from this test.
  base_date=`date +"%x@%X"`
-@@ -81,6 +83,10 @@
+@@ -97,6 +99,10 @@
  	fi
  fi
  
@@ -27,19 +27,19 @@ https://bugs.gentoo.org/519062
 
 https://bugs.gentoo.org/522050
 
---- a/tests/keyctl/padd/useradd/runtest.sh
-+++ b/tests/keyctl/padd/useradd/runtest.sh
+--- keyutils-1.5.10/tests/keyctl/padd/useradd/runtest.sh
++++ keyutils-1.5.10/tests/keyctl/padd/useradd/runtest.sh
 @@ -40,6 +40,8 @@
  marker "UNLINK KEY"
  unlink_key $keyid @s
  
-+if false; then
++if false ; then
 +
- # add keys with huge payloads
- old_root_quota=`cat /proc/sys/kernel/keys/root_maxbytes`
- if [ $old_root_quota -lt 65536 ]
-@@ -76,6 +78,10 @@
-     sleep 1
+ if [ $skip_root_required = 0 ] && {
+         [ $OSDIST = RHEL ] && ! version_less_than $OSRELEASE 6.6 ||
+         keyutils_at_or_later_than 1.5.6 ;
+@@ -85,6 +87,10 @@
+     fi
  fi
  
 +else
