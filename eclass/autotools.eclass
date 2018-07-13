@@ -1,6 +1,5 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/eclass/autotools.eclass,v 1.174 2015/03/19 19:27:02 vapier Exp $
 
 # @ECLASS: autotools.eclass
 # @MAINTAINER:
@@ -47,16 +46,20 @@ inherit libtool
 # @INTERNAL
 # @DESCRIPTION:
 # CONSTANT!
-# The latest major version/slot of automake available on each arch.  #312315
-# We should list both the latest stable, and the latest unstable.  #465732
-# This way the stable builds will still work, but the unstable are allowed
-# to build & test things for us ahead of time (if they have it installed).
+# The latest major unstable and stable version/slot of automake available
+# on each arch.
+# List latest unstable version first to boost testing adoption rate because
+# most package manager dependency resolver will pick the first suitable
+# version.
 # If a newer slot is stable on any arch, and is NOT reflected in this list,
 # then circular dependencies may arise during emerge @system bootstraps.
+# 
+# See bug 312315 and 465732 for further information and context.
+# 
 # Do NOT change this variable in your ebuilds!
 # If you want to force a newer minor version, you can specify the correct
 # WANT value by using a colon:  <PV>:<WANT_AUTOMAKE>
-_LATEST_AUTOMAKE=( 1.13:1.13 1.15:1.15 )
+_LATEST_AUTOMAKE=( 1.16.1:1.16 1.15.1:1.15 )
 
 _automake_atom="sys-devel/automake"
 _autoconf_atom="sys-devel/autoconf"
@@ -82,7 +85,7 @@ fi
 if [[ -n ${WANT_AUTOCONF} ]] ; then
 	case ${WANT_AUTOCONF} in
 		none)       _autoconf_atom="" ;; # some packages don't require autoconf at all
-		2.1)        _autoconf_atom="=sys-devel/autoconf-${WANT_AUTOCONF}*" ;;
+		2.1)        _autoconf_atom="~sys-devel/autoconf-2.13" ;;
 		# if you change the "latest" version here, change also autotools_env_setup
 		latest|2.5) _autoconf_atom=">=sys-devel/autoconf-2.69" ;;
 		*)          die "Invalid WANT_AUTOCONF value '${WANT_AUTOCONF}'" ;;
@@ -111,7 +114,7 @@ RDEPEND=""
 # @ECLASS-VARIABLE: AUTOTOOLS_AUTO_DEPEND
 # @DESCRIPTION:
 # Set to 'no' to disable automatically adding to DEPEND.  This lets
-# ebuilds former conditional depends by using ${AUTOTOOLS_DEPEND} in
+# ebuilds form conditional depends by using ${AUTOTOOLS_DEPEND} in
 # their own DEPEND string.
 : ${AUTOTOOLS_AUTO_DEPEND:=yes}
 if [[ ${AUTOTOOLS_AUTO_DEPEND} != "no" ]] ; then
@@ -198,7 +201,7 @@ eautoreconf() {
 		intltool    false "autotools_run_tool intltoolize --automake --copy --force"
 		gtkdoc      false "autotools_run_tool --at-missing gtkdocize --copy"
 		gnomedoc    false "autotools_run_tool --at-missing gnome-doc-prepare --copy --force"
-		libtool     false "_elibtoolize --install --copy --force"
+		libtool     false "_elibtoolize --auto-ltdl --install --copy --force"
 	)
 	for (( i = 0; i < ${#tools[@]}; i += 3 )) ; do
 		if _at_uses_${tools[i]} ; then
@@ -258,12 +261,13 @@ _at_uses_pkg() {
 }
 _at_uses_autoheader()  { _at_uses_pkg A{C,M}_CONFIG_HEADER{S,}; }
 _at_uses_automake()    { _at_uses_pkg AM_INIT_AUTOMAKE; }
-_at_uses_gettext()     { _at_uses_pkg AM_GNU_GETTEXT_VERSION; }
+_at_uses_gettext()     { _at_uses_pkg AM_GNU_GETTEXT_{,REQUIRE_}VERSION; }
 _at_uses_glibgettext() { _at_uses_pkg AM_GLIB_GNU_GETTEXT; }
 _at_uses_intltool()    { _at_uses_pkg {AC,IT}_PROG_INTLTOOL; }
 _at_uses_gtkdoc()      { _at_uses_pkg GTK_DOC_CHECK; }
 _at_uses_gnomedoc()    { _at_uses_pkg GNOME_DOC_INIT; }
 _at_uses_libtool()     { _at_uses_pkg A{C,M}_PROG_LIBTOOL LT_INIT; }
+_at_uses_libltdl()     { _at_uses_pkg LT_CONFIG_LTDL_DIR; }
 
 # @FUNCTION: eaclocal_amflags
 # @DESCRIPTION:
@@ -312,6 +316,11 @@ eaclocal() {
 # Note the '_' prefix: avoid collision with elibtoolize() from libtool.eclass.
 _elibtoolize() {
 	local LIBTOOLIZE=${LIBTOOLIZE:-$(type -P glibtoolize > /dev/null && echo glibtoolize || echo libtoolize)}
+
+	if [[ $1 == "--auto-ltdl" ]] ; then
+		shift
+		_at_uses_libltdl && set -- "$@" --ltdl
+	fi
 
 	[[ -f GNUmakefile.am || -f Makefile.am ]] && set -- "$@" --automake
 
@@ -433,9 +442,17 @@ autotools_env_setup() {
 	if [[ ${WANT_AUTOMAKE} == "latest" ]]; then
 		local pv
 		for pv in ${_LATEST_AUTOMAKE[@]/#*:} ; do
-			# has_version respects ROOT, but in this case, we don't want it to,
-			# thus "ROOT=/" prefix:
-			ROOT=/ has_version "=sys-devel/automake-${pv}*" && export WANT_AUTOMAKE="${pv}"
+			# Break on first hit to respect _LATEST_AUTOMAKE order.
+			local hv_args=""
+			case ${EAPI:-0} in
+				5|6)
+					hv_args="--host-root"
+					;;
+				7)
+					hv_args="-b"
+					;;
+			esac
+			ROOT=/ has_version ${hv_args} "=sys-devel/automake-${pv}*" && export WANT_AUTOMAKE="${pv}" && break
 		done
 		[[ ${WANT_AUTOMAKE} == "latest" ]] && \
 			die "Cannot find the latest automake! Tried ${_LATEST_AUTOMAKE[*]}"
@@ -475,13 +492,14 @@ autotools_run_tool() {
 
 	autotools_env_setup
 
-	local STDERR_TARGET="${T}/$1.out"
+	# Allow people to pass in full paths. #549268
+	local STDERR_TARGET="${T}/${1##*/}.out"
 	# most of the time, there will only be one run, but if there are
 	# more, make sure we get unique log filenames
 	if [[ -e ${STDERR_TARGET} ]] ; then
 		local i=1
 		while :; do
-			STDERR_TARGET="${T}/$1-${i}.out"
+			STDERR_TARGET="${T}/${1##*/}-${i}.out"
 			[[ -e ${STDERR_TARGET} ]] || break
 			: $(( i++ ))
 		done
@@ -518,13 +536,13 @@ autotools_run_tool() {
 # Keep a list of all the macros we might use so that we only
 # have to run the trace code once.  Order doesn't matter.
 ALL_AUTOTOOLS_MACROS=(
-	A{C,M}_PROG_LIBTOOL LT_INIT
+	A{C,M}_PROG_LIBTOOL LT_INIT LT_CONFIG_LTDL_DIR
 	A{C,M}_CONFIG_HEADER{S,}
 	AC_CONFIG_SUBDIRS
 	AC_CONFIG_AUX_DIR AC_CONFIG_MACRO_DIR
 	AM_INIT_AUTOMAKE
 	AM_GLIB_GNU_GETTEXT
-	AM_GNU_GETTEXT_VERSION
+	AM_GNU_GETTEXT_{,REQUIRE_}VERSION
 	{AC,IT}_PROG_INTLTOOL
 	GTK_DOC_CHECK
 	GNOME_DOC_INIT
@@ -591,6 +609,17 @@ _autotools_m4dir_include() {
 	echo ${include_opts}
 }
 autotools_m4dir_include()    { _autotools_m4dir_include ${AT_M4DIR} ; }
-autotools_m4sysdir_include() { _autotools_m4dir_include $(eval echo ${AT_SYS_M4DIR}) ; }
+autotools_m4sysdir_include() {
+	# First try to use the paths the system integrator has set up.
+	local paths=( $(eval echo ${AT_SYS_M4DIR}) )
+
+	if [[ ${#paths[@]} -eq 0 && -n ${SYSROOT} ]] ; then
+		# If they didn't give us anything, then default to the SYSROOT.
+		# This helps when cross-compiling.
+		local path="${SYSROOT}/usr/share/aclocal"
+		[[ -d ${path} ]] && paths+=( "${path}" )
+	fi
+	_autotools_m4dir_include "${paths[@]}"
+}
 
 fi
