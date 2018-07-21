@@ -9,5 +9,5 @@ LICENSE=GPL-2
 RDEPEND=conntrack? ( >=net-libs/libnetfilter_conntrack-1.0.6 ) netlink? ( net-libs/libnfnetlink ) nftables? ( >=net-libs/libmnl-1.0:0= >=net-libs/libnftnl-1.0.5:0= ) pcap? ( net-libs/libpcap ) nftables? ( !<net-firewall/ebtables-2.0.10.4-r2 !net-misc/ethertypes )
 SLOT=0/12
 SRC_URI=https://www.netfilter.org/projects/iptables/files/iptables-1.6.1.tar.bz2
-_eclasses_=autotools	999c8f6cf5d91495cb0779588f20716c	eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	libtool	52d0e17251d04645ffaa61bfdd858944	multilib	97f470f374f2e94ccab04a2fb21d811e	systemd	8f5286f89e265842f5b5189666eae88b	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607
+_eclasses_=autotools	d0e5375d47f4c809f406eb892e531513	eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	libtool	52d0e17251d04645ffaa61bfdd858944	multilib	97f470f374f2e94ccab04a2fb21d811e	systemd	8f5286f89e265842f5b5189666eae88b	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607
 _md5_=fc50f7a3218124284dc09f5e93721c24
