@@ -9,7 +9,7 @@ DESCRIPTION="Docbook SGML DTD 4.1"
 HOMEPAGE="http://www.docbook.org/sgml/"
 SRC_URI="http://www.oasis-open.org/docbook/sgml/${PV}/${MY_P}.zip"
 
-LICENSE="as-is"
+LICENSE="docbook"
 SLOT="4.1"
 KEYWORDS="*"
 IUSE=""

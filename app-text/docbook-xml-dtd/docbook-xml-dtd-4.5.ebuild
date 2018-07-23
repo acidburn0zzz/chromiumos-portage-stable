@@ -9,7 +9,7 @@ DESCRIPTION="Docbook DTD for XML"
 HOMEPAGE="http://www.docbook.org/"
 SRC_URI="http://www.docbook.org/xml/${PV}/${MY_P}.zip"
 
-LICENSE="as-is"
+LICENSE="docbook"
 SLOT="${PV}"
 KEYWORDS="*"
 IUSE=""

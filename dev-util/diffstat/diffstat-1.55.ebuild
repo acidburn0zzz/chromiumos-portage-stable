@@ -8,7 +8,7 @@ DESCRIPTION="Display a histogram of diff changes"
 HOMEPAGE="http://invisible-island.net/diffstat/diffstat.html"
 SRC_URI="ftp://invisible-island.net/diffstat/${P}.tgz"
 
-LICENSE="as-is"
+LICENSE="HPND"
 SLOT="0"
 KEYWORDS="*"
 IUSE=""

@@ -11,7 +11,7 @@ DESCRIPTION="DNS toolkit for Python"
 HOMEPAGE="http://www.dnspython.org/ http://pypi.python.org/pypi/dnspython"
 SRC_URI="http://www.dnspython.org/kits/${PV}/${P}.tar.gz"
 
-LICENSE="as-is"
+LICENSE="ISC"
 SLOT="0"
 KEYWORDS="*"
 IUSE="examples"

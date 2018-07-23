@@ -11,7 +11,7 @@ HOMEPAGE="http://www.fluff.org/ben/smdk/tools/"
 SRC_URI="http://www.fluff.org/ben/smdk/tools/downloads/smdk-tools-v${PV}.tar.gz"
 
 # Email sent to author on 2012-01-18 querying about license
-LICENSE="as-is"
+LICENSE="all-rights-reserved"
 SLOT="0"
 KEYWORDS="*"
 IUSE=""

@@ -9,7 +9,7 @@ DESCRIPTION="Docbook SGML DTD 4.5"
 HOMEPAGE="http://www.docbook.org/sgml/"
 SRC_URI="http://www.docbook.org/sgml/${PV}/${MY_P}.zip"
 
-LICENSE="as-is"
+LICENSE="docbook"
 SLOT="4.5"
 KEYWORDS="*"
 IUSE=""

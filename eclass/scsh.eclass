@@ -5,7 +5,7 @@
 
 inherit eutils
 
-LICENSE="as-is BSD"
+LICENSE="BSD"
 SLOT="0"
 IUSE="scsh"
 

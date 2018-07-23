@@ -10,7 +10,7 @@ DESCRIPTION="DSSSL Stylesheets for DocBook."
 HOMEPAGE="http://wiki.docbook.org/topic/DocBookDssslStylesheets"
 SRC_URI="mirror://sourceforge/docbook/${MY_P}.tar.bz2"
 
-LICENSE="as-is"
+LICENSE="MIT"
 SLOT="0"
 KEYWORDS="*"
 IUSE=""
