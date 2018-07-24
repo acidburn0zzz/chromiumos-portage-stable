@@ -1,17 +1,18 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-python/pylint/pylint-1.4.1.ebuild,v 1.1 2015/01/26 06:02:14 patrick Exp $
 
 EAPI=5
 
-PYTHON_COMPAT=( python{2_7,3_3,3_4} pypy )
+PYTHON_COMPAT=( python2_7 python3_{4,5,6} pypy )
+PYTHON_REQ_USE="threads(+)"
 
-inherit distutils-r1
-
-RESTRICT="test" # needs pygtk
+inherit distutils-r1 eutils
 
 DESCRIPTION="Python code static checker"
-HOMEPAGE="http://www.logilab.org/project/pylint http://pypi.python.org/pypi/pylint"
+HOMEPAGE="
+	http://www.logilab.org/project/pylint
+	https://pypi.python.org/pypi/pylint
+	https://github.com/pycqa/pylint"
 SRC_URI="mirror://pypi/${PN:0:1}/${PN}/${P}.tar.gz"
 
 LICENSE="GPL-2"
@@ -20,31 +21,29 @@ KEYWORDS="*"
 IUSE="doc examples test"
 
 RDEPEND="
-	>=dev-python/logilab-common-0.53.0[${PYTHON_USEDEP}]
-	>=dev-python/astroid-1.3.3[${PYTHON_USEDEP}]
+	>=dev-python/astroid-1.4.5[${PYTHON_USEDEP}]
+	<dev-python/astroid-1.5.0[${PYTHON_USEDEP}]
+	dev-python/colorama[${PYTHON_USEDEP}]
 	dev-python/six[${PYTHON_USEDEP}]"
 DEPEND="dev-python/setuptools[${PYTHON_USEDEP}]
 	doc? ( dev-python/sphinx[${PYTHON_USEDEP}] )
-	test? ( "${RDEPEND}" )"
+	test? ( ${RDEPEND} )"
+
+RESTRICT="test" # multiple failures
 
 # Usual. Requ'd for impl specific failures in test phase
 DISTUTILS_IN_SOURCE_BUILD=1
 
 python_compile_all() {
 	# selection of straight html triggers a trivial annoying bug, we skirt it
-	use doc && emake -C doc singlehtml
+	use doc && PYTHONPATH="${S}" emake -e -C doc singlehtml
 }
 
 python_test() {
-	# Test suite appears not to work under Python 3.
-	# https://bitbucket.org/logilab/pylint/issue/240/
-	local msg="Test suite broken with ${EPYTHON}"
-	if python_is_python3; then
-		einfo "${msg}"
-		return 0
-	fi
-
-	pytest || die "Tests failed under ${EPYTHON}"
+	${PYTHON} \
+		-m unittest discover \
+		-s pylint/test/ -p "*test_*".py \
+		--verbose || die
 }
 
 python_install_all() {
@@ -56,5 +55,5 @@ python_install_all() {
 
 pkg_postinst() {
 	# Optional dependency on "tk" USE flag would break support for Jython.
-	elog "pylint-gui script requires dev-lang/python with \"tk\" USE flag enabled."
+	optfeature "pylint-gui script requires dev-lang/python with \"tk\" USE flag enabled." dev-lang/python[tk]
 }
