@@ -1,9 +1,8 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
-EAPI=5
-inherit eutils multilib-minimal
+EAPI=6
+inherit multilib-minimal
 
 DESCRIPTION="An library to provide useful functions commonly found on BSD systems"
 HOMEPAGE="https://libbsd.freedesktop.org/wiki/"
@@ -18,7 +17,7 @@ DEPEND=">=sys-kernel/linux-headers-3.17"
 RDEPEND=""
 
 pkg_setup() {
-	local f="${ROOT}/usr/$(get_libdir)/${PN}.a"
+	local f="${EROOT}/usr/$(get_libdir)/${PN}.a"
 	local m="You need to remove ${f} by hand or re-emerge sys-libs/glibc first."
 	if ! has_version ${CATEGORY}/${PN}; then
 		if [[ -e ${f} ]]; then
@@ -37,5 +36,5 @@ multilib_src_configure() {
 
 multilib_src_install() {
 	emake DESTDIR="${D}" install
-	prune_libtool_files
+	find "${ED}" -name "*.la" -delete || die
 }
