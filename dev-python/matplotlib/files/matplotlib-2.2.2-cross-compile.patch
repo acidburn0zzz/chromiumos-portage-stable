@@ -1,0 +1,17 @@
+--- setupext.py	2018-03-05 20:47:09.000000000 -0800
++++ setupext.py_	2018-09-18 08:55:51.296280545 -0700
+@@ -265,14 +265,6 @@
+     `distutils.core.Extension` constructor.
+     """
+     ext = DelayedExtension(name, files, *args, **kwargs)
+-    for dir in get_base_dirs():
+-        include_dir = os.path.join(dir, 'include')
+-        if os.path.exists(include_dir):
+-            ext.include_dirs.append(include_dir)
+-        for lib in ('lib', 'lib64'):
+-            lib_dir = os.path.join(dir, lib)
+-            if os.path.exists(lib_dir):
+-                ext.library_dirs.append(lib_dir)
+     ext.include_dirs.append('.')
+ 
+     return ext
