@@ -23,3 +23,5 @@ SLOT="0"
 
 # Old packaging will cause file collisions
 RDEPEND="!<=media-libs/vulkan-loader-1.1.70.0-r999"
+
+PATCHES=( "${FILESDIR}/${PN}"-1.1.77.0-r1-Remove-loader-layer-dep.patch )
