@@ -1,54 +1,60 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/app-editors/emacs/emacs-24.5.ebuild,v 1.1 2015/04/11 08:25:18 ulm Exp $
 
-EAPI=5
+EAPI=6
 
-inherit autotools elisp-common eutils flag-o-matic multilib readme.gentoo
+inherit elisp-common flag-o-matic multilib readme.gentoo-r1
 
 DESCRIPTION="The extensible, customizable, self-documenting real-time display editor"
-HOMEPAGE="http://www.gnu.org/software/emacs/"
+HOMEPAGE="https://www.gnu.org/software/emacs/"
 SRC_URI="mirror://gnu/emacs/${P}.tar.xz
-	http://dev.gentoo.org/~ulm/emacs/${P}-patches-1.tar.xz"
+	https://dev.gentoo.org/~ulm/emacs/${P}-patches-1.tar.xz"
 
 LICENSE="GPL-3+ FDL-1.3+ BSD HPND MIT W3C unicode PSF-2"
-SLOT="24"
+SLOT="25"
 KEYWORDS="*"
-IUSE="acl alsa aqua athena dbus games gconf gfile gif gnutls gpm gsettings gtk +gtk3 gzip-el hesiod imagemagick +inotify jpeg kerberos libxml2 livecd m17n-lib motif pax_kernel png selinux sound source svg tiff toolkit-scroll-bars wide-int X Xaw3d xft +xpm zlib"
+IUSE="acl alsa aqua athena cairo dbus dynamic-loading games gconf gfile gif gpm gsettings gtk +gtk3 gzip-el imagemagick +inotify jpeg kerberos libxml2 livecd m17n-lib motif png selinux sound source ssl svg tiff toolkit-scroll-bars wide-int X Xaw3d xft +xpm zlib"
 REQUIRED_USE="?? ( aqua X )"
 
-RDEPEND="sys-libs/ncurses
+RDEPEND="sys-libs/ncurses:0=
 	>=app-eselect/eselect-emacs-1.16
 	>=app-emacs/emacs-common-gentoo-1.5[games?,X?]
 	net-libs/liblockfile
 	acl? ( virtual/acl )
 	alsa? ( media-libs/alsa-lib )
 	dbus? ( sys-apps/dbus )
-	gfile? ( >=dev-libs/glib-2.28.6 )
-	gnutls? ( net-libs/gnutls )
 	gpm? ( sys-libs/gpm )
-	hesiod? ( net-dns/hesiod )
+	!inotify? ( gfile? ( >=dev-libs/glib-2.28.6 ) )
 	kerberos? ( virtual/krb5 )
 	libxml2? ( >=dev-libs/libxml2-2.2.0 )
 	selinux? ( sys-libs/libselinux )
+	ssl? ( net-libs/gnutls:0= )
 	zlib? ( sys-libs/zlib )
 	X? (
-		x11-libs/libXmu
-		x11-libs/libXt
+		x11-libs/libICE
+		x11-libs/libSM
+		x11-libs/libX11
+		x11-libs/libXext
+		x11-libs/libXfixes
+		x11-libs/libXinerama
+		x11-libs/libXrandr
+		x11-libs/libxcb
 		x11-misc/xbitmaps
 		gconf? ( >=gnome-base/gconf-2.26.2 )
 		gsettings? ( >=dev-libs/glib-2.28.6 )
-		gif? ( media-libs/giflib )
+		gif? ( media-libs/giflib:0= )
 		jpeg? ( virtual/jpeg:0= )
 		png? ( >=media-libs/libpng-1.4:0= )
 		svg? ( >=gnome-base/librsvg-2.0 )
 		tiff? ( media-libs/tiff:0 )
 		xpm? ( x11-libs/libXpm )
-		imagemagick? ( >=media-gfx/imagemagick-6.6.2 )
+		imagemagick? ( >=media-gfx/imagemagick-6.6.2:0= )
 		xft? (
 			media-libs/fontconfig
 			media-libs/freetype
 			x11-libs/libXft
+			x11-libs/libXrender
+			cairo? ( >=x11-libs/cairo-1.12.18 )
 			m17n-lib? (
 				>=dev-libs/libotf-0.9.4
 				>=dev-libs/m17n-lib-1.5.1
@@ -59,10 +65,23 @@ RDEPEND="sys-libs/ncurses
 			!gtk3? ( x11-libs/gtk+:2 )
 		)
 		!gtk? (
-			motif? ( >=x11-libs/motif-2.3:0 )
+			motif? (
+				>=x11-libs/motif-2.3:0
+				x11-libs/libXpm
+				x11-libs/libXmu
+				x11-libs/libXt
+			)
 			!motif? (
-				Xaw3d? ( x11-libs/libXaw3d )
-				!Xaw3d? ( athena? ( x11-libs/libXaw ) )
+				Xaw3d? (
+					x11-libs/libXaw3d
+					x11-libs/libXmu
+					x11-libs/libXt
+				)
+				!Xaw3d? ( athena? (
+					x11-libs/libXaw
+					x11-libs/libXmu
+					x11-libs/libXt
+				) )
 			)
 		)
 	)"
@@ -70,10 +89,8 @@ RDEPEND="sys-libs/ncurses
 DEPEND="${RDEPEND}
 	virtual/pkgconfig
 	gzip-el? ( app-arch/gzip )
-	pax_kernel? (
-		sys-apps/attr
-		sys-apps/paxctl
-	)"
+	X? ( x11-base/xorg-proto )"
+#	pax_kernel? ( sys-apps/attr )
 
 RDEPEND="${RDEPEND}
 	!<app-editors/emacs-vcs-${PV}"
@@ -87,14 +104,15 @@ FULL_VERSION="${PV%%_*}"
 S="${WORKDIR}/emacs-${FULL_VERSION}"
 
 src_prepare() {
-	EPATCH_SUFFIX=patch epatch
-	epatch_user
+	eapply ../patch
+	eapply_user
 
 	# Fix filename reference in redirected man page
 	sed -i -e "/^\\.so/s/etags/&-${EMACS_SUFFIX}/" doc/man/ctags.1 \
 		|| die "unable to sed ctags.1"
 
-	AT_M4DIR=m4 eautoreconf
+	#AT_M4DIR=m4 eautoreconf
+	#touch src/stamp-h.in || die
 }
 
 src_configure() {
@@ -134,19 +152,37 @@ src_configure() {
 
 		if use xft; then
 			myconf+=" --with-xft"
+			myconf+=" $(use_with cairo)"
 			myconf+=" $(use_with m17n-lib libotf)"
 			myconf+=" $(use_with m17n-lib m17n-flt)"
 		else
 			myconf+=" --without-xft"
+			myconf+=" --without-cairo"
 			myconf+=" --without-libotf --without-m17n-flt"
+			use cairo && ewarn \
+				"USE flag \"cairo\" has no effect if \"xft\" is not set."
 			use m17n-lib && ewarn \
 				"USE flag \"m17n-lib\" has no effect if \"xft\" is not set."
 		fi
 
-		local f
+		local f line
 		if use gtk; then
 			einfo "Configuring to build with GIMP Toolkit (GTK+)"
-			myconf+=" --with-x-toolkit=$(usex gtk3 gtk3 gtk2)"
+			while read line; do ewarn "${line}"; done <<-EOF
+				Your version of GTK+ will have problems with closing open
+				displays. This is no problem if you just use one display, but
+				if you use more than one and close one of them Emacs may crash.
+				See <https://bugzilla.gnome.org/show_bug.cgi?id=85715>.
+				If you intend to use more than one display, then it is strongly
+				recommended that you compile Emacs with the Athena/Lucid or the
+				Motif toolkit instead.
+			EOF
+			#if use xwidgets; then
+			#	myconf+=" --with-x-toolkit=gtk3 --with-xwidgets"
+			#else
+				myconf+=" --with-x-toolkit=$(usex gtk3 gtk3 gtk2)"
+				myconf+=" --without-xwidgets"
+			#fi
 			for f in motif Xaw3d athena; do
 				use ${f} && ewarn \
 					"USE flag \"${f}\" has no effect if \"gtk\" is set."
@@ -165,6 +201,8 @@ src_configure() {
 			einfo "Configuring to build with no toolkit"
 			myconf+=" --with-x-toolkit=no"
 		fi
+		#! use gtk && use xwidgets && ewarn \
+		#	"USE flag \"xwidgets\" has no effect if \"gtk\" is not set."
 	elif use aqua; then
 		einfo "Configuring to build with Nextstep (Cocoa) support"
 		myconf+=" --with-ns --disable-ns-self-contained"
@@ -173,10 +211,6 @@ src_configure() {
 		myconf+=" --without-x --without-ns"
 	fi
 
-	# Save version information in the Emacs binary. It will be available
-	# in variable "system-configuration-options".
-	myconf+=" GENTOO_PACKAGE=${CATEGORY}/${PF}"
-
 	econf \
 		--program-suffix="-${EMACS_SUFFIX}" \
 		--infodir="${EPREFIX}"/usr/share/info/${EMACS_SUFFIX} \
@@ -184,23 +218,24 @@ src_configure() {
 		--enable-locallisppath="${EPREFIX}/etc/emacs:${EPREFIX}${SITELISP}" \
 		--with-gameuser=":gamestat" \
 		--without-compress-install \
-		--with-file-notification=$(usev gfile || usev inotify || echo no) \
+		--without-hesiod \
+		--with-file-notification=$(usev inotify || usev gfile || echo no) \
 		$(use_enable acl) \
 		$(use_with dbus) \
-		$(use_with gnutls) \
+		$(use_with dynamic-loading modules) \
 		$(use_with gpm) \
-		$(use_with hesiod) \
 		$(use_with kerberos) $(use_with kerberos kerberos5) \
 		$(use_with libxml2 xml2) \
 		$(use_with selinux) \
+		$(use_with ssl gnutls) \
 		$(use_with wide-int) \
 		$(use_with zlib) \
 		${myconf}
 }
 
 src_compile() {
-	export SANDBOX_ON=0			# for the unbelievers, see Bug #131505
-	emake
+	# Disable sandbox when dumping. For the unbelievers, see bug #131505
+	emake RUN_TEMACS="SANDBOX_ON=0 LD_PRELOAD= env ./temacs"
 }
 
 src_install () {
@@ -219,7 +254,7 @@ src_install () {
 
 	# avoid collision between slots, see bug #169033 e.g.
 	rm "${ED}"/usr/share/emacs/site-lisp/subdirs.el
-	rm -rf "${ED}"/usr/share/{applications,icons}
+	rm -rf "${ED}"/usr/share/{appdata,applications,icons}
 	rm -rf "${ED}"/var
 
 	# remove unused <version>/site-lisp dir
@@ -246,7 +281,7 @@ src_install () {
 		cdir="/usr/src/debug/${CATEGORY}/${PF}/${S#"${WORKDIR}/"}/src"
 	fi
 
-	sed -e "${cdir:+#}/^Y/d" -e "s/^[XY]//" >"${T}/${SITEFILE}" <<-EOF
+	sed -e "${cdir:+#}/^Y/d" -e "s/^[XY]//" >"${T}/${SITEFILE}" <<-EOF || die
 	X
 	;;; ${PN}-${SLOT} site-lisp configuration
 	X
@@ -266,7 +301,7 @@ src_install () {
 	EOF
 	elisp-site-file-install "${T}/${SITEFILE}" || die
 
-	dodoc README BUGS
+	dodoc README BUGS CONTRIBUTE
 
 	if use aqua; then
 		dodir /Applications/Gentoo
@@ -313,11 +348,6 @@ pkg_preinst() {
 
 pkg_postinst() {
 	elisp-site-regen
-
-	local pvr
-	for pvr in ${REPLACING_VERSIONS}; do
-		[[ ${pvr%%[-_]*} = 24.[12] ]] && FORCE_PRINT_ELOG=1
-	done
 	readme.gentoo_print_elog
 
 	if use livecd; then
