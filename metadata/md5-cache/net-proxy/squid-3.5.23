@@ -10,5 +10,5 @@ RDEPEND=caps? ( >=sys-libs/libcap-2.16 ) pam? ( virtual/pam ) ldap? ( net-nds/op
 REQUIRED_USE=tproxy? ( caps ) qos? ( caps )
 SLOT=0
 SRC_URI=http://www.squid-cache.org/Versions/v3/3.5/squid-3.5.23.tar.xz
-_eclasses_=autotools	d0e5375d47f4c809f406eb892e531513	estack	43ddf5aaffa7a8d0482df54d25a66a1f	eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	libtool	52d0e17251d04645ffaa61bfdd858944	linux-info	e60da1ae009f60d1c79c5af918dfd844	multilib	97f470f374f2e94ccab04a2fb21d811e	pam	3f746974e1cc47cabe3bd488c08cdc8e	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607	user	c8f947561e8797a300801d0dd3625448	versionator	26ca8a8bd95d6a74122c08ba98a4ee72
+_eclasses_=autotools	d0e5375d47f4c809f406eb892e531513	estack	43ddf5aaffa7a8d0482df54d25a66a1f	eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	libtool	52d0e17251d04645ffaa61bfdd858944	linux-info	e60da1ae009f60d1c79c5af918dfd844	multilib	97f470f374f2e94ccab04a2fb21d811e	pam	3f746974e1cc47cabe3bd488c08cdc8e	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607	user	3b54473ad93c2d51e2dc0e14f601e048	versionator	26ca8a8bd95d6a74122c08ba98a4ee72
 _md5_=4df0497a73abfa2958856cfad67c1778
