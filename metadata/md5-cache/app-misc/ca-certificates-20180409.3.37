@@ -3,11 +3,11 @@ DEPEND=|| ( dev-lang/python:3.6 dev-lang/python:3.5 dev-lang/python:3.4 >=dev-la
 DESCRIPTION=Common CA Certificates PEM files
 EAPI=6
 HOMEPAGE=https://packages.debian.org/sid/ca-certificates
-IUSE=insecure_certs cacert
+IUSE=cacert
 KEYWORDS=*
 LICENSE=MPL-1.1
 RDEPEND=app-misc/c_rehash sys-apps/debianutils
 SLOT=0
-SRC_URI=mirror://debian/pool/main/c/ca-certificates/ca-certificates_20170717.tar.xz https://archive.mozilla.org/pub/security/nss/releases/NSS_3_36_1_RTM/src/nss-3.36.1.tar.gz cacert? ( https://dev.gentoo.org/~axs/distfiles/nss-cacert-class1-class3.patch )
+SRC_URI=mirror://debian/pool/main/c/ca-certificates/ca-certificates_20180409.tar.xz https://archive.mozilla.org/pub/security/nss/releases/NSS_3_37_RTM/src/nss-3.37.tar.gz cacert? ( https://dev.gentoo.org/~axs/distfiles/nss-cacert-class1-class3.patch )
 _eclasses_=estack	43ddf5aaffa7a8d0482df54d25a66a1f	eutils	06133990e861be0fe60c2b428fd025d9	multilib	97f470f374f2e94ccab04a2fb21d811e	python-any-r1	8eb13cdf35f6e43c48107b911900b2cc	python-utils-r1	ec7e05a608c9ab8ae4d180d10bd61600	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607	versionator	26ca8a8bd95d6a74122c08ba98a4ee72
-_md5_=ae8d6dfae9d0e12a4fbd7d05c2fceeef
+_md5_=58c619a076746553fc5cb2f2ca84aad2
