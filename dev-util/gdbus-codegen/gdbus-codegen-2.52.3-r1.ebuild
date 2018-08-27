@@ -1,0 +1,1 @@
+gdbus-codegen-2.52.3.ebuild

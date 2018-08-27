@@ -1,0 +1,1 @@
+pyserial-2.7-r1.ebuild
