@@ -1,9 +1,7 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
-EAPI=5
-WANT_AUTOCONF="2.5"
+EAPI=6
 
 inherit autotools eutils multilib toolchain-funcs versionator multilib-minimal
 
@@ -18,31 +16,31 @@ SLOT="0"
 KEYWORDS="*"
 IUSE="debug"
 
-RDEPEND="
-	abi_x86_32? (
-		!<=app-emulation/emul-linux-x86-baselibs-20140508-r12
-		!app-emulation/emul-linux-x86-baselibs[-abi_x86_32(-)]
-	)"
-
 MULTILIB_CHOST_TOOLS=(
 	/usr/bin/nspr-config
 )
 
+PATCHES=(
+	"${FILESDIR}"/${PN}-4.7.0-prtime.patch
+	"${FILESDIR}"/${PN}-4.7.1-solaris.patch
+	"${FILESDIR}"/${PN}-4.10.6-solaris.patch
+	"${FILESDIR}"/${PN}-4.8.4-darwin-install_name.patch
+	"${FILESDIR}"/${PN}-4.8.9-link-flags.patch
+	# We do not need to pass -L$libdir via nspr-config --libs
+	"${FILESDIR}"/${PN}-4.9.5_nspr_config.patch
+)
+
 src_prepare() {
 	cd "${S}"/nspr || die
-	epatch "${FILESDIR}"/${PN}-4.7.0-prtime.patch
-	epatch "${FILESDIR}"/${PN}-4.7.1-solaris.patch
-	epatch "${FILESDIR}"/${PN}-4.10.6-solaris.patch
-	epatch "${FILESDIR}"/${PN}-4.8.4-darwin-install_name.patch
-	epatch "${FILESDIR}"/${PN}-4.8.9-link-flags.patch
-	# We do not need to pass -L$libdir via nspr-config --libs
-	epatch "${FILESDIR}"/${PN}-4.9.5_nspr_config.patch
+
+	default
 
 	# rename configure.in to configure.ac for new autotools compatibility
 	if [[ -e "${S}"/nspr/configure.in ]] ; then
 		einfo "Renaming configure.in to configure.ac"
 		mv "${S}"/nspr/configure.{in,ac} || die
 	fi
+
 	# We must run eautoconf to regenerate configure
 	eautoconf
 
@@ -63,7 +61,11 @@ multilib_src_configure() {
 		&& export CROSS_COMPILE=1 \
 		|| unset CROSS_COMPILE
 
-	local myconf=()
+	local myconf=(
+		--libdir="${EPREFIX}/usr/$(get_libdir)"
+		$(use_enable debug)
+		$(use_enable !debug optimize)
+	)
 
 	# The configure has some fancy --enable-{{n,x}32,64bit} switches
 	# that trigger some code conditional to platform & arch. This really
@@ -92,11 +94,7 @@ multilib_src_configure() {
 	# Ancient autoconf needs help finding the right tools.
 	LC_ALL="C" ECONF_SOURCE="${S}/nspr" \
 	ac_cv_path_AR="${AR}" \
-	econf \
-		--libdir="${EPREFIX}/usr/$(get_libdir)" \
-		$(use_enable debug) \
-		$(use_enable !debug optimize) \
-		"${myconf[@]}"
+	econf "${myconf[@]}"
 }
 
 multilib_src_install() {
@@ -105,16 +103,16 @@ multilib_src_install() {
 	emake DESTDIR="${D}" install
 
 	einfo "removing static libraries as upstream has requested!"
-	rm -f "${ED}"/usr/$(get_libdir)/*.a || die "failed to remove static libraries."
+	rm "${ED%/}"/usr/$(get_libdir)/*.a || die "failed to remove static libraries."
 
 	# install nspr-config
 	dobin config/nspr-config
 
 	# Remove stupid files in /usr/bin
-	rm "${ED}"/usr/bin/prerr.properties || die
+	rm "${ED%/}"/usr/bin/prerr.properties || die
 
 	# This is used only to generate prerr.c and prerr.h at build time.
 	# No other projects use it, and we don't want to depend on perl.
 	# Talked to upstream and they agreed w/punting.
-	rm "${ED}"/usr/bin/compile-et.pl || die
+	rm "${ED%/}"/usr/bin/compile-et.pl || die
 }
