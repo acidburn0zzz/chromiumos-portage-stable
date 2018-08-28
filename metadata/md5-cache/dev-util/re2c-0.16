@@ -1,0 +1,10 @@
+DEFINED_PHASES=install prepare
+DESCRIPTION=tool for generating C-based recognizers from regular expressions
+EAPI=5
+HOMEPAGE=http://re2c.org/
+KEYWORDS=*
+LICENSE=public-domain
+SLOT=0
+SRC_URI=https://github.com/skvadrik/re2c/releases/download/0.16/re2c-0.16.tar.gz
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607
+_md5_=e8cb0e6abda707105203b3679fe5d6f1
