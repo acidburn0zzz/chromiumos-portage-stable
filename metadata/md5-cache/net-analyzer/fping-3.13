@@ -6,5 +6,5 @@ IUSE=ipv6 suid
 KEYWORDS=*
 LICENSE=fping
 SLOT=0
-SRC_URI=http://fping.org/dist/fping-3.10.tar.gz
-_md5_=ec6ef8e07771c67ad65289a0dfdd0554
+SRC_URI=http://fping.org/dist/fping-3.13.tar.gz
+_md5_=eabde4d4e77e37b9dca07c6f2470ba9e

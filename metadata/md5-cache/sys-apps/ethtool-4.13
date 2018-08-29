@@ -6,5 +6,5 @@ HOMEPAGE=https://www.kernel.org/pub/software/network/ethtool/
 KEYWORDS=*
 LICENSE=GPL-2
 SLOT=0
-SRC_URI=mirror://kernel/software/network/ethtool/ethtool-3.18.tar.xz
-_md5_=34098fefd237bb47b43edb44ae3a0328
+SRC_URI=mirror://kernel/software/network/ethtool/ethtool-4.13.tar.xz
+_md5_=d14a01125b6c4a7c8f0858d7f92f08ce

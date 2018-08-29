@@ -1,29 +1,32 @@
-# Copyright 1999-2012 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/net-ftp/tftp-hpa/tftp-hpa-5.2.ebuild,v 1.9 2012/09/15 18:50:46 armin76 Exp $
 
-EAPI="4"
+EAPI="5"
 
-inherit toolchain-funcs
+inherit systemd eutils toolchain-funcs
 
 DESCRIPTION="port of the OpenBSD TFTP server"
-HOMEPAGE="http://www.kernel.org/pub/software/network/tftp/"
+HOMEPAGE="https://www.kernel.org/pub/software/network/tftp/"
 SRC_URI="mirror://kernel/software/network/tftp/${PN}/${P}.tar.xz"
 
-LICENSE="BSD"
+LICENSE="BSD-4"
 SLOT="0"
 KEYWORDS="*"
 IUSE="ipv6 readline selinux tcpd"
 
-RDEPEND="selinux? ( sec-policy/selinux-tftp )
-	readline? ( sys-libs/readline )
+CDEPEND="
+	readline? ( sys-libs/readline:0= )
 	tcpd? ( sys-apps/tcp-wrappers )
 	!net-ftp/atftp
 	!net-ftp/netkit-tftp"
-DEPEND="${RDEPEND}
+DEPEND="${CDEPEND}
 	app-arch/xz-utils"
-
+RDEPEND="${CDEPEND}
+	selinux? ( sec-policy/selinux-tftp )
+"
 src_prepare() {
+	epatch_user
+
 	sed -i "/^AR/s:ar:$(tc-getAR):" MCONFIG.in || die
 }
 
@@ -43,6 +46,10 @@ src_install() {
 
 	newconfd "${FILESDIR}"/in.tftpd.confd-0.44 in.tftpd
 	newinitd "${FILESDIR}"/in.tftpd.rc6 in.tftpd
+
+	systemd_dounit "${FILESDIR}"/tftp.service
+	systemd_dounit "${FILESDIR}"/tftp.socket
+
 	insinto /etc/xinetd.d
 	newins "${FILESDIR}"/tftp.xinetd tftp
 }
