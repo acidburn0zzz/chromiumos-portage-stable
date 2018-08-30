@@ -1,6 +1,5 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 # @ECLASS: python-utils-r1.eclass
 # @MAINTAINER:
@@ -8,6 +7,7 @@
 # @AUTHOR:
 # Author: Michał Górny <mgorny@gentoo.org>
 # Based on work of: Krzysztof Pawlik <nelchael@gentoo.org>
+# @SUPPORTED_EAPIS: 0 1 2 3 4 5 6 7
 # @BLURB: Utility functions for packages with Python parts.
 # @DESCRIPTION:
 # A utility eclass providing functions to query Python implementations,
@@ -20,7 +20,7 @@
 # https://wiki.gentoo.org/wiki/Project:Python/python-utils-r1
 
 case "${EAPI:-0}" in
-	0|1|2|3|4|5|6)
+	0|1|2|3|4|5|6|7)
 		;;
 	*)
 		die "Unsupported EAPI=${EAPI} (unknown) for ${ECLASS}"
@@ -44,9 +44,21 @@ _PYTHON_ALL_IMPLS=(
 	jython2_7
 	pypy pypy3
 	python2_7
-	python3_3 python3_4 python3_5 python3_6
+	python3_4 python3_5 python3_6 python3_7
 )
 readonly _PYTHON_ALL_IMPLS
+
+# @ECLASS-VARIABLE: PYTHON_COMPAT_NO_STRICT
+# @INTERNAL
+# @DESCRIPTION:
+# Set to a non-empty value in order to make eclass tolerate (ignore)
+# unknown implementations in PYTHON_COMPAT.
+#
+# This is intended to be set by the user when using ebuilds that may
+# have unknown (newer) implementations in PYTHON_COMPAT. The assumption
+# is that the ebuilds are intended to be used within multiple contexts
+# which can involve revisions of this eclass that support a different
+# set of Python implementations.
 
 # @FUNCTION: _python_impl_supported
 # @USAGE: <impl>
@@ -68,10 +80,10 @@ _python_impl_supported() {
 	# keep in sync with _PYTHON_ALL_IMPLS!
 	# (not using that list because inline patterns shall be faster)
 	case "${impl}" in
-		python2_7|python3_[3456]|jython2_7)
+		python2_7|python3_[4567]|jython2_7)
 			return 0
 			;;
-		pypy1_[89]|pypy2_0|python2_[56]|python3_[12])
+		pypy1_[89]|pypy2_0|python2_[56]|python3_[123])
 			return 1
 			;;
 		pypy|pypy3)
@@ -80,6 +92,7 @@ _python_impl_supported() {
 			fi
 			;;
 		*)
+			[[ ${PYTHON_COMPAT_NO_STRICT} ]] && return 1
 			die "Invalid implementation in PYTHON_COMPAT: ${impl}"
 	esac
 }
@@ -115,22 +128,73 @@ _python_set_impls() {
 		_python_impl_supported "${i}"
 	done
 
-	_PYTHON_SUPPORTED_IMPLS=()
-	_PYTHON_UNSUPPORTED_IMPLS=()
+	local supp=() unsupp=()
 
 	for i in "${_PYTHON_ALL_IMPLS[@]}"; do
 		if has "${i}" "${PYTHON_COMPAT[@]}"; then
-			_PYTHON_SUPPORTED_IMPLS+=( "${i}" )
+			supp+=( "${i}" )
 		else
-			_PYTHON_UNSUPPORTED_IMPLS+=( "${i}" )
+			unsupp+=( "${i}" )
 		fi
 	done
 
-	if [[ ${#_PYTHON_SUPPORTED_IMPLS[@]} -eq 0 ]]; then
+	if [[ ! ${supp[@]} ]]; then
 		die "No supported implementation in PYTHON_COMPAT."
 	fi
 
-	readonly _PYTHON_SUPPORTED_IMPLS _PYTHON_UNSUPPORTED_IMPLS
+	if [[ ${_PYTHON_SUPPORTED_IMPLS[@]} ]]; then
+		# set once already, verify integrity
+		if [[ ${_PYTHON_SUPPORTED_IMPLS[@]} != ${supp[@]} ]]; then
+			eerror "Supported impls (PYTHON_COMPAT) changed between inherits!"
+			eerror "Before: ${_PYTHON_SUPPORTED_IMPLS[*]}"
+			eerror "Now   : ${supp[*]}"
+			die "_PYTHON_SUPPORTED_IMPLS integrity check failed"
+		fi
+		if [[ ${_PYTHON_UNSUPPORTED_IMPLS[@]} != ${unsupp[@]} ]]; then
+			eerror "Unsupported impls changed between inherits!"
+			eerror "Before: ${_PYTHON_UNSUPPORTED_IMPLS[*]}"
+			eerror "Now   : ${unsupp[*]}"
+			die "_PYTHON_UNSUPPORTED_IMPLS integrity check failed"
+		fi
+	else
+		_PYTHON_SUPPORTED_IMPLS=( "${supp[@]}" )
+		_PYTHON_UNSUPPORTED_IMPLS=( "${unsupp[@]}" )
+		readonly _PYTHON_SUPPORTED_IMPLS _PYTHON_UNSUPPORTED_IMPLS
+	fi
+}
+
+# @FUNCTION: _python_impl_matches
+# @USAGE: <impl> <pattern>...
+# @INTERNAL
+# @DESCRIPTION:
+# Check whether the specified <impl> matches at least one
+# of the patterns following it. Return 0 if it does, 1 otherwise.
+#
+# <impl> can be in PYTHON_COMPAT or EPYTHON form. The patterns can be
+# either:
+# a) fnmatch-style patterns, e.g. 'python2*', 'pypy'...
+# b) '-2' to indicate all Python 2 variants (= !python_is_python3)
+# c) '-3' to indicate all Python 3 variants (= python_is_python3)
+_python_impl_matches() {
+	[[ ${#} -ge 2 ]] || die "${FUNCNAME}: takes at least 2 parameters"
+
+	local impl=${1} pattern
+	shift
+
+	for pattern; do
+		if [[ ${pattern} == -2 ]]; then
+			! python_is_python3 "${impl}"
+			return
+		elif [[ ${pattern} == -3 ]]; then
+			python_is_python3 "${impl}"
+			return
+		# unify value style to allow lax matching
+		elif [[ ${impl/./_} == ${pattern/./_} ]]; then
+			return 0
+		fi
+	done
+
+	return 1
 }
 
 # @ECLASS-VARIABLE: PYTHON
@@ -415,9 +479,9 @@ python_export() {
 					python*)
 						PYTHON_PKG_DEP="dev-lang/python:${impl#python}";;
 					pypy)
-						PYTHON_PKG_DEP='virtual/pypy:0=';;
+						PYTHON_PKG_DEP='>=virtual/pypy-5:0=';;
 					pypy3)
-						PYTHON_PKG_DEP='virtual/pypy3:0=';;
+						PYTHON_PKG_DEP='>=virtual/pypy3-5:0=';;
 					jython2.7)
 						PYTHON_PKG_DEP='dev-java/jython:2.7';;
 					*)
@@ -625,8 +689,8 @@ python_optimize() {
 			# 2) skip paths which do not exist
 			#    (python2.6 complains about them verbosely)
 
-			if [[ ${f} == /* && -d ${D}${f} ]]; then
-				set -- "${D}${f}" "${@}"
+			if [[ ${f} == /* && -d ${D%/}${f} ]]; then
+				set -- "${D%/}${f}" "${@}"
 			fi
 		done < <("${PYTHON}" -c 'import sys; print("\0".join(sys.path))' || die)
 
@@ -636,12 +700,18 @@ python_optimize() {
 	local d
 	for d; do
 		# make sure to get a nice path without //
-		local instpath=${d#${D}}
+		local instpath=${d#${D%/}}
 		instpath=/${instpath##/}
 
 		case "${EPYTHON}" in
-			python*)
+			python2.7|python3.[34])
 				"${PYTHON}" -m compileall -q -f -d "${instpath}" "${d}"
+				"${PYTHON}" -OO -m compileall -q -f -d "${instpath}" "${d}"
+				;;
+			python*|pypy3)
+				# both levels of optimization are separate since 3.5
+				"${PYTHON}" -m compileall -q -f -d "${instpath}" "${d}"
+				"${PYTHON}" -O -m compileall -q -f -d "${instpath}" "${d}"
 				"${PYTHON}" -OO -m compileall -q -f -d "${instpath}" "${d}"
 				;;
 			*)
@@ -651,32 +721,23 @@ python_optimize() {
 	done
 }
 
-# @ECLASS-VARIABLE: python_scriptroot
-# @DEFAULT_UNSET
+# @FUNCTION: python_scriptinto
+# @USAGE: <new-path>
 # @DESCRIPTION:
-# The current script destination for python_doscript(). The path
-# is relative to the installation root (${ED}).
+# Set the directory to which files passed to python_doexe(),
+# python_doscript(), python_newexe() and python_newscript()
+# are going to be installed. The new value needs to be relative
+# to the installation root (${ED}).
 #
-# When unset, ${DESTTREE}/bin (/usr/bin by default) will be used.
-#
-# Can be set indirectly through the python_scriptinto() function.
+# If not set explicitly, the directory defaults to /usr/bin.
 #
 # Example:
 # @CODE
 # src_install() {
-#   local python_scriptroot=${GAMES_BINDIR}
+#   python_scriptinto /usr/sbin
 #   python_foreach_impl python_doscript foo
 # }
 # @CODE
-
-# @FUNCTION: python_scriptinto
-# @USAGE: <new-path>
-# @DESCRIPTION:
-# Set the current scriptroot. The new value will be stored
-# in the 'python_scriptroot' environment variable. The new value need
-# be relative to the installation root (${ED}).
-#
-# Alternatively, you can set the variable directly.
 python_scriptinto() {
 	debug-print-function ${FUNCNAME} "${@}"
 
@@ -686,7 +747,7 @@ python_scriptinto() {
 # @FUNCTION: python_doexe
 # @USAGE: <files>...
 # @DESCRIPTION:
-# Install the given executables into current python_scriptroot,
+# Install the given executables into the executable install directory,
 # for the current Python implementation (${EPYTHON}).
 #
 # The executable will be wrapped properly for the Python implementation,
@@ -703,7 +764,7 @@ python_doexe() {
 # @FUNCTION: python_newexe
 # @USAGE: <path> <new-name>
 # @DESCRIPTION:
-# Install the given executable into current python_scriptroot,
+# Install the given executable into the executable install directory,
 # for the current Python implementation (${EPYTHON}).
 #
 # The executable will be wrapped properly for the Python implementation,
@@ -718,7 +779,7 @@ python_newexe() {
 		die "python_do* and python_new* helpers are banned in EAPIs older than 4."
 	fi
 
-	local wrapd=${python_scriptroot:-${DESTTREE}/bin}
+	local wrapd=${python_scriptroot:-/usr/bin}
 
 	local f=${1}
 	local newfn=${2}
@@ -729,6 +790,7 @@ python_newexe() {
 
 	(
 		dodir "${wrapd}"
+		exeopts -m 0755
 		exeinto "${d}"
 		newexe "${f}" "${newfn}" || return ${?}
 	)
@@ -746,7 +808,7 @@ python_newexe() {
 # @FUNCTION: python_doscript
 # @USAGE: <files>...
 # @DESCRIPTION:
-# Install the given scripts into current python_scriptroot,
+# Install the given scripts into the executable install directory,
 # for the current Python implementation (${EPYTHON}).
 #
 # All specified files must start with a 'python' shebang. The shebang
@@ -769,7 +831,7 @@ python_doscript() {
 # @FUNCTION: python_newscript
 # @USAGE: <path> <new-name>
 # @DESCRIPTION:
-# Install the given script into current python_scriptroot
+# Install the given script into the executable install directory
 # for the current Python implementation (${EPYTHON}), and name it
 # <new-name>.
 #
@@ -790,35 +852,34 @@ python_newscript() {
 	python_newexe "${@}"
 }
 
-# @ECLASS-VARIABLE: python_moduleroot
-# @DEFAULT_UNSET
+# @FUNCTION: python_moduleinto
+# @USAGE: <new-path>
 # @DESCRIPTION:
-# The current module root for python_domodule(). The path can be either
-# an absolute system path (it must start with a slash, and ${ED} will be
-# prepended to it) or relative to the implementation's site-packages directory
-# (then it must start with a non-slash character).
+# Set the Python module install directory for python_domodule().
+# The <new-path> can either be an absolute target system path (in which
+# case it needs to start with a slash, and ${ED} will be prepended to
+# it) or relative to the implementation's site-packages directory
+# (then it must not start with a slash). The relative path can be
+# specified either using the Python package notation (separated by dots)
+# or the directory notation (using slashes).
 #
-# When unset, the modules will be installed in the site-packages root.
+# When not set explicitly, the modules are installed to the top
+# site-packages directory.
 #
-# Can be set indirectly through the python_moduleinto() function.
+# In the relative case, the exact path is determined directly
+# by each python_doscript/python_newscript function. Therefore,
+# python_moduleinto can be safely called before establishing the Python
+# interpreter and/or a single call can be used to set the path correctly
+# for multiple implementations, as can be seen in the following example.
 #
 # Example:
 # @CODE
 # src_install() {
-#   local python_moduleroot=bar
+#   python_moduleinto bar
 #   # installs ${PYTHON_SITEDIR}/bar/baz.py
 #   python_foreach_impl python_domodule baz.py
 # }
 # @CODE
-
-# @FUNCTION: python_moduleinto
-# @USAGE: <new-path>
-# @DESCRIPTION:
-# Set the current module root. The new value will be stored
-# in the 'python_moduleroot' environment variable. The new value need
-# be relative to the site-packages root.
-#
-# Alternatively, you can set the variable directly.
 python_moduleinto() {
 	debug-print-function ${FUNCNAME} "${@}"
 
@@ -828,8 +889,8 @@ python_moduleinto() {
 # @FUNCTION: python_domodule
 # @USAGE: <files>...
 # @DESCRIPTION:
-# Install the given modules (or packages) into the current
-# python_moduleroot. The list can mention both modules (files)
+# Install the given modules (or packages) into the current Python module
+# installation directory. The list can mention both modules (files)
 # and packages (directories). All listed files will be installed
 # for all enabled implementations, and compiled afterwards.
 #
@@ -857,15 +918,16 @@ python_domodule() {
 		local PYTHON_SITEDIR=${PYTHON_SITEDIR}
 		[[ ${PYTHON_SITEDIR} ]] || python_export PYTHON_SITEDIR
 
-		d=${PYTHON_SITEDIR#${EPREFIX}}/${python_moduleroot}
+		d=${PYTHON_SITEDIR#${EPREFIX}}/${python_moduleroot//.//}
 	fi
 
 	(
+		insopts -m 0644
 		insinto "${d}"
 		doins -r "${@}" || return ${?}
 	)
 
-	python_optimize "${ED}/${d}"
+	python_optimize "${ED%/}/${d}"
 }
 
 # @FUNCTION: python_doheader
@@ -895,6 +957,7 @@ python_doheader() {
 	d=${PYTHON_INCLUDEDIR#${EPREFIX}}
 
 	(
+		insopts -m 0644
 		insinto "${d}"
 		doins -r "${@}" || return ${?}
 	)
@@ -929,11 +992,11 @@ python_wrapper_setup() {
 		mkdir -p "${workdir}"/{bin,pkgconfig} || die
 
 		# Clean up, in case we were supposed to do a cheap update.
-		rm -f "${workdir}"/bin/python{,2,3,-config} || die
+		rm -f "${workdir}"/bin/python{,2,3}{,-config} || die
 		rm -f "${workdir}"/bin/2to3 || die
 		rm -f "${workdir}"/pkgconfig/python{,2,3}.pc || die
 
-		local EPYTHON PYTHON PYTHON_CONFIG
+		local EPYTHON PYTHON
 		python_export "${impl}" EPYTHON PYTHON
 
 		local pyver pyother
@@ -960,11 +1023,9 @@ python_wrapper_setup() {
 
 		# CPython-specific
 		if [[ ${EPYTHON} == python* ]]; then
-			python_export "${impl}" PYTHON_CONFIG
-
 			cat > "${workdir}/bin/python-config" <<-_EOF_ || die
 				#!/bin/sh
-				exec "${PYTHON_CONFIG}" "\${@}"
+				exec "${PYTHON}-config" "\${@}"
 			_EOF_
 			cp "${workdir}/bin/python-config" \
 				"${workdir}/bin/python${pyver}-config" || die
@@ -986,23 +1047,23 @@ python_wrapper_setup() {
 		for x in "${nonsupp[@]}"; do
 			cat >"${workdir}"/bin/${x} <<-_EOF_ || die
 				#!/bin/sh
-				echo "${x} is not supported by ${EPYTHON}" >&2
+				echo "${ECLASS}: ${FUNCNAME}: ${x} is not supported by ${EPYTHON} (PYTHON_COMPAT)" >&2
 				exit 127
 			_EOF_
 			chmod +x "${workdir}"/bin/${x} || die
 		done
-
-		# Now, set the environment.
-		# But note that ${workdir} may be shared with something else,
-		# and thus already on top of PATH.
-		if [[ ${PATH##:*} != ${workdir}/bin ]]; then
-			PATH=${workdir}/bin${PATH:+:${PATH}}
-		fi
-		if [[ ${PKG_CONFIG_PATH##:*} != ${workdir}/pkgconfig ]]; then
-			PKG_CONFIG_PATH=${workdir}/pkgconfig${PKG_CONFIG_PATH:+:${PKG_CONFIG_PATH}}
-		fi
-		export PATH PKG_CONFIG_PATH
 	fi
+
+	# Now, set the environment.
+	# But note that ${workdir} may be shared with something else,
+	# and thus already on top of PATH.
+	if [[ ${PATH##:*} != ${workdir}/bin ]]; then
+		PATH=${workdir}/bin${PATH:+:${PATH}}
+	fi
+	if [[ ${PKG_CONFIG_PATH##:*} != ${workdir}/pkgconfig ]]; then
+		PKG_CONFIG_PATH=${workdir}/pkgconfig${PKG_CONFIG_PATH:+:${PKG_CONFIG_PATH}}
+	fi
+	export PATH PKG_CONFIG_PATH
 }
 
 # @FUNCTION: python_is_python3
@@ -1029,9 +1090,20 @@ python_is_python3() {
 python_is_installed() {
 	local impl=${1:-${EPYTHON}}
 	[[ ${impl} ]] || die "${FUNCNAME}: no impl nor EPYTHON"
+	local hasv_args=()
 
-	# for has_version
-	local -x ROOT=/
+	case ${EAPI:-0} in
+		0|1|2|3|4)
+			local -x ROOT=/
+			;;
+		5|6)
+			hasv_args+=( --host-root )
+			;;
+		*)
+			hasv_args+=( -b )
+			;;
+	esac
+
 	case "${impl}" in
 		pypy|pypy3)
 			local append=
@@ -1040,13 +1112,13 @@ python_is_installed() {
 			fi
 
 			# be happy with just the interpeter, no need for the virtual
-			has_version "dev-python/${impl}${append}" \
-				|| has_version "dev-python/${impl}-bin${append}"
+			has_version "${hasv_args[@]}" "dev-python/${impl}${append}" \
+				|| has_version "${hasv_args[@]}" "dev-python/${impl}-bin${append}"
 			;;
 		*)
 			local PYTHON_PKG_DEP
 			python_export "${impl}" PYTHON_PKG_DEP
-			has_version "${PYTHON_PKG_DEP}"
+			has_version "${hasv_args[@]}" "${PYTHON_PKG_DEP}"
 			;;
 	esac
 }
@@ -1110,7 +1182,7 @@ python_fix_shebang() {
 				for i in "${split_shebang[@]}"; do
 					case "${i}" in
 						*"${EPYTHON}")
-							debug-print "${FUNCNAME}: in file ${f#${D}}"
+							debug-print "${FUNCNAME}: in file ${f#${D%/}}"
 							debug-print "${FUNCNAME}: shebang matches EPYTHON: ${shebang}"
 
 							# Nothing to do, move along.
@@ -1119,7 +1191,7 @@ python_fix_shebang() {
 							break
 							;;
 						*python|*python[23])
-							debug-print "${FUNCNAME}: in file ${f#${D}}"
+							debug-print "${FUNCNAME}: in file ${f#${D%/}}"
 							debug-print "${FUNCNAME}: rewriting shebang: ${shebang}"
 
 							if [[ ${i} == *python2 ]]; then
@@ -1169,7 +1241,7 @@ python_fix_shebang() {
 			fi
 
 			if [[ ! ${quiet} ]]; then
-				einfo "Fixing shebang in ${f#${D}}."
+				einfo "Fixing shebang in ${f#${D%/}}."
 			fi
 
 			if [[ ! ${error} ]]; then
@@ -1183,7 +1255,7 @@ python_fix_shebang() {
 				any_fixed=1
 			else
 				eerror "The file has incompatible shebang:"
-				eerror "  file: ${f#${D}}"
+				eerror "  file: ${f#${D%/}}"
 				eerror "  current shebang: ${shebang}"
 				eerror "  requested impl: ${EPYTHON}"
 				die "${FUNCNAME}: conversion of incompatible shebang requested"
@@ -1194,7 +1266,7 @@ python_fix_shebang() {
 			local cmd=eerror
 			[[ ${EAPI:-0} == [012345] ]] && cmd=eqawarn
 
-			"${cmd}" "QA warning: ${FUNCNAME}, ${path#${D}} did not match any fixable files."
+			"${cmd}" "QA warning: ${FUNCNAME}, ${path#${D%/}} did not match any fixable files."
 			if [[ ${any_correct} ]]; then
 				"${cmd}" "All files have ${EPYTHON} shebang already."
 			else
@@ -1213,7 +1285,7 @@ python_fix_shebang() {
 # Check whether the specified locale sanely maps between lowercase
 # and uppercase ASCII characters.
 _python_check_locale_sanity() {
-	local -x LC_CTYPE=${1}
+	local -x LC_ALL=${1}
 	local IFS=
 
 	local lc=( {a..z} )
@@ -1238,7 +1310,7 @@ python_export_utf8_locale() {
 
 	if [[ $(locale charmap) != UTF-8 ]]; then
 		# Try English first, then everything else.
-		local lang locales="en_US.UTF-8 $(locale -a)"
+		local lang locales="C.UTF-8 en_US.UTF-8 en_GB.UTF-8 $(locale -a)"
 
 		for lang in ${locales}; do
 			if [[ $(LC_ALL=${lang} locale charmap 2>/dev/null) == UTF-8 ]]; then
@@ -1260,14 +1332,14 @@ python_export_utf8_locale() {
 					fi
 					return 0
 				fi
-			fi  
+			fi
 		done
 
 		ewarn "Could not find a UTF-8 locale. This may trigger build failures in"
 		ewarn "some python packages. Please ensure that a UTF-8 locale is listed in"
 		ewarn "/etc/locale.gen and run locale-gen."
 		return 1
-	fi  
+	fi
 
 	return 0
 }
