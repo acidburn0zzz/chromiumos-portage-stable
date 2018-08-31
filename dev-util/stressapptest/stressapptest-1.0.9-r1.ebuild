@@ -1,7 +1,7 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="5"
+EAPI="6"
 
 inherit eutils flag-o-matic
 
@@ -18,7 +18,8 @@ RDEPEND="dev-libs/libaio"
 DEPEND="${RDEPEND}"
 
 src_prepare() {
-	epatch "${FILESDIR}"/${PN}-gnu_cxx-namespace.patch
+	eapply "${FILESDIR}"/${PN}-gnu_cxx-namespace.patch
+	eapply_user
 }
 
 src_configure() {
