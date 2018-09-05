@@ -1,4 +1,4 @@
-DEFINED_PHASES=configure
+DEFINED_PHASES=configure prepare
 DEPEND=dev-libs/libaio
 DESCRIPTION=Stressful Application Test
 EAPI=6
@@ -10,4 +10,4 @@ RDEPEND=dev-libs/libaio
 SLOT=0
 SRC_URI=https://github.com/stressapptest/stressapptest/archive/v1.0.9.tar.gz -> stressapptest-1.0.9.tar.gz
 _eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607
-_md5_=eede6b4a71b743da02c5e65016f6df32
+_md5_=3b1044deef40c80e08d11f0bf68d08e5
