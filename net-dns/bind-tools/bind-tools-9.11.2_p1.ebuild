@@ -1,6 +1,5 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/net-dns/bind-tools/bind-tools-9.10.2-r1.ebuild,v 1.1 2015/05/26 03:01:00 vapier Exp $
 
 EAPI="5"
 
@@ -13,24 +12,30 @@ MY_P="${MY_PN}-${MY_PV}"
 
 DESCRIPTION="bind tools: dig, nslookup, host, nsupdate, dnssec-keygen"
 HOMEPAGE="http://www.isc.org/software/bind"
-SRC_URI="ftp://ftp.isc.org/isc/bind9/${MY_PV}/${MY_P}.tar.gz"
+SRC_URI="https://www.isc.org/downloads/file/${MY_P}/?version=tar-gz -> ${MY_PN}-${PV}.tar.gz"
 
-LICENSE="ISC BSD BSD-2 HPND JNIC RSA openssl"
+LICENSE="Apache-2.0 BSD BSD-2 GPL-2 HPND ISC MPL-2.0"
 SLOT="0"
 KEYWORDS="*"
-IUSE="doc gost gssapi idn ipv6 readline seccomp ssl urandom xml"
+IUSE="doc gost gssapi idn ipv6 libressl readline seccomp ssl urandom xml"
 # no PKCS11 currently as it requires OpenSSL to be patched, also see bug 409687
 
-REQUIRED_USE="gost? ( ssl )"
+REQUIRED_USE="gost? ( !libressl ssl )"
 
-DEPEND="ssl? ( dev-libs/openssl:0 )
-	gost? ( >=dev-libs/openssl-1.0.0:0[-bindist] )
+CDEPEND="
+	ssl? (
+		!libressl? ( dev-libs/openssl:0= )
+		libressl? ( dev-libs/libressl )
+	)
+	gost? ( >=dev-libs/openssl-1.0.0:0=[-bindist] )
 	xml? ( dev-libs/libxml2 )
-	idn? ( net-dns/idnkit )
+	idn? ( <net-dns/idnkit-2:= )
 	gssapi? ( virtual/krb5 )
 	readline? ( sys-libs/readline:0= )
 	seccomp? ( sys-libs/libseccomp )"
-RDEPEND="${DEPEND}
+DEPEND="${CDEPEND}
+	virtual/pkgconfig"
+RDEPEND="${CDEPEND}
 	!<net-dns/bind-9.10.2"
 
 S="${WORKDIR}/${MY_P}"
@@ -40,7 +45,6 @@ RESTRICT="test"
 
 src_prepare() {
 	epatch "${FILESDIR}"/${PN}-9.5.0_p1-lwconfig.patch #231247
-	epatch "${FILESDIR}"/${PN}-9.10.2-openssl.patch #417129
 
 	# Disable tests for now, bug 406399
 	sed -i '/^SUBDIRS/s:tests::' bin/Makefile.in lib/Makefile.in || die
@@ -48,6 +52,8 @@ src_prepare() {
 	# bug #220361
 	rm aclocal.m4
 	rm -rf libtool.m4/
+
+	mv configure.in configure.ac || die # configure.in is deprecated
 	eautoreconf
 }
 
@@ -69,6 +75,8 @@ src_configure() {
 		--localstatedir=/var \
 		--without-python \
 		--without-libjson \
+		--without-zlib \
+		--without-lmdb \
 		--disable-openssl-version-check \
 		$(use_enable ipv6) \
 		$(use_with idn) \
@@ -96,7 +104,7 @@ src_compile() {
 }
 
 src_install() {
-	dodoc README CHANGES FAQ
+	dodoc README CHANGES
 
 	cd "${S}"/bin/delv
 	dobin delv
@@ -115,7 +123,7 @@ src_install() {
 
 	cd "${S}"/bin/dnssec
 	for tool in dsfromkey importkey keyfromlabel keygen \
-	  revoke settime signzone verify; do
+		revoke settime signzone verify; do
 		dobin dnssec-"${tool}"
 		doman dnssec-"${tool}".8
 		if use doc; then
