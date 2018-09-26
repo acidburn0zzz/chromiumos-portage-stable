@@ -1,13 +1,14 @@
 DEFINED_PHASES=configure
 DEPEND=sys-libs/libcap:= udev? ( virtual/libudev:= )
 DESCRIPTION=NVM-Express user space tooling for Linux
-EAPI=5
+EAPI=6
 HOMEPAGE=https://github.com/linux-nvme/nvme-cli
 IUSE=udev
 KEYWORDS=*
 LICENSE=GPL-2
 RDEPEND=sys-libs/libcap:= udev? ( virtual/libudev:= )
+RESTRICT=test
 SLOT=0
-SRC_URI=https://github.com/linux-nvme/nvme-cli/archive/v1.1.tar.gz -> nvme-cli-1.1.tar.gz
+SRC_URI=https://github.com/linux-nvme/nvme-cli/archive/v1.6.tar.gz -> nvme-cli-1.6.tar.gz
 _eclasses_=multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607
-_md5_=24a139afa21f6ab4a5076911236aeb8a
+_md5_=4fb7e0e15c7c98c0df4ec51f58c9fe83

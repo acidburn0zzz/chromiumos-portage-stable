@@ -1,13 +1,14 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="5"
+EAPI=6
 
 inherit toolchain-funcs
 
 DESCRIPTION="NVM-Express user space tooling for Linux"
 HOMEPAGE="https://github.com/linux-nvme/nvme-cli"
-SRC_URI="https://github.com/linux-nvme/nvme-cli/archive/v${PV}.tar.gz -> ${P}.tar.gz"
+SRC_URI="${HOMEPAGE}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
+RESTRICT="test"
 
 LICENSE="GPL-2"
 SLOT="0"
