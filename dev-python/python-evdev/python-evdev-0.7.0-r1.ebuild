@@ -16,3 +16,9 @@ KEYWORDS="*"
 IUSE=""
 
 DEPEND="dev-python/setuptools[${PYTHON_USEDEP}]"
+
+python_compile() {
+	distutils-r1_python_compile build_ecodes \
+		--evdev-headers \
+		"${SYSROOT}"/usr/include/linux/input.h:"${SYSROOT}"/usr/include/linux/input-event-codes.h
+}
