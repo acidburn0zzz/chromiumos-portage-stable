@@ -1,0 +1,13 @@
+DEFINED_PHASES=compile configure install pretend setup unpack
+DEPEND=!binary? ( amd64? ( >=sys-power/iasl-20060912 || ( dev-lang/python:3.6 dev-lang/python:3.5 dev-lang/python:3.4 >=dev-lang/python-2.7.5-r2:2.7 ) ) x86? ( >=sys-power/iasl-20060912 || ( dev-lang/python:3.6 dev-lang/python:3.5 dev-lang/python:3.4 >=dev-lang/python-2.7.5-r2:2.7 ) ) )
+DESCRIPTION=Open Source implementation of a 16-bit x86 BIOS
+EAPI=6
+HOMEPAGE=https://www.seabios.org/
+IUSE=+binary debug +seavgabios
+KEYWORDS=*
+LICENSE=LGPL-3 GPL-3
+REQUIRED_USE=debug? ( !binary ) !amd64? ( !x86? ( binary ) )
+SLOT=0
+SRC_URI=!binary? ( https://code.coreboot.org/p/seabios/downloads/get/seabios-1.11.0.tar.gz ) binary? ( https://dev.gentoo.org/~tamiko/distfiles/seabios-1.11.0-bin.tar.xz )
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multilib	97f470f374f2e94ccab04a2fb21d811e	python-any-r1	8eb13cdf35f6e43c48107b911900b2cc	python-utils-r1	12114a2a9aab35b93efc037a196b3234	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607
+_md5_=c0273c2bb3384917ef74768fe2359248
