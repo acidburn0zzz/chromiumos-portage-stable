@@ -13,14 +13,18 @@ RESTRICT="test"
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="*"
-IUSE="udev"
+IUSE="+uuid"
 
-RDEPEND="sys-libs/libcap:=
-	udev? ( virtual/libudev:= )"
+RDEPEND="uuid? ( sys-apps/util-linux:= )"
 DEPEND="${RDEPEND}"
+
+src_prepare() {
+	default
+	sed -i 's:^LIBUUID =:LIBUUID ?=:' -i Makefile || die
+}
 
 src_configure() {
 	tc-export CC
 	export PREFIX="${EPREFIX}/usr"
-	MAKEOPTS+=" LIBUDEV=$(usex udev 0 1)"
+	MAKEOPTS+=" LIBUUID=$(usex uuid 0 1)"
 }
