@@ -11,4 +11,4 @@ REQUIRED_USE=|| ( python_targets_python2_7 python_targets_python3_4 python_targe
 SLOT=0
 SRC_URI=https://github.com/gvalkov/python-evdev/archive/v0.7.0.tar.gz -> python-evdev-0.7.0.tar.gz
 _eclasses_=distutils-r1	4e8ac1ba76ddacd8f7c0289aa586a34c	multibuild	742139c87a9fa3766f0c2b155e5522bf	multilib	97f470f374f2e94ccab04a2fb21d811e	multiprocessing	e32940a7b2a9992ad217eccddb84d548	python-r1	9f6eda21d15d6a8f665d7996a4e0f4e3	python-utils-r1	12114a2a9aab35b93efc037a196b3234	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607
-_md5_=2821709cf8b4102571e1ac8aff0ced98
+_md5_=2dc4699b8d31b5339e0b5241208fbcf7
