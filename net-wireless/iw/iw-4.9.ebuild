@@ -18,6 +18,10 @@ RDEPEND="dev-libs/libnl"
 DEPEND="${RDEPEND}
 	virtual/pkgconfig"
 
+PATCHES=(
+	"${FILESDIR}/iw-fix-the-beacon-average-signal-parsing.patch"
+)
+
 src_prepare() {
 	default
 	tc-export CC LD PKG_CONFIG
