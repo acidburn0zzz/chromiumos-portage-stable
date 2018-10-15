@@ -32,6 +32,7 @@ PATCHES=(
 	"${FILESDIR}"/${PN}-4.7.0-libxcmd-link.patch
 	"${FILESDIR}"/${PN}-4.9.0-underlinking.patch
 	"${FILESDIR}"/${PN}-4.14.0-BUILD_CC-fsmap.patch
+	"${FILESDIR}"/${PN}-4.14-copy_file_rage.patch
 )
 
 pkg_setup() {
