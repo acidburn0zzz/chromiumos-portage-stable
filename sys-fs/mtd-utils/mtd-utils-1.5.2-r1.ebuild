@@ -1,8 +1,7 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
-EAPI="4"
+EAPI="5"
 
 inherit eutils vcs-snapshot
 
@@ -39,6 +38,10 @@ RDEPEND="!sys-fs/mtd
 # And ACL brings in Attr as well.
 DEPEND="${RDEPEND}
 	xattr? ( sys-apps/acl )"
+
+src_prepare() {
+	epatch "${FILESDIR}"/${P}-sysmacros.patch #580206
+}
 
 makeopts() {
 	# These affect build output, so keep it common between compile & install.
