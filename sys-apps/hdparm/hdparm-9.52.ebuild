@@ -1,13 +1,12 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-apps/hdparm/hdparm-9.45.ebuild,v 1.9 2015/06/21 15:54:23 zlogene Exp $
 
-EAPI="4"
+EAPI=5
 
-inherit toolchain-funcs flag-o-matic
+inherit toolchain-funcs flag-o-matic eutils
 
 DESCRIPTION="Utility to change hard drive performance parameters"
-HOMEPAGE="http://sourceforge.net/projects/hdparm/"
+HOMEPAGE="https://sourceforge.net/projects/hdparm/"
 SRC_URI="mirror://sourceforge/hdparm/${P}.tar.gz"
 
 LICENSE="BSD GPL-2" # GPL-2 only
@@ -15,16 +14,19 @@ SLOT="0"
 KEYWORDS="*"
 IUSE="static"
 
+PATCHES=(
+	"${FILESDIR}"/${PN}-9.48-sysmacros.patch #580052
+	"${FILESDIR}"/${PN}-9.51-build.patch
+)
+
 src_prepare() {
+	epatch "${PATCHES[@]}"
 	use static && append-ldflags -static
-	sed -i \
-		-e "/^CFLAGS/ s:-O2:${CFLAGS}:" \
-		-e "/^LDFLAGS/ s:-s:${LDFLAGS}:" \
-		Makefile || die "sed"
 }
 
-src_compile() {
-	emake STRIP=: CC="$(tc-getCC)"
+src_configure() {
+	tc-export CC
+	export STRIP=:
 }
 
 src_install() {
@@ -38,4 +40,5 @@ src_install() {
 	dodoc hdparm.lsm Changelog README.acoustic hdparm-sysconfig
 	docinto wiper
 	dodoc wiper/{README.txt,wiper.sh}
+	docompress -x /usr/share/doc/${PF}/wiper/wiper.sh
 }
