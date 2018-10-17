@@ -1,8 +1,7 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
-EAPI="5"
+EAPI=6
 
 GENTOO_PATCH=2
 
@@ -16,14 +15,16 @@ SRC_URI="mirror://kernel/linux/docs/man-pages/Archive/${P}.tar.xz
 LICENSE="man-pages GPL-2+ BSD"
 SLOT="0"
 KEYWORDS="*"
-IUSE_L10N=" da de fr it ja nl pl ro ru zh-CN"
+IUSE_L10N=" da de fr it ja nl pl ru zh-CN"
 IUSE="nls ${IUSE_L10N// / l10n_}"
 RESTRICT="binchecks"
 
-# Block packages that used to install colliding man pages #341953 #548900
+# Block packages that used to install colliding man pages #341953 #548900 #612640 #617462
 RDEPEND="virtual/man
+	!<sys-apps/keyutils-1.5.9-r4
 	!<sys-apps/attr-2.4.47-r2
-	!<dev-libs/libaio-0.3.109-r2"
+	!<dev-libs/libaio-0.3.109-r2
+	!<dev-libs/libbsd-0.8.3-r1"
 PDEPEND="nls? (
 	l10n_da? ( app-i18n/man-pages-da )
 	l10n_de? ( app-i18n/man-pages-de )
@@ -32,7 +33,6 @@ PDEPEND="nls? (
 	l10n_ja? ( app-i18n/man-pages-ja )
 	l10n_nl? ( app-i18n/man-pages-nl )
 	l10n_pl? ( app-i18n/man-pages-pl )
-	l10n_ro? ( app-i18n/man-pages-ro )
 	l10n_ru? ( app-i18n/man-pages-ru )
 	l10n_zh-CN? ( app-i18n/man-pages-zh_CN )
 	)
@@ -47,7 +47,7 @@ src_install() {
 	dodoc man-pages-*.Announce README Changes*
 
 	# Override with Gentoo specific or additional Gentoo pages
-	cd "${WORKDIR}"/man-pages-gentoo
+	cd "${WORKDIR}"/man-pages-gentoo || die
 	doman */*
 	dodoc README.Gentoo
 }
