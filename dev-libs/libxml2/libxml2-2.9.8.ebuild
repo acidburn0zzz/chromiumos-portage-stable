@@ -81,6 +81,10 @@ src_prepare() {
 	# https://bugzilla.gnome.org/show_bug.cgi?id=760458
 	eapply "${FILESDIR}"/${PN}-2.9.2-python-ABIFLAG.patch
 
+	# Fix infinite loop in LZMA decompression, bug #895084
+	# https://bugzilla.gnome.org/show_bug.cgi?id=794914
+	eapply "${FILESDIR}"/${PN}-2.9.8-infinite-loop-lzma.patch
+
 	# Avoid final linking arguments for python modules
 	if [[ ${CHOST} == *-darwin* ]] ; then
 		sed -i -e '/PYTHON_LIBS/s/ldflags/libs/' configure.ac || die
