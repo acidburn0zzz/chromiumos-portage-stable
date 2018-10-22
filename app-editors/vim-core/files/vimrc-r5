@@ -2,7 +2,6 @@ scriptencoding utf-8
 " ^^ Please leave the above line at the start of the file.
 
 " Default configuration file for Vim
-" $Header: /var/cvsroot/gentoo-x86/app-editors/vim-core/files/vimrc-r4,v 1.3 2010/04/15 19:30:32 darkside Exp $
 
 " Written by Aron Griffis <agriffis@gentoo.org>
 " Modified by Ryan Phillips <rphillips@gentoo.org>
@@ -167,7 +166,7 @@ augroup gentoo
   autocmd BufReadPost *
         \ if ! exists("g:leave_my_cursor_position_alone") |
         \     if line("'\"") > 0 && line ("'\"") <= line("$") |
-        \         exe "normal g'\"" |
+        \         exe "normal! g'\"" |
         \     endif |
         \ endif
 
@@ -189,6 +188,21 @@ augroup END
 
 endif " has("autocmd")
 " }}}
+
+" We don't want VIM to load their own built-in defaults, preferring ours here
+" instead:
+let g:skip_defaults_vim = 1
+
+" Enable Omni completion when opening a file only if a specific plugin does
+" not already exist for that filetype. This allows Omni completion
+" (Ctrl-x/Ctrl-o) to work with any programming language if and only if a syntax
+" file exists for the said language.
+if exists("+omnifunc")
+   autocmd Filetype *
+	      \	if &omnifunc == "" |
+	      \		setlocal omnifunc=syntaxcomplete#Complete |
+	      \	endif
+endif
 
 " {{{ vimrc.local
 if filereadable("@GENTOO_PORTAGE_EPREFIX@/etc/vim/vimrc.local")

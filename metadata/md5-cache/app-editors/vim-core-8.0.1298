@@ -1,13 +1,13 @@
 DEFINED_PHASES=compile configure install postinst postrm prepare setup test
 DEPEND=sys-devel/autoconf
 DESCRIPTION=vim and gvim shared files
-EAPI=5
-HOMEPAGE=http://www.vim.org/
+EAPI=6
+HOMEPAGE=https://vim.sourceforge.io/ https://github.com/vim/vim
 IUSE=nls acl minimal
 KEYWORDS=*
 LICENSE=vim
 PDEPEND=!minimal? ( app-vim/gentoo-syntax )
 SLOT=0
-SRC_URI=ftp://ftp.vim.org/pub/vim/unix/vim-7.4.tar.bz2 http://dev.gentoo.org/~radhermit/vim/vim-7.4.712.patch.xz http://dev.gentoo.org/~radhermit/vim/vim-7.4.542-gentoo-patches.tar.bz2
+SRC_URI=https://github.com/vim/vim/archive/v8.0.1298.tar.gz -> vim-8.0.1298.tar.gz https://dev.gentoo.org/~radhermit/vim/vim-8.0.0938-gentoo-patches.tar.bz2
 _eclasses_=bash-completion-r1	8e447753aaf658afa609fbf961d80ab7	estack	43ddf5aaffa7a8d0482df54d25a66a1f	eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	97f470f374f2e94ccab04a2fb21d811e	prefix	e51c7882b7b721e54e684f7eb143cbfe	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607	versionator	26ca8a8bd95d6a74122c08ba98a4ee72	vim-doc	6bd5bb2529af326fe3359e975a3439d0
-_md5_=99330b3fa7c46b996100a059a964a26d
+_md5_=e3e56d074e3335c6bd74f0d4d2e32e0c
