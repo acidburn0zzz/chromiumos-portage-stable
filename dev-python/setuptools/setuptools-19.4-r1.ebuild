@@ -1,1 +1,0 @@
-setuptools-19.4.ebuild
