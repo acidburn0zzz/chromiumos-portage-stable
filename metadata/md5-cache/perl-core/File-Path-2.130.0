@@ -1,12 +1,12 @@
-DEFINED_PHASES=compile configure install postinst postrm prepare test
-DEPEND=dev-lang/perl:=
+DEFINED_PHASES=compile configure install postinst postrm prepare test unpack
+DEPEND=dev-lang/perl:=[-build(-)]
 DESCRIPTION=File path and name utilities
-EAPI=6
+EAPI=5
 HOMEPAGE=http://search.cpan.org/dist/File-Path/
 KEYWORDS=*
 LICENSE=|| ( Artistic GPL-1+ )
-RDEPEND=dev-lang/perl:=
+RDEPEND=dev-lang/perl:=[-build(-)]
 SLOT=0
 SRC_URI=mirror://cpan/authors/id/J/JK/JKEENAN/File-Path-2.13.tar.gz
-_eclasses_=alternatives	eb864f6e50a20036e4cd47c8fd8f64d1	multiprocessing	e32940a7b2a9992ad217eccddb84d548	perl-functions	01e8c68d5a528bbcda4d3c60205983df	perl-module	863b35d127db98823d439f8d73c2d011
-_md5_=581151a1510f6c6c8d4288d858ed4400
+_eclasses_=alternatives	eb864f6e50a20036e4cd47c8fd8f64d1	eutils	06133990e861be0fe60c2b428fd025d9	multilib	97f470f374f2e94ccab04a2fb21d811e	multiprocessing	e32940a7b2a9992ad217eccddb84d548	perl-functions	01e8c68d5a528bbcda4d3c60205983df	perl-module	863b35d127db98823d439f8d73c2d011	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607	unpacker	04385b0f181c42fa9c18ec0e31729d1f
+_md5_=973906e031eedf714746bc19eb92e2ca

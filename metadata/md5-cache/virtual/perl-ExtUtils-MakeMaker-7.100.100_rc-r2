@@ -4,4 +4,4 @@ EAPI=5
 KEYWORDS=*
 RDEPEND=|| ( =dev-lang/perl-5.24.4* =dev-lang/perl-5.24.0* ~perl-core/ExtUtils-MakeMaker-7.100.100_rc ) dev-lang/perl:= !<perl-core/ExtUtils-MakeMaker-7.100.100_rc !>perl-core/ExtUtils-MakeMaker-7.100.100_rc-r999
 SLOT=0
-_md5_=21c7ab93b5eb33d48d32dc748d70c1bf
+_md5_=170a865c2a4edd1f0c3e2786f358bd68

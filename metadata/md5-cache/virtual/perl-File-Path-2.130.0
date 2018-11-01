@@ -1,7 +1,7 @@
 DEFINED_PHASES=-
 DESCRIPTION=Virtual for File-Path
-EAPI=6
+EAPI=5
 KEYWORDS=*
 RDEPEND=~perl-core/File-Path-2.130.0 dev-lang/perl:= !<perl-core/File-Path-2.130.0 !>perl-core/File-Path-2.130.0-r999
 SLOT=0
-_md5_=44c4e6a338a759ff93d3c3a2f97cbb63
+_md5_=5952ca6bd5e7654107ecaec4cd2d6a09
