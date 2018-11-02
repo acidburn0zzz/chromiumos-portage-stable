@@ -1,8 +1,9 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="5"
-inherit autotools eutils libtool multilib-minimal
+EAPI=6
+
+inherit autotools libtool multilib-minimal
 
 DESCRIPTION="Tag Image File Format (TIFF) library"
 HOMEPAGE="http://libtiff.maptools.org"
@@ -14,7 +15,8 @@ SLOT="0"
 KEYWORDS="*"
 IUSE="+cxx jbig jpeg lzma static-libs test zlib"
 
-RDEPEND="jpeg? ( >=virtual/jpeg-0-r2:0=[${MULTILIB_USEDEP}] )
+RDEPEND="
+	jpeg? ( >=virtual/jpeg-0-r2:0=[${MULTILIB_USEDEP}] )
 	jbig? ( >=media-libs/jbigkit-2.1:=[${MULTILIB_USEDEP}] )
 	lzma? ( >=app-arch/xz-utils-5.0.5-r1:=[${MULTILIB_USEDEP}] )
 	zlib? ( >=sys-libs/zlib-1.2.8-r1:=[${MULTILIB_USEDEP}] )
@@ -28,11 +30,11 @@ REQUIRED_USE="test? ( jpeg )" #483132
 
 PATCHES=(
 	"${FILESDIR}"/${PN}-4.0.7-pdfium-0006-HeapBufferOverflow-ChopUpSingleUncompressedStrip.patch
-	"${FILESDIR}"/${PN}-4.0.7-pdfium-0007-uninitialized-value.patch
 	"${FILESDIR}"/${PN}-4.0.7-pdfium-0008-HeapBufferOverflow-ChopUpSingleUncompressedStrip.patch
-	"${FILESDIR}"/${PN}-4.0.7-pdfium-0013-validate-refblackwhite.patch
-	"${FILESDIR}"/${PN}-4.0.7-pdfium-0018-fix-leak-in-PredictorSetupDecode.patch
-	"${FILESDIR}"/${PN}-4.0.7-pdfium-0021-oom-TIFFFillStrip.patch
+	"${FILESDIR}"/${P}-CVE-2017-9935.patch #624696
+	"${FILESDIR}"/${P}-CVE-2017-9935-fix-incorrect-type.patch #624696
+	"${FILESDIR}"/${P}-CVE-2017-18013.patch #645982
+	"${FILESDIR}"/${P}-CVE-2018-5784.patch #645730
 )
 
 MULTILIB_WRAPPED_HEADERS=(
@@ -40,7 +42,7 @@ MULTILIB_WRAPPED_HEADERS=(
 )
 
 src_prepare() {
-	epatch "${PATCHES[@]}"
+	default
 
 	# tiffcp-thumbnail.sh fails as thumbnail binary doesn't get built anymore since tiff-4.0.7
 	sed '/tiffcp-thumbnail\.sh/d' -i test/Makefile.am || die
@@ -49,14 +51,17 @@ src_prepare() {
 }
 
 multilib_src_configure() {
-	ECONF_SOURCE="${S}" econf \
-		$(use_enable static-libs static) \
-		$(use_enable zlib) \
-		$(use_enable jpeg) \
-		$(use_enable jbig) \
-		$(use_enable lzma) \
-		$(use_enable cxx) \
+	local myeconfargs=(
 		--without-x
+		--with-docdir="${EPREFIX}"/usr/share/doc/${PF}
+		$(use_enable cxx)
+		$(use_enable jbig)
+		$(use_enable jpeg)
+		$(use_enable lzma)
+		$(use_enable static-libs static)
+		$(use_enable zlib)
+	)
+	ECONF_SOURCE="${S}" econf "${myeconfargs[@]}"
 
 	# remove useless subdirs
 	if ! multilib_is_native_abi ; then
@@ -77,6 +82,7 @@ multilib_src_test() {
 }
 
 multilib_src_install_all() {
-	prune_libtool_files --all
-	rm -f "${ED}"/usr/share/doc/${PF}/{COPYRIGHT,README*,RELEASE-DATE,TODO,VERSION}
+	find "${D}" -name '*.la' -delete || die
+	rm "${ED}"/usr/share/doc/${PF}/{COPYRIGHT,README*,RELEASE-DATE,TODO,VERSION} || die
 }
+
