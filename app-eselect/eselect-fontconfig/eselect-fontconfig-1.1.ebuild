@@ -12,7 +12,7 @@ SLOT="0"
 KEYWORDS="*"
 IUSE=""
 
-DEPEND=""
+DEPEND="!app-admin/eselect-fontconfig"
 RDEPEND=">=app-admin/eselect-1.2.3
 		 >=media-libs/fontconfig-2.4"
 
