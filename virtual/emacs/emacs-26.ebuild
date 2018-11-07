@@ -7,4 +7,4 @@ DESCRIPTION="Virtual for GNU Emacs"
 SLOT="0"
 KEYWORDS="*"
 
-RDEPEND="app-editors/emacs:25"
+RDEPEND="|| ( app-editors/emacs:26 >=app-editors/emacs-vcs-26.1 )"
