@@ -1,0 +1,7 @@
+DEFINED_PHASES=-
+DESCRIPTION=Virtual for GNU Emacs
+EAPI=6
+KEYWORDS=*
+RDEPEND=|| ( app-editors/emacs:26 >=app-editors/emacs-vcs-26.1 )
+SLOT=0
+_md5_=fa77dff6f4625dd1538b627d5f2d9032
