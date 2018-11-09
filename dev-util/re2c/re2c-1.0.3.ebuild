@@ -1,7 +1,7 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=5
+EAPI=6
 
 inherit eutils
 
@@ -14,7 +14,7 @@ SLOT="0"
 KEYWORDS="*"
 
 src_prepare() {
-	epatch_user
+	default
 	export ac_cv_path_BISON="no"
 }
 
@@ -24,5 +24,5 @@ src_install() {
 	docompress -x /usr/share/doc/${PF}/{examples,paper}
 	dodoc -r README CHANGELOG examples
 	docinto paper
-	dodoc doc/loplas.ps doc/sample.bib
+	dodoc doc/loplas.ps doc/tdfa/tdfa.pdf
 }
