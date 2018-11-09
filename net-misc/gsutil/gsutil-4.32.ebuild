@@ -1,9 +1,8 @@
 # Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="5"
+EAPI="6"
 
-# Python 3 depends on google-apitools being updated.
 PYTHON_COMPAT=( python2_7 )
 
 inherit distutils-r1
@@ -22,9 +21,10 @@ RDEPEND="${PYTHON_DEPS}
 	>=dev-python/boto-2.48.0[${PYTHON_USEDEP}]
 	>=dev-python/crcmod-1.7[${PYTHON_USEDEP}]
 	>=dev-python/fasteners-0.14.1[${PYTHON_USEDEP}]
-	>=dev-python/gcs-oauth2-boto-plugin-1.14[${PYTHON_USEDEP}]
+	>=dev-python/gcs-oauth2-boto-plugin-2.1[${PYTHON_USEDEP}]
 	>=dev-python/google-apitools-0.5.22[${PYTHON_USEDEP}]
-	>=dev-python/httplib2-0.10.3[${PYTHON_USEDEP}]
+	dev-python/google-reauth-python[${PYTHON_USEDEP}]
+	>=dev-python/httplib2-0.11.3[${PYTHON_USEDEP}]
 	>=dev-python/mock-2.0.0[${PYTHON_USEDEP}]
 	>=dev-python/monotonic-1.4[${PYTHON_USEDEP}]
 	>=dev-python/oauth2client-4.1.2[${PYTHON_USEDEP}]
@@ -40,12 +40,32 @@ S=${WORKDIR}/${PN}
 
 DOCS=( README.md CHANGES.md )
 
-PATCHES=(
-	"${FILESDIR}"/${PN}-4.30-use-friendy-version-checks.patch
-)
-
 python_prepare_all() {
 	distutils-r1_python_prepare_all
+
+	sed -e 's/boto==/boto>=/' \
+		-e 's/mock==/mock>=/' \
+		-e 's/oauth2client==/oauth2client>=/' \
+		-e 's/SocksiPy-branch==/PySocks>=/' \
+		-i setup.py || die
+
+	# For debugging purposes, temporarily uncomment this in order to
+	# show hidden tracebacks.
+	#sed -e 's/^  except OSError as e:$/&\n    raise/' \
+	#	-e 's/def _HandleUnknownFailure(e):/&\n  raise/' \
+	#	-i gslib/__main__.py || die
+
+	# create_bucket raised ResponseNotReady
+	sed -e 's/test_cp_unwritable_tracker_file/_&/' \
+		-e 's/test_cp_unwritable_tracker_file_download/_&/' \
+		-i gslib/tests/test_cp.py || die
+
+	sed -e 's/\(executable_prefix =\).*/\1 [sys.executable]/' \
+		-i gslib/commands/test.py || die
+
+	# IOError: close() called during concurrent operation on the same file object.
+	sed -e 's/sys.stderr.close()/#&/' \
+		-i gslib/tests/testcase/unit_testcase.py
 
 	# Package installs 'test' package which is forbidden and likely a bug in the build system
 	rm -rf "${S}/test" || die

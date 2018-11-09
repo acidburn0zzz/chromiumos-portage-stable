@@ -1,1 +1,0 @@
-httplib2-0.10.3-r1.ebuild
