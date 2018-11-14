@@ -14,7 +14,7 @@ SLOT="0"
 KEYWORDS="*"
 IUSE=""
 
-RDEPEND="dev-libs/libnl"
+RDEPEND="dev-libs/libnl:="
 DEPEND="${RDEPEND}
 	virtual/pkgconfig"
 
