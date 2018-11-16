@@ -1,1 +1,0 @@
-librsvg-2.31.0.ebuild
