@@ -1,1 +1,0 @@
-gdk-pixbuf-2.22.1-r2.ebuild
