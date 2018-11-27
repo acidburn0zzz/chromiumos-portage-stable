@@ -1,5 +1,5 @@
 DEFINED_PHASES=compile configure install postinst postrm preinst prepare test unpack
-DEPEND=>=dev-libs/glib-2.22.0:2=[static-libs?] virtual/libudev:=[static-libs?] introspection? ( dev-libs/gobject-introspection ) app-arch/xz-utils >=sys-apps/sed-4
+DEPEND=>=dev-libs/glib-2.22.0:2=[static-libs?] virtual/libudev:=[static-libs?] introspection? ( dev-libs/gobject-introspection ) app-arch/xz-utils >=sys-apps/sed-4 dev-util/desktop-file-utils x11-misc/shared-mime-info
 DESCRIPTION=GObject bindings for libudev
 EAPI=5
 HOMEPAGE=https://wiki.gnome.org/Projects/libgudev
@@ -9,5 +9,5 @@ LICENSE=LGPL-2.1
 RDEPEND=>=dev-libs/glib-2.22.0:2=[static-libs?] virtual/libudev:=[static-libs?] introspection? ( dev-libs/gobject-introspection ) !sys-fs/eudev[gudev(-)] !sys-fs/udev[gudev(-)] !sys-apps/systemd[gudev(-)]
 SLOT=0/0
 SRC_URI=mirror://gnome/sources/libgudev/230/libgudev-230.tar.xz
-_eclasses_=estack	43ddf5aaffa7a8d0482df54d25a66a1f	eutils	06133990e861be0fe60c2b428fd025d9	fdo-mime	9c46e30acd923ff12e325dbe96bb98b9	gnome.org	8fef8f967214f56e08fa92d61163d891	gnome2	7976d3f4d0c0816c67033d3dcd4d9472	gnome2-utils	794d2847b4af390a1e020924876c8297	libtool	52d0e17251d04645ffaa61bfdd858944	multibuild	742139c87a9fa3766f0c2b155e5522bf	multilib	97f470f374f2e94ccab04a2fb21d811e	multilib-build	8fe2e81aeb36cdf8a6cc5f50443879cc	multilib-minimal	0224dee31c0f98405d572e14ad6dee65	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607	versionator	26ca8a8bd95d6a74122c08ba98a4ee72
+_eclasses_=estack	43ddf5aaffa7a8d0482df54d25a66a1f	eutils	06133990e861be0fe60c2b428fd025d9	gnome.org	8fef8f967214f56e08fa92d61163d891	gnome2	acac536f2c3bbcd312ac3faaa3e55e40	gnome2-utils	c6060f4ab634aca444c4b2176b0f3877	libtool	52d0e17251d04645ffaa61bfdd858944	multibuild	742139c87a9fa3766f0c2b155e5522bf	multilib	97f470f374f2e94ccab04a2fb21d811e	multilib-build	8fe2e81aeb36cdf8a6cc5f50443879cc	multilib-minimal	0224dee31c0f98405d572e14ad6dee65	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607	versionator	26ca8a8bd95d6a74122c08ba98a4ee72	xdg	6cd76cc914c1a759dee032778487b57f	xdg-utils	f2c8335407f0b935b0a96d4adf23ef25
 _md5_=b4cd396881d12a8c6e382a76fd6a1321
