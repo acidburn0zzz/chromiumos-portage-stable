@@ -1,9 +1,0 @@
-DEFINED_PHASES=install
-DESCRIPTION=An eselect module to manage /etc/fonts/conf.d symlinks.
-EAPI=0
-HOMEPAGE=http://www.gentoo.org
-KEYWORDS=*
-LICENSE=GPL-2
-RDEPEND=app-admin/eselect >=media-libs/fontconfig-2.4
-SLOT=0
-_md5_=2cb6924bf1521b596ad729220030da10
