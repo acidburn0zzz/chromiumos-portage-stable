@@ -1,4 +1,4 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI="5"
@@ -20,7 +20,7 @@ IUSE+=" elibc_Winnt"
 RESTRICT="test"
 
 RDEPEND="ldap? ( net-nds/openldap[${MULTILIB_USEDEP}] )
-	brotli? ( app-arch/brotli:= )
+	brotli? ( app-arch/brotli:=[${MULTILIB_USEDEP}] )
 	ssl? (
 		curl_ssl_axtls? (
 			net-libs/axtls:0=[${MULTILIB_USEDEP}]
@@ -227,7 +227,7 @@ multilib_src_configure() {
 		libs+=( "-lnghttp2" )
 		priv+=( "libnghttp2" )
 	fi
-	if use curl_ssl_openssl; then
+	if use ssl && use curl_ssl_openssl; then
 		libs+=( "-lssl" "-lcrypto" )
 		priv+=( "openssl" )
 	fi
