@@ -85,6 +85,10 @@ src_prepare() {
 	# https://bugzilla.gnome.org/show_bug.cgi?id=794914
 	eapply "${FILESDIR}"/${PN}-2.9.8-infinite-loop-lzma.patch
 
+	# Fix null pointer reference in xpath, bug #888310
+	# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=901817
+	eapply "${FILESDIR}"/${PN}-2.9.8-null-ptr-ref.patch
+
 	# Avoid final linking arguments for python modules
 	if [[ ${CHOST} == *-darwin* ]] ; then
 		sed -i -e '/PYTHON_LIBS/s/ldflags/libs/' configure.ac || die
