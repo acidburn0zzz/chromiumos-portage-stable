@@ -1,7 +1,8 @@
 # Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="6"
+# Needs to be 5 for bootstraping SDK.
+EAPI="5"
 
 inherit autotools eutils flag-o-matic multilib multilib-minimal toolchain-funcs versionator
 
@@ -50,20 +51,20 @@ pkg_setup() {
 
 src_prepare() {
 	if full_archive; then
-		eapply "${FILESDIR}/${PN}-3.23.0-full_archive-build.patch"
-		eapply "${FILESDIR}/${PN}-3.23.1-full_archive-prohibit_bound_parameters_in_arguments_to_table-valued_functions_within_triggers.patch"
-		eapply "${FILESDIR}/${PN}-3.23.1-full_archive-tests.patch"
+		epatch "${FILESDIR}/${PN}-3.23.0-full_archive-build.patch"
+		epatch "${FILESDIR}/${PN}-3.23.1-full_archive-prohibit_bound_parameters_in_arguments_to_table-valued_functions_within_triggers.patch"
+		epatch "${FILESDIR}/${PN}-3.23.1-full_archive-tests.patch"
 
-		eapply_user
+		epatch_user
 
 		# Fix AC_CHECK_FUNCS.
 		# https://mailinglists.sqlite.org/cgi-bin/mailman/private/sqlite-dev/2016-March/002762.html
 		sed -e "s/AC_CHECK_FUNCS(.*)/AC_CHECK_FUNCS([fdatasync fullfsync gmtime_r isnan localtime_r localtime_s malloc_usable_size posix_fallocate pread pread64 pwrite pwrite64 strchrnul usleep utime])/" -i configure.ac || die "sed failed"
 	else
-		eapply "${FILESDIR}/${PN}-3.21.0-nonfull_archive-build.patch"
-		eapply "${FILESDIR}/${PN}-3.23.1-nonfull_archive-prohibit_bound_parameters_in_arguments_to_table-valued_functions_within_triggers.patch"
+		epatch "${FILESDIR}/${PN}-3.21.0-nonfull_archive-build.patch"
+		epatch "${FILESDIR}/${PN}-3.23.1-nonfull_archive-prohibit_bound_parameters_in_arguments_to_table-valued_functions_within_triggers.patch"
 
-		eapply_user
+		epatch_user
 
 		# Fix AC_CHECK_FUNCS.
 		# https://mailinglists.sqlite.org/cgi-bin/mailman/private/sqlite-dev/2016-March/002762.html
