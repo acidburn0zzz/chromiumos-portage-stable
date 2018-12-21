@@ -41,14 +41,14 @@ DEPEND="fontforge? ( x11-apps/mkfontscale
 		>media-libs/fontconfig-2.6.0 )"
 RDEPEND=""
 
-if use fontforge
-then
-	S=${WORKDIR}/${MY_SP}
-	FONT_S=${S}/build
-else
+#if use fontforge
+#then
+#	S=${WORKDIR}/${MY_SP}
+#	FONT_S=${S}/build
+#else
 	S=${WORKDIR}/${MY_BP}
 	FONT_S=${S}/ttf
-fi
+#fi
 
 FONT_CONF=(
 		"${S}"/fontconfig/20-unhint-small-dejavu-sans-mono.conf
