@@ -10,4 +10,4 @@ RDEPEND=gmp? ( >=dev-libs/gmp-5.1.3-r1[abi_x86_32(-)?,abi_x86_64(-)?,abi_x86_x32
 SLOT=0.9.8
 SRC_URI=mirror://openssl/source/openssl-0.9.8zf.tar.gz
 _eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multibuild	742139c87a9fa3766f0c2b155e5522bf	multilib	97f470f374f2e94ccab04a2fb21d811e	multilib-build	8fe2e81aeb36cdf8a6cc5f50443879cc	multilib-minimal	0224dee31c0f98405d572e14ad6dee65	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607
-_md5_=894eff5f6888d0f90b7e4a80d11987e8
+_md5_=cfb1ee8de352a461653bb11ac81e1b32
