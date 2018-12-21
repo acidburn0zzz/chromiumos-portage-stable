@@ -23,7 +23,7 @@ DESCRIPTION="Used to create autoconfiguration files"
 HOMEPAGE="http://www.gnu.org/software/autoconf/autoconf.html"
 
 LICENSE="GPL-3"
-SLOT=$(usex multislot "${PV}" "2.5")
+SLOT="2.5"
 IUSE="emacs multislot"
 
 DEPEND=">=sys-devel/m4-1.4.16
