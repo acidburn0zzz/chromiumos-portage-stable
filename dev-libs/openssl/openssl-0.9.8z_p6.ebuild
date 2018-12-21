@@ -8,7 +8,7 @@ EAPI="5"
 
 inherit eutils flag-o-matic toolchain-funcs multilib multilib-minimal
 
-PLEVEL=$(echo "${PV##*_p}" | tr '[1-9]' '[a-i]')
+PLEVEL='f' # _p8 -> tr '[1-9]' '[a-i]' -> 'f'
 MY_PV=${PV/_p*/${PLEVEL}}
 MY_P=${PN}-${MY_PV}
 S="${WORKDIR}/${MY_P}"
