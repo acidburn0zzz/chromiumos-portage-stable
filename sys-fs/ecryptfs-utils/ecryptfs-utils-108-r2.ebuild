@@ -13,7 +13,7 @@ SRC_URI="https://launchpad.net/ecryptfs/trunk/${PV}/+download/${PN}_${PV}.orig.t
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="*"
-IUSE="doc gpg gtk openssl pam pkcs11 python suid tpm"
+IUSE="doc gpg gtk nls openssl pam pkcs11 python suid tpm"
 
 RDEPEND=">=sys-apps/keyutils-1.0
 	>=dev-libs/libgcrypt-1.2.0:0
@@ -52,6 +52,7 @@ src_configure() {
 		$(use_enable doc docs) \
 		$(use_enable gpg) \
 		$(use_enable gtk gui) \
+		$(use_enable nls) \
 		$(use_enable openssl) \
 		$(use_enable pam) \
 		$(use_enable pkcs11 pkcs11-helper) \
