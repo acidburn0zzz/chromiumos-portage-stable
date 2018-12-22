@@ -1,0 +1,7 @@
+DEFINED_PHASES=-
+DESCRIPTION=Virtual for the device filesystem manager
+EAPI=5
+KEYWORDS=*
+RDEPEND=|| ( virtual/udev sys-apps/busybox[mdev] sys-fs/devfsd sys-fs/static-dev sys-freebsd/freebsd-sbin )
+SLOT=0
+_md5_=f145f8aa1c71aa8f719f8bf48eefb763
