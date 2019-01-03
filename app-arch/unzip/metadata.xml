@@ -10,5 +10,6 @@
 	</use>
 	<upstream>
 		<remote-id type="sourceforge">infozip</remote-id>
+		<remote-id type="cpe">cpe:/a:info-zip:unzip</remote-id>
 	</upstream>
 </pkgmetadata>

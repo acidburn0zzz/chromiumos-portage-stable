@@ -9,4 +9,7 @@
 		A parallel implementation of gzip for modern
 		multi-processor, multi-core machines.
 	</longdescription>
+	<upstream>
+		<remote-id type="cpe">cpe:/a:zlib:pigz</remote-id>
+	</upstream>
 </pkgmetadata>

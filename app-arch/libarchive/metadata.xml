@@ -33,4 +33,7 @@
       files.
     </flag>
   </use>
+  <upstream>
+    <remote-id type="cpe">cpe:/a:libarchive:libarchive</remote-id>
+  </upstream>
 </pkgmetadata>
