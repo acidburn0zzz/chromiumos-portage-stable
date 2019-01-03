@@ -2,4 +2,7 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
 <herd>graphics</herd>
+<upstream>
+<remote-id type="cpe">cpe:/a:curtis_galloway:libexif</remote-id>
+</upstream>
 </pkgmetadata>
