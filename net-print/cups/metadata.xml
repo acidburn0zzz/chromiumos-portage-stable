@@ -13,4 +13,7 @@
       Add support for the Java interpeter in the web server CGIs.
     </flag>
   </use>
+  <upstream>
+    <remote-id type="cpe">cpe:/a:apple:cups</remote-id>
+  </upstream>
 </pkgmetadata>
