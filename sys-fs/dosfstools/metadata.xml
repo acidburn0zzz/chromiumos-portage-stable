@@ -11,4 +11,7 @@
 <use>
 	<flag name="compat">Install symlinks for legacy names of the tools</flag>
 </use>
+<upstream>
+	<remote-id type="cpe">cpe:/a:dosfstools_project:dosfstools</remote-id>
+</upstream>
 </pkgmetadata>
