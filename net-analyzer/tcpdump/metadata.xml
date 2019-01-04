@@ -7,4 +7,7 @@
 		<flag name='chroot'>Chroot into /var/lib/tcpdump when dropping privileges</flag>
 		<flag name='drop-root'>Drop privileges to tcpdump:tcpdump when run as root</flag>
 	</use>
+	<upstream>
+		<remote-id type="cpe">cpe:/a:tcpdump:tcpdump</remote-id>
+	</upstream>
 </pkgmetadata>

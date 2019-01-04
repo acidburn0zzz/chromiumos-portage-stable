@@ -6,4 +6,7 @@
   <email>cedk@gentoo.org</email>
 </maintainer>
 <longdescription>the low-level library for netfilter related kernel/userspace communication</longdescription>
+<upstream>
+  <remote-id type="cpe">cpe:/a:netfilter:libnfnetlink</remote-id>
+</upstream>
 </pkgmetadata>

@@ -10,4 +10,7 @@
       Use <pkg>virtual/libusb</pkg> to support Controller Area Network over USB (CAN USB)
     </flag>
   </use>
+  <upstream>
+    <remote-id type="cpe">cpe:/a:tcpdump:libpcap</remote-id>
+  </upstream>
 </pkgmetadata>
