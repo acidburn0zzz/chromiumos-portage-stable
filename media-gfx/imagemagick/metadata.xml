@@ -18,4 +18,7 @@
     <flag name="q8">Set quantum depth value to 8</flag>
     <flag name="webp">Enable webp image format support using <pkg>media-libs/libwebp</pkg></flag>
   </use>
+  <upstream>
+    <remote-id type="cpe">cpe:/a:imagemagick:imagemagick</remote-id>
+  </upstream>
 </pkgmetadata>
