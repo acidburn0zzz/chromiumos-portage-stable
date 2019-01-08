@@ -10,5 +10,6 @@
 	</use>
 	<upstream>
 		<remote-id type="sourceforge">qpdf</remote-id>
+		<remote-id type="cpe">cpe:/a:qpdf_project:qpdf</remote-id>
 	</upstream>
 </pkgmetadata>
