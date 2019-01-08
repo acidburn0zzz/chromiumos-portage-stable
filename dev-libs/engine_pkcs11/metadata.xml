@@ -5,4 +5,7 @@
 	<longdescription>
 		engine_pkcs11 is an implementation of an engine for OpenSSL.
 	</longdescription>
+	<upstream>
+		<remote-id type="cpe">cpe:/a:opensc-project:opensc</remote-id>
+	</upstream>
 </pkgmetadata>
