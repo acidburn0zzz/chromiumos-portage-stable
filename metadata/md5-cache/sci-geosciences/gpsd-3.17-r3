@@ -10,5 +10,5 @@ RDEPEND=>=net-misc/pps-tools-0.0.20120407 bluetooth? ( net-wireless/bluez ) dbus
 REQUIRED_USE=X? ( python ) gpsd_protocols_nmea2000? ( gpsd_protocols_aivdm ) python? ( || ( python_targets_python2_7 ) ) qt5? ( cxx )
 SLOT=0/23
 SRC_URI=mirror://nongnu/gpsd/gpsd-3.17.tar.gz
-_eclasses_=distutils-r1	4e8ac1ba76ddacd8f7c0289aa586a34c	eutils	06133990e861be0fe60c2b428fd025d9	multibuild	742139c87a9fa3766f0c2b155e5522bf	multilib	97f470f374f2e94ccab04a2fb21d811e	multiprocessing	e32940a7b2a9992ad217eccddb84d548	python-r1	9f6eda21d15d6a8f665d7996a4e0f4e3	python-utils-r1	12114a2a9aab35b93efc037a196b3234	scons-utils	988e24b9e2e4642189b4e97c03e5ae71	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607	udev	d91cac2c73b94629cad2daea66e0d182	user	77ad494d1257e3badef496e390973d6b
+_eclasses_=distutils-r1	4e8ac1ba76ddacd8f7c0289aa586a34c	eutils	06133990e861be0fe60c2b428fd025d9	multibuild	742139c87a9fa3766f0c2b155e5522bf	multilib	97f470f374f2e94ccab04a2fb21d811e	multiprocessing	e32940a7b2a9992ad217eccddb84d548	python-r1	ce1cd23cfdc1848e8e32743efe34f299	python-utils-r1	12114a2a9aab35b93efc037a196b3234	scons-utils	988e24b9e2e4642189b4e97c03e5ae71	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607	udev	d91cac2c73b94629cad2daea66e0d182	user	77ad494d1257e3badef496e390973d6b
 _md5_=b81f49386cbee86b7c1da2095a9c3d30
