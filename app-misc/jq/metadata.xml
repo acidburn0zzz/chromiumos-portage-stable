@@ -5,4 +5,7 @@
 		<email>radhermit@gentoo.org</email>
 		<name>Tim Harder</name>
 	</maintainer>
+	<upstream>
+		<remote-id type="cpe">cpe:/a:jq_project:jq</remote-id>
+	</upstream>
 </pkgmetadata>
