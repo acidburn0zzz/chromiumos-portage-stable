@@ -15,5 +15,6 @@
 	</use>
 	<upstream>
 		<remote-id type="github">SELinuxProject/selinux</remote-id>
+		<remote-id type="cpe">cpe:/a:selinuxproject:libselinux</remote-id>
 	</upstream>
 </pkgmetadata>
