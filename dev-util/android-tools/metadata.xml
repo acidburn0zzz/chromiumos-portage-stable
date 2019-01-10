@@ -12,4 +12,7 @@
 		<email>zmedico@gentoo.org</email>
 		<name>Zac Medico</name>
 	</maintainer>
+	<upstream>
+		<remote-id type="cpe">cpe:/a:google:android_debug_bridge</remote-id>
+	</upstream>
 </pkgmetadata>
