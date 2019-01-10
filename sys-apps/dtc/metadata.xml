@@ -5,4 +5,7 @@
 <maintainer>
 	<email>lu_zero@gentoo.org</email>
 </maintainer>
+<upstream>
+	<remote-id type="cpe">cpe:/a:dtc_project:dtc</remote-id>
+</upstream>
 </pkgmetadata>
