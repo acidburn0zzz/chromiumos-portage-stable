@@ -1,1 +1,0 @@
-avahi-0.6.32.ebuild

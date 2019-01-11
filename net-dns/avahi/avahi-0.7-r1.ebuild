@@ -1,8 +1,7 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
-EAPI="5"
+EAPI="6"
 
 PYTHON_COMPAT=( python2_7 )
 PYTHON_REQ_USE="gdbm"
@@ -20,11 +19,10 @@ S="${WORKDIR}/${P}"
 LICENSE="LGPL-2.1"
 SLOT="0"
 KEYWORDS="*"
-IUSE="autoipd bookmarks dbus doc gdbm gtk gtk3 howl-compat +introspection ipv6 kernel_linux mdnsresponder-compat mono nls python qt4 selinux test utils"
+IUSE="autoipd bookmarks dbus doc gdbm gtk gtk3 howl-compat +introspection ipv6 kernel_linux mdnsresponder-compat mono nls python qt5 selinux test"
 
 REQUIRED_USE="
-	utils? ( || ( gtk gtk3 ) )
-	python? ( dbus gdbm )
+	python? ( dbus gdbm ${PYTHON_REQUIRED_USE} )
 	mono? ( dbus )
 	howl-compat? ( dbus )
 	mdnsresponder-compat? ( dbus )
@@ -34,8 +32,8 @@ COMMON_DEPEND="
 	dev-libs/libdaemon
 	dev-libs/expat
 	dev-libs/glib:2[${MULTILIB_USEDEP}]
-	gdbm? ( sys-libs/gdbm[${MULTILIB_USEDEP}] )
-	qt4? ( dev-qt/qtcore:4[${MULTILIB_USEDEP}] )
+	gdbm? ( sys-libs/gdbm:=[${MULTILIB_USEDEP}] )
+	qt5? ( dev-qt/qtcore:5 )
 	gtk? ( x11-libs/gtk+:2[${MULTILIB_USEDEP}] )
 	gtk3? ( x11-libs/gtk+:3[${MULTILIB_USEDEP}] )
 	dbus? ( sys-apps/dbus[${MULTILIB_USEDEP}] )
@@ -47,12 +45,12 @@ COMMON_DEPEND="
 	)
 	python? (
 		${PYTHON_DEPS}
-		gtk? ( dev-python/pygtk )
-		dbus? ( dev-python/dbus-python )
+		dbus? ( dev-python/dbus-python[${PYTHON_USEDEP}] )
+		introspection? ( dev-python/pygobject:3[${PYTHON_USEDEP}] )
 	)
 	bookmarks? (
-		dev-python/twisted-core
-		dev-python/twisted-web
+		${PYTHON_DEPS}
+		>=dev-python/twisted-16.0.0[${PYTHON_USEDEP}]
 	)
 "
 
@@ -71,6 +69,10 @@ RDEPEND="
 	selinux? ( sec-policy/selinux-avahi )
 "
 
+MULTILIB_WRAPPED_HEADERS=( /usr/include/avahi-qt5/qt-watch.h )
+
+PATCHES=( "${FILESDIR}/${P}-qt5.patch" )
+
 pkg_preinst() {
 	enewgroup netdev
 	enewgroup avahi
@@ -87,6 +89,8 @@ pkg_setup() {
 }
 
 src_prepare() {
+	default
+
 	if ! use ipv6; then
 		sed -i \
 			-e s/use-ipv6=yes/use-ipv6=no/ \
@@ -96,21 +100,6 @@ src_prepare() {
 	sed -i\
 		-e "s:\\.\\./\\.\\./\\.\\./doc/avahi-docs/html/:../../../doc/${PF}/html/:" \
 		doxygen_to_devhelp.xsl || die
-
-	# Make gtk utils optional
-	# https://github.com/lathiat/avahi/issues/24
-	epatch "${FILESDIR}"/${PN}-0.6.30-optional-gtk-utils.patch
-
-	# Don't install avahi-discover unless ENABLE_GTK_UTILS, bug #359575
-	# https://github.com/lathiat/avahi/issues/24
-	epatch "${FILESDIR}"/${PN}-0.6.31-fix-install-avahi-discover.patch
-
-	# Fix build under various locales, bug #501664
-	# https://github.com/lathiat/avahi/issues/27
-	epatch "${FILESDIR}"/${PN}-0.6.31-fix-locale-build.patch
-
-	# Bug #525832
-	epatch_user
 
 	# Prevent .pyc files in DESTDIR
 	>py-compile
@@ -124,10 +113,7 @@ src_prepare() {
 src_configure() {
 	# those steps should be done once-per-ebuild rather than per-ABI
 	use sh && replace-flags -O? -O0
-	use python && python_export_best
-
-	# We need to unset DISPLAY, else the configure script might have problems detecting the pygtk module
-	unset DISPLAY
+	use python && python_setup
 
 	multilib-minimal_src_configure
 }
@@ -138,7 +124,7 @@ multilib_src_configure() {
 	if use python; then
 		myconf+=(
 			$(multilib_native_use_enable dbus python-dbus)
-			$(multilib_native_use_enable gtk pygtk)
+			$(multilib_native_use_enable introspection pygobject)
 		)
 	fi
 
@@ -154,11 +140,12 @@ multilib_src_configure() {
 		)
 	fi
 
+	myconf+=( $(multilib_native_use_enable qt5) )
+
 	econf \
 		--localstatedir="${EPREFIX}/var" \
 		--with-distro=gentoo \
 		--disable-python-dbus \
-		--disable-pygtk \
 		--enable-manpages \
 		--enable-xmltoman \
 		--disable-monodoc \
@@ -176,11 +163,10 @@ multilib_src_configure() {
 		$(use_enable gtk3) \
 		$(use_enable nls) \
 		$(multilib_native_use_enable introspection) \
-		$(multilib_native_use_enable utils gtk-utils) \
 		--disable-qt3 \
-		$(use_enable qt4) \
+		--disable-qt4 \
 		$(use_enable gdbm) \
-		$(systemd_with_unitdir) \
+		--with-systemdsystemunitdir="$(systemd_get_systemunitdir)" \
 		"${myconf[@]}"
 }
 
@@ -200,7 +186,8 @@ multilib_src_install() {
 	use mdnsresponder-compat && dosym avahi-compat-libdns_sd/dns_sd.h /usr/include/dns_sd.h
 
 	if multilib_is_native_abi && use doc; then
-		dohtml -r doxygen/html/. || die
+		docinto html
+		dodoc -r doxygen/html/.
 		insinto /usr/share/devhelp/books/avahi
 		doins avahi.devhelp || die
 	fi
