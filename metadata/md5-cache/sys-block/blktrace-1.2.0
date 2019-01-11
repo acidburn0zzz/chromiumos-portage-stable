@@ -1,12 +1,13 @@
-DEFINED_PHASES=compile install prepare setup
-DEPEND=sys-kernel/linux-headers doc? ( virtual/latex-base app-text/dvipdfm ) dev-libs/libaio
-DESCRIPTION=btrace can show detailed info about what is happening on a block device io queue
-EAPI=5
+DEFINED_PHASES=compile install setup
+DEPEND=dev-libs/libaio sys-kernel/linux-headers doc? ( virtual/latex-base >=app-text/texlive-core-2014 )
+DESCRIPTION=show detailed info about what is happening on a block device io queue
+EAPI=6
 HOMEPAGE=http://git.kernel.dk/cgit/blktrace/
 IUSE=doc
 KEYWORDS=*
 LICENSE=GPL-2
+RDEPEND=dev-libs/libaio
 SLOT=0
-SRC_URI=http://brick.kernel.dk/snaps/blktrace-1.1.0.tar.bz2
+SRC_URI=http://brick.kernel.dk/snaps/blktrace-1.2.0.tar.bz2
 _eclasses_=estack	43ddf5aaffa7a8d0482df54d25a66a1f	eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	linux-info	e60da1ae009f60d1c79c5af918dfd844	multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607	versionator	26ca8a8bd95d6a74122c08ba98a4ee72
-_md5_=58558c539c060b0541ea903c04b8a15f
+_md5_=db4cfbea7359569c13315e1613680349
