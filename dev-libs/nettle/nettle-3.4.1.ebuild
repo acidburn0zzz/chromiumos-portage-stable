@@ -1,4 +1,4 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -10,16 +10,12 @@ HOMEPAGE="http://www.lysator.liu.se/~nisse/nettle/"
 SRC_URI="mirror://gnu/${PN}/${P}.tar.gz"
 
 LICENSE="|| ( LGPL-3 LGPL-2.1 )"
-SLOT="0/6.1" # subslot = libnettle soname version, .1 as broke ABI bug#601512
+SLOT="0/6.2" # subslot = libnettle soname version, .2 as broke ABI bug#601512 then fixed
 KEYWORDS="*"
 IUSE="doc +gmp neon static-libs test cpu_flags_x86_aes"
 
-DEPEND="gmp? ( >=dev-libs/gmp-5.0:0=[${MULTILIB_USEDEP}] )"
-RDEPEND="${DEPEND}
-	abi_x86_32? (
-		!<=app-emulation/emul-linux-x86-baselibs-20131008-r17
-		!app-emulation/emul-linux-x86-baselibs[-abi_x86_32(-)]
-	)"
+DEPEND="gmp? ( >=dev-libs/gmp-6.0:0=[${MULTILIB_USEDEP}] )"
+RDEPEND="${DEPEND}"
 
 MULTILIB_WRAPPED_HEADERS=(
 	/usr/include/nettle/nettle-stdint.h
@@ -28,10 +24,6 @@ MULTILIB_WRAPPED_HEADERS=(
 
 DOCS=()
 HTML_DOCS=()
-
-PATCHES=(
-	"${FILESDIR}/${P}-ecc-add-eh.patch"
-)
 
 pkg_setup() {
 	use doc && DOCS+=(
