@@ -3,7 +3,7 @@
 
 EAPI=6
 
-inherit multilib-minimal libtool ltprune
+inherit multilib-minimal libtool
 
 DESCRIPTION="ASN.1 library"
 HOMEPAGE="https://www.gnu.org/software/libtasn1/"
@@ -12,22 +12,18 @@ SRC_URI="mirror://gnu/${PN}/${P}.tar.gz"
 LICENSE="GPL-3 LGPL-2.1"
 SLOT="0/6" # subslot = libtasn1 soname version
 KEYWORDS="*"
-IUSE="doc static-libs valgrind"
+IUSE="doc static-libs test valgrind"
 
-DEPEND=">=dev-lang/perl-5.6
-	sys-apps/help2man
-	virtual/yacc"
-RDEPEND="
-	valgrind? ( dev-util/valgrind )
-	abi_x86_32? (
-		!<=app-emulation/emul-linux-x86-baselibs-20131008-r16
-		!app-emulation/emul-linux-x86-baselibs[-abi_x86_32(-)]
-	)"
+BDEPEND="sys-apps/help2man
+	virtual/yacc
+	test? ( valgrind? ( dev-util/valgrind ) )"
 
-DOCS=( AUTHORS ChangeLog NEWS README THANKS )
-
-PATCHES=(
-	"${FILESDIR}/${P}-CVE-2017-10790.patch"
+DOCS=(
+	AUTHORS
+	ChangeLog
+	NEWS
+	README
+	THANKS
 )
 
 pkg_setup() {
@@ -50,5 +46,5 @@ multilib_src_configure() {
 
 multilib_src_install_all() {
 	einstalldocs
-	prune_libtool_files
+	find "${D}" -name '*.la' -delete || die
 }
