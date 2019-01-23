@@ -8,5 +8,5 @@ KEYWORDS=*
 LICENSE=MSttfEULA
 SLOT=0
 SRC_URI=mirror://sourceforge/corefonts/andale32.exe mirror://sourceforge/corefonts/arial32.exe mirror://sourceforge/corefonts/arialb32.exe mirror://sourceforge/corefonts/comic32.exe mirror://sourceforge/corefonts/courie32.exe mirror://sourceforge/corefonts/georgi32.exe mirror://sourceforge/corefonts/impact32.exe mirror://sourceforge/corefonts/times32.exe mirror://sourceforge/corefonts/trebuc32.exe mirror://sourceforge/corefonts/verdan32.exe mirror://sourceforge/corefonts/webdin32.exe
-_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	font	bc3df4ed373e09f86a90e8fad39034d6	multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	font	bc3df4ed373e09f86a90e8fad39034d6	multilib	b2f01ad412baf81650c23fcf0975fa33	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607
 _md5_=4fda806d619cc0e7e9796b1f8fc3ff3a

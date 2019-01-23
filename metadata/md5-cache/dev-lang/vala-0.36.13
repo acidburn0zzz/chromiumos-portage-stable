@@ -1,5 +1,5 @@
 DEFINED_PHASES=compile configure install postinst postrm preinst prepare
-DEPEND=>=dev-libs/glib-2.32:2 >=dev-libs/vala-common-0.36.13 !dev-lang/vala:0 dev-libs/libxslt sys-devel/flex virtual/pkgconfig virtual/yacc test? ( dev-libs/dbus-glib >=dev-libs/glib-2.26:2 dev-libs/gobject-introspection ) app-arch/xz-utils >=sys-apps/sed-4 dev-util/desktop-file-utils x11-misc/shared-mime-info
+DEPEND=>=dev-libs/glib-2.32:2 >=dev-libs/vala-common-0.36.13 !dev-lang/vala:0 dev-libs/libxslt sys-devel/flex virtual/pkgconfig virtual/yacc test? ( dev-libs/dbus-glib >=dev-libs/glib-2.26:2 dev-libs/gobject-introspection ) >=app-portage/elt-patches-20170815 app-arch/xz-utils >=sys-apps/sed-4 dev-util/desktop-file-utils x11-misc/shared-mime-info
 DESCRIPTION=Compiler for the GObject type system
 EAPI=6
 HOMEPAGE=https://wiki.gnome.org/Projects/Vala
@@ -9,5 +9,5 @@ LICENSE=LGPL-2.1
 RDEPEND=>=dev-libs/glib-2.32:2 >=dev-libs/vala-common-0.36.13
 SLOT=0.36
 SRC_URI=mirror://gnome/sources/vala/0.36/vala-0.36.13.tar.xz
-_eclasses_=estack	43ddf5aaffa7a8d0482df54d25a66a1f	eutils	06133990e861be0fe60c2b428fd025d9	gnome.org	8fef8f967214f56e08fa92d61163d891	gnome2	acac536f2c3bbcd312ac3faaa3e55e40	gnome2-utils	c6060f4ab634aca444c4b2176b0f3877	libtool	52d0e17251d04645ffaa61bfdd858944	multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607	versionator	26ca8a8bd95d6a74122c08ba98a4ee72	xdg	6cd76cc914c1a759dee032778487b57f	xdg-utils	f2c8335407f0b935b0a96d4adf23ef25
+_eclasses_=estack	43ddf5aaffa7a8d0482df54d25a66a1f	eutils	06133990e861be0fe60c2b428fd025d9	gnome.org	8fef8f967214f56e08fa92d61163d891	gnome2	acac536f2c3bbcd312ac3faaa3e55e40	gnome2-utils	c6060f4ab634aca444c4b2176b0f3877	libtool	f143db5a74ccd9ca28c1234deffede96	multilib	b2f01ad412baf81650c23fcf0975fa33	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607	versionator	26ca8a8bd95d6a74122c08ba98a4ee72	xdg	6cd76cc914c1a759dee032778487b57f	xdg-utils	f2c8335407f0b935b0a96d4adf23ef25
 _md5_=b20cd06fe4a8a25429bc414440cf5be2

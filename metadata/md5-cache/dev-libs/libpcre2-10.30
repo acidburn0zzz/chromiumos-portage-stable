@@ -1,5 +1,5 @@
 DEFINED_PHASES=compile configure install prepare test
-DEPEND=bzip2? ( app-arch/bzip2 ) zlib? ( sys-libs/zlib ) libedit? ( dev-libs/libedit ) readline? ( sys-libs/readline:0= ) virtual/pkgconfig userland_GNU? ( >=sys-apps/findutils-4.4.0 )
+DEPEND=bzip2? ( app-arch/bzip2 ) zlib? ( sys-libs/zlib ) libedit? ( dev-libs/libedit ) readline? ( sys-libs/readline:0= ) virtual/pkgconfig userland_GNU? ( >=sys-apps/findutils-4.4.0 ) >=app-portage/elt-patches-20170815
 DESCRIPTION=Perl-compatible regular expression library
 EAPI=5
 HOMEPAGE=http://www.pcre.org/
@@ -10,5 +10,5 @@ RDEPEND=bzip2? ( app-arch/bzip2 ) zlib? ( sys-libs/zlib ) libedit? ( dev-libs/li
 REQUIRED_USE=?? ( libedit readline )
 SLOT=0
 SRC_URI=mirror://sourceforge/pcre/pcre2-10.30.tar.bz2 ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre2-10.30.tar.bz2
-_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	libtool	52d0e17251d04645ffaa61bfdd858944	ltprune	2770eed66a9b8ef944714cd0e968182e	multibuild	742139c87a9fa3766f0c2b155e5522bf	multilib	97f470f374f2e94ccab04a2fb21d811e	multilib-build	8fe2e81aeb36cdf8a6cc5f50443879cc	multilib-minimal	0224dee31c0f98405d572e14ad6dee65	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	libtool	f143db5a74ccd9ca28c1234deffede96	ltprune	2770eed66a9b8ef944714cd0e968182e	multibuild	40fe59465edacd730c644ec2bc197809	multilib	b2f01ad412baf81650c23fcf0975fa33	multilib-build	b42436dc1260f475af229754c165cb6b	multilib-minimal	8bddda43703ba94d8341f4e247f97566	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607
 _md5_=2257b2fd857a5cd32998456356036802

@@ -1,5 +1,5 @@
 DEFINED_PHASES=compile configure install prepare test unpack
-DEPEND=net-print/cups virtual/pkgconfig dev-lang/perl:=[-build(-)] !<sys-devel/gettext-0.18.1.1-r3 || ( >=sys-devel/automake-1.16.1:1.16 >=sys-devel/automake-1.15.1:1.15 ) >=sys-devel/autoconf-2.69 >=sys-devel/libtool-2.4
+DEPEND=net-print/cups virtual/pkgconfig dev-lang/perl:=[-build(-)] >=app-portage/elt-patches-20170815 !<sys-devel/gettext-0.18.1.1-r3 || ( >=sys-devel/automake-1.16.1:1.16 >=sys-devel/automake-1.15.1:1.15 ) >=sys-devel/autoconf-2.69 >=sys-devel/libtool-2.4
 DESCRIPTION=Generates ppds out of xml foomatic printer description files
 EAPI=5
 HOMEPAGE=http://www.linuxprinting.org/foomatic.html
@@ -9,5 +9,5 @@ PDEPEND=net-print/foomatic-db
 RDEPEND=dev-libs/libxml2 || ( >=net-print/cups-filters-1.0.43-r1[foomatic] net-print/foomatic-filters ) dev-lang/perl:=[-build(-)]
 SLOT=0
 SRC_URI=http://www.openprinting.org/download/foomatic/foomatic-db-engine-4.0.11.tar.gz
-_eclasses_=autotools	d0e5375d47f4c809f406eb892e531513	estack	43ddf5aaffa7a8d0482df54d25a66a1f	eutils	06133990e861be0fe60c2b428fd025d9	libtool	52d0e17251d04645ffaa61bfdd858944	multilib	97f470f374f2e94ccab04a2fb21d811e	multiprocessing	e32940a7b2a9992ad217eccddb84d548	perl-app	20b0a51a72b6d2c8ac53ccab1605737f	perl-functions	01e8c68d5a528bbcda4d3c60205983df	perl-module	863b35d127db98823d439f8d73c2d011	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607	unpacker	04385b0f181c42fa9c18ec0e31729d1f	versionator	26ca8a8bd95d6a74122c08ba98a4ee72
+_eclasses_=autotools	d0e5375d47f4c809f406eb892e531513	estack	43ddf5aaffa7a8d0482df54d25a66a1f	eutils	06133990e861be0fe60c2b428fd025d9	libtool	f143db5a74ccd9ca28c1234deffede96	multilib	b2f01ad412baf81650c23fcf0975fa33	multiprocessing	e32940a7b2a9992ad217eccddb84d548	perl-app	20b0a51a72b6d2c8ac53ccab1605737f	perl-functions	01e8c68d5a528bbcda4d3c60205983df	perl-module	863b35d127db98823d439f8d73c2d011	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607	unpacker	04385b0f181c42fa9c18ec0e31729d1f	versionator	26ca8a8bd95d6a74122c08ba98a4ee72
 _md5_=f720f13aaedc408abed02fc18f9f4b64

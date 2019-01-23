@@ -1,5 +1,5 @@
 DEFINED_PHASES=configure install prepare
-DEPEND=nls? ( sys-devel/gettext )
+DEPEND=nls? ( sys-devel/gettext ) >=app-portage/elt-patches-20170815
 DESCRIPTION=Contains error handling functions used by GnuPG software
 EAPI=5
 HOMEPAGE=http://www.gnupg.org/related_software/libgpg-error
@@ -9,5 +9,5 @@ LICENSE=GPL-2 LGPL-2.1
 RDEPEND=nls? ( virtual/libintl )
 SLOT=0
 SRC_URI=mirror://gnupg/libgpg-error/libgpg-error-1.12.tar.bz2
-_eclasses_=libtool	52d0e17251d04645ffaa61bfdd858944	multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607
+_eclasses_=libtool	f143db5a74ccd9ca28c1234deffede96	multilib	b2f01ad412baf81650c23fcf0975fa33	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607
 _md5_=afe07f6047a3af20d432ba751ada65c8

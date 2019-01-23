@@ -10,5 +10,5 @@ RDEPEND=wxwidgets? ( x11-libs/wxGTK:3.0[X] )
 REQUIRED_USE=kde? ( wxwidgets )
 SLOT=0
 SRC_URI=mirror://sourceforge/p7zip/p7zip_16.02_src_all.tar.bz2
-_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	97f470f374f2e94ccab04a2fb21d811e	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607	wxwidgets	ed63935305b6de2210ae97a407719d89
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	b2f01ad412baf81650c23fcf0975fa33	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607	wxwidgets	ed63935305b6de2210ae97a407719d89
 _md5_=2c4adc959a1ef13ebbaa8f718d872554

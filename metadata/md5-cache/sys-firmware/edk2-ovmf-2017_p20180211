@@ -9,5 +9,5 @@ LICENSE=BSD-2 MIT
 REQUIRED_USE=!amd64? ( binary )
 SLOT=0
 SRC_URI=binary? ( https://dev.gentoo.org/~tamiko/distfiles/edk2-ovmf-2017_p20180211-bin.tar.xz ) !binary? ( https://dev.gentoo.org/~tamiko/distfiles/edk2-ovmf-2017_p20180211.tar.xz )
-_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multilib	97f470f374f2e94ccab04a2fb21d811e	python-any-r1	4900ae970f827a22d33d41bd8b8f9ace	python-utils-r1	12114a2a9aab35b93efc037a196b3234	readme.gentoo-r1	6f03e110529650f57fc7d1fb908b8986	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multilib	b2f01ad412baf81650c23fcf0975fa33	python-any-r1	4900ae970f827a22d33d41bd8b8f9ace	python-utils-r1	12114a2a9aab35b93efc037a196b3234	readme.gentoo-r1	6f03e110529650f57fc7d1fb908b8986	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607
 _md5_=2d755285dd1f7a4cbd54da50612df4ab
