@@ -1,1 +1,0 @@
-rsyslog-8.22.0.ebuild

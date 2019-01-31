@@ -1,10 +1,9 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
-EAPI=5
+EAPI="6"
 
-inherit autotools-utils eutils
+inherit autotools
 
 DESCRIPTION="Liblogging is an easy to use, portable, open source library for system logging"
 HOMEPAGE="http://www.liblogging.org"
@@ -24,7 +23,11 @@ DEPEND="
 
 DOCS=( ChangeLog )
 
-AUTOTOOLS_IN_SOURCE_BUILD=1
+src_prepare() {
+	default
+
+	eautoreconf
+}
 
 src_configure() {
 	local myeconfargs=(
@@ -32,5 +35,12 @@ src_configure() {
 		$(use_enable stdlog)
 		$(use_enable systemd journal)
 	)
-	autotools-utils_src_configure
+
+	econf "${myeconfargs[@]}"
+}
+
+src_install() {
+	default
+
+	find "${ED}"usr/lib* -name '*.la' -delete || die
 }

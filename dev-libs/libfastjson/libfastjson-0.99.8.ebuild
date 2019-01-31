@@ -1,16 +1,15 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
-EAPI=5
+EAPI="6"
 
 inherit autotools
 
 DESCRIPTION="Fork of the json-c library, which is optimized for liblognorm processing"
-HOMEPAGE="http://www.rsyslog.com/tag/libfastjson/"
+HOMEPAGE="https://www.rsyslog.com/tag/libfastjson/"
 SRC_URI="http://download.rsyslog.com/${PN}/${P}.tar.gz"
 LICENSE="MIT"
-SLOT="0/4.0.0"
+SLOT="0/4.2.0"
 KEYWORDS="*"
 IUSE="static-libs"
 
