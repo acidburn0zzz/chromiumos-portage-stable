@@ -1,4 +1,4 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -15,16 +15,15 @@ KEYWORDS="*"
 IUSE=""
 
 RDEPEND="dev-libs/libnl:="
-DEPEND="${RDEPEND}
+DEPEND="${DEPEND}
 	virtual/pkgconfig"
-
-PATCHES=(
-	"${FILESDIR}/iw-fix-the-beacon-average-signal-parsing.patch"
-)
 
 src_prepare() {
 	default
 	tc-export CC LD PKG_CONFIG
+
+	# do not compress man pages by default.
+	sed 's@\(iw\.8\)\.gz@\1@' -i Makefile || die
 }
 
 src_compile() {
