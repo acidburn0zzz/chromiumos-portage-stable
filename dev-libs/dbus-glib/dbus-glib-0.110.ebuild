@@ -1,7 +1,7 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=5
+EAPI=6
 inherit bash-completion-r1 eutils multilib-minimal
 
 DESCRIPTION="D-Bus bindings for glib"
@@ -15,29 +15,21 @@ IUSE="debug static-libs test"
 
 CDEPEND="
 	>=dev-libs/expat-2.1.0-r3[${MULTILIB_USEDEP}]
-	>=dev-libs/glib-2.34.3:2[${MULTILIB_USEDEP}]
+	>=dev-libs/glib-2.40:2[${MULTILIB_USEDEP}]
 	>=sys-apps/dbus-1.8[${MULTILIB_USEDEP}]
 "
 DEPEND="${CDEPEND}
+	>=dev-util/glib-utils-2.40
 	>=dev-util/gtk-doc-am-1.14
 	virtual/pkgconfig
 "
-RDEPEND="${CDEPEND}
-	abi_x86_32? (
-		!<app-emulation/emul-linux-x86-baselibs-20131008-r8
-		!app-emulation/emul-linux-x86-baselibs[-abi_x86_32(-)]
-	)
-"
+RDEPEND="${CDEPEND}"
 
 DOCS=( AUTHORS ChangeLog HACKING NEWS README )
 
 set_TBD() {
 	# out of sources build dir for make check
 	export TBD="${BUILD_DIR}-tests"
-}
-
-src_prepare() {
-	epatch_user
 }
 
 multilib_src_configure() {
@@ -51,19 +43,18 @@ multilib_src_configure() {
 
 	ECONF_SOURCE="${S}" econf "${myconf[@]}"
 
-	ln -s "${S}"/doc/reference/html doc/reference/html #460042
+	ln -s "${S}"/doc/reference/html doc/reference/html || die #460042
 
 	if use test; then
 		set_TBD
-		mkdir "${TBD}"
-		cd "${TBD}"
+		mkdir "${TBD}" || die
+		cd "${TBD}" || die
 		einfo "Running configure in ${TBD}"
 		ECONF_SOURCE="${S}" econf \
 			"${myconf[@]}" \
 			$(use_enable test checks) \
 			$(use_enable test tests) \
-			$(use_enable test asserts) \
-			$(use_with test test-socket-dir "${T}"/dbus-test-socket)
+			$(use_enable test asserts)
 	fi
 }
 
@@ -72,7 +63,7 @@ multilib_src_compile() {
 
 	if use test; then
 		set_TBD
-		cd "${TBD}"
+		cd "${TBD}" || die
 		einfo "Running make in ${TBD}"
 		emake
 	fi
@@ -80,7 +71,7 @@ multilib_src_compile() {
 
 multilib_src_test() {
 	set_TBD
-	cd "${TBD}"
+	cd "${TBD}" || die
 	emake check
 }
 
