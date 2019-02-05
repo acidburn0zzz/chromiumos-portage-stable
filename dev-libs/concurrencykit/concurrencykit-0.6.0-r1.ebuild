@@ -19,3 +19,7 @@ KEYWORDS="*"
 RDEPEND="!sys-cluster/charm"
 
 S="${WORKDIR}/${MY_P}"
+
+src_configure() {
+	econf --platform="${ARCH}"
+}
