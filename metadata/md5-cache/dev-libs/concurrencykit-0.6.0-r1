@@ -1,4 +1,4 @@
-DEFINED_PHASES=-
+DEFINED_PHASES=configure
 DESCRIPTION=A library with concurrency related algorithms and data structures in C
 EAPI=6
 HOMEPAGE=http://concurrencykit.org
@@ -7,4 +7,4 @@ LICENSE=Apache-2.0 BSD-2
 RDEPEND=!sys-cluster/charm
 SLOT=0
 SRC_URI=http://concurrencykit.org/releases/ck-0.6.0.tar.gz -> concurrencykit-0.6.0.tar.gz
-_md5_=8372aed6c736895e4ebaa555cede40f2
+_md5_=0fc5b50df1a8a4ca119e0e778005d843
