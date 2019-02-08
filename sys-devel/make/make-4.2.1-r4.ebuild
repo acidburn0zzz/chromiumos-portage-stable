@@ -1,7 +1,7 @@
 # Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=5
+EAPI="6"
 
 inherit flag-o-matic
 
@@ -25,6 +25,7 @@ PATCHES=(
 	"${FILESDIR}"/${PN}-4.2-default-cxx.patch
 	"${FILESDIR}"/${PN}-4.2.1-perl526.patch
 	"${FILESDIR}"/${PN}-4.2.1-glob-internals.patch
+	"${FILESDIR}"/${PN}-4.2.1-pselect-non-blocking.patch
 )
 
 src_prepare() {
@@ -32,9 +33,8 @@ src_prepare() {
 	# These patches require special handling as they modify configure.ac
 	# which in turn triggers maintainer-mode when being applied the
 	# usual way.
-	epatch -Z "${FILESDIR}"/${PN}-4.2.1-glob-v2.patch \
+	eapply -Z "${FILESDIR}"/${PN}-4.2.1-glob-v2.patch \
 		"${FILESDIR}"/${P}-guile-2.2.patch
-	epatch -Z ${PATCHES[@]}
 }
 
 src_configure() {

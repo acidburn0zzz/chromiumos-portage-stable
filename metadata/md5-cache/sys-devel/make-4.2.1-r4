@@ -1,7 +1,7 @@
 DEFINED_PHASES=configure install prepare
 DEPEND=guile? ( >=dev-scheme/guile-1.8:= ) nls? ( sys-devel/gettext )
 DESCRIPTION=Standard tool to compile source trees
-EAPI=5
+EAPI=6
 HOMEPAGE=https://www.gnu.org/software/make/make.html
 IUSE=guile nls static
 KEYWORDS=*
@@ -10,4 +10,4 @@ RDEPEND=guile? ( >=dev-scheme/guile-1.8:= ) nls? ( virtual/libintl )
 SLOT=0
 SRC_URI=mirror://gnu//make/make-4.2.1.tar.bz2
 _eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	b2f01ad412baf81650c23fcf0975fa33	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607
-_md5_=e0b9464133aa8a54b798510ef2b37dd8
+_md5_=21bc57e4a2eb8c506629b051f7f07b02
