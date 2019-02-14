@@ -1,0 +1,15 @@
+DEFINED_PHASES=compile configure install prepare test
+DEPEND=>=dev-libs/glib-2.44:2 sys-libs/zlib introspection? ( >=dev-libs/gobject-introspection-1.54:= ) dev-util/glib-utils gtk-doc? ( >=dev-util/gtk-doc-1.14 app-text/docbook-xml-dtd:4.3 ) >=sys-devel/gettext-0.19.8 virtual/pkgconfig vala? ( || ( dev-lang/vala:0.36[vapigen(+)] dev-lang/vala:0.34[vapigen(+)] dev-lang/vala:0.32[vapigen(+)] ) ) app-arch/xz-utils >=dev-util/meson-0.40.0 >=dev-util/ninja-1.7.2
+DESCRIPTION=Library and tool for working with Microsoft Cabinet (CAB) files
+EAPI=6
+HOMEPAGE=https://wiki.gnome.org/msitools
+IUSE=gtk-doc +introspection test vala
+KEYWORDS=*
+LICENSE=LGPL-2.1+
+RDEPEND=>=dev-libs/glib-2.44:2 sys-libs/zlib introspection? ( >=dev-libs/gobject-introspection-1.54:= )
+REQUIRED_USE=vala? ( introspection )
+RESTRICT=!test? ( test )
+SLOT=0
+SRC_URI=mirror://gnome/sources/gcab/1.2/gcab-1.2.tar.xz
+_eclasses_=estack	43ddf5aaffa7a8d0482df54d25a66a1f	eutils	06133990e861be0fe60c2b428fd025d9	gnome.org	8fef8f967214f56e08fa92d61163d891	meson	7fd8feaa69ea21af5f87a7939bc6a2a8	multilib	b2f01ad412baf81650c23fcf0975fa33	multiprocessing	e32940a7b2a9992ad217eccddb84d548	ninja-utils	ebb2eaddc6331c4fa000b8eb8f6fe074	python-utils-r1	1a4f6b5e7fa7b8da3f7d9753118d10c5	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607	vala	2f3804278870542119da624a5eded505	versionator	26ca8a8bd95d6a74122c08ba98a4ee72
+_md5_=e39d1da9e989ff20f4c2fbe8df32dd4f
