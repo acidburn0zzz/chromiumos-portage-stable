@@ -1,8 +1,7 @@
-# Copyright 1999-2011 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/x11-apps/xkbcomp/xkbcomp-1.2.3.ebuild,v 1.7 2011/10/03 17:56:28 josejx Exp $
 
-EAPI=4
+EAPI=5
 
 inherit xorg-2
 
