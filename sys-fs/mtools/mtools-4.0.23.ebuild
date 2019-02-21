@@ -1,9 +1,9 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI="5"
 
-inherit flag-o-matic eutils
+inherit flag-o-matic
 
 DESCRIPTION="utilities to access MS-DOS disks from Unix without mounting them"
 HOMEPAGE="https://www.gnu.org/software/mtools/ https://savannah.gnu.org/projects/mtools"
@@ -14,7 +14,7 @@ SLOT="0"
 KEYWORDS="*"
 IUSE="X elibc_glibc"
 
-DEPEND="
+RDEPEND="
 	!elibc_glibc? ( virtual/libiconv )
 	X? (
 		x11-libs/libICE
@@ -23,31 +23,32 @@ DEPEND="
 		x11-libs/libX11
 		x11-libs/libXt
 	)"
-RDEPEND="${DEPEND}"
+DEPEND="${RDEPEND}"
 
 src_prepare() {
+	default
+
 	# Don't throw errors on existing directories
 	sed -i -e "s:mkdir:mkdir -p:" mkinstalldirs || die
-
-	epatch "${FILESDIR}"/${P}-locking.patch # https://crbug.com/508713
-	epatch "${FILESDIR}"/${P}-attr.patch # https://crbug.com/644387
-	epatch "${FILESDIR}"/${P}-memset.patch
 }
 
 src_configure() {
 	# 447688
-	use elibc_glibc || append-libs iconv
-	econf \
-		--sysconfdir="${EPREFIX}"/etc/mtools \
+	use !elibc_glibc && use !elibc_musl && append-libs "-liconv"
+	local myeconfargs=(
+		--sysconfdir="${EPREFIX%/}"/etc/mtools
 		$(use_with X x)
+	)
+	econf "${myeconfargs[@]}"
 }
 
 src_install() {
-	emake DESTDIR="${D}" install
-	dodoc README* Release.notes
+	local -a DOCS=( README* Release.notes )
+	default
 
 	insinto /etc/mtools
 	doins mtools.conf
+
 	# default is fine
-	sed -i -e '/^SAMPLE FILE$/s:^:#:' "${ED}"/etc/mtools/mtools.conf || die
+	sed -i -e '/^SAMPLE FILE$/s:^:#:' "${ED%/}"/etc/mtools/mtools.conf || die
 }
