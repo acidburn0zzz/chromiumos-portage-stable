@@ -1,13 +1,13 @@
 DEFINED_PHASES=configure install prepare
 DEPEND=!elibc_glibc? ( virtual/libiconv ) X? ( x11-libs/libICE x11-libs/libXau x11-libs/libSM x11-libs/libX11 x11-libs/libXt )
 DESCRIPTION=utilities to access MS-DOS disks from Unix without mounting them
-EAPI=5
+EAPI=6
 HOMEPAGE=https://www.gnu.org/software/mtools/ https://savannah.gnu.org/projects/mtools
 IUSE=X elibc_glibc
 KEYWORDS=*
 LICENSE=GPL-3
 RDEPEND=!elibc_glibc? ( virtual/libiconv ) X? ( x11-libs/libICE x11-libs/libXau x11-libs/libSM x11-libs/libX11 x11-libs/libXt )
 SLOT=0
-SRC_URI=mirror://gnu/mtools/mtools-4.0.18.tar.bz2
+SRC_URI=mirror://gnu/mtools/mtools-4.0.23.tar.bz2
 _eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	b2f01ad412baf81650c23fcf0975fa33	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607
-_md5_=048eab5bbd2f7de106a6246108b4027d
+_md5_=b12153bd3add8d63279a9728106245b7
