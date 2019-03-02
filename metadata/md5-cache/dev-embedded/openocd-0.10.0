@@ -10,5 +10,5 @@ RDEPEND=>=dev-lang/jimtcl-0.76 cmsis-dap? ( dev-libs/hidapi ) jlink? ( dev-embed
 RESTRICT=strip
 SLOT=0
 SRC_URI=mirror://sourceforge/project/openocd/openocd/0.10.0/openocd-0.10.0.tar.gz
-_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	b2f01ad412baf81650c23fcf0975fa33	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607	udev	d91cac2c73b94629cad2daea66e0d182	user	77ad494d1257e3badef496e390973d6b
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	b2f01ad412baf81650c23fcf0975fa33	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607	udev	d91cac2c73b94629cad2daea66e0d182	user	059bd54dd6b0acf0eb8961c4ec0c2b64
 _md5_=a6420886962b56ea63bfa67050609f4b
