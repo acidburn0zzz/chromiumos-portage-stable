@@ -3,7 +3,7 @@
 
 # TODO: Add python support.
 
-EAPI=7
+EAPI=6
 
 inherit multilib-minimal
 
