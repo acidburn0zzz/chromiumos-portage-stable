@@ -1,15 +1,15 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=5
 
-PYTHON_COMPAT=( python{2_7,3_{4,5}} pypy pypy3 )
+PYTHON_COMPAT=( python{2_7,3_{4,5,6,7}} pypy pypy3 )
 PYTHON_REQ_USE="threads(+)"
 
 inherit distutils-r1
 
 DESCRIPTION="Python module used for monitoring filesystems events"
-HOMEPAGE="http://trac.dbzteam.org/pyinotify https://pypi.python.org/pypi/pyinotify"
+HOMEPAGE="http://trac.dbzteam.org/pyinotify https://pypi.org/project/pyinotify/"
 SRC_URI="http://seb.dbzteam.org/pub/pyinotify/releases/${P}.tar.gz"
 
 LICENSE="MIT"
