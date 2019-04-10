@@ -1,15 +1,15 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=5
+EAPI=6
 
-PYTHON_COMPAT=( python2_7 python3_{4,5} pypy{,3} )
+PYTHON_COMPAT=( python2_7 python3_{4,5,6,7} pypy{,3} )
 PYTHON_REQ_USE="threads(+)"
 
-inherit distutils-r1
+inherit distutils-r1 flag-o-matic
 
 DESCRIPTION="Library providing cryptographic recipes and primitives"
-HOMEPAGE="https://github.com/pyca/cryptography/ https://pypi.python.org/pypi/cryptography/"
+HOMEPAGE="https://github.com/pyca/cryptography/ https://pypi.org/project/cryptography/"
 SRC_URI="mirror://pypi/${PN:0:1}/${PN}/${P}.tar.gz"
 
 LICENSE="|| ( Apache-2.0 BSD )"
@@ -17,16 +17,27 @@ SLOT="0"
 KEYWORDS="*"
 IUSE="libressl test"
 
+# the openssl 1.0.2l-r1 needs to be updated again :(
+# It'd theb be able to go into the || section again
+#=dev-libs/openssl-1.0.2l-r1:0
+# the following is the original section, disallowing bindist entirely
+#!libressl? ( >=dev-libs/openssl-1.0.2:0=[-bindist(-)] )
 RDEPEND="
-	!libressl? ( >=dev-libs/openssl-1.0.2:0=[-bindist(-)] )
-	libressl? ( dev-libs/libressl )
+	!libressl? (
+		dev-libs/openssl:0= (
+			|| (
+				dev-libs/openssl:0[-bindist(-)]
+				>=dev-libs/openssl-1.0.2o-r6:0
+			)
+		)
+	)
+	libressl? ( dev-libs/libressl:0= )
 	$(python_gen_cond_dep '>=dev-python/cffi-1.7:=[${PYTHON_USEDEP}]' 'python*')
-	$(python_gen_cond_dep 'dev-python/enum34[${PYTHON_USEDEP}]' python2_7 python3_3 pypy{,3})
 	>=dev-python/idna-2.1[${PYTHON_USEDEP}]
 	>=dev-python/asn1crypto-0.21.0[${PYTHON_USEDEP}]
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	>=dev-python/six-1.4.1[${PYTHON_USEDEP}]
-	$(python_gen_cond_dep '>=virtual/pypy-2.6.0' pypy )
+	virtual/python-enum34[${PYTHON_USEDEP}]
 	virtual/python-ipaddress[${PYTHON_USEDEP}]
 	"
 DEPEND="${RDEPEND}
@@ -43,8 +54,16 @@ DEPEND="${RDEPEND}
 
 DOCS=( AUTHORS.rst CONTRIBUTING.rst README.rst )
 
-python_test() {
-	distutils_install_for_testing
+PATCHES=(
+	"${FILESDIR}"/${PN}-2.1.4-libressl-2.7-x509.patch
+	"${FILESDIR}"/${PN}-2.1.4-libressl-2.7-x509_vfy.patch
+	"${FILESDIR}"/CVE-2018-10903.patch
+)
 
+python_configure_all() {
+	append-cflags $(test-flags-CC -pthread)
+}
+
+python_test() {
 	py.test -v -v -x || die "Tests fail with ${EPYTHON}"
 }

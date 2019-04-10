@@ -1,16 +1,16 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=5
+EAPI=6
 
 # DO NOT ADD pypy to PYTHON_COMPAT
 # pypy bundles a modified version of cffi. Use python_gen_cond_dep instead.
-PYTHON_COMPAT=( python2_7 python3_{4,5} )
+PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
 
 inherit distutils-r1
 
 DESCRIPTION="Foreign Function Interface for Python calling C code"
-HOMEPAGE="http://cffi.readthedocs.org/ https://pypi.python.org/pypi/cffi"
+HOMEPAGE="https://cffi.readthedocs.io/ https://pypi.org/project/cffi/"
 SRC_URI="mirror://pypi/${PN:0:1}/${PN}/${P}.tar.gz"
 
 LICENSE="MIT"
@@ -19,12 +19,12 @@ KEYWORDS="*"
 IUSE="doc test"
 
 RDEPEND="
-	virtual/libffi
+	virtual/libffi:=
 	dev-python/pycparser[${PYTHON_USEDEP}]"
 DEPEND="${RDEPEND}
 	virtual/pkgconfig
 	doc? ( dev-python/sphinx[${PYTHON_USEDEP}] )
-	test? (	dev-python/pytest[${PYTHON_USEDEP}] )"
+	test? ( dev-python/pytest[${PYTHON_USEDEP}] )"
 
 # Avoid race on _configtest.c (distutils/command/config.py:_gen_temp_sourcefile)
 DISTUTILS_IN_SOURCE_BUILD=1
