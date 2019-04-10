@@ -1,8 +1,8 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=5
-PYTHON_COMPAT=( python2_7 python3_{4,5,6} pypy{,3} )
+EAPI=6
+PYTHON_COMPAT=( python2_7 python3_{4,5,6,7} pypy{,3} )
 PYTHON_REQ_USE="xml(+)"
 
 inherit distutils-r1
@@ -33,6 +33,7 @@ DEPEND="${RDEPEND}
 		dev-python/pytest-virtualenv[${PYTHON_USEDEP}]
 		>=dev-python/backports-unittest-mock-1.2[${PYTHON_USEDEP}]
 		dev-python/wheel[${PYTHON_USEDEP}]
+		virtual/python-futures[${PYTHON_USEDEP}]
 	)
 "
 PDEPEND="
