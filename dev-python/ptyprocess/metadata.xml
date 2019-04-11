@@ -6,7 +6,7 @@
     <name>Python</name>
   </maintainer>
   <upstream>
-    <remote-id type="pypi">pexpect</remote-id>
-    <remote-id type="github">pexpect/pexpect</remote-id>
+    <remote-id type="pypi">ptyprocess</remote-id>
+    <remote-id type="github">pexpect/ptyprocess</remote-id>
   </upstream>
 </pkgmetadata>

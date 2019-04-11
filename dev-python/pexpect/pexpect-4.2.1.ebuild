@@ -1,15 +1,15 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-python/pexpect/pexpect-3.3.ebuild,v 1.15 2015/04/08 08:04:53 mgorny Exp $
 
-EAPI=5
+EAPI=6
 
-PYTHON_COMPAT=( python{2_7,3_3,3_4} pypy pypy3 )
+PYTHON_COMPAT=( python2_7 python3_{4,5,6,7} pypy pypy3 )
+PYTHON_REQ_USE="threads(+)"
 
 inherit distutils-r1
 
-DESCRIPTION="Python module for spawning child applications and responding to expected patterns"
-HOMEPAGE="http://pexpect.sourceforge.net/ http://pypi.python.org/pypi/pexpect/ https://github.com/pexpect/pexpect/"
+DESCRIPTION="Python module for spawning child apps and responding to expected patterns"
+HOMEPAGE="https://pexpect.readthedocs.io/ https://pypi.org/project/pexpect/ https://github.com/pexpect/pexpect/"
 SRC_URI="mirror://pypi/${PN:0:1}/${PN}/${P}.tar.gz"
 
 LICENSE="MIT"
@@ -17,6 +17,7 @@ SLOT="0"
 KEYWORDS="*"
 IUSE="doc examples test"
 
+RDEPEND=">=dev-python/ptyprocess-0.5[${PYTHON_USEDEP}]"
 DEPEND="
 	doc? ( dev-python/sphinx[${PYTHON_USEDEP}] )
 	test? ( dev-python/pytest[${PYTHON_USEDEP}] )"
@@ -31,6 +32,9 @@ python_test() {
 
 python_install_all() {
 	use doc && local HTML_DOCS=( doc/_build/html/. )
-	use examples && local EXAMPLES=( examples/. )
+	if use examples; then
+		dodoc -r examples
+		docompress -x /usr/share/doc/${PF}/examples
+	fi
 	distutils-r1_python_install_all
 }
