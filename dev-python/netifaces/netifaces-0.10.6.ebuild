@@ -1,18 +1,18 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
-EAPI=5
+EAPI=6
 
-PYTHON_COMPAT=( python{2_7,3_{4,5}} pypy{,3} )
+PYTHON_COMPAT=( python2_7 python3_{4,5,6} pypy{,3} )
 
 inherit distutils-r1
 
 DESCRIPTION="Portable network interface information"
 HOMEPAGE="
-	https://pypi.python.org/pypi/netifaces/
-	http://alastairs-place.net/netifaces/
-	https://bitbucket.org/al45tair/netifaces"
+	https://pypi.org/project/netifaces/
+	https://alastairs-place.net/projects/netifaces/
+	https://github.com/al45tair/netifaces
+"
 SRC_URI="mirror://pypi/${PN:0:1}/${PN}/${P}.tar.gz"
 
 LICENSE="MIT"
