@@ -1,17 +1,16 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
-EAPI=5
+EAPI=6
 
-PYTHON_COMPAT=( python2_7 python3_{3,4,5} pypy pypy3 )
+PYTHON_COMPAT=( python2_7 python3_{4,5,6} pypy{,3} )
 
 inherit distutils-r1
 
 DESCRIPTION="Virtual Python Environment builder"
 HOMEPAGE="
-	http://www.virtualenv.org/
-	https://pypi.python.org/pypi/virtualenv
+	https://virtualenv.pypa.io/en/stable/
+	https://pypi.org/project/virtualenv/
 	https://github.com/pypa/virtualenv/
 "
 SRC_URI="https://github.com/pypa/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
@@ -23,7 +22,7 @@ IUSE="doc test"
 
 RDEPEND=""
 DEPEND="${RDEPEND}
-	dev-python/setuptools[${PYTHON_USEDEP}]
+	>=dev-python/setuptools-19.6.2[${PYTHON_USEDEP}]
 	doc? ( dev-python/sphinx[${PYTHON_USEDEP}] )
 	test? (
 		dev-python/mock[${PYTHON_USEDEP}]
@@ -33,7 +32,6 @@ DEPEND="${RDEPEND}
 DOCS=( docs/index.rst docs/changes.rst )
 
 PATCHES=(
-	"${FILESDIR}"/${PN}-1.8.2-no-versioned-script.patch
 	"${FILESDIR}"/${PN}-12.1.1-skip-broken-test.patch
 )
 
@@ -46,6 +44,6 @@ python_test() {
 }
 
 python_install_all() {
-	use doc && local HTML_DOCS=( "${S}"/docs/_build/html/. )
+	use doc && local HTML_DOCS=( docs/_build/html/. )
 	distutils-r1_python_install_all
 }
