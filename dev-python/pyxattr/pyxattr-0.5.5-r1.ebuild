@@ -1,1 +1,0 @@
-pyxattr-0.5.5.ebuild
