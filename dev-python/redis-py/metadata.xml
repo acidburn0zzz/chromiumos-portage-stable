@@ -6,7 +6,7 @@
     <name>Python</name>
   </maintainer>
   <upstream>
-    <remote-id type="pypi">Logbook</remote-id>
-    <remote-id type="github">mitsuhiko/logbook</remote-id>
+    <remote-id type="pypi">redis</remote-id>
+    <remote-id type="github">andymccurdy/redis-py</remote-id>
   </upstream>
 </pkgmetadata>
