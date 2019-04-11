@@ -1,31 +1,39 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-python/pycrypto/pycrypto-2.6.1-r1.ebuild,v 1.2 2014/12/11 09:28:17 jlec Exp $
 
-EAPI=5
+EAPI=6
 
-PYTHON_COMPAT=( python{2_7,3_3,3_4} )
+PYTHON_COMPAT=( python2_7 python3_{4,5,6,7} )
+PYTHON_REQ_USE="threads(+)"
 
-inherit distutils-r1
+inherit distutils-r1 flag-o-matic
 
 DESCRIPTION="Python Cryptography Toolkit"
-HOMEPAGE="http://www.dlitz.net/software/pycrypto/ http://pypi.python.org/pypi/pycrypto"
+HOMEPAGE="https://www.dlitz.net/software/pycrypto/
+	https://pypi.org/project/pycrypto/"
 SRC_URI="http://ftp.dlitz.net/pub/dlitz/crypto/pycrypto/${P}.tar.gz"
 
 LICENSE="PSF-2 public-domain"
 SLOT="0"
 KEYWORDS="*"
-IUSE="doc +gmp"
+IUSE="doc +gmp test"
 
-RDEPEND="gmp? ( dev-libs/gmp )"
+RDEPEND="gmp? ( dev-libs/gmp:0= )"
 DEPEND="${RDEPEND}
 	doc? (
 		dev-python/docutils[${PYTHON_USEDEP}]
-		$(python_gen_cond_dep '>=dev-python/epydoc-3[${PYTHON_USEDEP}]' python2_7)
-		)"
+		$(python_gen_cond_dep '>=dev-python/epydoc-3[${PYTHON_USEDEP}]' 'python2*')
+	)"
+
+REQUIRED_USE="test? ( gmp )"
+
+DOCS=( ACKS ChangeLog README TODO )
+PATCHES=(
+	"${FILESDIR}"/${P}-cross-compile.patch
+	"${FILESDIR}"/${P}-CVE-2013-7459.patch
+)
 
 python_prepare_all() {
-	epatch "${FILESDIR}"/${P}-cross-compile.patch
 	# Fix Crypto.PublicKey.RSA._RSAobj.exportKey(format="OpenSSH") with Python 3
 	# https://github.com/dlitz/pycrypto/commit/ab25c6fe95ee92fac3187dcd90e0560ccacb084a
 	sed \
@@ -33,6 +41,7 @@ python_prepare_all() {
 		-e "s/keystring = ''.join/keystring = b('').join/" \
 		-e "s/return 'ssh-rsa '/return b('ssh-rsa ')/" \
 		-i lib/Crypto/PublicKey/RSA.py || die
+
 	distutils-r1_python_prepare_all
 }
 
@@ -46,23 +55,21 @@ python_configure_all() {
 
 python_compile_all() {
 	if use doc; then
-		rst2html.py Doc/pycrypt.rst > Doc/index.html
+		rst2html.py Doc/pycrypt.rst > Doc/index.html || die
 		epydoc --config=Doc/epydoc-config --exclude-introspect="^Crypto\.(Random\.OSRNG\.nt|Util\.winrandom)$" || die
+		HTML_DOCS=( Doc/apidoc/. Doc/index.html )
 	fi
 }
 
 python_compile() {
-	python_is_python3 || local -x CFLAGS="${CFLAGS} -fno-strict-aliasing"
+	if ! python_is_python3; then
+		local -x CFLAGS="${CFLAGS}"
+		append-cflags -fno-strict-aliasing
+	fi
+
 	distutils-r1_python_compile
 }
 
 python_test() {
 	esetup.py test
-}
-
-python_install_all() {
-	local DOCS=( ACKS ChangeLog README TODO )
-	use doc && local HTML_DOCS=( Doc/apidoc/. Doc/index.html )
-
-	distutils-r1_python_install_all
 }
