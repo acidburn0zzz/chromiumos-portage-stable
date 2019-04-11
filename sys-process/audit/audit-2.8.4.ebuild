@@ -1,17 +1,17 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="5"
+EAPI="6"
 
-PYTHON_COMPAT=( python{2_7,3_4,3_5} )
+PYTHON_COMPAT=( python{2_7,3_4,3_5,3_6} )
 
-inherit autotools multilib multilib-minimal toolchain-funcs python-r1 linux-info systemd
+inherit autotools multilib multilib-minimal toolchain-funcs preserve-libs python-r1 linux-info systemd
 
 DESCRIPTION="Userspace utilities for storing and processing auditing records"
 HOMEPAGE="https://people.redhat.com/sgrubb/audit/"
 SRC_URI="https://people.redhat.com/sgrubb/audit/${P}.tar.gz"
 
-LICENSE="GPL-2"
+LICENSE="GPL-2+ LGPL-2.1+"
 SLOT="0"
 KEYWORDS="*"
 IUSE="gssapi ldap python static-libs"
@@ -35,8 +35,6 @@ pkg_setup() {
 }
 
 src_prepare() {
-	epatch_user
-
 	# Do not build GUI tools
 	sed -i \
 		-e '/AC_CONFIG_SUBDIRS.*system-config-audit/d' \
@@ -56,15 +54,17 @@ src_prepare() {
 	fi
 
 	# Don't build static version of Python module.
-	epatch "${FILESDIR}"/${PN}-2.4.3-python.patch
+	eapply "${FILESDIR}"/${PN}-2.4.3-python.patch
 
 	# glibc/kernel upstreams suck with both defining ia64_fpreg
 	# This patch is a horribly workaround that is only valid as long as you
 	# don't need the OTHER definitions in fpu.h.
-	epatch "${FILESDIR}"/${PN}-2.1.3-ia64-compile-fix.patch
+	eapply "${FILESDIR}"/${PN}-2.8.4-ia64-compile-fix.patch
 
 	# there is no --without-golang conf option
 	sed -e "/^SUBDIRS =/s/ @gobind_dir@//" -i bindings/Makefile.am || die
+
+	eapply_user
 
 	# Regenerate autotooling
 	eautoreconf
@@ -178,7 +178,7 @@ multilib_src_install() {
 }
 
 multilib_src_install_all() {
-	dodoc AUTHORS ChangeLog README* THANKS TODO
+	dodoc AUTHORS ChangeLog README* THANKS
 	docinto contrib
 	dodoc contrib/{avc_snap,skeleton.c}
 	docinto contrib/plugin
@@ -203,10 +203,10 @@ multilib_src_install_all() {
 	# audit logs go here
 	keepdir /var/log/audit/
 
+	find "${D}" -name '*.la' -delete || die
+
 	# Security
 	lockdown_perms "${ED}"
-
-	prune_libtool_files --modules
 }
 
 pkg_preinst() {
