@@ -1,15 +1,14 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-python/rsa/rsa-3.1.4-r1.ebuild,v 1.3 2015/01/26 10:27:36 ago Exp $
 
 EAPI=5
 
-PYTHON_COMPAT=( python2_7 python3_{3,4} pypy pypy3 )
+PYTHON_COMPAT=( python2_7 python3_{4,5,6,7} pypy )
 
 inherit distutils-r1
 
 DESCRIPTION="Pure-Python RSA implementation"
-HOMEPAGE="http://stuvel.eu/rsa http://pypi.python.org/pypi/rsa"
+HOMEPAGE="https://stuvel.eu/rsa https://pypi.org/project/rsa/"
 SRC_URI="mirror://pypi/${P:0:1}/${PN}/${P}.tar.gz"
 
 LICENSE="Apache-2.0"
@@ -18,7 +17,8 @@ KEYWORDS="*"
 IUSE="test"
 
 RDEPEND="
-	>=dev-python/pyasn1-0.0.13[${PYTHON_USEDEP}]
+	>=dev-python/pyasn1-0.1.3[${PYTHON_USEDEP}]
+	dev-python/traceback2[${PYTHON_USEDEP}]
 	"
 DEPEND="${RDEPEND}
 	>=dev-python/setuptools-0.6.10[${PYTHON_USEDEP}]
@@ -28,6 +28,10 @@ DEPEND="${RDEPEND}
 		)
 	"
 
+PATCHES=(
+	"${FILESDIR}"/${P}-CVE-2016-1494.patch
+)
+
 python_test() {
-	nosetests || die
+	nosetests --verbose || die
 }
