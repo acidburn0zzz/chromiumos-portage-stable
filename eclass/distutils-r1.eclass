@@ -100,8 +100,8 @@ if [[ ! ${_DISTUTILS_R1} ]]; then
 if [[ ! ${DISTUTILS_OPTIONAL} ]]; then
 	RDEPEND=${PYTHON_DEPS}
 	if [[ ${EAPI} != [56] ]]; then
-        # Neverware: changed this to DEPEND instead of BDEPEND to
-        # avoid problems in parallel_emerge [OVER-9470]
+		# Neverware: changed this to DEPEND instead of BDEPEND to
+		# avoid problems in parallel_emerge [OVER-9470]
 		DEPEND=${PYTHON_DEPS}
 	else
 		DEPEND=${PYTHON_DEPS}
