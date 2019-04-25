@@ -1,7 +1,7 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=5
+EAPI=6
 
 RESTRICT="test"
 
@@ -11,7 +11,7 @@ inherit eutils flag-o-matic python-single-r1 toolchain-funcs versionator
 MY_PV="$(replace_all_version_separators _)"
 
 DESCRIPTION="A system for large project software construction, simple to use and powerful"
-HOMEPAGE="http://www.boost.org/doc/tools/build/index.html"
+HOMEPAGE="https://boostorg.github.io/build/"
 SRC_URI="https://downloads.sourceforge.net/project/boost/boost/${PV}/boost_${MY_PV}.tar.bz2"
 
 LICENSE="Boost-1.0"
@@ -38,6 +38,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-1.52.0-darwin-no-python-framework.patch"
 	"${FILESDIR}/${PN}-1.54.0-support_dots_in_python-buildid.patch"
 	"${FILESDIR}/${PN}-1.55.0-ppc-aix.patch"
+	"${FILESDIR}/${PN}-1.62.0-sparc-no-default-flags.patch"
 )
 
 pkg_setup() {
@@ -47,11 +48,11 @@ pkg_setup() {
 }
 
 src_unpack() {
-	tar xjf "${DISTDIR}/${A}" boost_${MY_PV}/tools/build || die "unpacking tar failed"
+	tar xojf "${DISTDIR}/${A}" boost_${MY_PV}/tools/build || die "unpacking tar failed"
 }
 
 src_prepare() {
-	epatch "${PATCHES[@]}"
+	default
 
 	pushd ../ >/dev/null || die
 	eapply "${FILESDIR}/${PN}-1.54.0-fix-test.patch"
@@ -112,16 +113,16 @@ src_install() {
 		../boost-build.jam bootstrap.jam build-system.jam ../example/user-config.jam *.py \
 		build kernel options tools util
 
-	rm "${ED%/}/usr/share/boost-build/build/project.ann.py" || die "removing faulty python file failed"
 	if ! use python; then
 		find "${ED%/}/usr/share/boost-build" -iname "*.py" -delete || die "removing experimental python files failed"
 	fi
 
-	dodoc ../notes/{changes,hacking,release_procedure,build_dir_option,relative_source_paths}.txt
+	dodoc ../notes/{changes,release_procedure,build_dir_option,relative_source_paths}.txt
 
 	if use examples; then
-		dodoc -r ../example
-		docompress -x "/usr/share/doc/${PF}/example"
+		docinto examples
+		dodoc -r ../example/.
+		docompress -x /usr/share/doc/${PF}/examples
 	fi
 }
 
