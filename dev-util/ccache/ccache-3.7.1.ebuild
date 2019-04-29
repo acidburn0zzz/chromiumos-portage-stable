@@ -1,14 +1,13 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
-EAPI=5
+EAPI=6
 
-inherit eutils readme.gentoo
+inherit readme.gentoo-r1
 
 DESCRIPTION="fast compiler cache"
-HOMEPAGE="http://ccache.samba.org/"
-SRC_URI="http://samba.org/ftp/ccache/${P}.tar.xz"
+HOMEPAGE="https://ccache.dev/"
+SRC_URI="https://github.com/ccache/ccache/releases/download/v${PV}/ccache-${PV}.tar.xz"
 
 LICENSE="GPL-3"
 SLOT="0"
@@ -18,27 +17,45 @@ IUSE=""
 DEPEND="app-arch/xz-utils
 	sys-libs/zlib"
 RDEPEND="${DEPEND}
+	dev-util/shadowman
 	sys-apps/gentoo-functions"
 
+PATCHES=(
+	"${FILESDIR}"/${PN}-3.4-size-on-disk.patch #456178
+	"${FILESDIR}"/${PN}-3.5-nvcc-test.patch
+	"${FILESDIR}"/${PN}-3.6-disable-sized-cleanup.patch #649440
+)
+
 src_prepare() {
+	default
+
 	# make sure we always use system zlib
-	rm -rf zlib || die
-	epatch "${FILESDIR}"/${PN}-3.1.10-size-on-disk.patch #456178
+	rm -rf src/zlib || die
 	sed \
 		-e "/^EPREFIX=/s:'':'${EPREFIX}':" \
 		"${FILESDIR}"/ccache-config-3 > ccache-config || die
 }
 
+src_compile() {
+	emake V=1
+}
+
+src_test() {
+	emake check V=1
+}
+
 src_install() {
-	DOCS=( AUTHORS.txt MANUAL.txt NEWS.txt README.txt )
+	DOCS=( doc/{AUTHORS,MANUAL,NEWS}.adoc CONTRIBUTING.md README.md )
 	default
 
 	dobin ccache-config
+	insinto /usr/share/shadowman/tools
+	newins - ccache <<<'/usr/lib/ccache/bin'
 
 	DOC_CONTENTS="
 To use ccache with **non-Portage** C compiling, add
-${EPREFIX}/usr/lib/ccache/bin to the beginning of your path, before ${EPREFIX}usr/bin.
-Portage 2.0.46-r11+ will automatically take advantage of ccache with
+'${EPREFIX}/usr/lib/ccache/bin' to the beginning of your path, before
+'${EPREFIX}/usr/bin'. Portage will automatically take advantage of ccache with
 no additional steps.  If this is your first install of ccache, type
 something like this to set a maximum cache size of 2GB:\\n
 # ccache -M 2G\\n
@@ -50,18 +67,17 @@ ccache now supports sys-devel/clang and dev-lang/icc, too!"
 }
 
 pkg_prerm() {
-	if [[ -z ${REPLACED_BY_VERSION} ]] ; then
-		"${EROOT}"/usr/bin/ccache-config --remove-links
-		"${EROOT}"/usr/bin/ccache-config --remove-links ${CHOST}
+	if [[ -z ${REPLACED_BY_VERSION} && ${ROOT:-/} == / ]] ; then
+		eselect compiler-shadow remove ccache
 	fi
 }
 
 pkg_postinst() {
-	"${EROOT}"/usr/bin/ccache-config --install-links
-	"${EROOT}"/usr/bin/ccache-config --install-links ${CHOST}
+	if [[ ${ROOT:-/} == / ]]; then
+		eselect compiler-shadow update ccache
+	fi
 
 	# nuke broken symlinks from previous versions that shouldn't exist
-	rm -f "${EROOT}"/usr/lib/ccache/bin/${CHOST}-cc || die
 	rm -rf "${EROOT}"/usr/lib/ccache.backup || die
 
 	readme.gentoo_print_elog

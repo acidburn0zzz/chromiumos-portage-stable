@@ -1,0 +1,11 @@
+DEFINED_PHASES=install
+DEPEND=app-admin/eselect
+DESCRIPTION=Unified compiler shadow link directory updater
+EAPI=6
+HOMEPAGE=https://github.com/mgorny/shadowman
+KEYWORDS=*
+LICENSE=GPL-2
+RDEPEND=app-admin/eselect
+SLOT=0
+SRC_URI=https://github.com/mgorny/shadowman/archive/v2.tar.gz -> shadowman-2.tar.gz
+_md5_=dd90452daa61d48a35743a985a34ee5d
