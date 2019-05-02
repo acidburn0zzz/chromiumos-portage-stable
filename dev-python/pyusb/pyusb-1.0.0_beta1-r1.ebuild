@@ -1,0 +1,1 @@
+pyusb-1.0.0_beta1.ebuild
