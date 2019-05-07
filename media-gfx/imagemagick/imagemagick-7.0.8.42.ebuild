@@ -5,16 +5,22 @@ EAPI="6"
 
 inherit eapi7-ver eutils flag-o-matic libtool perl-functions toolchain-funcs multilib
 
-MY_PV="$(ver_rs 3 '-')"
-MY_P="ImageMagick-${MY_PV}"
+if [[ ${PV} == "9999" ]] ; then
+	EGIT_REPO_URI="https://github.com/ImageMagick/ImageMagick.git"
+	inherit git-r3
+	MY_P="imagemagick-9999"
+else
+	MY_PV="$(ver_rs 3 '-')"
+	MY_P="ImageMagick-${MY_PV}"
+	SRC_URI="mirror://${PN}/${MY_P}.tar.xz"
+	KEYWORDS="*"
+fi
 
 DESCRIPTION="A collection of tools and libraries for many image formats"
 HOMEPAGE="https://www.imagemagick.org/"
-SRC_URI="mirror://${PN}/${MY_P}.tar.xz"
 
 LICENSE="imagemagick"
 SLOT="0/${PV}"
-KEYWORDS="*"
 IUSE="bzip2 corefonts cxx djvu fftw fontconfig fpx graphviz hdri heif jbig jpeg jpeg2k lcms lqr lzma opencl openexr openmp pango perl png postscript q32 q8 raw static-libs svg test tiff truetype webp wmf X xml zlib"
 
 RDEPEND="
