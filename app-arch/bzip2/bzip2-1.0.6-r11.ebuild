@@ -1,19 +1,19 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # XXX: atm, libbz2.a is always PIC :(, so it is always built quickly
 #      (since we're building shared libs) ...
 
-EAPI=5
+EAPI=6
 
-inherit eutils toolchain-funcs multilib multilib-minimal
+inherit toolchain-funcs multilib-minimal
 
 DESCRIPTION="A high-quality data compressor used extensively by Gentoo Linux"
-HOMEPAGE="http://www.bzip.org/"
-SRC_URI="http://www.bzip.org/${PV}/${P}.tar.gz"
+HOMEPAGE="https://sourceware.org/bzip2/"
+SRC_URI="mirror://gentoo/${P}.tar.gz"
 
 LICENSE="BZIP2"
-SLOT="0"
+SLOT="0/1" # subslot = SONAME
 KEYWORDS="*"
 IUSE="static static-libs"
 
@@ -31,8 +31,11 @@ PATCHES=(
 	"${FILESDIR}"/${PN}-1.0.6-nselectors-upper-bound-check.patch
 )
 
+DOCS=( CHANGES README{,.COMPILATION.PROBLEMS,.XML.STUFF} manual.pdf )
+HTML_DOCS=( manual.html )
+
 src_prepare() {
-	epatch "${PATCHES[@]}"
+	default
 
 	# - Use right man path
 	# - Generate symlinks instead of hardlinks
@@ -56,7 +59,7 @@ bemake() {
 multilib_src_compile() {
 	bemake -f "${S}"/Makefile-libbz2_so all
 	# Make sure we link against the shared lib #504648
-	ln -sf libbz2.so.${PV} libbz2.so
+	ln -s libbz2.so.${PV} libbz2.so || die
 	bemake -f "${S}"/Makefile all LDFLAGS="${LDFLAGS} $(usex static -static '')"
 }
 
@@ -107,8 +110,7 @@ multilib_src_install_all() {
 		dosym bzgrep.1 /usr/share/man/man1/${x}.1
 	done
 
-	dodoc README* CHANGES manual.pdf
-	dohtml manual.html
+	einstalldocs
 
 	# move "important" bzip2 binaries to /bin and use the shared libbz2.so
 	dosym bzip2 /bin/bzcat
