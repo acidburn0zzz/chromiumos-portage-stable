@@ -1,9 +1,9 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=5
+EAPI=6
 
-DESCRIPTION="exFAT filesystem FUSE module"
+DESCRIPTION="exFAT filesystem utilities"
 HOMEPAGE="https://github.com/relan/exfat"
 SRC_URI="https://github.com/relan/exfat/releases/download/v${PV}/${P}.tar.gz"
 
@@ -12,13 +12,8 @@ LICENSE="GPL-2+"
 SLOT="0"
 KEYWORDS="*"
 
-RDEPEND="sys-fs/fuse"
-DEPEND="${RDEPEND}
-	virtual/pkgconfig"
-
-DOCS=( ChangeLog )
-
 src_install() {
 	default
-	dosym mount.exfat-fuse.8 /usr/share/man/man8/mount.exfat.8
+	dosym exfatfsck.8 /usr/share/man/man8/fsck.exfat.8
+	dosym mkexfatfs.8 /usr/share/man/man8/mkfs.exfat.8
 }
