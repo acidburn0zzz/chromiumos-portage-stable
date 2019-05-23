@@ -1,15 +1,16 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/app-vim/gentoo-syntax/gentoo-syntax-20130619.ebuild,v 1.13 2014/06/06 06:06:20 vapier Exp $
 
 EAPI=5
 
 inherit vim-plugin
 
-DESCRIPTION="vim plugin: Gentoo and portage related syntax highlighting, filetype, and indent settings"
-HOMEPAGE="http://www.gentoo.org/"
+DESCRIPTION="vim plugin: Gentoo and Portage syntax highlighting"
+HOMEPAGE="https://github.com/gentoo/gentoo-syntax"
+SRC_URI="https://gitweb.gentoo.org/proj/gentoo-syntax.git/snapshot/${P}.tar.bz2"
 
 LICENSE="vim"
+SLOT="0"
 KEYWORDS="*"
 IUSE="ignore-glep31"
 
@@ -17,6 +18,7 @@ VIM_PLUGIN_HELPFILES="gentoo-syntax"
 VIM_PLUGIN_MESSAGES="filetype"
 
 src_prepare() {
+	default
 	if use ignore-glep31 ; then
 		for f in ftplugin/*.vim ; do
 			ebegin "Removing UTF-8 rules from ${f} ..."
@@ -35,13 +37,6 @@ pkg_postinst() {
 			ewarn "You have chosen to disable the rules which ensure GLEP 31"
 			ewarn "compliance. When editing ebuilds, please make sure you get"
 			ewarn "the character set correct."
-		else
-			elog "Note for developers and anyone else who edits ebuilds:"
-			elog "    This release of gentoo-syntax now contains filetype rules to set"
-			elog "    fileencoding for ebuilds and ChangeLogs to utf-8 as per GLEP 31."
-			elog "    If you find this feature breaks things, please submit a bug and"
-			elog "    assign it to vim@gentoo.org. You can use the 'ignore-glep31' USE"
-			elog "    flag to remove these rules."
 		fi
 	fi
 }
