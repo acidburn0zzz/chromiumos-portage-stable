@@ -1,27 +1,29 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=5
+EAPI=6
 
+CMAKE_MAKEFILE_GENERATOR="emake"
 CMAKE_REMOVE_MODULES="no"
-inherit bash-completion-r1 elisp-common toolchain-funcs eutils versionator cmake-utils virtualx flag-o-matic
+inherit bash-completion-r1 elisp-common flag-o-matic toolchain-funcs virtualx xdg cmake-utils
 
 MY_P="${P/_/-}"
 
 DESCRIPTION="Cross platform Make"
-HOMEPAGE="http://www.cmake.org/"
-SRC_URI="http://www.cmake.org/files/v$(get_version_component_range 1-2)/${MY_P}.tar.gz"
+HOMEPAGE="https://cmake.org/"
+SRC_URI="https://cmake.org/files/v3.14/${MY_P}.tar.gz"
 
 LICENSE="CMake"
 SLOT="0"
 [[ "${PV}" = *_rc* ]] || \
 KEYWORDS="*"
-IUSE="doc emacs system-jsoncpp ncurses qt5"
+IUSE="doc emacs system-jsoncpp ncurses qt5 test"
 
 RDEPEND="
+	app-crypt/rhash
 	>=app-arch/libarchive-3.0.0:=
 	>=dev-libs/expat-2.0.1
-	>=dev-libs/libuv-1.0.0:=
+	>=dev-libs/libuv-1.10.0:=
 	>=net-misc/curl-7.21.5[ssl]
 	sys-libs/zlib
 	virtual/pkgconfig
@@ -34,8 +36,12 @@ RDEPEND="
 	)
 	system-jsoncpp? ( >=dev-libs/jsoncpp-0.6.0_rc2:0= )
 "
-DEPEND="${RDEPEND}
-	doc? ( dev-python/sphinx )
+DEPEND="${RDEPEND}"
+BDEPEND="
+	doc? (
+		dev-python/requests
+		dev-python/sphinx
+	)
 "
 
 S="${WORKDIR}/${MY_P}"
@@ -45,19 +51,18 @@ SITEFILE="50${PN}-gentoo.el"
 PATCHES=(
 	# prefix
 	"${FILESDIR}"/${PN}-3.4.0_rc1-darwin-bundle.patch
-	"${FILESDIR}"/${PN}-3.0.0-prefix-dirs.patch
-	"${FILESDIR}"/${PN}-3.1.0-darwin-isysroot.patch
+	"${FILESDIR}"/${PN}-3.14.0_rc3-prefix-dirs.patch
+	# Next patch requires new work from prefix people
+	#"${FILESDIR}"/${PN}-3.1.0-darwin-isysroot.patch
 
 	# handle gentoo packaging in find modules
-	"${FILESDIR}"/${PN}-2.8.12.1-FindImageMagick.patch
-	"${FILESDIR}"/${PN}-3.0.0-FindBLAS.patch
-	"${FILESDIR}"/${PN}-3.0.0-FindBoost-python.patch
-	"${FILESDIR}"/${PN}-3.0.2-FindLAPACK.patch
+	"${FILESDIR}"/${PN}-3.14.0_rc1-FindBLAS.patch
+	"${FILESDIR}"/${PN}-3.14.0_rc1-FindLAPACK.patch
 	"${FILESDIR}"/${PN}-3.5.2-FindQt4.patch
 
 	# respect python eclasses
 	"${FILESDIR}"/${PN}-2.8.10.2-FindPythonLibs.patch
-	"${FILESDIR}"/${PN}-3.1.0-FindPythonInterp.patch
+	"${FILESDIR}"/${PN}-3.9.0_rc2-FindPythonInterp.patch
 
 	# upstream fixes (can usually be removed with a version bump)
 )
@@ -65,9 +70,9 @@ PATCHES=(
 cmake_src_bootstrap() {
 	# Cleanup args to extract only JOBS.
 	# Because bootstrap does not know anything else.
-	echo ${MAKEOPTS} | egrep -o '(\-j|\-\-jobs)(=?|[[:space:]]*)[[:digit:]]+' > /dev/null
-	if [ $? -eq 0 ]; then
-		par_arg=$(echo ${MAKEOPTS} | egrep -o '(\-j|\-\-jobs)(=?|[[:space:]]*)[[:digit:]]+' | tail -n1 | egrep -o '[[:digit:]]+')
+	grep -Eo '(\-j|\-\-jobs)(=?|[[:space:]]*)[[:digit:]]+' <<< "${MAKEOPTS}" > /dev/null
+	if [[ $? -eq 0 ]] ; then
+		par_arg=$(grep -Eo '(\-j|\-\-jobs)(=?|[[:space:]]*)[[:digit:]]+' <<< "${MAKEOPTS}" | tail -n1 | grep -o '[[:digit:]]+')
 		par_arg="--parallel=${par_arg}"
 	else
 		par_arg="--parallel=1"
@@ -80,7 +85,8 @@ cmake_src_bootstrap() {
 
 	# execinfo.h on Solaris isn't quite what it is on Darwin
 	if [[ ${CHOST} == *-solaris* ]] ; then
-		sed -i -e 's/execinfo\.h/blablabla.h/' Source/kwsys/CMakeLists.txt || die
+		sed -i -e 's/execinfo\.h/blablabla.h/' \
+			Source/kwsys/CMakeLists.txt || die
 	fi
 
 	tc-export CC CXX LD
@@ -107,13 +113,18 @@ cmake_src_test() {
 	# Excluded tests:
 	#    BootstrapTest: we actualy bootstrap it every time so why test it.
 	#    BundleUtilities: bundle creation broken
+	#    CMakeOnly.AllFindModules: pthread issues
 	#    CTest.updatecvs: which fails to commit as root
 	#    Fortran: requires fortran
-	#    Qt4Deploy, which tries to break sandbox and ignores prefix
-	#    Qt5Autogen, which breaks for unknown reason
+	#    RunCMake.CompilerLauncher: also requires fortran
+	#    RunCMake.CPack_RPM: breaks if app-arch/rpm is installed because
+	#        debugedit binary is not in the expected location
 	#    TestUpload, which requires network access
-	"${BUILD_DIR}"/bin/ctest ${ctestargs} \
-		-E "(BootstrapTest|BundleUtilities|CTest.UpdateCVS|Fortran|Qt4Deploy|Qt5Autogen|TestUpload)" \
+	"${BUILD_DIR}"/bin/ctest \
+		-j "$(makeopts_jobs)" \
+		--test-load "$(makeopts_loadavg)" \
+		${ctestargs} \
+		-E "(BootstrapTest|BundleUtilities|CMakeOnly.AllFindModules|CompileOptions|CTest.UpdateCVS|Fortran|RunCMake.CompilerLauncher|RunCMake.CPack_RPM|TestUpload)" \
 		|| die "Tests failed"
 
 	popd > /dev/null
@@ -122,9 +133,16 @@ cmake_src_test() {
 src_prepare() {
 	cmake-utils_src_prepare
 
+	# disable Xcode hooks, bug #652134
+	if [[ ${CHOST} == *-darwin* ]] ; then
+		sed -i -e 's/__APPLE__/__DISABLED_APPLE__/' \
+			Source/cmGlobalXCodeGenerator.cxx || die
+	fi
+
 	# Add gcc libs to the default link paths
 	sed -i \
 		-e "s|@GENTOO_PORTAGE_GCCLIBDIR@|${EPREFIX}/usr/${CHOST}/lib/|g" \
+		-e "$(usex prefix-guest "s|@GENTOO_HOST@||" "/@GENTOO_HOST@/d")" \
 		-e "s|@GENTOO_PORTAGE_EPREFIX@|${EPREFIX}/|g" \
 		Modules/Platform/{UnixPaths,Darwin}.cmake || die "sed failed"
 	if ! has_version \>=${CATEGORY}/${PN}-3.4.0_rc1 ; then
@@ -147,6 +165,7 @@ src_configure() {
 		-DSPHINX_MAN=$(usex doc)
 		-DSPHINX_HTML=$(usex doc)
 		-DBUILD_CursesDialog="$(usex ncurses)"
+		-DBUILD_TESTING=$(usex test)
 	)
 
 	if use qt5 ; then
@@ -190,10 +209,16 @@ src_install() {
 	rm -r "${ED}"/usr/share/cmake/{completions,editors} || die
 }
 
+pkg_preinst() {
+	use qt5 && xdg_pkg_preinst
+}
+
 pkg_postinst() {
 	use emacs && elisp-site-regen
+	use qt5 && xdg_pkg_postinst
 }
 
 pkg_postrm() {
 	use emacs && elisp-site-regen
+	use qt5 && xdg_pkg_postrm
 }
