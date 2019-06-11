@@ -1,9 +1,9 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
-VIM_VERSION="8.0"
-inherit estack vim-doc flag-o-matic versionator bash-completion-r1 prefix
+VIM_VERSION="8.1"
+inherit estack vim-doc flag-o-matic bash-completion-r1 prefix desktop gnome2-utils
 
 if [[ ${PV} == 9999* ]] ; then
 	inherit git-r3
@@ -23,6 +23,8 @@ LICENSE="vim"
 IUSE="nls acl minimal"
 
 DEPEND="sys-devel/autoconf"
+# avoid icon file collision bug #673880
+RDEPEND="!!<app-editors/gvim-8.1.0648"
 PDEPEND="!minimal? ( app-vim/gentoo-syntax )"
 
 S=${WORKDIR}/vim-${PV}
@@ -75,7 +77,7 @@ src_prepare() {
 	# which isn't even in the source file being invalid, we'll do some trickery
 	# to make the error never occur. bug 66162 (02 October 2004 ciaranm)
 	find "${S}" -name '*.c' | while read c; do
-			echo >> "$c" || die "echo failed"
+	    echo >> "$c" || die "echo failed"
 	done
 
 	# Try to avoid sandbox problems. Bug #114475.
@@ -201,14 +203,23 @@ src_install() {
 	fi
 
 	newbashcomp "${FILESDIR}"/xxd-completion xxd
+
+	# install gvim icon since both vim/gvim desktop files reference it
+	doicon -s scalable "${FILESDIR}"/gvim.svg
 }
 
 pkg_postinst() {
-	# Update documentation tags (from vim-doc.eclass)
+	# update documentation tags (from vim-doc.eclass)
 	update_vim_helptags
+
+	# update icon cache
+	gnome2_icon_cache_update
 }
 
 pkg_postrm() {
 	# Update documentation tags (from vim-doc.eclass)
 	update_vim_helptags
+
+	# update icon cache
+	gnome2_icon_cache_update
 }

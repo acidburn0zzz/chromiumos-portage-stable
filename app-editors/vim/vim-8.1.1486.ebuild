@@ -1,11 +1,13 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
-VIM_VERSION="8.0"
-PYTHON_COMPAT=( python{2_7,3_4,3_5,3_6} )
-PYTHON_REQ_USE=threads
-inherit vim-doc flag-o-matic versionator bash-completion-r1 python-single-r1
+VIM_VERSION="8.1"
+PYTHON_COMPAT=( python{2_7,3_5,3_6,3_7} )
+PYTHON_REQ_USE="threads(+)"
+USE_RUBY="ruby24 ruby25 ruby26"
+
+inherit vim-doc flag-o-matic bash-completion-r1 python-single-r1 ruby-single desktop xdg-utils
 
 if [[ ${PV} == 9999* ]] ; then
 	inherit git-r3
@@ -23,8 +25,8 @@ SLOT="0"
 LICENSE="vim"
 IUSE="X acl cscope debug gpm lua luajit minimal nls perl python racket ruby selinux tcl terminal vim-pager"
 REQUIRED_USE="
-	luajit? ( lua )
 	python? ( ${PYTHON_REQUIRED_USE} )
+	vim-pager? ( !minimal )
 "
 
 RDEPEND="
@@ -38,14 +40,12 @@ RDEPEND="
 		luajit? ( dev-lang/luajit:2= )
 		!luajit? ( dev-lang/lua:0[deprecated] )
 	)
-	!minimal? (
-		~app-editors/vim-core-${PV}
-		dev-util/ctags
-	)
+	!minimal? ( ~app-editors/vim-core-${PV} )
+	vim-pager? ( app-editors/vim-core[-minimal] )
 	perl? ( dev-lang/perl:= )
 	python? ( ${PYTHON_DEPS} )
 	racket? ( dev-scheme/racket )
-	ruby? ( || ( dev-lang/ruby:2.4 dev-lang/ruby:2.3 ) )
+	ruby? ( ${RUBY_DEPS} )
 	selinux? ( sys-libs/libselinux )
 	tcl? ( dev-lang/tcl:0= )
 	X? ( x11-libs/libXt )
@@ -109,7 +109,7 @@ src_prepare() {
 	# which isn't even in the source file being invalid, we'll do some trickery
 	# to make the error never occur. bug 66162 (02 October 2004 ciaranm)
 	find "${S}" -name '*.c' | while read c; do
-			echo >> "$c" || die "echo failed"
+	    echo >> "$c" || die "echo failed"
 	done
 
 	# conditionally make the manpager.sh script
@@ -174,7 +174,6 @@ src_configure() {
 		myconf=(
 			--with-features=tiny
 			--disable-nls
-			--disable-multibyte
 			--disable-acl
 			--enable-gui=no
 			--without-x
@@ -193,7 +192,6 @@ src_configure() {
 
 		myconf=(
 			--with-features=huge
-			--enable-multibyte
 			$(use_enable acl)
 			$(use_enable cscope)
 			$(use_enable gpm)
@@ -204,6 +202,8 @@ src_configure() {
 			$(use_enable perl perlinterp)
 			$(use_enable python pythoninterp)
 			$(use_enable python python3interp)
+			$(use_with python python-command $(type -P $(eselect python show --python2)))
+			$(use_with python python3-command $(type -P $(eselect python show --python3)))
 			$(use_enable racket mzschemeinterp)
 			$(use_enable ruby rubyinterp)
 			$(use_enable selinux)
@@ -286,6 +286,8 @@ src_install() {
 		fperms a+x ${vimfiles}/macros/manpager.sh
 	fi
 
+	domenu runtime/vim.desktop
+
 	newbashcomp "${FILESDIR}"/${PN}-completion ${PN}
 
 	# keep in sync with 'complete ... -F' list
@@ -298,6 +300,9 @@ pkg_postinst() {
 
 	# Call eselect vi update
 	eselect_vi_update
+
+	# update desktop file mime cache
+	xdg_desktop_database_update
 }
 
 pkg_postrm() {
@@ -306,4 +311,7 @@ pkg_postrm() {
 
 	# Call eselect vi update
 	eselect_vi_update
+
+	# update desktop file mime cache
+	xdg_desktop_database_update
 }
