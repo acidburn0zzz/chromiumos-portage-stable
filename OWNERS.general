@@ -1,0 +1,7 @@
+# Ebuild/eclass experts!
+allenwebb@google.com
+bmgordon@chromium.org
+chirantan@chromium.org
+manojgupta@chromium.org
+
+include chromiumos/chromite:OWNERS.build
