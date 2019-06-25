@@ -35,8 +35,14 @@ DEPEND="${RDEPEND}
 		e2fsprogs? ( sys-fs/e2fsprogs )
 	)"
 
+PATCHES=(
+	"${FILESDIR}/archive_read-fix-handling-of-sparse-files.patch"
+	"${FILESDIR}/archive_read_next_header2-clean-old-entry-entry-data.patch"
+)
+
 src_prepare() {
 	default
+	epatch "${PATCHES[@]}"
 	elibtoolize  # is required for Solaris sol2_ld linker fix
 }
 
