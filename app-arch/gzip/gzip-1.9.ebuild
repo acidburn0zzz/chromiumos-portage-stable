@@ -1,10 +1,9 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
-EAPI=5
+EAPI=6
 
-inherit eutils flag-o-matic
+inherit flag-o-matic
 
 DESCRIPTION="Standard GNU compressor"
 HOMEPAGE="https://www.gnu.org/software/gzip/"
@@ -19,18 +18,14 @@ IUSE="pic static"
 
 PATCHES=(
 	"${FILESDIR}/${PN}-1.3.8-install-symlinks.patch"
-	"${FILESDIR}/${PN}-1.4-asmv.patch"
+	"${FILESDIR}/${PN}-1.9-gnulib-glibc-2.28.patch"
 )
-
-src_prepare() {
-	epatch "${PATCHES[@]}"
-}
 
 src_configure() {
 	use static && append-flags -static
 	# avoid text relocation in gzip
 	use pic && export DEFS="NO_ASM"
-	econf
+	econf --disable-gcc-warnings #663928
 }
 
 src_install() {
@@ -40,6 +35,6 @@ src_install() {
 
 	# keep most things in /usr, just the fun stuff in /
 	dodir /bin
-	mv "${ED}"/usr/bin/{gunzip,gzip,uncompress,zcat} "${ED}"/bin/ || die
-	sed -e "s:${EPREFIX}/usr:${EPREFIX}:" -i "${ED}"/bin/gunzip || die
+	mv "${ED%/}"/usr/bin/{gunzip,gzip,uncompress,zcat} "${ED%/}"/bin/ || die
+	sed -e "s:${EPREFIX}/usr:${EPREFIX}:" -i "${ED%/}"/bin/gunzip || die
 }
