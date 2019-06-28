@@ -2,18 +2,18 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
+AUTOTOOLS_AUTO_DEPEND=no
 inherit autotools eutils libtool multilib toolchain-funcs multilib-minimal
 
 DESCRIPTION="Stream-oriented XML parser library"
 HOMEPAGE="https://libexpat.github.io/"
-SRC_URI="https://github.com/libexpat/libexpat/releases/download/R_${PV//\./_}/expat-${PV}.tar.bz2"
+SRC_URI="https://github.com/libexpat/libexpat/releases/download/R_${PV//\./_}/expat-${PV}.tar.xz"
 
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS="*"
 IUSE="elibc_FreeBSD examples static-libs unicode"
 DEPEND="unicode? ( ${AUTOTOOLS_DEPEND} )"
-RDEPEND=""
 
 DOCS=( README.md )
 
@@ -92,5 +92,5 @@ multilib_src_install_all() {
 		doins examples/*.c
 	fi
 
-	prune_libtool_files
+	find "${D}" -name '*.la' -type f -delete || die
 }
