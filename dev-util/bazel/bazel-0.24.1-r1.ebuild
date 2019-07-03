@@ -1,0 +1,1 @@
+bazel-0.24.1.ebuild
