@@ -24,6 +24,8 @@ IUSE="nls acl minimal"
 
 DEPEND="sys-devel/autoconf"
 PDEPEND="!minimal? ( app-vim/gentoo-syntax )"
+# ncurses is required for it to build [OVER-6733]
+DEPEND="${DEPEND} sys-libs/ncurses"
 
 S=${WORKDIR}/vim-${PV}
 
