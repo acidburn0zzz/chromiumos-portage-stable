@@ -1,9 +1,9 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/app-portage/esearch/esearch-1.3-r1.ebuild,v 1.12 2015/03/02 22:27:33 fuzzyray Exp $
 
-EAPI="5"
-PYTHON_COMPAT=(python{2_6,2_7,3_2,3_3,3_4})
+EAPI=5
+
+PYTHON_COMPAT=(python{2_7,3_4,3_5,3_6,3_7})
 PYTHON_REQ_USE="readline(+)"
 
 inherit distutils-r1
@@ -14,7 +14,7 @@ SRC_URI="mirror://github/fuzzyray/${PN}/${P}.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
-IUSE="linguas_fr linguas_it"
+IUSE="l10n_fr l10n_it"
 
 KEYWORDS="*"
 
@@ -41,13 +41,13 @@ python_install_all() {
 	distutils-r1_python_install_all
 	dodoc eupdatedb.cron || die "dodoc failed"
 
-	# Remove unused man pages according to the linguas flags
-	if ! use linguas_fr ; then
+	# Remove unused man pages according to the l10n flags
+	if ! use l10n_fr ; then
 		rm -rf "${ED}"/usr/share/man/fr \
 			|| die "rm failed to remove ${ED}/usr/share/man/fr"
 	fi
 
-	if ! use linguas_it ; then
+	if ! use l10n_it ; then
 		rm -rf "${ED}"/usr/share/man/it \
 			|| die "rm failed to remove ${ED}/usr/share/man/it"
 	fi
