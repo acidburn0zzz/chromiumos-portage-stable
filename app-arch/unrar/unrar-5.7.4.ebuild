@@ -1,11 +1,11 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI="6"
 
-inherit eutils flag-o-matic multilib toolchain-funcs
+inherit flag-o-matic multilib toolchain-funcs
 
-MY_PN=${PN}src
+MY_PN="${PN}src"
 
 DESCRIPTION="Uncompress rar files"
 HOMEPAGE="https://www.rarlab.com/rar_add.htm"
@@ -65,4 +65,6 @@ src_install() {
 	insinto /usr/include/libunrar${PV%.*.*}
 	doins *.hpp
 	dosym libunrar${PV%.*.*} /usr/include/libunrar
+
+	find "${ED}" -name "*.a" -delete || die
 }
