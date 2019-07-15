@@ -1,48 +1,61 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="5"
+EAPI=6
 
 inherit autotools flag-o-matic
 
 DESCRIPTION="A suite of tools for thin provisioning on Linux"
 HOMEPAGE="https://github.com/jthornber/thin-provisioning-tools"
-SRC_URI="https://github.com/jthornber/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
+
+if [[ ${PV} != *9999 ]]; then
+	SRC_URI="https://github.com/jthornber/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
+	KEYWORDS="*"
+else
+	inherit git-r3
+	EGIT_REPO_URI='https://github.com/jthornber/thin-provisioning-tools.git'
+fi
 
 LICENSE="GPL-3"
 SLOT="0"
-KEYWORDS="*"
 IUSE="static test"
 
 LIB_DEPEND="dev-libs/expat[static-libs(+)]
 	dev-libs/libaio[static-libs(+)]"
 RDEPEND="!static? ( ${LIB_DEPEND//\[static-libs(+)]} )"
-# || ( ) is a non-future proof workaround for Portage unefficiency wrt #477050
 DEPEND="${RDEPEND}
 	static? ( ${LIB_DEPEND} )
 	test? (
-		|| ( dev-lang/ruby:2.9 dev-lang/ruby:2.8 dev-lang/ruby:2.7 dev-lang/ruby:2.6 dev-lang/ruby:2.5 dev-lang/ruby:2.4 dev-lang/ruby:2.3 dev-lang/ruby:2.2 dev-lang/ruby:2.1 dev-lang/ruby:2.0 )
-		>=dev-cpp/gmock-1.6
-		>=dev-cpp/gtest-1.6
+		|| (
+			dev-lang/ruby:2.6
+			dev-lang/ruby:2.5
+			dev-lang/ruby:2.4
+		)
+		>=dev-cpp/gtest-1.8.0
 		dev-util/cucumber
 		dev-util/aruba
 	)
 	dev-libs/boost"
 
-PATCHES=( "${FILESDIR}"/${P}-build-fixes.patch )
+PATCHES=(
+	"${FILESDIR}"/${PN}-0.7.0-build-fixes.patch
+	"${FILESDIR}"/${PN}-0.8.5-libaio-0.3.112.patch
+)
 
 src_prepare() {
-	epatch "${PATCHES[@]}"
+	default
 	eautoreconf
 }
 
 src_configure() {
 	use static && append-ldflags -static
-	STRIP=true econf \
-		--prefix="${EPREFIX}"/ \
-		--bindir="${EPREFIX}"/sbin \
-		--with-optimisation='' \
+	local myeconfargs=(
+		--prefix="${EPREFIX}"/
+		--bindir="${EPREFIX}"/sbin
+		--with-optimisation=''
 		$(use_enable test testing)
+	)
+	STRIP=true econf "${myeconfargs[@]}"
 }
 
 src_compile() {
@@ -55,6 +68,6 @@ src_test() {
 }
 
 src_install() {
-	emake DESTDIR="${D}" DATADIR="${ED}/usr/share" install
+	emake DESTDIR="${D}" DATADIR="${D}/usr/share" install
 	dodoc README.md TODO.org
 }
