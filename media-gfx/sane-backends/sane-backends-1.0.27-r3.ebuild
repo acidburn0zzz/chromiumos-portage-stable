@@ -1,8 +1,8 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
-inherit flag-o-matic ltprune multilib-minimal systemd toolchain-funcs udev user
+inherit flag-o-matic multilib-minimal systemd toolchain-funcs udev user
 
 # gphoto and v4l are handled by their usual USE flags.
 # The pint backend was disabled because I could not get it to compile.
@@ -116,29 +116,13 @@ REQUIRED_USE="
 
 DESCRIPTION="Scanner Access Now Easy - Backends"
 HOMEPAGE="http://www.sane-project.org/"
-case ${PV} in
-9999)
-	EGIT_REPO_URI="git://anonscm.debian.org/sane/sane-backends.git"
-	inherit git-r3 autotools
-	;;
-*_pre*)
-	MY_P="${PN}-git${PV#*_pre}"
-	SRC_URI="http://www.sane-project.org/snapshots/${MY_P}.tar.gz
-		mirror://gentoo/${MY_P}.tar.gz"
-	S=${WORKDIR}/${MY_P}
-	;;
-*)
-	MY_P=${P}
-	FRS_ID="4224"
-	SRC_URI="https://alioth.debian.org/frs/download.php/file/${FRS_ID}/${P}.tar.gz"
-	;;
-esac
+MY_P="${P}"
+FRS_ID="4224"
+SRC_URI="https://alioth.debian.org/frs/download.php/file/${FRS_ID}/${P}.tar.gz"
 
 LICENSE="GPL-2 public-domain"
 SLOT="0"
-if [[ ${PV} != "9999" ]] ; then
-	KEYWORDS="*"
-fi
+KEYWORDS="*"
 
 RDEPEND="
 	sane_backends_dc210? ( >=virtual/jpeg-0-r2:0=[${MULTILIB_USEDEP}] )
@@ -157,7 +141,7 @@ RDEPEND="
 	)
 	v4l? ( >=media-libs/libv4l-0.9.5[${MULTILIB_USEDEP}] )
 	xinetd? ( sys-apps/xinetd )
-	snmp? ( net-analyzer/net-snmp )
+	snmp? ( net-analyzer/net-snmp:0= )
 	systemd? ( sys-apps/systemd:0= )
 	zeroconf? ( >=net-dns/avahi-0.6.31-r2[${MULTILIB_USEDEP}] )
 "
@@ -166,11 +150,6 @@ DEPEND="${RDEPEND}
 	v4l? ( sys-kernel/linux-headers )
 	>=sys-devel/gettext-0.18.1
 	>=virtual/pkgconfig-0-r1[${MULTILIB_USEDEP}]
-"
-
-# We now use new syntax construct (SUBSYSTEMS!="usb|usb_device)
-RDEPEND="${RDEPEND}
-	!<sys-fs/udev-114
 "
 
 MULTILIB_CHOST_TOOLS=(
@@ -195,10 +174,17 @@ src_prepare() {
 	eapply "${FILESDIR}"/${PN}-1.0.24-saned_pidfile_location.patch
 	eapply "${FILESDIR}"/${PN}-1.0.27-disable-usb-tests.patch
 
-	if [[ ${PV} == "9999" ]] ; then
-		mv configure.{in,ac} || die
-		AT_NOELIBTOOLIZE=yes eautoreconf
-	fi
+	# From Arch
+	eapply "${FILESDIR}"/${PN}-1.0.27-network.patch
+
+	# From Fedora
+	# Fix https://bugs.gentoo.org/635348
+	eapply "${FILESDIR}"/${PN}-1.0.27-canon-lide-100.patch
+	# Fix https://bugs.gentoo.org/653300
+	eapply "${FILESDIR}"/${PN}-1.0.27-revert-samsung.patch
+
+	# From Debian
+	eapply "${FILESDIR}"/${PN}-1.0.27-uninitialized-variable.patch
 
 	# Fix for "make check".  Upstream sometimes forgets to update this.
 	local ver=$(./configure --version | awk '{print $NF; exit 0}')
@@ -208,7 +194,7 @@ src_prepare() {
 }
 
 src_configure() {
-	append-flags -fno-strict-aliasing # bug?????
+	append-flags -fno-strict-aliasing # From Fedora
 
 	# if LINGUAS is set, just use the listed and supported localizations.
 	if [[ ${LINGUAS+set} == "set" ]]; then
@@ -249,10 +235,16 @@ multilib_src_configure() {
 	fi
 
 	# relative path must be used for tests to work properly
+	# All distributions pass --disable-locking because /var/lock/sane/ would be a world-writable directory
+	# --without-api-spec to not automagically depend on tons of stuff
+	# that break in many ways, bug #636202, #668232, #668350
+	# People can refer to the "Programmer's Documentation" at http://www.sane-project.org/docs.html
 	ECONF_SOURCE=${S} \
 	SANEI_JPEG="sanei_jpeg.o" SANEI_JPEG_LO="sanei_jpeg.lo" \
 	BACKENDS="${BACKENDS}" \
 	econf \
+		--disable-locking \
+		--without-api-spec \
 		$(use_with gphoto2) \
 		$(multilib_native_use_with systemd) \
 		$(use_with v4l) \
@@ -328,7 +320,8 @@ multilib_src_install_all() {
 	fi
 
 	dodoc NEWS AUTHORS ChangeLog* PROBLEMS README README.linux
-	prune_libtool_files --modules
+	find "${D}" -name '*.la' -delete || die
+
 	if use xinetd; then
 		insinto /etc/xinetd.d
 		doins "${FILESDIR}"/saned
@@ -344,6 +337,8 @@ pkg_postinst() {
 		elog "/etc/sane.d/saned.conf and /etc/hosts.allow"
 	fi
 
-	elog "If you are using a USB scanner, add all users who want"
-	elog "to access your scanner to the \"scanner\" group."
+	if ! use systemd; then
+		elog "If you are using a USB scanner, add all users who want"
+		elog "to access your scanner to the \"scanner\" group."
+	fi
 }
