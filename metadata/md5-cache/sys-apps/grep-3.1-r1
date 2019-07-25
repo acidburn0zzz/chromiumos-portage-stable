@@ -8,6 +8,6 @@ KEYWORDS=*
 LICENSE=GPL-3
 RDEPEND=!static? ( pcre? ( >=dev-libs/libpcre-7.8-r1 ) ) nls? ( virtual/libintl ) virtual/libiconv
 SLOT=0
-SRC_URI=mirror://gnu/grep/grep-3.0.tar.xz mirror://gentoo/grep-3.0.tar.xz
+SRC_URI=mirror://gnu/grep/grep-3.1.tar.xz mirror://gentoo/grep-3.1.tar.xz
 _eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	b2f01ad412baf81650c23fcf0975fa33	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607
-_md5_=2606123da0ff39e66c3d77072bcdeb96
+_md5_=47f15eedd8b4bf2bab0de6339fa8a1af
