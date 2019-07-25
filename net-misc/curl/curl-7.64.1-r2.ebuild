@@ -1,1 +1,0 @@
-curl-7.64.1.ebuild
