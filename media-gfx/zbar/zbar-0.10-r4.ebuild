@@ -14,6 +14,7 @@ LICENSE="LGPL-2.1"
 SLOT="0"
 KEYWORDS="*"
 IUSE="gtk imagemagick jpeg python qt4 static-libs +threads v4l X xv"
+REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 RDEPEND="gtk? ( dev-libs/glib:2 x11-libs/gtk+:2 )
 	imagemagick? (
@@ -23,7 +24,8 @@ RDEPEND="gtk? ( dev-libs/glib:2 x11-libs/gtk+:2 )
 	python? ( gtk? ( >=dev-python/pygtk-2 ) )
 	qt4? ( dev-qt/qtcore:4 dev-qt/qtgui:4 )
 	X? ( x11-libs/libXext
-		xv? ( x11-libs/libXv ) )"
+		xv? ( x11-libs/libXv ) )
+	${PYTHON_DEPS}"
 DEPEND="${RDEPEND}
 	virtual/pkgconfig"
 
