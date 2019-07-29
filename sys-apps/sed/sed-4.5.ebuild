@@ -1,9 +1,9 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="5"
+EAPI=6
 
-inherit eutils flag-o-matic toolchain-funcs
+inherit flag-o-matic toolchain-funcs
 
 DESCRIPTION="Super-useful stream editor"
 HOMEPAGE="http://sed.sourceforge.net/"
@@ -21,20 +21,20 @@ DEPEND="${RDEPEND}
 	nls? ( sys-devel/gettext )"
 
 src_bootstrap_sed() {
-	# make sure system-sed works #40786
-	export NO_SYS_SED=""
-	if ! type -p sed > /dev/null ; then
-		NO_SYS_SED="!!!"
-		./bootstrap.sh || die "couldnt bootstrap"
-		cp sed/sed "${T}"/ || die "couldnt copy"
-		export PATH="${PATH}:${T}"
-		emake clean
+	# make sure system-sed works #40786 #650052
+	if ! type -p sed > /dev/null || has_version 'sys-apps/sed[forced-sandbox]' ; then
+		mkdir -p "${T}/bootstrap"
+		printf '#!/bin/sh\nexec /bin/sed "$@"\n' > "${T}/bootstrap/sed" || die
+		chmod a+rx "${T}/bootstrap/sed"
+		PATH="${T}/bootstrap:${PATH}"
 	fi
 }
 
 src_prepare() {
 	# Don't use sed before bootstrap if we have to recover a broken host sed.
 	src_bootstrap_sed
+
+	default
 
 	if use forced-sandbox ; then
 		# Upstream doesn't want to add a configure flag for this.
