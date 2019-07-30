@@ -1,0 +1,14 @@
+BDEPEND=>=app-portage/elt-patches-20170815
+DEFINED_PHASES=configure install prepare
+DEPEND=selinux? ( sys-libs/libselinux ) elibc_musl? ( sys-libs/queue-standalone ) !<sys-devel/gettext-0.18.1.1-r3 || ( >=sys-devel/automake-1.16.1:1.16 >=sys-devel/automake-1.15.1:1.15 ) >=sys-devel/autoconf-2.69 >=sys-devel/libtool-2.4
+DESCRIPTION=Tools for Flash-Friendly File System (F2FS)
+EAPI=7
+HOMEPAGE=https://git.kernel.org/cgit/linux/kernel/git/jaegeuk/f2fs-tools.git/about/
+IUSE=selinux
+KEYWORDS=*
+LICENSE=GPL-2
+RDEPEND=selinux? ( sys-libs/libselinux ) elibc_musl? ( sys-libs/queue-standalone )
+SLOT=0/6
+SRC_URI=https://dev.gentoo.org/~zlogene/distfiles/sys-fs/f2fs-tools/f2fs-tools-1.12.0.tar.gz
+_eclasses_=autotools	d0e5375d47f4c809f406eb892e531513	libtool	f143db5a74ccd9ca28c1234deffede96	multilib	b2f01ad412baf81650c23fcf0975fa33	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607
+_md5_=1796fb2eaf8856ad5f068df8fae0c854
