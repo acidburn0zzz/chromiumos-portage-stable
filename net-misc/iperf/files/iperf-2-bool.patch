@@ -1,0 +1,23 @@
+iperf was defining bool to int which breaks compiling C++ files.
+Modified config.h to define bool to _Bool in C only.
+
+This has been reported upstream but hasn't been fixed yet:
+https://sourceforge.net/p/iperf/mailman/message/34860443/
+
+Signed-off-by: Zhizhou Yang zhizhouy@google.com
+
+diff --git a/config.h b/config.h
+index d9dae4d..f9d7525 100644
+--- a/config.h
++++ b/config.h
+@@ -316,7 +316,9 @@
+ /* #undef _REENTRANT */
+ 
+ /* */
++#ifndef __cplusplus
+-#define bool int
++#define bool _Bool
++#endif
+ 
+ /* Define to empty if `const' does not conform to ANSI C. */
+ /* #undef const */

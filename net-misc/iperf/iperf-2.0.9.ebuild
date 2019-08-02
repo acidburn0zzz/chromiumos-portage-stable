@@ -11,6 +11,7 @@ LICENSE="HPND"
 SLOT="2"
 KEYWORDS="*"
 IUSE="ipv6 threads debug"
+inherit eutils
 
 DOCS="INSTALL README"
 
@@ -19,6 +20,8 @@ src_configure() {
 		$(use_enable debug debuginfo) \
 		$(use_enable ipv6) \
 		$(use_enable threads)
+	# Modify config.h to use _Bool for C only.
+	epatch "${FILESDIR}"/${PN}-2-bool.patch
 }
 
 src_install() {
