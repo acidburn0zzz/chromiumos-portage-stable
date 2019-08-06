@@ -1,7 +1,5 @@
+# By default everyone may approve.
 *
-allenwebb@google.com
-bmgordon@chromium.org
-chirantan@chromium.org
-cjmcdonald@chromium.org
-manojgupta@chromium.org
-vapier@chromium.org
+
+# Set of domain experts available for consultation as a fallback.
+include OWNERS.general

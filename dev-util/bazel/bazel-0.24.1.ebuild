@@ -13,15 +13,15 @@ SRC_URI="https://github.com/bazelbuild/bazel/releases/download/${PV}/${P}-dist.z
 LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="*"
-IUSE="examples tools"
+IUSE="examples test tools"
 # strip corrupts the bazel binary
-RESTRICT="strip"
-RDEPEND="virtual/jdk:1.8"
+RESTRICT="strip test? ( network-sandbox ) !test? ( test )"
+RDEPEND=">=virtual/jdk-1.8:*"
 DEPEND="${RDEPEND}
-	app-arch/unzip"
+	app-arch/unzip
+	app-arch/zip"
 
 S="${WORKDIR}"
-QA_FLAGS_IGNORED="usr/bin/bazel"
 
 bazel-get-flags() {
 	local i fs=()
@@ -62,23 +62,10 @@ src_prepare() {
 	# R: /proc/24939/setgroups
 	# C: /usr/lib/systemd/systemd
 	addpredict /proc
-
-	# Use standalone strategy to deactivate the bazel sandbox, since it
-	# conflicts with FEATURES=sandbox.
-	cat > "${T}/bazelrc" <<-EOF || die
-		build --verbose_failures
-		build --spawn_strategy=standalone --genrule_strategy=standalone
-
-		build --distdir="${S}/derived/distdir/"
-		build --jobs=$(makeopts_jobs) $(bazel-get-flags)
-
-		test --verbose_failures --verbose_test_summary
-		test --spawn_strategy=standalone --genrule_strategy=standalone
-		EOF
 }
 
 src_compile() {
-	export EXTRA_BAZEL_ARGS="--jobs=$(makeopts_jobs) --host_javabase=@local_jdk//:jdk"
+	export EXTRA_BAZEL_ARGS="--jobs=$(makeopts_jobs) $(bazel-get-flags) --host_javabase=@local_jdk//:jdk"
 	VERBOSE=yes ./compile.sh || die
 
 	./scripts/generate_bash_completion.sh \
@@ -116,5 +103,6 @@ src_install() {
 		docinto tools
 		dodoc -r tools/*
 		docompress -x /usr/share/doc/${PF}/tools
+		docompress -x /usr/share/doc/${PF}/tools/build_defs/pkg/testdata
 	fi
 }

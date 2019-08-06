@@ -3,9 +3,8 @@
 # $Header: /var/cvsroot/gentoo-x86/media-gfx/zbar/zbar-0.10-r4.ebuild,v 1.1 2013/11/27 23:11:55 vapier Exp $
 
 EAPI=5
-PYTHON_DEPEND="2:2.6"
-
-inherit autotools eutils flag-o-matic python
+PYTHON_COMPAT=( python2_7 )
+inherit autotools eutils flag-o-matic python-single-r1
 
 DESCRIPTION="Library and tools for reading barcodes from images or video"
 HOMEPAGE="http://zbar.sourceforge.net/"
@@ -29,8 +28,7 @@ DEPEND="${RDEPEND}
 	virtual/pkgconfig"
 
 pkg_setup() {
-	python_set_active_version 2
-	python_pkg_setup
+	python-single-r1_pkg_setup
 }
 
 src_prepare() {
@@ -38,7 +36,7 @@ src_prepare() {
 	epatch "${FILESDIR}"/${P}-errors.patch
 	epatch "${FILESDIR}"/${P}-python-crash.patch
 
-	python_convert_shebangs 2 examples/upcrpc.py test/{barcodetest,test_pygtk}.py
+	python_fix_shebang examples/upcrpc.py test/{barcodetest,test_pygtk}.py
 
 	sed -i -e '/AM_INIT_AUTOMAKE/s:-Werror ::' configure.ac || die #423581
 	eautoreconf
