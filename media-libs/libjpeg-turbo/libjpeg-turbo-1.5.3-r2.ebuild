@@ -1,13 +1,12 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
-EAPI=5
+EAPI=6
 
-inherit libtool eutils java-pkg-opt-2 libtool toolchain-funcs multilib-minimal
+inherit autotools libtool ltprune java-pkg-opt-2 libtool toolchain-funcs multilib-minimal
 
 DESCRIPTION="MMX, SSE, and SSE2 SIMD accelerated JPEG library"
-HOMEPAGE="http://libjpeg-turbo.virtualgl.org/ http://sourceforge.net/projects/libjpeg-turbo/"
+HOMEPAGE="https://libjpeg-turbo.org/ https://sourceforge.net/projects/libjpeg-turbo/"
 SRC_URI="mirror://sourceforge/${PN}/${P}.tar.gz
 	mirror://gentoo/libjpeg8_8d-2.debian.tar.gz"
 
@@ -18,9 +17,7 @@ IUSE="java static-libs"
 
 ASM_DEPEND="|| ( dev-lang/nasm dev-lang/yasm )"
 COMMON_DEPEND="!media-libs/jpeg:0
-	!media-libs/jpeg:62
-	abi_x86_32? ( !<=app-emulation/emul-linux-x86-baselibs-20130224-r5
-		!app-emulation/emul-linux-x86-baselibs[-abi_x86_32(-)] )"
+	!media-libs/jpeg:62"
 RDEPEND="${COMMON_DEPEND}
 	java? ( >=virtual/jre-1.5 )"
 DEPEND="${COMMON_DEPEND}
@@ -31,14 +28,21 @@ DEPEND="${COMMON_DEPEND}
 	amd64-linux? ( ${ASM_DEPEND} )
 	x86-linux? ( ${ASM_DEPEND} )
 	x64-macos? ( ${ASM_DEPEND} )
+	x64-cygwin? ( ${ASM_DEPEND} )
 	java? ( >=virtual/jdk-1.5 )"
 
 MULTILIB_WRAPPED_HEADERS=( /usr/include/jconfig.h )
 
-src_prepare() {
-	epatch "${FILESDIR}"/${PN}-1.2.0-x32.patch #420239
+PATCHES=(
+	"${FILESDIR}"/${PN}-1.2.0-x32.patch #420239
+	"${FILESDIR}"/${P}-divzero_fix.patch #658624
+	"${FILESDIR}"/${P}-cve-2018-11813.patch
+)
 
-	elibtoolize
+src_prepare() {
+	default
+
+	eautoreconf
 
 	java-pkg-opt-2_src_prepare
 }
@@ -57,7 +61,7 @@ multilib_src_configure() {
 	[[ ${ABI} == "x32" ]] && myconf+=( --without-simd ) #420239
 
 	# Force /bin/bash until upstream generates a new version. #533902
-	CONFIG_SHELL=/bin/bash \
+	CONFIG_SHELL="${EPREFIX}"/bin/bash \
 	ECONF_SOURCE=${S} \
 	econf \
 		$(use_enable static-libs static) \
