@@ -1,0 +1,13 @@
+Fix for https://crbug.com/988024.
+
+--- src/util/profile/prof_parse.c
++++ src/util/profile/prof_parse.c
+@@ -50,6 +50,8 @@ static void parse_quoted_string(char *str)
+     for (to = from = str; *from && *from != '"'; to++, from++) {
+         if (*from == '\\') {
+             from++;
++            if (!*from)
++                break;
+             switch (*from) {
+             case 'n':
+                 *to = '\n';

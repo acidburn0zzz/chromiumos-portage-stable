@@ -58,6 +58,7 @@ src_prepare() {
 	eapply "${FILESDIR}/${PN}-1.12_warn_cflags.patch"
 	eapply -p2 "${FILESDIR}/${PN}-config_LDFLAGS.patch"
 	eapply "${FILESDIR}/${PN}-libressl-version-check.patch"
+	eapply "${FILESDIR}/${PN}-1.16_quoted_string_buffer_overflow.patch"
 
 	# Make sure we always use the system copies.
 	rm -rf util/{et,ss,verto}
