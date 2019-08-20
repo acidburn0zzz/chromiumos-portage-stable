@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI="6"
-PYTHON_COMPAT=( python{2_7,3_4,3_5,3_6,3_7} )
+PYTHON_COMPAT=( python{2_7,3_5,3_6,3_7} )
 
 inherit autotools eutils linux-info python-any-r1 systemd
 
@@ -26,7 +26,7 @@ fi
 
 LICENSE="GPL-3 LGPL-3 Apache-2.0"
 SLOT="0"
-IUSE="curl dbi debug doc elasticsearch +gcrypt grok gnutls jemalloc kafka kerberos kubernetes libressl mdblookup"
+IUSE="curl dbi debug doc elasticsearch +gcrypt gnutls jemalloc kafka kerberos kubernetes libressl mdblookup"
 IUSE+=" mongodb mysql normalize clickhouse omhttp omhttpfs omudpspoof openssl postgres"
 IUSE+=" rabbitmq redis relp rfc3195 rfc5424hmac snmp ssl systemd test usertools +uuid xxhash zeromq"
 RESTRICT="!test? ( test )"
@@ -39,7 +39,6 @@ RDEPEND="
 	dbi? ( >=dev-db/libdbi-0.8.3 )
 	elasticsearch? ( >=net-misc/curl-7.35.0 )
 	gcrypt? ( >=dev-libs/libgcrypt-1.5.3:= )
-	grok? ( >=dev-libs/grok-0.9.2 )
 	jemalloc? ( >=dev-libs/jemalloc-3.3.1:= )
 	kafka? ( >=dev-libs/librdkafka-0.9.0.99:= )
 	kerberos? ( virtual/krb5 )
@@ -143,6 +142,12 @@ src_unpack() {
 src_prepare() {
 	default
 
+	# https://github.com/rsyslog/rsyslog/issues/3626
+	sed -i \
+		-e '\|^#!/bin/bash$|a exit 77' \
+		tests/mmkubernetes-cache-expir*.sh \
+		|| die "Failed to disabled known test failure mmkubernetes-cache-expir*.sh"
+
 	eautoreconf
 }
 
@@ -224,7 +229,6 @@ src_configure() {
 		$(use_enable kubernetes mmkubernetes)
 		$(use_enable normalize mmnormalize)
 		$(use_enable mdblookup mmdblookup)
-		$(use_enable grok mmgrok)
 		$(use_enable omhttp)
 		$(use_enable omhttpfs)
 		$(use_enable omudpspoof)
