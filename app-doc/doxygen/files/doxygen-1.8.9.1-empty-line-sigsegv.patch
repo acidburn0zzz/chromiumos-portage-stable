@@ -15,6 +15,6 @@ Patch written by Thibaut Paumard <paumard@users.sourceforge.net>
 +    out.addChar('\0');
 +    return out.data();
 +  }
-   char *p=s.data();
+   const char *p=s.data();
    if (p)
    {
