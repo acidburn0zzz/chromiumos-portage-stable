@@ -1,12 +1,12 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=5
+EAPI=6
 
-inherit flag-o-matic toolchain-funcs eutils
+inherit flag-o-matic toolchain-funcs
 
 DESCRIPTION="DMI (Desktop Management Interface) table related utilities"
-HOMEPAGE="http://www.nongnu.org/dmidecode/"
+HOMEPAGE="https://www.nongnu.org/dmidecode/"
 SRC_URI="https://savannah.nongnu.org/download/${PN}/${P}.tar.xz"
 
 LICENSE="GPL-2"
@@ -18,6 +18,7 @@ RDEPEND="selinux? ( sec-policy/selinux-dmidecode )"
 DEPEND=""
 
 src_prepare() {
+	default
 	sed -i \
 		-e "/^prefix/s:/usr/local:${EPREFIX}/usr:" \
 		-e "/^docdir/s:dmidecode:${PF}:" \
