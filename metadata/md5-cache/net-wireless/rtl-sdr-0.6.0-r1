@@ -1,12 +1,12 @@
 DEFINED_PHASES=compile configure install postinst prepare test unpack
 DEPEND=virtual/libusb:1 sys-devel/make >=dev-util/cmake-2.8.12
 DESCRIPTION=turns your Realtek RTL2832 based DVB dongle into a SDR receiver
-EAPI=5
+EAPI=6
 HOMEPAGE=http://sdr.osmocom.org/trac/wiki/rtl-sdr
 KEYWORDS=*
 LICENSE=GPL-2
 RDEPEND=virtual/libusb:1
 SLOT=0
-SRC_URI=https://dev.gentoo.org/~zerochaos/distfiles/rtl-sdr-0.5.3_p20150730.tar.xz
+SRC_URI=https://github.com/steve-m/librtlsdr/archive/0.6.0.tar.gz -> rtl-sdr-0.6.0.tar.gz
 _eclasses_=cmake-utils	625ac0250848368bad285a1d1de242cf	estack	43ddf5aaffa7a8d0482df54d25a66a1f	eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	b2f01ad412baf81650c23fcf0975fa33	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607	versionator	26ca8a8bd95d6a74122c08ba98a4ee72
-_md5_=c9c4f294c00111bbfcaa13262a45f41a
+_md5_=ef8b77e8e06d22b943e34c9d3a29951c

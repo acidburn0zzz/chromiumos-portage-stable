@@ -1,8 +1,7 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
-EAPI=5
+EAPI=6
 
 inherit cmake-utils multilib
 
@@ -12,11 +11,12 @@ HOMEPAGE="http://sdr.osmocom.org/trac/wiki/rtl-sdr"
 if [[ ${PV} == 9999* ]]; then
 	inherit git-r3
 	SRC_URI=""
-	EGIT_REPO_URI="git://git.osmocom.org/${PN}.git"
+	EGIT_REPO_URI="https://git.osmocom.org/${PN}"
 	KEYWORDS="*"
 else
-	SRC_URI="https://dev.gentoo.org/~zerochaos/distfiles/${P}.tar.xz"
+	SRC_URI="https://github.com/steve-m/librtlsdr/archive/${PV}.tar.gz -> ${P}.tar.gz"
 	KEYWORDS="*"
+	S="${WORKDIR}"/librtlsdr-${PV}
 fi
 
 LICENSE="GPL-2"
@@ -25,10 +25,6 @@ IUSE=""
 
 DEPEND="virtual/libusb:1"
 RDEPEND="${DEPEND}"
-
-PATCHES=(
-	"${FILESDIR}"/${PN}-0.5.3-static-inline.patch
-)
 
 src_unpack() {
 	if [[ ${PV} == 9999* ]]; then
@@ -43,9 +39,15 @@ src_configure() {
 	mycmakeargs=(
 		-DINSTALL_UDEV_RULES=OFF
 		-DDETACH_KERNEL_DRIVER=ON
-		-DLIB_INSTALL_DIR=/usr/$(get_libdir)
+		-DLIB_INSTALL_DIR=$(get_libdir)
 	)
 	cmake-utils_src_configure
+}
+
+src_install() {
+	cmake-utils_src_install
+	newinitd "${FILESDIR}"/rtl_tcp.initd rtl_tcp
+	newconfd "${FILESDIR}"/rtl_tcp.confd rtl_tcp
 }
 
 pkg_postinst() {
