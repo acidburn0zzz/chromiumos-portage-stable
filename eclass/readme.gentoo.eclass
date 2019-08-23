@@ -1,22 +1,23 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/eclass/readme.gentoo.eclass,v 1.7 2013/05/24 18:05:27 pacho Exp $
 
-# @ECLASS: readme.gentoo
+# @ECLASS: readme.gentoo.eclass
 # @MAINTAINER:
 # Pacho Ramos <pacho@gentoo.org>
 # @AUTHOR:
 # Author: Pacho Ramos <pacho@gentoo.org>
-# @BLURB: An eclass for installing a README.gentoo doc file recording tips
-# shown via elog messages.
+# @SUPPORTED_EAPIS: 4 5
+# @BLURB: install a doc file shown via elog messages
 # @DESCRIPTION:
 # An eclass for installing a README.gentoo doc file recording tips
 # shown via elog messages. With this eclass, those elog messages will only be
 # shown at first package installation and a file for later reviewing will be
 # installed under /usr/share/doc/${PF}
+#
+# This eclass is DEPRECATED. Please use readme.gentoo-r1 instead.
 
-if [[ ${___ECLASS_ONCE_README_GENTOO} != "recur -_+^+_- spank" ]] ; then
-___ECLASS_ONCE_README_GENTOO="recur -_+^+_- spank"
+if [[ -z ${_README_GENTOO_ECLASS} ]]; then
+_README_GENTOO_ECLASS=1
 
 inherit eutils
 
@@ -28,13 +29,19 @@ case "${EAPI:-0}" in
 		# EAPI>=4 is required for REPLACING_VERSIONS preventing us
 		# from needing to export another pkg_preinst phase to save has_version
 		# result. Also relies on EAPI >=4 default src_install phase.
+		EXPORT_FUNCTIONS src_install pkg_postinst
+		;;
+	6)
+		die "Unsupported EAPI=${EAPI} for ${ECLASS}"
+		die "Please migrate to readme.gentoo-r1.eclass and note	that"
+		die "it stops to export any ebuild phases and, then, you will"
+		die "need to ensure readme.gentoo_create_doc is called in"
+		die "src_install and readme.gentoo_print_elog in pkg_postinst"
 		;;
 	*)
 		die "Unsupported EAPI=${EAPI} (unknown) for ${ECLASS}"
 		;;
 esac
-
-EXPORT_FUNCTIONS src_install pkg_postinst
 
 # @ECLASS-VARIABLE: DISABLE_AUTOFORMATTING
 # @DEFAULT_UNSET
@@ -47,6 +54,11 @@ EXPORT_FUNCTIONS src_install pkg_postinst
 # @DEFAULT_UNSET
 # @DESCRIPTION:
 # If non-empty this variable forces elog messages to be printed.
+
+# @ECLASS-VARIABLE: README_GENTOO_SUFFIX
+# @DESCRIPTION:
+# If you want to specify a suffix for README.gentoo file please export it.
+: ${README_GENTOO_SUFFIX:=""}
 
 # @FUNCTION: readme.gentoo_create_doc
 # @DESCRIPTION:
@@ -68,9 +80,9 @@ readme.gentoo_create_doc() {
 		fi
 		eshopts_pop
 	elif [[ -f "${FILESDIR}/README.gentoo-${SLOT%/*}" ]]; then
-		cp "${FILESDIR}/README.gentoo-${SLOT%/*}" "${T}"/README.gentoo
-	elif [[ -f "${FILESDIR}/README.gentoo" ]]; then
-		cp "${FILESDIR}/README.gentoo" "${T}"/README.gentoo
+		cp "${FILESDIR}/README.gentoo-${SLOT%/*}" "${T}"/README.gentoo || die
+	elif [[ -f "${FILESDIR}/README.gentoo${README_GENTOO_SUFFIX}" ]]; then
+		cp "${FILESDIR}/README.gentoo${README_GENTOO_SUFFIX}" "${T}"/README.gentoo || die
 	else
 		die "You are not specifying README.gentoo contents!"
 	fi
@@ -93,13 +105,16 @@ readme.gentoo_create_doc() {
 readme.gentoo_print_elog() {
 	debug-print-function ${FUNCNAME} "${@}"
 
+	eqawarn "${CATEGORY}/${PN} is using the deprecated readme.gentoo.eclass."
+	eqawarn "Please use readme.gentoo-r1 instead."
+
 	if [[ -z "${README_GENTOO_DOC_VALUE}" ]]; then
 		die "readme.gentoo_print_elog invoked without matching readme.gentoo_create_doc call!"
 	elif ! [[ -n "${REPLACING_VERSIONS}" ]] || [[ -n "${FORCE_PRINT_ELOG}" ]]; then
 		echo -e "${README_GENTOO_DOC_VALUE}" | while read -r ELINE; do elog "${ELINE}"; done
 		elog ""
 		elog "(Note: Above message is only printed the first time package is"
-		elog "installed. Please look at /usr/share/doc/${PF}/README.gentoo*"
+		elog "installed. Please look at ${EPREFIX}/usr/share/doc/${PF}/README.gentoo*"
 		elog "for future reference)"
 	fi
 }
