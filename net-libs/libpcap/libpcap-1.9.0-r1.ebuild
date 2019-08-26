@@ -1,4 +1,4 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -10,7 +10,7 @@ HOMEPAGE="
 	https://github.com/the-tcpdump-group/libpcap
 "
 SRC_URI="
-	https://github.com/the-tcpdump-group/${PN}/archive/${P}.tar.gz
+	https://github.com/the-tcpdump-group/${PN}/archive/${P/_}.tar.gz
 "
 
 LICENSE="BSD"
@@ -30,15 +30,13 @@ DEPEND="
 	dbus? ( virtual/pkgconfig[${MULTILIB_USEDEP}] )
 "
 
-S=${WORKDIR}/${PN}-${P}
+S=${WORKDIR}/${PN}-${P/_}
 
 PATCHES=(
 	"${FILESDIR}"/${PN}-1.6.1-prefix-solaris.patch
-	"${FILESDIR}"/${PN}-1.8.1-cross-compile.patch
 	"${FILESDIR}"/${PN}-1.8.1-darwin.patch
-	"${FILESDIR}"/${PN}-1.8.1-libnl.patch
 	"${FILESDIR}"/${PN}-1.8.1-usbmon.patch
-	"${FILESDIR}"/${PN}-9999-parallel.patch
+	"${FILESDIR}"/${PN}-1.9.0-pcap-config-includedir.patch
 )
 
 src_prepare() {
@@ -64,7 +62,7 @@ multilib_src_compile() {
 }
 
 multilib_src_install_all() {
-	dodoc CREDITS CHANGES VERSION TODO README{,.dag,.linux,.macosx,.septel}
+	dodoc CREDITS CHANGES VERSION TODO README.* doc/README.*
 
 	# remove static libraries (--disable-static does not work)
 	if ! use static-libs; then
@@ -75,6 +73,6 @@ multilib_src_install_all() {
 	# We need this to build pppd on G/FBSD systems
 	if [[ "${USERLAND}" == "BSD" ]]; then
 		insinto /usr/include
-		doins pcap-int.h
+		doins pcap-int.h portability.h
 	fi
 }
