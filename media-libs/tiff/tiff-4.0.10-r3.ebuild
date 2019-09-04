@@ -1,4 +1,4 @@
-# Copyright 1999-2018 Gentoo Authors
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -7,8 +7,7 @@ inherit autotools libtool multilib-minimal
 
 DESCRIPTION="Tag Image File Format (TIFF) library"
 HOMEPAGE="http://libtiff.maptools.org"
-SRC_URI="http://download.osgeo.org/libtiff/${P}.tar.gz
-	ftp://ftp.remotesensing.org/pub/libtiff/${P}.tar.gz"
+SRC_URI="https://download.osgeo.org/libtiff/${P}.tar.gz"
 
 LICENSE="libtiff"
 SLOT="0"
@@ -28,11 +27,10 @@ DEPEND="${RDEPEND}"
 REQUIRED_USE="test? ( jpeg )" #483132
 
 PATCHES=(
-	"${FILESDIR}"/${PN}-4.0.7-pdfium-0006-HeapBufferOverflow-ChopUpSingleUncompressedStrip.patch
-	"${FILESDIR}"/${PN}-4.0.7-pdfium-0008-HeapBufferOverflow-ChopUpSingleUncompressedStrip.patch
-	"${FILESDIR}"/${P}-CVE-2018-17000-tif_dirwrite-null-dereference.patch
-	"${FILESDIR}"/${P}-CVE-2019-6128-pal2rgb-leak.patch
-	"${FILESDIR}"/${P}-CVE-2019-7663-tiffcpIntegerOverflow.patch
+	"${FILESDIR}"/${PN}-4.0.10-CVE-2018-17000-tif_dirwrite-null-dereference.patch
+	"${FILESDIR}"/${PN}-4.0.10-CVE-2019-6128-pal2rgb-leak.patch
+	"${FILESDIR}"/${PN}-4.0.10-CVE-2019-7663-tiffcpIntegerOverflow.patch
+	"${FILESDIR}"/${P}-CVE-2019-14973-fix-integer-overflow.patch
 )
 
 MULTILIB_WRAPPED_HEADERS=(
