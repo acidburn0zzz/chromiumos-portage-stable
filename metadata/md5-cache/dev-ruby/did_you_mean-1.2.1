@@ -1,0 +1,14 @@
+DEFINED_PHASES=compile configure install prepare setup test unpack
+DEPEND=ruby_targets_ruby25? ( dev-lang/ruby:2.5 ) ruby_targets_ruby25? ( test? ( dev-ruby/rake[ruby_targets_ruby25] ) ) ruby_targets_ruby25? ( virtual/rubygems[ruby_targets_ruby25] ) test? ( ruby_targets_ruby25? ( virtual/rubygems[ruby_targets_ruby25] ) )
+DESCRIPTION='did you mean?'experience in Ruby
+EAPI=6
+HOMEPAGE=https://github.com/yuki24/did_you_mean
+IUSE=ruby_targets_ruby25 test test
+KEYWORDS=*
+LICENSE=MIT
+RDEPEND=ruby_targets_ruby25? ( dev-lang/ruby:2.5 ) ruby_targets_ruby25? ( virtual/rubygems[ruby_targets_ruby25] )
+REQUIRED_USE=|| ( ruby_targets_ruby25 )
+SLOT=2.5
+SRC_URI=mirror://rubygems/did_you_mean-1.2.1.gem
+_eclasses_=estack	43ddf5aaffa7a8d0482df54d25a66a1f	multilib	b2f01ad412baf81650c23fcf0975fa33	ruby-fakegem	d4f8591e9b20b106327e9d143eb13da5	ruby-ng	a28f4a400304e633468f10ad1b9e2f6e	ruby-utils	5b782a86f95c84466cdb53f8c8a8be37	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607
+_md5_=4f378dd4185fdf8804ad6a1cd9c353b5
