@@ -1,0 +1,14 @@
+DEFINED_PHASES=compile configure install prepare setup test unpack
+DEPEND=cuda? ( dev-util/nvidia-cuda-toolkit ) doc? ( app-doc/doxygen[dot,latex] ) test? ( dev-libs/gmp:0 dev-libs/mpfr:0 media-libs/freeglut media-libs/glew sci-libs/adolc[sparse] sci-libs/cholmod sci-libs/fftw:3.0 sci-libs/pastix sci-libs/umfpack sci-libs/scotch sci-libs/spqr sci-libs/superlu virtual/opengl virtual/pkgconfig ) sys-devel/make >=dev-util/cmake-2.8.12 test? ( virtual/fortran )
+DESCRIPTION=C++ template library for linear algebra
+EAPI=6
+HOMEPAGE=http://eigen.tuxfamily.org/
+IUSE=altivec c++11 cuda debug doc neon openmp test
+KEYWORDS=*
+LICENSE=MPL-2.0
+RDEPEND=!dev-cpp/eigen:0
+RESTRICT=!test? ( test )
+SLOT=3
+SRC_URI=https://bitbucket.org/eigen/eigen/get/3.3.7.tar.bz2 -> eigen-3.3.7.tar.bz2
+_eclasses_=cmake-utils	625ac0250848368bad285a1d1de242cf	cuda	bb861e5221b7272ac90c2f12791c1e66	eapi7-ver	756b3f27d8e46131d5cf3c51bd876446	estack	43ddf5aaffa7a8d0482df54d25a66a1f	eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	fortran-2	f75a2d9321053acf424991e805f32ede	multilib	b2f01ad412baf81650c23fcf0975fa33	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607	versionator	26ca8a8bd95d6a74122c08ba98a4ee72
+_md5_=b976d2297fc996b0213b1a4932674ba5

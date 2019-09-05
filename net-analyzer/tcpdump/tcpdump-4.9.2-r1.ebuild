@@ -1,27 +1,31 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/net-analyzer/tcpdump/tcpdump-4.5.1-r1.ebuild,v 1.2 2013/12/06 06:33:37 radhermit Exp $
 
-EAPI=5
-
-AUTOTOOLS_AUTO_DEPEND="no" # Only cross-compiling
-inherit autotools eutils flag-o-matic toolchain-funcs user
+EAPI=6
+inherit autotools flag-o-matic toolchain-funcs user
 
 DESCRIPTION="A Tool for network monitoring and data acquisition"
-HOMEPAGE="http://www.tcpdump.org/"
-SRC_URI="http://www.tcpdump.org/release/${P}.tar.gz
-		http://www.jp.tcpdump.org/release/${P}.tar.gz"
+HOMEPAGE="
+	http://www.tcpdump.org/
+	https://github.com/the-tcpdump-group/tcpdump
+"
+SRC_URI="
+	http://www.tcpdump.org/release/${P}.tar.gz
+"
 
 LICENSE="BSD"
 SLOT="0"
 KEYWORDS="*"
-IUSE="+drop-root smi ssl ipv6 -samba suid test"
+IUSE="+drop-root libressl smi ssl samba suid test"
 
 RDEPEND="
 	drop-root? ( sys-libs/libcap-ng )
 	net-libs/libpcap
 	smi? ( net-libs/libsmi )
-	ssl? ( >=dev-libs/openssl-0.9.6m )
+	ssl? (
+		!libressl? ( >=dev-libs/openssl-0.9.6m:0= )
+		libressl? ( dev-libs/libressl:= )
+	)
 "
 DEPEND="
 	${RDEPEND}
@@ -31,20 +35,11 @@ DEPEND="
 		dev-lang/perl
 	)
 "
+PATCHES=(
+	"${FILESDIR}"/${PN}-4.9.2-includedir.patch
+)
 
 pkg_setup() {
-	if use samba ; then
-		ewarn
-		ewarn "CAUTION !!! CAUTION !!! CAUTION"
-		ewarn
-		ewarn "You're about to compile tcpdump with samba printing support"
-		ewarn "Upstream tags it with:"
-		ewarn "WARNING: The SMB printer may have exploitable buffer overflows!!!"
-		ewarn "So think twice whether this is fine with you"
-		ewarn
-		ewarn "CAUTION !!! CAUTION !!! CAUTION"
-		ewarn
-	fi
 	if use drop-root || use suid; then
 		enewgroup tcpdump
 		enewuser tcpdump -1 -1 -1 tcpdump
@@ -52,24 +47,25 @@ pkg_setup() {
 }
 
 src_prepare() {
-	sed -i aclocal.m4 -e 's|\"-O2\"|\"\"|g' || die
-	eautoconf
+	default
+
+	mv aclocal.m4 acinclude.m4 || die
+
+	eautoreconf
+
+	sed -i -e '/^eapon1/d;' tests/TESTLIST || die
+
+	# bug 630394
+	sed -i -e '/^nbns-valgrind/d' tests/TESTLIST || die
 }
+
 src_configure() {
-	# tcpdump needs some optimization. see bug #108391
-	# but do not replace -Os
-	filter-flags -O[0-9]
-	has -O? ${CFLAGS} || append-cflags -O2
-
-	filter-flags -finline-functions
-
 	if use drop-root; then
 		append-cppflags -DHAVE_CAP_NG_H
 		export LIBS=$( $(tc-getPKG_CONFIG) --libs libcap-ng )
 	fi
 
 	econf \
-		$(use_enable ipv6) \
 		$(use_enable samba smb) \
 		$(use_with drop-root chroot '') \
 		$(use_with smi) \
@@ -79,7 +75,6 @@ src_configure() {
 
 src_test() {
 	if [[ ${EUID} -ne 0 ]] || ! use drop-root; then
-		sed -i '/^\(espudp1\|eapon1\)/d;' -i tests/TESTLIST
 		emake check
 	else
 		ewarn "If you want to run the test suite, make sure you either"
