@@ -1,21 +1,23 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
-EAPI=5
+EAPI=6
+
 PYTHON_COMPAT=( python2_7 pypy )
+
 inherit distutils-r1
 
 DESCRIPTION="Backport of the concurrent.futures package from Python 3.2"
-HOMEPAGE="https://code.google.com/p/pythonfutures  https://pypi.python.org/pypi/futures"
+HOMEPAGE="https://pypi.org/project/futures/"
 SRC_URI="mirror://pypi/${PN:0:1}/${PN}/${P}.tar.gz"
 
-LICENSE="BSD"
+LICENSE="PSF-2"
 SLOT="0"
 KEYWORDS="*"
 IUSE="doc"
 
-DEPEND="dev-python/setuptools[${PYTHON_USEDEP}]
+DEPEND="
+	dev-python/setuptools[${PYTHON_USEDEP}]
 	doc? ( dev-python/sphinx[${PYTHON_USEDEP}] )"
 
 python_compile_all() {
@@ -23,12 +25,6 @@ python_compile_all() {
 }
 
 python_test() {
-	# tests that fail under pypy
-	# https://code.google.com/p/pythonfutures/issues/detail?id=27
-	if [[ "${EPYTHON}" == pypy ]]; then
-		sed -e 's:test_del_shutdown:_&:g' \
-			-e 's:test_repr:_&:' -i test_futures.py || die
-	fi
 	"${PYTHON}" test_futures.py || die "Tests fail with ${EPYTHON}"
 }
 
