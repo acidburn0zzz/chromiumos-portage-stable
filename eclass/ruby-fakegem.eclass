@@ -1,6 +1,5 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/eclass/ruby-fakegem.eclass,v 1.44 2014/12/28 10:13:18 graaff Exp $
 
 # @ECLASS: ruby-fakegem.eclass
 # @MAINTAINER:
@@ -8,6 +7,8 @@
 # @AUTHOR:
 # Author: Diego E. Pettenò <flameeyes@gentoo.org>
 # Author: Alex Legler <a3li@gentoo.org>
+# Author: Hans de Graaff <graaff@gentoo.org>
+# @SUPPORTED_EAPIS: 4 5 6 7
 # @BLURB: An eclass for installing Ruby packages to behave like RubyGems.
 # @DESCRIPTION:
 # This eclass allows to install arbitrary Ruby libraries (including Gems),
@@ -18,17 +19,19 @@ inherit ruby-ng
 # @ECLASS-VARIABLE: RUBY_FAKEGEM_NAME
 # @DESCRIPTION:
 # Sets the Gem name for the generated fake gemspec.
-# RUBY_FAKEGEM_NAME="${PN}"
+# This variable MUST be set before inheriting the eclass.
+RUBY_FAKEGEM_NAME="${RUBY_FAKEGEM_NAME:-${PN}}"
 
 # @ECLASS-VARIABLE: RUBY_FAKEGEM_VERSION
 # @DESCRIPTION:
 # Sets the Gem version for the generated fake gemspec.
-# RUBY_FAKEGEM_VERSION="${PV}"
+# This variable MUST be set before inheriting the eclass.
+RUBY_FAKEGEM_VERSION="${RUBY_FAKEGEM_VERSION:-${PV/_pre/.pre}}"
 
 # @ECLASS-VARIABLE: RUBY_FAKEGEM_TASK_DOC
 # @DESCRIPTION:
 # Specify the rake(1) task to run to generate documentation.
-# RUBY_FAKEGEM_TASK_DOC="rdoc"
+RUBY_FAKEGEM_TASK_DOC="${RUBY_FAKEGEM_TASK_DOC-rdoc}"
 
 # @ECLASS-VARIABLE: RUBY_FAKEGEM_RECIPE_TEST
 # @DESCRIPTION:
@@ -37,15 +40,15 @@ inherit ruby-ng
 #  - rspec (calls ruby-ng_rspec, adds dev-ruby/rspec:2 to the dependencies)
 #  - rspec3 (calls ruby-ng_rspec, adds dev-ruby/rspec:3 to the dependencies)
 #  - cucumber (calls ruby-ng_cucumber, adds dev-util/cucumber to the
-#    dependencies; does not work on JRuby).
+#    dependencies)
 #  - none
-# RUBY_FAKEGEM_RECIPE_TEST="rake"
+RUBY_FAKEGEM_RECIPE_TEST="${RUBY_FAKEGEM_RECIPE_TEST-rake}"
 
 # @ECLASS-VARIABLE: RUBY_FAKEGEM_TASK_TEST
 # @DESCRIPTION:
 # Specify the rake(1) task used for executing tests. Only valid
 # if RUBY_FAKEGEM_RECIPE_TEST is set to "rake" (the default).
-# RUBY_FAKEGEM_TASK_TEST="test"
+RUBY_FAKEGEM_TASK_TEST="${RUBY_FAKEGEM_TASK_TEST-test}"
 
 # @ECLASS-VARIABLE: RUBY_FAKEGEM_RECIPE_DOC
 # @DESCRIPTION:
@@ -54,61 +57,75 @@ inherit ruby-ng
 #  - rdoc (calls `rdoc-2`, adds dev-ruby/rdoc to the dependencies);
 #  - yard (calls `yard`, adds dev-ruby/yard to the dependencies);
 #  - none
-# RUBY_FAKEGEM_RECIPE_DOC="rake"
+case ${EAPI} in
+	4|5|6)
+		RUBY_FAKEGEM_RECIPE_DOC="${RUBY_FAKEGEM_RECIPE_DOC-rake}"
+		;;
+	*)
+		RUBY_FAKEGEM_RECIPE_DOC="${RUBY_FAKEGEM_RECIPE_DOC-rdoc}"
+		;;
+esac
 
 # @ECLASS-VARIABLE: RUBY_FAKEGEM_DOCDIR
+# @DEFAULT_UNSET
 # @DESCRIPTION:
 # Specify the directory under which the documentation is built;
 # if empty no documentation will be installed automatically.
 # Note: if RUBY_FAKEGEM_RECIPE_DOC is set to `rdoc`, this variable is
 # hardwired to `doc`.
-# RUBY_FAKEGEM_DOCDIR=""
 
 # @ECLASS-VARIABLE: RUBY_FAKEGEM_EXTRADOC
+# @DEFAULT_UNSET
 # @DESCRIPTION:
 # Extra documentation to install (readme, changelogs, …).
-# RUBY_FAKEGEM_EXTRADOC=""
 
 # @ECLASS-VARIABLE: RUBY_FAKEGEM_DOC_SOURCES
 # @DESCRIPTION:
 # Allow settings defined sources to scan for documentation.
 # This only applies if RUBY_FAKEGEM_DOC_TASK is set to `rdoc`.
-# RUBY_FAKEGEM_DOC_SOURCES="lib"
+RUBY_FAKEGEM_DOC_SOURCES="${RUBY_FAKEGEM_DOC_SOURCES-lib}"
 
 # @ECLASS-VARIABLE: RUBY_FAKEGEM_BINWRAP
 # @DESCRIPTION:
-# Binaries to wrap around (relative to the bin/ directory)
-# RUBY_FAKEGEM_BINWRAP="*"
+# Binaries to wrap around (relative to the RUBY_FAKEGEM_BINDIR directory)
+RUBY_FAKEGEM_BINWRAP="${RUBY_FAKEGEM_BINWRAP-*}"
+
+# @ECLASS-VARIABLE: RUBY_FAKEGEM_BINDIR
+# @DESCRIPTION:
+# Path that contains binaries to be binwrapped. Equivalent to the
+# gemspec bindir option.
+RUBY_FAKEGEM_BINDIR="${RUBY_FAKEGEM_BINDIR-bin}"
 
 # @ECLASS-VARIABLE: RUBY_FAKEGEM_REQUIRE_PATHS
+# @DEFAULT_UNSET
 # @DESCRIPTION:
 # Extra require paths (beside lib) to add to the specification
-# RUBY_FAKEGEM_REQUIRE_PATHS=""
 
 # @ECLASS-VARIABLE: RUBY_FAKEGEM_GEMSPEC
+# @DEFAULT_UNSET
 # @DESCRIPTION:
 # Filename of .gemspec file to install instead of generating a generic one.
-# RUBY_FAKEGEM_GEMSPEC=""
 
 # @ECLASS-VARIABLE: RUBY_FAKEGEM_EXTRAINSTALL
+# @DEFAULT_UNSET
 # @DESCRIPTION:
 # List of files and directories relative to the top directory that also
 # get installed. Some gems provide extra files such as version information,
 # Rails generators, or data that needs to be installed as well.
-# RUBY_FAKEGEM_EXTRAINSTALL=""
 
-RUBY_FAKEGEM_NAME="${RUBY_FAKEGEM_NAME:-${PN}}"
-RUBY_FAKEGEM_VERSION="${RUBY_FAKEGEM_VERSION:-${PV/_pre/.pre}}"
+case "${EAPI:-0}" in
+	0|1|2|3)
+		die "Unsupported EAPI=${EAPI} (too old) for ruby-fakegem.eclass" ;;
+	4|5|6|7)
+		;;
+	*)
+		die "Unsupported EAPI=${EAPI} (unknown) for ${ECLASS}"
+		;;
+esac
+
+
 RUBY_FAKEGEM_SUFFIX="${RUBY_FAKEGEM_SUFFIX:-}"
 
-RUBY_FAKEGEM_RECIPE_DOC="${RUBY_FAKEGEM_RECIPE_DOC-rake}"
-RUBY_FAKEGEM_TASK_DOC="${RUBY_FAKEGEM_TASK_DOC-rdoc}"
-RUBY_FAKEGEM_DOC_SOURCES="${RUBY_FAKEGEM_DOC_SOURCES-lib}"
-
-RUBY_FAKEGEM_RECIPE_TEST="${RUBY_FAKEGEM_RECIPE_TEST-rake}"
-RUBY_FAKEGEM_TASK_TEST="${RUBY_FAKEGEM_TASK_TEST-test}"
-
-RUBY_FAKEGEM_BINWRAP="${RUBY_FAKEGEM_BINWRAP-*}"
 
 [[ ${RUBY_FAKEGEM_TASK_DOC} == "" ]] && RUBY_FAKEGEM_RECIPE_DOC="none"
 
@@ -152,10 +169,7 @@ case ${RUBY_FAKEGEM_RECIPE_TEST} in
 		;;
 	cucumber)
 		IUSE+=" test"
-		# Unfortunately as of August 2012, cucumber is not supported on
-		# JRuby.  We work it around here to avoid repeating the same
-		# code over and over again.
-		USE_RUBY="${USE_RUBY/jruby/}" ruby_add_bdepend "test? ( dev-util/cucumber )"
+		ruby_add_bdepend "test? ( dev-util/cucumber )"
 		;;
 	*)
 		RUBY_FAKEGEM_RECIPE_TEST="none"
@@ -166,6 +180,13 @@ SRC_URI="mirror://rubygems/${RUBY_FAKEGEM_NAME}-${RUBY_FAKEGEM_VERSION}${RUBY_FA
 
 ruby_add_bdepend virtual/rubygems
 ruby_add_rdepend virtual/rubygems
+case ${EAPI} in
+	4|5|6)
+		;;
+	*)
+		ruby_add_depend virtual/rubygems
+		;;
+esac
 
 # @FUNCTION: ruby_fakegem_gemsdir
 # @RETURN: Returns the gem data directory
@@ -173,8 +194,6 @@ ruby_add_rdepend virtual/rubygems
 # This function returns the gems data directory for the ruby
 # implementation in question.
 ruby_fakegem_gemsdir() {
-	has "${EAPI}" 2 && ! use prefix && EPREFIX=
-
 	local _gemsitedir=$(ruby_rbconfig_value 'sitelibdir')
 	_gemsitedir=${_gemsitedir//site_ruby/gems}
 	_gemsitedir=${_gemsitedir#${EPREFIX}}
@@ -198,7 +217,7 @@ ruby_fakegem_doins() {
 	) || die "failed $0 $@"
 }
 
-# @FUNCTION: ruby_fakegem_newsins()
+# @FUNCTION: ruby_fakegem_newsins
 # @USAGE: file filename
 # @DESCRIPTION:
 # Installs the specified file into the gems directory using the provided filename.
@@ -259,14 +278,7 @@ ruby_fakegem_gemspec_gemspec() {
 # the metadata distributed by the gem itself. This is similar to how
 # rubygems creates an installation from a .gem file.
 ruby_fakegem_metadata_gemspec() {
-	case ${RUBY} in
-		*jruby)
-			${RUBY} -r yaml -e "puts Gem::Specification.from_yaml(File::open('$1').read).to_ruby" > $2
-				;;
-		*)
-			${RUBY} -r yaml -e "puts Gem::Specification.from_yaml(File::open('$1', :encoding => 'UTF-8').read).to_ruby" > $2
-				;;
-	esac
+	${RUBY} -r yaml -e "puts Gem::Specification.from_yaml(File::open('$1', :encoding => 'UTF-8').read).to_ruby" > $2
 }
 
 # @FUNCTION: ruby_fakegem_genspec
@@ -283,6 +295,15 @@ ruby_fakegem_metadata_gemspec() {
 # See RUBY_FAKEGEM_NAME and RUBY_FAKEGEM_VERSION for setting name and version.
 # See RUBY_FAKEGEM_REQUIRE_PATHS for setting extra require paths.
 ruby_fakegem_genspec() {
+	case ${EAPI} in
+		4|5|6) ;;
+		*)
+			eqawarn "Generating generic fallback gemspec *without* dependencies"
+			eqawarn "This will only work when there are no runtime dependencies"
+			eqawarn "Set RUBY_FAKEGEM_GEMSPEC to generate a proper specifications file"
+			;;
+	esac
+
 	local required_paths="'lib'"
 	for path in ${RUBY_FAKEGEM_REQUIRE_PATHS}; do
 		required_paths="${required_paths}, '${path}'"
@@ -294,7 +315,7 @@ ruby_fakegem_genspec() {
 	# so better taking this into consideration.
 	local quoted_description=${DESCRIPTION//\"/\\\"}
 	cat - > $1 <<EOF
-# generated by ruby-fakegem.eclass $Revision: 1.44 $
+# generated by ruby-fakegem.eclass
 Gem::Specification.new do |s|
   s.name = "${RUBY_FAKEGEM_NAME}"
   s.version = "${RUBY_FAKEGEM_VERSION}"
@@ -317,7 +338,7 @@ ruby_fakegem_binwrapper() {
 		local gembinary=$1
 		local newbinary=${2:-/usr/bin/$gembinary}
 		local content=$3
-		local relativegembinary=${RUBY_FAKEGEM_NAME}-${RUBY_FAKEGEM_VERSION}/bin/${gembinary}
+		local relativegembinary=${RUBY_FAKEGEM_NAME}-${RUBY_FAKEGEM_VERSION}/${RUBY_FAKEGEM_BINDIR}/${gembinary}
 		local binpath=$(dirname $newbinary)
 		[[ ${binpath} = . ]] && binpath=/usr/bin
 
@@ -325,10 +346,9 @@ ruby_fakegem_binwrapper() {
 		# one or multiple implementations; if we're installing for a
 		# *single* implementation, no need to use “/usr/bin/env ruby”
 		# in the shebang, and we can actually avoid errors when
-		# calling the script by default (see for instance the
-		# JRuby-specific commands).
+		# calling the script by default.
 		local rubycmd=
-		for implementation in ${USE_RUBY}; do
+		for implementation in $(_ruby_get_all_impls); do
 			# ignore non-enabled implementations
 			use ruby_targets_${implementation} || continue
 			if [ -z $rubycmd ]; then
@@ -347,7 +367,7 @@ ruby_fakegem_binwrapper() {
 #!${rubycmd}
 # This is a simplified version of the RubyGems wrapper
 #
-# Generated by ruby-fakegem.eclass $Revision: 1.44 $
+# Generated by ruby-fakegem.eclass
 
 require 'rubygems'
 
@@ -373,6 +393,7 @@ all_fakegem_compile() {
 				;;
 			rdoc)
 				rdoc ${RUBY_FAKEGEM_DOC_SOURCES} || die "failed to (re)build documentation"
+				rm -f doc/js/*.gz || die "failed to remove duplicated compressed javascript files"
 				;;
 			yard)
 				yard doc ${RUBY_FAKEGEM_DOC_SOURCES} || die "failed to (re)build documentation"
@@ -404,13 +425,13 @@ all_ruby_unpack() {
 				eend $?
 
 				mkdir "${S}"
-				pushd "${S}" &>/dev/null
+				pushd "${S}" &>/dev/null || die
 
 				ebegin "Unpacking data.tar.gz"
 				tar -mxf "${my_WORKDIR}"/data.tar.gz || die
 				eend $?
 
-				popd &>/dev/null
+				popd &>/dev/null || die
 				;;
 			*.patch.bz2)
 				# We apply the patches with RUBY_PATCHES directly from DISTDIR,
@@ -473,7 +494,7 @@ each_fakegem_install() {
 	ruby_fakegem_install_gemspec
 
 	local _gemlibdirs="${RUBY_FAKEGEM_EXTRAINSTALL}"
-	for directory in bin lib; do
+	for directory in "${RUBY_FAKEGEM_BINDIR}" lib; do
 		[[ -d ${directory} ]] && _gemlibdirs="${_gemlibdirs} ${directory}"
 	done
 
@@ -496,9 +517,9 @@ all_fakegem_install() {
 		for dir in ${RUBY_FAKEGEM_DOCDIR}; do
 			[[ -d ${dir} ]] || continue
 
-			pushd ${dir} &>/dev/null
-			dohtml -r * || die "failed to install documentation"
-			popd &>/dev/null
+			pushd ${dir} &>/dev/null || die
+			dodoc -r * || die "failed to install documentation"
+			popd &>/dev/null || die
 		done
 	fi
 
@@ -509,15 +530,14 @@ all_fakegem_install() {
 	# binary wrappers; we assume that all the implementations get the
 	# same binaries, or something is wrong anyway, so...
 	if [[ -n ${RUBY_FAKEGEM_BINWRAP} ]]; then
-		local bindir=$(find "${D}" -type d -path "*/gems/${RUBY_FAKEGEM_NAME}-${RUBY_FAKEGEM_VERSION}/bin" -print -quit)
+		local bindir=$(find "${D}" -type d -path "*/gems/${RUBY_FAKEGEM_NAME}-${RUBY_FAKEGEM_VERSION}/${RUBY_FAKEGEM_BINDIR}" -print -quit)
 
 		if [[ -d "${bindir}" ]]; then
-			pushd "${bindir}" &>/dev/null
-			local binaries=$(eval ls ${RUBY_FAKEGEM_BINWRAP})
-			for binary in $binaries; do
-				ruby_fakegem_binwrapper $binary
+			pushd "${bindir}" &>/dev/null || die
+			for binary in ${RUBY_FAKEGEM_BINWRAP}; do
+				ruby_fakegem_binwrapper "${binary}"
 			done
-			popd &>/dev/null
+			popd &>/dev/null || die
 		fi
 	fi
 }
