@@ -6,8 +6,8 @@ yet supported properly by some CrOS tools. Hopefully upstream will
 resolve this some time soon, then we can drop this fork. And for some
 reason I also had to change one ebuild from EAPI 6 to 7.
 
-Any changes to these packages can be tested in your build chroot using:
-sudo emerge-chromeover64 <subdirectory>/<package name>
+Any changes to these packages can be tested in your build chroot using:  
+sudo emerge-chromeover64 subdirectory/package-name
 
 ## 32-bit GnuPG
 
