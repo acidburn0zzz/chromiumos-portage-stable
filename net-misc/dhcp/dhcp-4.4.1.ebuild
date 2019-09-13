@@ -1,4 +1,4 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -11,11 +11,11 @@ MY_PV="${MY_PV//_rc/rc}"
 MY_PV="${MY_PV//_p/-P}"
 MY_P="${PN}-${MY_PV}"
 DESCRIPTION="ISC Dynamic Host Configuration Protocol (DHCP) client/server"
-HOMEPAGE="http://www.isc.org/products/DHCP"
+HOMEPAGE="https://www.isc.org/dhcp"
 SRC_URI="ftp://ftp.isc.org/isc/dhcp/${MY_P}.tar.gz
 	ftp://ftp.isc.org/isc/dhcp/${MY_PV}/${MY_P}.tar.gz"
 
-LICENSE="ISC BSD SSLeay GPL-2" # GPL-2 only for init script
+LICENSE="MPL-2.0 BSD SSLeay GPL-2" # GPL-2 only for init script
 SLOT="0"
 KEYWORDS="*"
 IUSE="+client ipv6 kernel_linux ldap libressl selinux +server ssl vim-syntax"
@@ -30,7 +30,7 @@ DEPEND="
 	ldap? (
 		net-nds/openldap
 		ssl? (
-			!libressl? ( dev-libs/openssl:0 )
+			!libressl? ( dev-libs/openssl:0= )
 			libressl? ( dev-libs/libressl )
 		)
 	)"
@@ -60,11 +60,10 @@ PATCHES=(
 	"${FILESDIR}/${PN}-4.2.2-dhclient-stdin-conf.patch"
 	"${FILESDIR}/${PN}-4.3.6-nogateway.patch" #265531
 	"${FILESDIR}/${PN}-4.3.6-quieter-ping.patch" #296921
-	"${FILESDIR}/${PN}-4.2.4-always-accept-4.patch" #437108
+	"${FILESDIR}/${PN}-4.4.0-always-accept-4.patch" #437108
 	"${FILESDIR}/${PN}-4.3.6-iproute2-path.patch" #480636
 	"${FILESDIR}/${PN}-4.2.5-bindtodevice-inet6.patch" #471142
 	"${FILESDIR}/${PN}-4.3.3-ldap-ipv6-client-id.patch" #559832
-	"${FILESDIR}/${PN}-4.3.6-lmdb-removal.patch" #628598
 )
 
 src_prepare() {
@@ -121,9 +120,11 @@ src_prepare() {
 	binddir=${binddir}
 	GMAKE=${MAKE:-gmake}
 	EOF
-	eapply -p2 "${FILESDIR}"/${PN}-4.3.4-bind-disable.patch
-	cd bind-*/ || die
-	eapply -p2 "${FILESDIR}"/${PN}-4.2.2-bind-parallel-build.patch #380717
+	eapply -p2 "${FILESDIR}"/${PN}-4.4.0-bind-disable.patch
+	# Only use the relevant subdirs now that ISC
+	#removed the lib/export structure in bind.
+	sed '/^SUBDIRS/s@=.*$@= isc dns isccfg irs samples@' \
+		-i bind-*/lib/Makefile.in || die
 }
 
 src_configure() {
@@ -167,16 +168,16 @@ src_configure() {
 	# configure local bind cruft.  symtable option requires
 	# perl and we don't want to require that #383837.
 	cd bind/bind-*/ || die
+	local el
 	eval econf \
-		$(sed -n '/^bindconfig =/,/^$/{:a;N;$!ba;s,^[^-]*,,;s,\\\s*\n\s*--,--,g;s, @[[:upper:]]\+@,,g;P;D}' ../Makefile.in) \
+		$(for el in $(awk '/^bindconfig/,/^$/ {print}' ../Makefile.in) ; do if [[ ${el} =~ ^-- ]] ; then printf ' %s' ${el} ; fi ; done | sed 's,@\([[:alpha:]]\+\)dir@,${binddir}/\1,g') \
 		--disable-symtable \
-		--without-make-clean \
-		--with-randomdev=/dev/urandom
+		--without-make-clean
 }
 
 src_compile() {
 	# build local bind cruft first
-	emake -C bind/bind-*/lib/export install
+	emake -C bind/bind-*/lib install
 	# then build standard dhcp code
 	emake AR="$(tc-getAR)"
 }
@@ -191,7 +192,7 @@ src_install() {
 	if [[ -e client/dhclient ]] ; then
 		# move the client to /
 		dodir /sbin
-		mv "${D}"/usr/sbin/dhclient "${D}"/sbin/ || die
+		mv "${ED%/}"/usr/sbin/dhclient "${ED%/}"/sbin/ || die
 
 		exeinto /sbin
 		if use kernel_linux ; then
@@ -223,15 +224,15 @@ src_install() {
 		systemd_install_serviced "${FILESDIR}"/dhcrelay4.service.conf
 		systemd_install_serviced "${FILESDIR}"/dhcrelay6.service.conf
 
-		sed -i "s:#@slapd@:$(usex ldap slapd ''):" "${ED}"/etc/init.d/* || die #442560
+		sed -i "s:#@slapd@:$(usex ldap slapd ''):" "${ED%/}"/etc/init.d/* || die #442560
 	fi
 
 	# the default config files aren't terribly useful #384087
 	local f
-	for f in "${ED}"/etc/dhcp/*.conf.example ; do
+	for f in "${ED%/}"/etc/dhcp/*.conf.example ; do
 		mv "${f}" "${f%.example}" || die
 	done
-	sed -i '/^[^#]/s:^:#:' "${ED}"/etc/dhcp/*.conf || die
+	sed -i '/^[^#]/s:^:#:' "${ED%/}"/etc/dhcp/*.conf || die
 }
 
 pkg_preinst() {
@@ -244,10 +245,10 @@ pkg_preinst() {
 	for f in dhclient:da7c8496a96452190aecf9afceef4510 dhcpd:10979e7b71134bd7f04d2a60bd58f070 ; do
 		h=${f#*:}
 		f="/etc/dhcp/${f%:*}.conf"
-		if [ -e "${EROOT}"${f} ] ; then
+		if [ -e "${EROOT%/}"${f} ] ; then
 			case $(md5sum "${EROOT}"${f}) in
 				${h}*) ;;
-				*) cp -p "${EROOT}"${f} "${ED}"${f};;
+				*) cp -p "${EROOT%/}"${f} "${ED%/}"${f};;
 			esac
 		fi
 	done
