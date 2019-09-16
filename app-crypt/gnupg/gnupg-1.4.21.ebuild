@@ -57,7 +57,7 @@ src_configure() {
 	if [ "${ARCH}" == "sparc" ] && [ "${PROFILE_ARCH}" == "sparc" ]; then
 		filter-flags -mcpu=supersparc -mcpu=v8 -mcpu=v7
 	fi
-# 'USE=static' support was requested in #29299
+	# 'USE=static' support was requested in #29299
 	use static && append-ldflags -static
 
 	econf \
