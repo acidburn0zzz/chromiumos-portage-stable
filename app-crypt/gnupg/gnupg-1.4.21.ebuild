@@ -57,15 +57,6 @@ src_configure() {
 	if [ "${ARCH}" == "sparc" ] && [ "${PROFILE_ARCH}" == "sparc" ]; then
 		filter-flags -mcpu=supersparc -mcpu=v8 -mcpu=v7
 	fi
-
-	# OVER-9976
-	# Clang needs heinous-gnu-extensions and --disable-asm
-	# to build GnuPG on 32-bit Chromeover
-	if [ "${ARCH}" == "x86" ]; then
-		DISABLE_ASM="--disable-asm"
-		append-cflags -fheinous-gnu-extensions
-	fi
-
 	# 'USE=static' support was requested in #29299
 	use static && append-ldflags -static
 
@@ -87,7 +78,6 @@ src_configure() {
 		--enable-static-rnd=linux \
 		--libexecdir="${EPREFIX}/usr/libexec" \
 		--enable-noexecstack \
-		${DISABLE_ASM} \
 		CC_FOR_BUILD=$(tc-getBUILD_CC) \
 		${myconf}
 }
