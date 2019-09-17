@@ -1,52 +1,76 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=5
+EAPI=6
 
-inherit eutils pam multilib libtool
+inherit eutils pam multilib libtool tmpfiles
+if [[ ${PV} == "9999" ]] ; then
+	EHG_REPO_URI="https://www.sudo.ws/repos/sudo"
+	inherit mercurial
+fi
 
 MY_P=${P/_/}
 MY_P=${MY_P/beta/b}
 
 uri_prefix=
 case ${P} in
-*_beta*|*_rc*) uri_prefix=beta/ ;;
+	*_beta*|*_rc*) uri_prefix=beta/ ;;
 esac
 
 DESCRIPTION="Allows users or groups to run commands as other users"
-HOMEPAGE="http://www.sudo.ws/"
-SRC_URI="http://www.sudo.ws/sudo/dist/${uri_prefix}${MY_P}.tar.gz
-	ftp://ftp.sudo.ws/pub/sudo/${uri_prefix}${MY_P}.tar.gz"
+HOMEPAGE="https://www.sudo.ws/"
+if [[ ${PV} != "9999" ]] ; then
+	SRC_URI="https://www.sudo.ws/sudo/dist/${uri_prefix}${MY_P}.tar.gz
+		ftp://ftp.sudo.ws/pub/sudo/${uri_prefix}${MY_P}.tar.gz"
+	if [[ ${PV} != *_beta* ]] && [[ ${PV} != *_rc* ]] ; then
+		KEYWORDS="*"
+	fi
+fi
 
 # Basic license is ISC-style as-is, some files are released under
 # 3-clause BSD license
 LICENSE="ISC BSD"
 SLOT="0"
-if [[ ${PV} != *_beta* ]] && [[ ${PV} != *_rc* ]] ; then
-	KEYWORDS="*"
-fi
-IUSE="ldap nls pam offensive selinux skey +sendmail"
+IUSE="gcrypt ldap libressl nls offensive pam sasl +secure-path selinux +sendmail skey sssd system-digest"
 
-DEPEND="pam? ( virtual/pam )
-	skey? ( >=sys-auth/skey-1.1.5-r1 )
+CDEPEND="
+	sys-libs/zlib:=
 	ldap? (
 		>=net-nds/openldap-2.1.30-r1
 		dev-libs/cyrus-sasl
 	)
-	sys-libs/zlib"
-RDEPEND="${DEPEND}
-	selinux? ( sec-policy/selinux-sudo )
-	ldap? ( dev-lang/perl )
-	pam? ( sys-auth/pambase )
+	pam? ( virtual/pam )
+	sasl? ( dev-libs/cyrus-sasl )
+	skey? ( >=sys-auth/skey-1.1.5-r1 )
+	sssd? ( sys-auth/sssd[sudo] )
+	system-digest? (
+		gcrypt? ( dev-libs/libgcrypt:= )
+		!gcrypt? (
+			!libressl? ( dev-libs/openssl:0= )
+			libressl? ( dev-libs/libressl:0= )
+		)
+	)
+"
+RDEPEND="
+	${CDEPEND}
 	>=app-misc/editor-wrapper-3
 	virtual/editor
-	sendmail? ( virtual/mta )"
-DEPEND="${DEPEND}
-	sys-devel/bison"
+	ldap? ( dev-lang/perl )
+	pam? ( sys-auth/pambase )
+	selinux? ( sec-policy/selinux-sudo )
+	sendmail? ( virtual/mta )
+"
+DEPEND="
+	${CDEPEND}
+	sys-devel/bison
+"
 
-S=${WORKDIR}/${MY_P}
+S="${WORKDIR}/${MY_P}"
 
-REQUIRED_USE="pam? ( !skey ) skey? ( !pam )"
+REQUIRED_USE="
+	pam? ( !skey )
+	skey? ( !pam )
+"
 
 MAKEOPTS+=" SAMPLES="
 
@@ -55,16 +79,23 @@ src_prepare() {
 	elibtoolize
 }
 
-set_rootpath() {
-	# FIXME: secure_path is a compile time setting. using ROOTPATH
-	# is not perfect, env-update may invalidate this, but until it
+set_secure_path() {
+	# FIXME: secure_path is a compile time setting. using PATH or
+	# ROOTPATH is not perfect, env-update may invalidate this, but until it
 	# is available as a sudoers setting this will have to do.
 	einfo "Setting secure_path ..."
 
 	# first extract the default ROOTPATH from build env
-	ROOTPATH=$(unset ROOTPATH; . "${EPREFIX}"/etc/profile.env; echo "${ROOTPATH}")
-	if [[ -z ${ROOTPATH} ]] ; then
-		ewarn "	Failed to find ROOTPATH, please report this"
+	SECURE_PATH=$(unset ROOTPATH; . "${EPREFIX}"/etc/profile.env;
+		echo "${ROOTPATH}")
+		case "${SECURE_PATH}" in
+			*/usr/sbin*) ;;
+			*) SECURE_PATH=$(unset PATH;
+				. "${EPREFIX}"/etc/profile.env; echo "${PATH}")
+				;;
+		esac
+	if [[ -z ${SECURE_PATH} ]] ; then
+		ewarn "	Failed to detect SECURE_PATH, please report this"
 	fi
 
 	# then remove duplicate path entries
@@ -77,18 +108,18 @@ set_rootpath() {
 				einfo "   Duplicate entry ${thisp} removed..."
 			fi
 		done
-		ROOTPATH=${newpath#:}
+		SECURE_PATH=${newpath#:}
 	}
-	cleanpath /bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:/opt/bin${ROOTPATH:+:${ROOTPATH}}
+	cleanpath /bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:/opt/bin${SECURE_PATH:+:${SECURE_PATH}}
 
 	# finally, strip gcc paths #136027
 	rmpath() {
 		local e newpath thisp IFS=:
-		for thisp in ${ROOTPATH} ; do
+		for thisp in ${SECURE_PATH} ; do
 			for e ; do [[ $thisp == $e ]] && continue 2 ; done
 			newpath+=:$thisp
 		done
-		ROOTPATH=${newpath#:}
+		SECURE_PATH=${newpath#:}
 	}
 	rmpath '*/gcc-bin/*' '*/gnat-gcc-bin/*' '*/gnat-gcc/*'
 
@@ -96,34 +127,47 @@ set_rootpath() {
 }
 
 src_configure() {
-	local ROOTPATH
-	set_rootpath
+	local SECURE_PATH
+	set_secure_path
 
 	# audit: somebody got to explain me how I can test this before I
 	# enable it.. - Diego
 	# plugindir: autoconf code is crappy and does not delay evaluation
 	# until `make` time, so we have to use a full path here rather than
 	# basing off other values.
-	econf \
-		--enable-zlib=system \
-		--with-secure-path="${ROOTPATH}" \
-		--with-editor="${EPREFIX}"/usr/libexec/editor \
-		--with-env-editor \
-		$(use_with offensive insults) \
-		$(use_with offensive all-insults) \
-		$(use_with ldap ldap_conf_file /etc/ldap.conf.sudo) \
-		$(use_with ldap) \
-		$(use_enable nls) \
-		$(use_with pam) \
-		$(use_with skey) \
-		$(use_with selinux) \
-		$(use_with sendmail) \
-		--without-opie \
-		--without-linux-audit \
-		--with-rundir="${EPREFIX}"/var/run/sudo \
-		--with-vardir="${EPREFIX}"/var/db/sudo \
-		--with-plugindir="${EPREFIX}"/usr/$(get_libdir)/sudo \
-		--docdir="${EPREFIX}"/usr/share/doc/${PF}
+	myeconfargs=(
+		--enable-zlib=system
+		--enable-tmpfiles.d="${EPREFIX}"/usr/lib/tmpfiles.d
+		--with-editor="${EPREFIX}"/usr/libexec/editor
+		--with-env-editor
+		--with-plugindir="${EPREFIX}"/usr/$(get_libdir)/sudo
+		--with-rundir="${EPREFIX}"/run/sudo
+		$(use_with secure-path secure-path ${SECURE_PATH})
+		--with-secure-path="${SECURE_PATH}"
+		--with-vardir="${EPREFIX}"/var/db/sudo
+		--without-linux-audit
+		--without-opie
+		$(use_enable gcrypt)
+		$(use_enable nls)
+		$(use_enable sasl)
+		$(use_with offensive insults)
+		$(use_with offensive all-insults)
+		$(use_with ldap ldap_conf_file /etc/ldap.conf.sudo)
+		$(use_with ldap)
+		$(use_with pam)
+		$(use_with skey)
+		$(use_with sssd)
+		$(use_with selinux)
+		$(use_with sendmail)
+	)
+
+	if use system-digest && ! use gcrypt; then
+		myeconfargs+=("--enable-openssl")
+	else
+		myeconfargs+=("--disable-openssl")
+	fi
+
+	econf "${myeconfargs[@]}"
 }
 
 src_install() {
@@ -131,7 +175,6 @@ src_install() {
 
 	if use ldap ; then
 		dodoc README.LDAP
-		dosbin plugins/sudoers/sudoers2ldif
 
 		cat <<-EOF > "${T}"/ldap.conf.sudo
 		# See ldap.conf(5) and README.LDAP for details
@@ -152,15 +195,24 @@ src_install() {
 
 	pamd_mimic system-auth sudo auth account session
 
-	keepdir /var/db/sudo
-	fperms 0700 /var/db/sudo
+	keepdir /var/db/sudo/lectured
+	fperms 0700 /var/db/sudo/lectured
+	fperms 0711 /var/db/sudo #652958
 
-	# Don't install into /var/run as that is a tmpfs most of the time
+	# Don't install into /run as that is a tmpfs most of the time
 	# (bug #504854)
-	rm -rf "${D}"/var/run
+	rm -rf "${ED%/}"/run
 }
 
 pkg_postinst() {
+	tmpfiles_process sudo.conf
+
+	#652958
+	local sudo_db="${EROOT}/var/db/sudo"
+	if [[ "$(stat -c %a "${sudo_db}")" -ne 711 ]] ; then
+		chmod 711 "${sudo_db}" || die
+	fi
+
 	if use ldap ; then
 		ewarn
 		ewarn "sudo uses the /etc/ldap.conf.sudo file for ldap configuration."
