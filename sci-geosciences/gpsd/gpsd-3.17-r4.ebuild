@@ -1,4 +1,4 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=5
@@ -46,6 +46,7 @@ RDEPEND="
 	ncurses? ( sys-libs/ncurses:= )
 	ntp? ( || (
 		net-misc/ntp
+		net-misc/ntpsec
 		net-misc/chrony
 	) )
 	qt5? (
@@ -78,6 +79,8 @@ src_prepare() {
 	fi
 
 	epatch "${FILESDIR}"/${P}-do_not_rm_library.patch
+	epatch "${FILESDIR}"/${P}-scons-print.patch
+	epatch "${FILESDIR}"/${P}-scons-py3.patch
 
 	# Avoid useless -L paths to the install dir
 	sed -i \
@@ -92,6 +95,8 @@ python_prepare_all() {
 	# Extract python info out of SConstruct so we can use saner distribute
 	pyvar() { sed -n "/^ *$1 *=/s:.*= *::p" SConstruct ; }
 	local pybins=$(pyvar python_progs | tail -1)
+	# Handle conditional tools manually. #666734
+	use X && pybins+="+ ['xgps', 'xgpsspeed']"
 	local pysrcs=$(sed -n '/^ *python_extensions = {/,/}/{s:^ *::;s:os[.]sep:"/":g;p}' SConstruct)
 	local packet=$("${PYTHON}" -c "${pysrcs}; print(python_extensions['gps/packet'])")
 	local client=$("${PYTHON}" -c "${pysrcs}; print(python_extensions['gps/clienthelpers'])")
