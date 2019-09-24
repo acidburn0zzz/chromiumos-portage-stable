@@ -1,46 +1,51 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-firmware/ipxe/ipxe-1.0.0_p20130624.ebuild,v 1.7 2013/09/06 16:11:44 ago Exp $
 
-EAPI=5
+EAPI="6"
 
-inherit toolchain-funcs
+inherit toolchain-funcs eutils savedconfig
 
-GIT_REV="936134ed460618e18cc05d677a442d43d5e739a1"
-GIT_SHORT="936134e"
+GIT_REV="a4f8c6e31f6c62522cfc633bbbffa81b22f9d6f3"
+GIT_SHORT=${GIT_REV:0:7}
 
 DESCRIPTION="Open source network boot (PXE) firmware"
-HOMEPAGE="http://ipxe.org"
-SRC_URI="https://git.ipxe.org/ipxe.git/snapshot/${GIT_REV}.tar.bz2 -> ${P}-${GIT_SHORT}.tar.bz2"
+HOMEPAGE="http://ipxe.org/"
+SRC_URI="
+	!binary? ( https://git.ipxe.org/ipxe.git/snapshot/${GIT_REV}.tar.bz2 -> ${P}-${GIT_SHORT}.tar.bz2 )
+	binary? ( https://dev.gentoo.org/~tamiko/distfiles/${P}-${GIT_SHORT}-bin.tar.xz )"
 
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="amd64 x86"
-IUSE="iso +qemu undi usb vmware"
+IUSE="+binary efi ipv6 iso lkrn +qemu undi usb vmware"
 
-DEPEND="sys-devel/make
+REQUIRED_USE="!amd64? ( !x86? ( binary ) )"
+
+SOURCE_DEPEND="app-arch/xz-utils
 	dev-lang/perl
 	sys-libs/zlib
 	iso? (
 		sys-boot/syslinux
 		virtual/cdrtools
 	)"
+DEPEND="
+	!binary? (
+		amd64? ( ${SOURCE_DEPEND} )
+		x86? ( ${SOURCE_DEPEND} )
+	)"
 RDEPEND=""
 
 S="${WORKDIR}/ipxe-${GIT_SHORT}/src"
 
-pkg_setup() {
-	local myld=$(tc-getLD)
+src_configure() {
+	use binary && return
 
-	${myld} -v | grep -q "GNU gold" && \
-	ewarn "gold linker unable to handle 16-bit code using ld.bfd. bug #438058"
-}
-
-src_prepare() {
 	cat <<-EOF > "${S}"/config/local/general.h
 #undef BANNER_TIMEOUT
 #define BANNER_TIMEOUT 0
 EOF
+
+	use ipv6 && echo "#define NET_PROTO_IPV6" >> "${S}"/config/local/general.h
 
 	if use vmware; then
 		cat <<-EOF >> "${S}"/config/local/general.h
@@ -48,21 +53,29 @@ EOF
 #define CONSOLE_VMWARE
 EOF
 	fi
+
+	restore_config config/local/general.h
+
+	tc-ld-disable-gold
+}
+
+ipxemake() {
+	# Q='' makes the build verbose since that's what everyone loves now
+	emake Q='' \
+		CC="$(tc-getCC)" \
+		LD="$(tc-getLD)" \
+		AS="$(tc-getAS)" \
+		AR="$(tc-getAR)" \
+		NM="$(tc-getNM)" \
+		OBJCOPY="$(tc-getOBJCOPY)" \
+		RANLIB="$(tc-getRANLIB)" \
+		OBJDUMP="$(tc-getOBJDUMP)" \
+		HOST_CC="$(tc-getBUILD_CC)" \
+		"$@"
 }
 
 src_compile() {
-	ipxemake() {
-		# Q='' makes the build verbose since that's what everyone loves now
-		emake Q='' \
-			CC=$(tc-getCC) \
-			LD="$(tc-getLD).bfd" \
-			AR=$(tc-getAR) \
-			OBJCOPY=$(tc-getOBJCOPY) \
-			RANLIB=$(tc-getRANLIB) \
-			OBJDUMP=$(tc-getPROG OBJDUMP objdump) \
-			HOST_CC=$(tc-getBUILD_CC) \
-			${*}
-	}
+	use binary && return
 
 	export NO_WERROR=1
 	if use qemu; then
@@ -73,7 +86,7 @@ src_compile() {
 		ipxemake bin/10222000.rom # pxe-pcnet.rom
 		ipxemake bin/10ec8139.rom # pxe-rtl8139.rom
 		ipxemake bin/1af41000.rom # pxe-virtio.rom
-		fi
+	fi
 
 	if use vmware; then
 		ipxemake bin/8086100f.mrom # e1000
@@ -82,9 +95,11 @@ src_compile() {
 		ipxemake bin/15ad07b0.rom # vmxnet3
 	fi
 
+	use efi && ipxemake PLATFORM=efi BIN=bin-efi bin-efi/ipxe.efi
 	use iso && ipxemake bin/ipxe.iso
 	use undi && ipxemake bin/undionly.kpxe
 	use usb && ipxemake bin/ipxe.usb
+	use lkrn && ipxemake bin/ipxe.lkrn
 }
 
 src_install() {
@@ -94,7 +109,11 @@ src_install() {
 		doins bin/*.rom
 	fi
 	use vmware && doins bin/*.mrom
+	use efi && doins bin-efi/*.efi
 	use iso && doins bin/*.iso
 	use undi && doins bin/*.kpxe
 	use usb && doins bin/*.usb
+	use lkrn && doins bin/*.lkrn
+
+	save_config config/local/general.h
 }

@@ -1,4 +1,4 @@
-# Copyright 1999-2018 Gentoo Authors
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -7,7 +7,8 @@ GNOME2_LA_PUNT="yes"
 inherit gnome2 multilib-minimal toolchain-funcs
 
 DESCRIPTION="Internationalized text layout and rendering library"
-HOMEPAGE="http://www.pango.org/"
+HOMEPAGE="https://www.pango.org/"
+SRC_URI+=" https://dev.gentoo.org/~leio/distfiles/${P}-patchset.tar.xz"
 
 LICENSE="LGPL-2+ FTL"
 SLOT="0"
@@ -17,7 +18,7 @@ IUSE="X +introspection test"
 
 RDEPEND="
 	>=media-libs/harfbuzz-1.4.2:=[glib(+),truetype(+),${MULTILIB_USEDEP}]
-	>=dev-libs/glib-2.34.3:2[${MULTILIB_USEDEP}]
+	>=dev-libs/glib-2.50.2:2[${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.12.92:1.0=[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-2.5.0.1:2=[${MULTILIB_USEDEP}]
 	>=x11-libs/cairo-1.12.14-r4:=[X?,${MULTILIB_USEDEP}]
@@ -30,12 +31,18 @@ RDEPEND="
 	)
 "
 DEPEND="${RDEPEND}
+	dev-util/glib-utils
 	>=dev-util/gtk-doc-am-1.20
 	virtual/pkgconfig[${MULTILIB_USEDEP}]
 	test? ( media-fonts/cantarell )
 	X? ( x11-base/xorg-proto )
 	!<=sys-devel/autoconf-2.63:2.5
 "
+
+PATCHES=(
+	"${WORKDIR}"/patches/ # bug fix cherry-picks from master by 20190216; each patch has commit id of origin/master included and will be part of 1.43.1/1.44
+	"${FILESDIR}"/${PV}-CVE-2019-1010238.patch
+)
 
 src_prepare() {
 	gnome2_src_prepare
