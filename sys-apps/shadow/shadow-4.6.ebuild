@@ -1,72 +1,72 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-apps/shadow/shadow-4.2.1-r1.ebuild,v 1.2 2015/04/30 06:48:16 vapier Exp $
 
-EAPI=4
+EAPI=6
 
-inherit eutils libtool toolchain-funcs pam multilib autotools
+inherit libtool pam
 
 DESCRIPTION="Utilities to deal with user accounts"
-HOMEPAGE="http://shadow.pld.org.pl/ http://pkg-shadow.alioth.debian.org/"
-SRC_URI="http://pkg-shadow.alioth.debian.org/releases/${P}.tar.xz"
+HOMEPAGE="https://github.com/shadow-maint/shadow http://pkg-shadow.alioth.debian.org/"
+SRC_URI="https://github.com/shadow-maint/shadow/releases/download/${PV}/${P}.tar.gz"
 
 LICENSE="BSD GPL-2"
 SLOT="0"
 KEYWORDS="*"
-IUSE="acl audit cracklib nls pam selinux skey xattr"
+IUSE="acl audit +cracklib nls pam selinux skey split-usr xattr"
 # Taken from the man/Makefile.am file.
 LANGS=( cs da de es fi fr hu id it ja ko pl pt_BR ru sv tr zh_CN zh_TW )
-IUSE+=" $(printf 'linguas_%s ' ${LANGS[*]})"
 
-RDEPEND="acl? ( sys-apps/acl )
-	audit? ( sys-process/audit )
-	cracklib? ( >=sys-libs/cracklib-2.7-r3 )
-	pam? ( virtual/pam )
-	skey? ( sys-auth/skey )
+RDEPEND="acl? ( sys-apps/acl:0= )
+	audit? ( >=sys-process/audit-2.6:0= )
+	cracklib? ( >=sys-libs/cracklib-2.7-r3:0= )
+	pam? ( virtual/pam:0= )
+	skey? ( sys-auth/skey:0= )
 	selinux? (
-		>=sys-libs/libselinux-1.28
-		sys-libs/libsemanage
+		>=sys-libs/libselinux-1.28:0=
+		sys-libs/libsemanage:0=
 	)
 	nls? ( virtual/libintl )
-	xattr? ( sys-apps/attr )"
+	xattr? ( sys-apps/attr:0= )"
 DEPEND="${RDEPEND}
 	app-arch/xz-utils
 	nls? ( sys-devel/gettext )"
 RDEPEND="${RDEPEND}
 	pam? ( >=sys-auth/pambase-20150213 )"
 
+PATCHES=(
+	"${FILESDIR}/${PN}-4.1.3-dots-in-usernames.patch"
+)
+
 src_prepare() {
-	epatch "${FILESDIR}"/${PN}-4.1.3-dots-in-usernames.patch #22920
-	epatch "${FILESDIR}"/${P}-cross-size-checks.patch
-	epatch_user
-	# https://github.com/shadow-maint/shadow/pull/5
-	mv configure.{in,ac} || die
-	eautoreconf
-	#elibtoolize
+	default
+	#eautoreconf
+	elibtoolize
 }
 
 src_configure() {
-	tc-is-cross-compiler && export ac_cv_func_setpgrp_void=yes
-	econf \
-		--without-group-name-max-length \
-		--without-tcb \
-		--enable-shared=no \
-		--enable-static=yes \
-		$(use_with acl) \
-		$(use_with audit) \
-		$(use_with cracklib libcrack) \
-		$(use_with pam libpam) \
-		$(use_with skey) \
-		$(use_with selinux) \
-		$(use_enable nls) \
-		$(use_with elibc_glibc nscd) \
+	local myeconfargs=(
+		--without-group-name-max-length
+		--without-tcb
+		--enable-shared=no
+		--enable-static=yes
+		$(use_with acl)
+		$(use_with audit)
+		$(use_with cracklib libcrack)
+		$(use_with pam libpam)
+		$(use_with skey)
+		$(use_with selinux)
+		$(use_enable nls)
+		$(use_with elibc_glibc nscd)
 		$(use_with xattr attr)
+	)
+	econf "${myeconfargs[@]}"
+
 	has_version 'sys-libs/uclibc[-rpc]' && sed -i '/RLOGIN/d' config.h #425052
 
 	if use nls ; then
 		local l langs="po" # These are the pot files.
 		for l in ${LANGS[*]} ; do
-			use linguas_${l} && langs+=" ${l}"
+			has ${l} ${LINGUAS-${l}} && langs+=" ${l}"
 		done
 		sed -i "/^SUBDIRS = /s:=.*:= ${langs}:" man/Makefile || die
 	fi
@@ -78,13 +78,13 @@ set_login_opt() {
 		comment="#"
 		sed -i \
 			-e "/^${opt}\>/s:^:#:" \
-			"${ED}"/etc/login.defs || die
+			"${ED%/}"/etc/login.defs || die
 	else
 		sed -i -r \
 			-e "/^#?${opt}\>/s:.*:${opt} ${val}:" \
-			"${ED}"/etc/login.defs
+			"${ED%/}"/etc/login.defs
 	fi
-	local res=$(grep "^${comment}${opt}\>" "${ED}"/etc/login.defs)
+	local res=$(grep "^${comment}${opt}\>" "${ED%/}"/etc/login.defs)
 	einfo "${res:-Unable to find ${opt} in /etc/login.defs}"
 }
 
@@ -96,7 +96,7 @@ src_install() {
 	#   Currently, libshadow.a is for internal use only, so if you see
 	#   -lshadow in a Makefile of some other package, it is safe to
 	#   remove it.
-	rm -f "${ED}"/{,usr/}$(get_libdir)/lib{misc,shadow}.{a,la}
+	rm -f "${ED%/}"/{,usr/}$(get_libdir)/lib{misc,shadow}.{a,la}
 
 	insinto /etc
 	if ! use pam ; then
@@ -109,11 +109,14 @@ src_install() {
 	insopts -m0600
 	doins "${FILESDIR}"/default/useradd
 
-	# move passwd to / to help recover broke systems #64441
-	mv "${ED}"/usr/bin/passwd "${ED}"/bin/ || die
-	dosym /bin/passwd /usr/bin/passwd
+	if use split-usr ; then
+		# move passwd to / to help recover broke systems #64441
+		dodir /bin
+		mv "${ED%/}"/usr/bin/passwd "${ED%/}"/bin/ || die
+		dosym ../../bin/passwd /usr/bin/passwd
+	fi
 
-	cd "${S}"
+	cd "${S}" || die
 	insinto /etc
 	insopts -m0644
 	newins etc/login.defs login.defs
@@ -134,7 +137,7 @@ src_install() {
 		done
 
 		for x in chage chsh chfn \
-				 user{add,del,mod} group{add,del,mod} ; do
+				user{add,del,mod} group{add,del,mod} ; do
 			newpamd "${FILESDIR}"/pam.d-include/shadow ${x}
 		done
 
@@ -167,27 +170,27 @@ src_install() {
 			-e 'b exit' \
 			-e ': pamnote; i# NOTE: This setting should be configured via /etc/pam.d/ and not in this file.' \
 			-e ': exit' \
-			"${ED}"/etc/login.defs || die
+			"${ED%/}"/etc/login.defs || die
 
 		# remove manpages that pam will install for us
 		# and/or don't apply when using pam
-		find "${ED}"/usr/share/man \
+		find "${ED%/}"/usr/share/man \
 			'(' -name 'limits.5*' -o -name 'suauth.5*' ')' \
 			-delete
 
 		# Remove pam.d files provided by pambase.
-		rm "${ED}"/etc/pam.d/{login,passwd,su} || die
+		rm "${ED%/}"/etc/pam.d/{login,passwd,su} || die
 	fi
 
 	# Remove manpages that are handled by other packages
-	find "${ED}"/usr/share/man \
+	find "${ED%/}"/usr/share/man \
 		'(' -name id.1 -o -name passwd.5 -o -name getspnam.3 ')' \
 		-delete
 
-	cd "${S}"
+	cd "${S}" || die
 	dodoc ChangeLog NEWS TODO
 	newdoc README README.download
-	cd doc
+	cd doc || die
 	dodoc HOWTO README* WISHLIST *.txt
 }
 
