@@ -3,13 +3,12 @@
 
 EAPI=6
 
-PYTHON_COMPAT=( python2_7 python3_{4..7})
+PYTHON_COMPAT=( python2_7 python3_{5..7})
 PYTHON_REQ_USE="threads(+)"
 
-inherit distutils-r1
+inherit distutils-r1 toolchain-funcs
 
 MY_PN="M2Crypto"
-
 DESCRIPTION="A Python crypto and SSL toolkit"
 HOMEPAGE="https://gitlab.com/m2crypto/m2crypto https://pypi.org/project/M2Crypto/"
 SRC_URI="mirror://pypi/${MY_PN:0:1}/${MY_PN}/${MY_PN}-${PV}.tar.gz"
@@ -17,7 +16,6 @@ SRC_URI="mirror://pypi/${MY_PN:0:1}/${MY_PN}/${MY_PN}-${PV}.tar.gz"
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS="*"
-
 IUSE="libressl"
 
 RDEPEND="
@@ -32,22 +30,30 @@ DEPEND="${RDEPEND}
 
 S="${WORKDIR}/${MY_PN}-${PV}"
 
-# Tests access network, and fail randomly. Bug #431458.
-RESTRICT=test
-
 PATCHES=(
-	"${FILESDIR}/${PN}-libressl-${PV}.patch"
-	"${FILESDIR}/${PN}-crossdev-${PV}.patch"
+	"${FILESDIR}/${PN}-libressl-0.31.0.patch"
 )
+
+swig_define() {
+	local x
+	for x; do
+		if tc-cpp-is-true "defined(${x})"; then
+			SWIG_FEATURES+=" -D${x}"
+		fi
+	done
+}
 
 python_compile() {
 	# setup.py looks at platform.machine() to determine swig options.
 	# For exotic ABIs, we need to give swig a hint.
-	# https://bugs.gentoo.org/617946
 	local -x SWIG_FEATURES=
-	case ${ABI} in
-		x32) SWIG_FEATURES="-D__ILP32__" ;;
-	esac
+
+	# https://bugs.gentoo.org/617946
+	swig_define __ILP32__
+
+	# https://bugs.gentoo.org/674112
+	swig_define __ARM_PCS_VFP
+
 	distutils-r1_python_compile --openssl="${SYSROOT}"/usr
 }
 
