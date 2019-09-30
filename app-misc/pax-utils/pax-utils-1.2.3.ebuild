@@ -1,14 +1,14 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="5"
+EAPI=6
 
 inherit eutils toolchain-funcs unpacker
 
 DESCRIPTION="ELF utils that can check files for security relevant properties"
 HOMEPAGE="https://wiki.gentoo.org/index.php?title=Project:Hardened/PaX_Utilities"
 SRC_URI="mirror://gentoo/${P}.tar.xz
-	https://dev.gentoo.org/~vapier/dist/${P}.tar.xz"
+	https://dev.gentoo.org/~slyfox/distfiles/${P}.tar.xz"
 
 LICENSE="GPL-2"
 SLOT="0"
@@ -35,7 +35,7 @@ _emake() {
 src_configure() {
 	# Avoid slow configure+gnulib+make if on an up-to-date Linux system
 	if use prefix || ! use kernel_linux || \
-	   has_version '<sys-libs/glibc-2.10'
+		has_version '<sys-libs/glibc-2.10'
 	then
 		econf $(use_with caps) $(use_with debug) $(use_with python) $(use_with seccomp)
 	else
