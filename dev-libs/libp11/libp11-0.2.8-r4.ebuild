@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/dev-libs/libp11/libp11-0.2.8-r1.ebuild,v 1.1 2012/01/02 19:40:31 vapier Exp $
 
-EAPI="4"
+EAPI=6
 inherit eutils autotools
 
 DESCRIPTION="A library implementing a layer on top of PKCS#11 API to make using PKCS#11 implementations easier."
@@ -20,7 +20,7 @@ SLOT="0"
 KEYWORDS="*"
 IUSE="doc"
 
-RDEPEND="dev-libs/openssl"
+RDEPEND="dev-libs/openssl:0="
 DEPEND="${RDEPEND}
 	dev-util/pkgconfig
 	doc? ( app-doc/doxygen )"
@@ -34,6 +34,7 @@ fi
 src_prepare() {
 	epatch "${FILESDIR}"/${P}-no-ltdl.patch
 	epatch "${FILESDIR}"/${P}-variable-buffer-size.patch
+	eapply_user
 	eautoreconf
 }
 

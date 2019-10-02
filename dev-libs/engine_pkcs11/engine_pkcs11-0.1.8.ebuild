@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/dev-libs/engine_pkcs11/engine_pkcs11-0.1.8.ebuild,v 1.2 2010/02/15 19:55:35 josejx Exp $
 
-EAPI="2"
+EAPI=6
 
 if [[ "${PV}" = "9999" ]]; then
 	inherit autotools subversion
@@ -20,7 +20,7 @@ KEYWORDS="*"
 IUSE="doc"
 
 DEPEND=">=dev-libs/libp11-0.2.5
-	dev-libs/openssl"
+	dev-libs/openssl:0="
 RDEPEND="${DEPEND}"
 
 if [[ "${PV}" = "9999" ]]; then
@@ -29,6 +29,7 @@ if [[ "${PV}" = "9999" ]]; then
 		dev-libs/libxslt"
 
 	src_prepare() {
+		default
 		eautoreconf
 	}
 fi
