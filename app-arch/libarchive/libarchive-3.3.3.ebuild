@@ -38,6 +38,8 @@ DEPEND="${RDEPEND}
 	)"
 
 PATCHES=(
+	"${FILESDIR}/archive_read-fix-handling-of-sparse-files.patch"
+	"${FILESDIR}/archive_read_next_header2-clean-old-entry-entry-data.patch"
 	"${FILESDIR}"/${PN}-3.3.3-libressl.patch
 )
 
