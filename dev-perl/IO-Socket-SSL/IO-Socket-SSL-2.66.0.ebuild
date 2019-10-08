@@ -1,10 +1,11 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=5
+EAPI=6
 
-MODULE_AUTHOR=SULLR
-MODULE_VERSION=2.024
+DIST_AUTHOR=SULLR
+DIST_VERSION=2.066
+DIST_EXAMPLES=("example/*")
 inherit perl-module
 
 DESCRIPTION="Nearly transparent SSL encapsulation for IO::Socket::INET"
@@ -14,16 +15,17 @@ KEYWORDS="*"
 IUSE="idn"
 
 RDEPEND="
-	>=dev-perl/Net-SSLeay-1.330.0
+	dev-perl/Mozilla-CA
+	>=dev-perl/Net-SSLeay-1.460.0
 	virtual/perl-Scalar-List-Utils
 	idn? (
 		|| (
 			>=dev-perl/URI-1.50
 			dev-perl/Net-LibIDN
+			dev-perl/Net-IDN-Encode
 		)
 	)"
 DEPEND="${RDEPEND}
 	virtual/perl-ExtUtils-MakeMaker
 "
-
-SRC_TEST="do"
+mydoc=("docs/debugging.txt")
