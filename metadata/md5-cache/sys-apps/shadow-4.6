@@ -1,0 +1,13 @@
+DEFINED_PHASES=configure install postinst preinst prepare
+DEPEND=acl? ( sys-apps/acl:0= ) audit? ( >=sys-process/audit-2.6:0= ) cracklib? ( >=sys-libs/cracklib-2.7-r3:0= ) pam? ( virtual/pam:0= ) skey? ( sys-auth/skey:0= ) selinux? ( >=sys-libs/libselinux-1.28:0= sys-libs/libsemanage:0= ) nls? ( virtual/libintl ) xattr? ( sys-apps/attr:0= ) app-arch/xz-utils nls? ( sys-devel/gettext ) >=app-portage/elt-patches-20170815
+DESCRIPTION=Utilities to deal with user accounts
+EAPI=6
+HOMEPAGE=https://github.com/shadow-maint/shadow http://pkg-shadow.alioth.debian.org/
+IUSE=acl audit +cracklib nls pam selinux skey split-usr xattr
+KEYWORDS=*
+LICENSE=BSD GPL-2
+RDEPEND=acl? ( sys-apps/acl:0= ) audit? ( >=sys-process/audit-2.6:0= ) cracklib? ( >=sys-libs/cracklib-2.7-r3:0= ) pam? ( virtual/pam:0= ) skey? ( sys-auth/skey:0= ) selinux? ( >=sys-libs/libselinux-1.28:0= sys-libs/libsemanage:0= ) nls? ( virtual/libintl ) xattr? ( sys-apps/attr:0= ) pam? ( >=sys-auth/pambase-20150213 )
+SLOT=0
+SRC_URI=https://github.com/shadow-maint/shadow/releases/download/4.6/shadow-4.6.tar.gz
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	libtool	f143db5a74ccd9ca28c1234deffede96	multilib	b2f01ad412baf81650c23fcf0975fa33	pam	3f746974e1cc47cabe3bd488c08cdc8e	toolchain-funcs	2f8b8f320bee13b71a8a54cc6d09e08a
+_md5_=188401112914baf2b6510c4fef5cfb70
