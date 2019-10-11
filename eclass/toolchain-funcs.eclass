@@ -214,7 +214,7 @@ tc-cpp-is-true() {
 		EOF
 	)
 
-	[[ ${RESULT} == true ]]
+	[[ $(echo "${RESULT}" | tr -d '[[:space:]]') == true ]]
 }
 
 # @FUNCTION: tc-detect-is-softfloat
