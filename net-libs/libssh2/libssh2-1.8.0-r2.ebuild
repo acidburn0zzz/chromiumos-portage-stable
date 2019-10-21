@@ -13,9 +13,12 @@ SLOT="0"
 KEYWORDS="*"
 IUSE="gcrypt libressl static-libs test zlib"
 
+# Hack: Unslotted OpenSSL dependency to allow cargo to continue using OpenSSL
+# 1.0.2 across the OpenSSL 1.1 uprev. To be switched back to slotted dependency
+# after the OpenSSL uprev is done.
 RDEPEND="
 	!gcrypt? (
-		!libressl? ( >=dev-libs/openssl-1.0.1h-r2:0=[${MULTILIB_USEDEP}] )
+		!libressl? ( >=dev-libs/openssl-1.0.1h-r2[${MULTILIB_USEDEP}] )
 		libressl? ( dev-libs/libressl:0=[${MULTILIB_USEDEP}] )
 	)
 	gcrypt? ( >=dev-libs/libgcrypt-1.5.3:0[${MULTILIB_USEDEP}] )
