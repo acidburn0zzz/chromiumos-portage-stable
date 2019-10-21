@@ -1,34 +1,31 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=5
-
+EAPI=6
 inherit autotools eutils
 
 DESCRIPTION="A TCP, UDP, and SCTP network bandwidth measurement tool"
 HOMEPAGE="https://github.com/esnet/iperf/"
-SRC_URI="https://codeload.github.com/esnet/${PN}/tar.gz/${PV/_beta/b} -> ${P}.tar.gz"
+SRC_URI="${HOMEPAGE}archive/${PV/_/}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="BSD"
 SLOT="3"
 KEYWORDS="*"
-IUSE="sctp static-libs"
+IUSE="libressl profiling sctp static-libs"
 
-DEPEND="sctp? ( net-misc/lksctp-tools )"
+DEPEND="
+	!libressl? ( dev-libs/openssl:0= )
+	libressl? ( dev-libs/libressl:0= )
+	sctp? ( net-misc/lksctp-tools )
+"
 RDEPEND="${DEPEND}"
-
-S=${WORKDIR}/${P/_beta/b}
-
-PATCHES=( "${FILESDIR}"/${PN}-3.0.5-flags.patch )
-
-src_prepare() {
-	epatch "${PATCHES[@]}"
-
-	eautoreconf
-}
+S=${WORKDIR}/${P/_/}
 
 src_configure() {
-	econf $(use_enable static-libs static)
+	use sctp || export ac_cv_header_netinet_sctp_h=no
+	econf \
+		$(use_enable profiling) \
+		$(use_enable static-libs static)
 }
 
 src_install() {
