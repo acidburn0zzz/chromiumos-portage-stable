@@ -3,12 +3,12 @@ DEPEND=>=sys-apps/util-linux-2.20 dmalloc? ( dev-libs/dmalloc[threads] ) ldap? (
 DESCRIPTION=Kernel based automounter
 EAPI=6
 HOMEPAGE=http://www.linux-consulting.com/Amd_AutoFS/autofs.html
-IUSE=-dmalloc ldap +libtirpc mount-locking sasl
+IUSE=-dmalloc ldap +libtirpc mount-locking sasl kernel_linux
 KEYWORDS=*
 LICENSE=GPL-2
 RDEPEND=>=sys-apps/util-linux-2.20 dmalloc? ( dev-libs/dmalloc[threads] ) ldap? ( >=net-nds/openldap-2.0 sasl? ( dev-libs/cyrus-sasl dev-libs/libxml2 virtual/krb5 ) ) libtirpc? ( net-libs/libtirpc ) !libtirpc? ( elibc_glibc? ( sys-libs/glibc[rpc(-)] ) )
 REQUIRED_USE=sasl? ( ldap )
 SLOT=0
 SRC_URI=mirror://kernel/linux/daemons/autofs/v5/autofs-5.1.4.tar.xz
-_eclasses_=estack	43ddf5aaffa7a8d0482df54d25a66a1f	linux-info	e60da1ae009f60d1c79c5af918dfd844	multilib	b2f01ad412baf81650c23fcf0975fa33	systemd	8f5286f89e265842f5b5189666eae88b	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607	versionator	26ca8a8bd95d6a74122c08ba98a4ee72
+_eclasses_=eapi7-ver	756b3f27d8e46131d5cf3c51bd876446	linux-info	953c3b1c472dcadbf62098a9301327f2	multilib	b2f01ad412baf81650c23fcf0975fa33	systemd	8f5286f89e265842f5b5189666eae88b	toolchain-funcs	2f8b8f320bee13b71a8a54cc6d09e08a
 _md5_=89a70959daa13024d2e60cd54a9e66e8

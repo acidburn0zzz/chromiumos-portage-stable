@@ -10,5 +10,5 @@ RDEPEND=!static? ( zlib? ( sys-libs/zlib ) dev-libs/libtommath ) pam? ( virtual/
 REQUIRED_USE=pam? ( !static )
 SLOT=0
 SRC_URI=http://matt.ucc.asn.au/dropbear/releases/dropbear-2015.67.tar.bz2 http://matt.ucc.asn.au/dropbear/testing/dropbear-2015.67.tar.bz2
-_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	b2f01ad412baf81650c23fcf0975fa33	pam	3f746974e1cc47cabe3bd488c08cdc8e	portability	536c5e70c5fb252ed3b769e04aa3f05b	savedconfig	973a6df1a0949eba28a185eac79de815	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607	user	059bd54dd6b0acf0eb8961c4ec0c2b64
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	b2f01ad412baf81650c23fcf0975fa33	pam	3f746974e1cc47cabe3bd488c08cdc8e	portability	536c5e70c5fb252ed3b769e04aa3f05b	savedconfig	973a6df1a0949eba28a185eac79de815	toolchain-funcs	2f8b8f320bee13b71a8a54cc6d09e08a	user	059bd54dd6b0acf0eb8961c4ec0c2b64
 _md5_=d156149bbdce46f4c6c04d526256ad96

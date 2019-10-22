@@ -1,0 +1,13 @@
+DEFINED_PHASES=compile configure install prepare test
+DEPEND=!libressl? ( dev-libs/openssl:0= ) libressl? ( dev-libs/libressl:0= ) virtual/perl-MIME-Base64 virtual/perl-ExtUtils-MakeMaker test? ( !minimal? ( dev-perl/Test-Exception dev-perl/Test-Warn dev-perl/Test-NoWarnings ) virtual/perl-Test-Simple ) dev-lang/perl:=
+DESCRIPTION=Perl extension for using OpenSSL
+EAPI=6
+HOMEPAGE=http://search.cpan.org/dist/Net-SSLeay/
+IUSE=libressl test minimal examples examples
+KEYWORDS=*
+LICENSE=Artistic-2
+RDEPEND=!libressl? ( dev-libs/openssl:0= ) libressl? ( dev-libs/libressl:0= ) virtual/perl-MIME-Base64 dev-lang/perl:=
+SLOT=0
+SRC_URI=mirror://cpan/authors/id/C/CH/CHRISN/Net-SSLeay-1.88.tar.gz
+_eclasses_=multilib	b2f01ad412baf81650c23fcf0975fa33	multiprocessing	e32940a7b2a9992ad217eccddb84d548	perl-functions	01e8c68d5a528bbcda4d3c60205983df	perl-module	863b35d127db98823d439f8d73c2d011	toolchain-funcs	2f8b8f320bee13b71a8a54cc6d09e08a
+_md5_=ffb7006ea978b75573d5b9d779a59f03
