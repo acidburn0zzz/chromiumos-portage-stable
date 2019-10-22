@@ -6,5 +6,5 @@ KEYWORDS=*
 LICENSE=BSD
 SLOT=0
 SRC_URI=http://dotat.at/prog/unifdef/unifdef-2.10.tar.gz
-_eclasses_=multilib	b2f01ad412baf81650c23fcf0975fa33	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607
+_eclasses_=multilib	b2f01ad412baf81650c23fcf0975fa33	toolchain-funcs	2f8b8f320bee13b71a8a54cc6d09e08a
 _md5_=f2e8855058c2a95bb00de3efa0ced5b5

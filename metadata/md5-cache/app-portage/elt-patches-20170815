@@ -8,5 +8,5 @@ LICENSE=GPL-2
 RDEPEND=sys-apps/gentoo-functions
 SLOT=0
 SRC_URI=https://dev.gentoo.org/~mgorny/dist/elt-patches-20170815.tar.xz
-_eclasses_=multilib	b2f01ad412baf81650c23fcf0975fa33	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607
+_eclasses_=multilib	b2f01ad412baf81650c23fcf0975fa33	toolchain-funcs	2f8b8f320bee13b71a8a54cc6d09e08a
 _md5_=831100b15a44dba11776194796b8d412

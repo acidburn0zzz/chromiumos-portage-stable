@@ -8,5 +8,5 @@ LICENSE=|| ( Artistic GPL-1+ )
 RDEPEND=dev-lang/perl:=[-build(-)]
 SLOT=0
 SRC_URI=mirror://cpan/authors/id/A/AM/AMS/Storable-2.39.tar.gz
-_eclasses_=alternatives	eb864f6e50a20036e4cd47c8fd8f64d1	eutils	06133990e861be0fe60c2b428fd025d9	multilib	b2f01ad412baf81650c23fcf0975fa33	multiprocessing	e32940a7b2a9992ad217eccddb84d548	perl-functions	01e8c68d5a528bbcda4d3c60205983df	perl-module	863b35d127db98823d439f8d73c2d011	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607	unpacker	04385b0f181c42fa9c18ec0e31729d1f
+_eclasses_=alternatives	eb864f6e50a20036e4cd47c8fd8f64d1	eutils	06133990e861be0fe60c2b428fd025d9	multilib	b2f01ad412baf81650c23fcf0975fa33	multiprocessing	e32940a7b2a9992ad217eccddb84d548	perl-functions	01e8c68d5a528bbcda4d3c60205983df	perl-module	863b35d127db98823d439f8d73c2d011	toolchain-funcs	2f8b8f320bee13b71a8a54cc6d09e08a	unpacker	04385b0f181c42fa9c18ec0e31729d1f
 _md5_=f80100571cca1749d24910a496730052
