@@ -3,14 +3,14 @@
 
 EAPI=5
 
-PYTHON_COMPAT=(python{2_7,3_4,3_5,3_6,3_7})
+PYTHON_COMPAT=(python{2_7,3_5,3_6,3_7})
 PYTHON_REQ_USE="readline(+)"
 
 inherit distutils-r1
 
 DESCRIPTION="Replacement for 'emerge --search' with search-index"
 HOMEPAGE="https://github.com/fuzzyray/esearch"
-SRC_URI="mirror://github/fuzzyray/${PN}/${P}.tar.gz"
+SRC_URI="https://github.com/downloads/fuzzyray/${PN}/${P}.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
