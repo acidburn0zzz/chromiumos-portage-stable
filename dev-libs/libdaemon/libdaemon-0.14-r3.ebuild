@@ -1,26 +1,34 @@
-# Copyright 1999-2012 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-libs/libdaemon/libdaemon-0.14-r1.ebuild,v 1.8 2012/05/13 19:47:31 aballier Exp $
 
-EAPI=4
+EAPI=6
 
-inherit libtool eutils
+inherit multilib-minimal
 
 DESCRIPTION="Simple library for creating daemon processes in C"
 HOMEPAGE="http://0pointer.de/lennart/projects/libdaemon/"
 SRC_URI="http://0pointer.de/lennart/projects/${PN}/${P}.tar.gz"
 
 LICENSE="LGPL-2.1"
-SLOT="0"
+SLOT="0/5"
 KEYWORDS="*"
 IUSE="doc examples static-libs"
 
 RDEPEND=""
 DEPEND="doc? ( app-doc/doxygen )"
 
-DOCS=( "README" )
+PATCHES=(
+	"${FILESDIR}"/${PV}-man-page-typo-fix.patch
+)
 
-src_configure() {
+src_prepare() {
+	default
+
+	# doxygen is broken with out-of-source builds
+	multilib_copy_sources
+}
+
+multilib_src_configure() {
 	econf \
 		--docdir="${EPREFIX}/usr/share/doc/${PF}" \
 		--localstatedir=/var \
@@ -29,30 +37,31 @@ src_configure() {
 		$(use_enable static-libs static)
 }
 
-src_compile() {
+multilib_src_compile() {
 	emake
 
-	if use doc ; then
+	if multilib_is_native_abi && use doc; then
 		einfo "Building documentation"
 		emake doxygen
 	fi
 }
 
-src_install() {
-	default
+multilib_src_install() {
+	emake DESTDIR="${D}" install
 
-	find "${ED}" -name '*.la' -exec rm -f {} +
-
-	if use doc; then
-		ln -sf doc/reference/html reference
-		dohtml -r doc/README.html doc/style.css reference
-		doman doc/reference/man/man*/*
+	if multilib_is_native_abi && use doc; then
+		docinto html
+		dodoc -r doc/README.html doc/style.css doc/reference/html/*
+		doman doc/reference/man/man3/*.h.3
 	fi
+}
+
+multilib_src_install_all() {
+	einstalldocs
+	find "${D}" -name '*.la' -delete || die
 
 	if use examples; then
 		docinto examples
 		dodoc examples/testd.c
 	fi
-
-	rm -rf "${ED}"/usr/share/doc/${PF}/{README.html,style.css} || die "rm failed"
 }
