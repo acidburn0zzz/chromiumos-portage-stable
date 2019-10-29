@@ -1,34 +1,42 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-python/subunit/subunit-0.0.21-r1.ebuild,v 1.6 2015/04/14 12:51:23 ago Exp $
 
 EAPI=5
 
-PYTHON_COMPAT=( python{2_7,3_3,3_4} pypy )
+PYTHON_COMPAT=( python2_7 python3_{5,6,7} pypy pypy3 )
 
-inherit distutils-r1 eutils multilib-minimal
+inherit distutils-r1 eutils multilib-minimal versionator
 
 DESCRIPTION="A streaming protocol for test results"
-HOMEPAGE="https://launchpad.net/subunit http://pypi.python.org/pypi/python-subunit"
-SRC_URI="http://launchpad.net/${PN}/trunk/${PV}/+download/${P}.tar.gz"
+HOMEPAGE="https://launchpad.net/subunit https://pypi.org/project/python-subunit/"
+SRC_URI="https://launchpad.net/${PN}/trunk/$(get_version_component_range 1-2)/+download/${P}.tar.gz"
 
 LICENSE="Apache-2.0 BSD"
 SLOT="0"
 KEYWORDS="*"
 IUSE="static-libs test"
 
-RDEPEND=">=dev-python/testtools-0.9.34[${PYTHON_USEDEP}]
-	dev-python/extras[${PYTHON_USEDEP}]"
-DEPEND="${RDEPEND}
+RDEPEND="
+	>=dev-python/testtools-0.9.34[${PYTHON_USEDEP}]
+	dev-python/extras[${PYTHON_USEDEP}]
+	dev-lang/perl:="
+
+DEPEND="
+	${RDEPEND}
 	dev-python/setuptools[${PYTHON_USEDEP}]
-	dev-lang/perl:=
 	>=dev-libs/check-0.9.11[${MULTILIB_USEDEP}]
 	>=dev-util/cppunit-1.13.2[${MULTILIB_USEDEP}]
 	>=virtual/pkgconfig-0-r1[${MULTILIB_USEDEP}]
-	test? ( dev-python/testscenarios[${PYTHON_USEDEP}] )"
+	test? (
+		dev-python/fixtures[${PYTHON_USEDEP}]
+		dev-python/hypothesis[${PYTHON_USEDEP}]
+		dev-python/testscenarios[${PYTHON_USEDEP}]
+	)"
 
 # Take out rogue & trivial failing tests that exit the suite before it even gets started
-PATCHES=( "${FILESDIR}"/${PV}-tests.patch )
+# The removed class in fact works fine in py3 and fails with py2.7 & pupu
+# The setu to restrict this patch is just those 2 is not worth it.
+PATCHES=( "${FILESDIR}"/1.0.0-tests.patch )
 
 src_prepare() {
 	sed -i -e 's/os.chdir(os.path.dirname(__file__))//' setup.py || die
@@ -56,6 +64,12 @@ multilib_src_compile() {
 python_test() {
 	local -x PATH="${PWD}/shell/share:${PATH}"
 	local -x PYTHONPATH=python
+	# Following tests are known to fail in py2.7 & pypy. They pass under py3.
+	# DO NOT re-file
+	# test_add_error test_add_error_details test_add_expected_failure
+	# test_add_expected_failure_details test_add_failure test_add_failure
+	# https://bugs.launchpad.net/subunit/+bug/1436686
+
 	"${PYTHON}" -m testtools.run all_tests.test_suite || die "Testing failed with ${EPYTHON}"
 }
 
