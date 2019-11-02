@@ -1,5 +1,5 @@
 DEFINED_PHASES=compile configure install prepare test
-DEPEND=sys-devel/make >=dev-util/cmake-2.8.12
+DEPEND=sys-devel/make >=dev-util/cmake-3.9.6
 DESCRIPTION=Vulkan Header files and API registry
 EAPI=6
 HOMEPAGE=https://github.com/KhronosGroup/Vulkan-Headers
@@ -8,5 +8,5 @@ LICENSE=Apache-2.0
 RDEPEND=!<=media-libs/vulkan-loader-1.1.70.0-r999
 SLOT=0
 SRC_URI=https://github.com/KhronosGroup/Vulkan-Headers/archive/114c3546e195819bd53a34b39f5194b2989a5b12.tar.gz -> vulkan-headers-1.1.92.0.tar.gz
-_eclasses_=cmake-utils	625ac0250848368bad285a1d1de242cf	estack	43ddf5aaffa7a8d0482df54d25a66a1f	eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	b2f01ad412baf81650c23fcf0975fa33	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607	versionator	26ca8a8bd95d6a74122c08ba98a4ee72
+_eclasses_=cmake-utils	91d6ef31dc426240577497cacbf2508c	eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	b2f01ad412baf81650c23fcf0975fa33	multiprocessing	e32940a7b2a9992ad217eccddb84d548	ninja-utils	132cbb376048d079b5a012f5467c4e7f	toolchain-funcs	209edad4a5c4812e7b2f8021650974f0	xdg-utils	ff2ff954e6b17929574eee4efc5152ba
 _md5_=eca32500dd600c5f12aea3671c60e980

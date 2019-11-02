@@ -9,5 +9,5 @@ LICENSE=GPL-2
 RDEPEND=selinux? ( sec-policy/selinux-hddtemp )
 SLOT=0
 SRC_URI=http://download.savannah.gnu.org/releases/hddtemp/hddtemp-0.3-beta15.tar.bz2 mirror://gentoo/hddtemp-20080531.db.bz2
-_eclasses_=autotools	d0e5375d47f4c809f406eb892e531513	eutils	06133990e861be0fe60c2b428fd025d9	libtool	f143db5a74ccd9ca28c1234deffede96	multilib	b2f01ad412baf81650c23fcf0975fa33	readme.gentoo-r1	6f03e110529650f57fc7d1fb908b8986	systemd	8f5286f89e265842f5b5189666eae88b	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607
+_eclasses_=autotools	d0e5375d47f4c809f406eb892e531513	eutils	06133990e861be0fe60c2b428fd025d9	libtool	f143db5a74ccd9ca28c1234deffede96	multilib	b2f01ad412baf81650c23fcf0975fa33	readme.gentoo-r1	22ae82e140bdd95d17a34fd5fd733190	systemd	71fd8d2065d102753fb9e4d20eaf3e9f	toolchain-funcs	209edad4a5c4812e7b2f8021650974f0
 _md5_=06c474715c4cb5ec03c37634676b0da8

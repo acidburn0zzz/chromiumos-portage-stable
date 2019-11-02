@@ -1,5 +1,5 @@
 DEFINED_PHASES=compile configure install prepare setup test
-DEPEND=sys-libs/zlib bzip2? ( app-arch/bzip2 ) ssl? ( gnutls? ( net-libs/gnutls ) !gnutls? ( !libressl? ( dev-libs/openssl:0= ) libressl? ( dev-libs/libressl:0= ) ) ) sys-devel/make >=dev-util/cmake-2.8.12
+DEPEND=sys-libs/zlib bzip2? ( app-arch/bzip2 ) ssl? ( gnutls? ( net-libs/gnutls ) !gnutls? ( !libressl? ( dev-libs/openssl:0= ) libressl? ( dev-libs/libressl:0= ) ) ) sys-devel/make >=dev-util/cmake-3.9.6
 DESCRIPTION=Library for manipulating zip archives
 EAPI=6
 HOMEPAGE=https://nih.at/libzip/
@@ -9,5 +9,5 @@ LICENSE=BSD
 RDEPEND=sys-libs/zlib bzip2? ( app-arch/bzip2 ) ssl? ( gnutls? ( net-libs/gnutls ) !gnutls? ( !libressl? ( dev-libs/openssl:0= ) libressl? ( dev-libs/libressl:0= ) ) )
 SLOT=0/5
 SRC_URI=https://www.nih.at/libzip/libzip-1.5.1.tar.xz
-_eclasses_=cmake-utils	625ac0250848368bad285a1d1de242cf	estack	43ddf5aaffa7a8d0482df54d25a66a1f	eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multibuild	40fe59465edacd730c644ec2bc197809	multilib	b2f01ad412baf81650c23fcf0975fa33	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607	versionator	26ca8a8bd95d6a74122c08ba98a4ee72
+_eclasses_=cmake-utils	91d6ef31dc426240577497cacbf2508c	eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multibuild	40fe59465edacd730c644ec2bc197809	multilib	b2f01ad412baf81650c23fcf0975fa33	multiprocessing	e32940a7b2a9992ad217eccddb84d548	ninja-utils	132cbb376048d079b5a012f5467c4e7f	toolchain-funcs	209edad4a5c4812e7b2f8021650974f0	xdg-utils	ff2ff954e6b17929574eee4efc5152ba
 _md5_=145e12b317107b50ff7fff4f2c5f423e

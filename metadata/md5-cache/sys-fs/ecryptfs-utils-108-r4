@@ -1,0 +1,14 @@
+DEFINED_PHASES=configure install postinst prepare setup
+DEPEND=>=sys-apps/keyutils-1.0:= >=dev-libs/libgcrypt-1.2.0:0 dev-libs/nss gpg? ( app-crypt/gpgme ) gtk? ( x11-libs/gtk+:2 ) openssl? ( >=dev-libs/openssl-0.9.7:= ) pam? ( sys-libs/pam ) pkcs11? ( >=dev-libs/openssl-0.9.7:= >=dev-libs/pkcs11-helper-1.04 ) python? ( python_targets_python2_7? ( >=dev-lang/python-2.7.5-r2:2.7 ) >=dev-lang/python-exec-2:=[python_targets_python2_7(-)?,-python_single_target_jython2_7(-),-python_single_target_pypy(-),-python_single_target_pypy3(-),-python_single_target_python3_4(-),-python_single_target_python3_5(-),-python_single_target_python3_6(-),-python_single_target_python3_7(-),python_single_target_python2_7(+)] ) tpm? ( app-crypt/trousers ) virtual/pkgconfig sys-devel/gettext >=dev-util/intltool-0.41.0 python? ( dev-lang/swig ) >=app-portage/elt-patches-20170815 !<sys-devel/gettext-0.18.1.1-r3 || ( >=sys-devel/automake-1.16.1:1.16 >=sys-devel/automake-1.15.1:1.15 ) >=sys-devel/autoconf-2.69 >=sys-devel/libtool-2.4
+DESCRIPTION=eCryptfs userspace utilities
+EAPI=6
+HOMEPAGE=https://launchpad.net/ecryptfs
+IUSE=doc gpg gtk nls openssl pam pkcs11 python suid tpm python_targets_python2_7 kernel_linux
+KEYWORDS=*
+LICENSE=GPL-2
+RDEPEND=>=sys-apps/keyutils-1.0:= >=dev-libs/libgcrypt-1.2.0:0 dev-libs/nss gpg? ( app-crypt/gpgme ) gtk? ( x11-libs/gtk+:2 ) openssl? ( >=dev-libs/openssl-0.9.7:= ) pam? ( sys-libs/pam ) pkcs11? ( >=dev-libs/openssl-0.9.7:= >=dev-libs/pkcs11-helper-1.04 ) python? ( python_targets_python2_7? ( >=dev-lang/python-2.7.5-r2:2.7 ) >=dev-lang/python-exec-2:=[python_targets_python2_7(-)?,-python_single_target_jython2_7(-),-python_single_target_pypy(-),-python_single_target_pypy3(-),-python_single_target_python3_4(-),-python_single_target_python3_5(-),-python_single_target_python3_6(-),-python_single_target_python3_7(-),python_single_target_python2_7(+)] ) tpm? ( app-crypt/trousers )
+REQUIRED_USE=python? ( python_targets_python2_7 )
+SLOT=0
+SRC_URI=https://launchpad.net/ecryptfs/trunk/108/+download/ecryptfs-utils_108.orig.tar.gz
+_eclasses_=autotools	d0e5375d47f4c809f406eb892e531513	eapi7-ver	756b3f27d8e46131d5cf3c51bd876446	eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	libtool	f143db5a74ccd9ca28c1234deffede96	linux-info	6accc0e19163336db48a3c346993eb16	multilib	b2f01ad412baf81650c23fcf0975fa33	pam	3f746974e1cc47cabe3bd488c08cdc8e	python-single-r1	3a0fc81f484bfdbd9c2b7448015a36e4	python-utils-r1	1a4f6b5e7fa7b8da3f7d9753118d10c5	toolchain-funcs	209edad4a5c4812e7b2f8021650974f0
+_md5_=7a0edb2d331e47b1920d1a00c99c7a2d

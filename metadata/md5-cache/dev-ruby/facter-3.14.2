@@ -1,5 +1,5 @@
 DEFINED_PHASES=compile configure install prepare setup test unpack
-DEPEND=>=sys-devel/gcc-4.8:* dev-cpp/cpp-hocon >=dev-libs/leatherman-1.0.0:= dev-libs/openssl:0= sys-apps/util-linux app-emulation/virt-what net-misc/curl >=dev-libs/boost-1.54:=[nls] <dev-libs/boost-1.70.0 >=dev-cpp/yaml-cpp-0.5.1 !<app-admin/puppet-4.0.0 sys-devel/make >=dev-util/cmake-2.8.12 ruby_targets_ruby24? ( dev-lang/ruby:2.4 ) ruby_targets_ruby25? ( dev-lang/ruby:2.5 ) ruby_targets_ruby26? ( dev-lang/ruby:2.6 )
+DEPEND=>=sys-devel/gcc-4.8:* dev-cpp/cpp-hocon >=dev-libs/leatherman-1.0.0:= dev-libs/openssl:0= sys-apps/util-linux app-emulation/virt-what net-misc/curl >=dev-libs/boost-1.54:=[nls] <dev-libs/boost-1.70.0 >=dev-cpp/yaml-cpp-0.5.1 !<app-admin/puppet-4.0.0 sys-devel/make >=dev-util/cmake-3.9.6 ruby_targets_ruby24? ( dev-lang/ruby:2.4 ) ruby_targets_ruby25? ( dev-lang/ruby:2.5 ) ruby_targets_ruby26? ( dev-lang/ruby:2.6 )
 DESCRIPTION=A cross-platform ruby library for retrieving facts from operating systems
 EAPI=6
 HOMEPAGE=http://www.puppetlabs.com/puppet/related-projects/facter/
@@ -10,5 +10,5 @@ RDEPEND=>=dev-libs/leatherman-1.0.0:= dev-libs/openssl:0= sys-apps/util-linux ap
 REQUIRED_USE=|| ( ruby_targets_ruby24 ruby_targets_ruby25 ruby_targets_ruby26 )
 SLOT=0
 SRC_URI=https://github.com/puppetlabs/facter/archive/3.14.2.tar.gz -> facter-3.14.2.tar.gz
-_eclasses_=cmake-utils	625ac0250848368bad285a1d1de242cf	estack	43ddf5aaffa7a8d0482df54d25a66a1f	eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	b2f01ad412baf81650c23fcf0975fa33	ruby-ng	a28f4a400304e633468f10ad1b9e2f6e	ruby-utils	5b782a86f95c84466cdb53f8c8a8be37	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607	versionator	26ca8a8bd95d6a74122c08ba98a4ee72
-_md5_=42570bc6bae6154017afcc655116966e
+_eclasses_=cmake-utils	91d6ef31dc426240577497cacbf2508c	estack	43ddf5aaffa7a8d0482df54d25a66a1f	eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	b2f01ad412baf81650c23fcf0975fa33	multiprocessing	e32940a7b2a9992ad217eccddb84d548	ninja-utils	132cbb376048d079b5a012f5467c4e7f	ruby-ng	52fd4285a474ae0ea41f35fe3b3c6060	ruby-utils	5b782a86f95c84466cdb53f8c8a8be37	toolchain-funcs	209edad4a5c4812e7b2f8021650974f0	xdg-utils	ff2ff954e6b17929574eee4efc5152ba
+_md5_=78735dad66147f421e7efc6b5b6056c7

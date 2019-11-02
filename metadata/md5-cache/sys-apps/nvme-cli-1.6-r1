@@ -10,5 +10,5 @@ RDEPEND=uuid? ( sys-apps/util-linux:= )
 RESTRICT=test
 SLOT=0
 SRC_URI=https://github.com/linux-nvme/nvme-cli/archive/v1.6.tar.gz -> nvme-cli-1.6.tar.gz
-_eclasses_=multilib	b2f01ad412baf81650c23fcf0975fa33	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607
+_eclasses_=multilib	b2f01ad412baf81650c23fcf0975fa33	toolchain-funcs	209edad4a5c4812e7b2f8021650974f0
 _md5_=6a79ce7a0e96b83513fab7c455d398ec

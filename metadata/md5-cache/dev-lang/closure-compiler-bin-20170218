@@ -9,5 +9,5 @@ LICENSE=Apache-2.0
 RDEPEND=>=virtual/jre-1.6 >=dev-java/java-config-2.2.0-r3
 SLOT=0
 SRC_URI=https://dl.google.com/closure-compiler/compiler-20170218.tar.gz -> closure-compiler-bin-20170218.tar.gz
-_eclasses_=estack	43ddf5aaffa7a8d0482df54d25a66a1f	eutils	06133990e861be0fe60c2b428fd025d9	java-pkg-2	c4e6af2574fd1dc79b43a6e27af4b5fb	java-utils-2	1971a6927fcd7ec839f7e12b28a24bdd	multilib	b2f01ad412baf81650c23fcf0975fa33	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607	versionator	26ca8a8bd95d6a74122c08ba98a4ee72
+_eclasses_=estack	43ddf5aaffa7a8d0482df54d25a66a1f	eutils	06133990e861be0fe60c2b428fd025d9	java-pkg-2	c4e6af2574fd1dc79b43a6e27af4b5fb	java-utils-2	1971a6927fcd7ec839f7e12b28a24bdd	multilib	b2f01ad412baf81650c23fcf0975fa33	toolchain-funcs	209edad4a5c4812e7b2f8021650974f0	versionator	26ca8a8bd95d6a74122c08ba98a4ee72
 _md5_=3a97ab6882cc33bbeaa1d6aa70076793

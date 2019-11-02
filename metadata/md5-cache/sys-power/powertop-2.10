@@ -1,0 +1,13 @@
+DEFINED_PHASES=configure prepare setup
+DEPEND=dev-libs/libnl:3 sys-apps/pciutils sys-libs/ncurses:=[unicode?] >=app-portage/elt-patches-20170815 !<sys-devel/gettext-0.18.1.1-r3 || ( >=sys-devel/automake-1.16.1:1.16 >=sys-devel/automake-1.15.1:1.15 ) >=sys-devel/autoconf-2.69 >=sys-devel/libtool-2.4
+DESCRIPTION=tool to diagnose issues with power consumption and power management
+EAPI=6
+HOMEPAGE=https://01.org/powertop/ https://github.com/fenrus75/powertop/
+IUSE=nls unicode X kernel_linux
+KEYWORDS=*
+LICENSE=GPL-2
+RDEPEND=dev-libs/libnl:3 sys-apps/pciutils sys-libs/ncurses:=[unicode?] X? ( x11-apps/xset ) virtual/libintl
+SLOT=0
+SRC_URI=https://01.org/sites/default/files/downloads/powertop-v2.10.tar.gz
+_eclasses_=autotools	d0e5375d47f4c809f406eb892e531513	eapi7-ver	756b3f27d8e46131d5cf3c51bd876446	libtool	f143db5a74ccd9ca28c1234deffede96	linux-info	6accc0e19163336db48a3c346993eb16	multilib	b2f01ad412baf81650c23fcf0975fa33	toolchain-funcs	209edad4a5c4812e7b2f8021650974f0
+_md5_=a26c18813fc897ca775e6793537619a0

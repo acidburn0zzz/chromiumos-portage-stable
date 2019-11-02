@@ -1,8 +1,7 @@
-BDEPEND=>=app-portage/elt-patches-20170815
 DEFINED_PHASES=compile configure install prepare test
-DEPEND=!static? ( dev-libs/expat dev-libs/libaio ) static? ( dev-libs/expat[static-libs(+)] dev-libs/libaio[static-libs(+)] ) test? ( || ( dev-lang/ruby:2.6 dev-lang/ruby:2.5 dev-lang/ruby:2.4 ) >=dev-cpp/gtest-1.8.0 dev-util/cucumber dev-util/aruba ) dev-libs/boost !<sys-devel/gettext-0.18.1.1-r3 || ( >=sys-devel/automake-1.16.1:1.16 >=sys-devel/automake-1.15.1:1.15 ) >=sys-devel/autoconf-2.69 >=sys-devel/libtool-2.4
+DEPEND=!static? ( dev-libs/expat dev-libs/libaio ) static? ( dev-libs/expat[static-libs(+)] dev-libs/libaio[static-libs(+)] ) test? ( || ( dev-lang/ruby:2.6 dev-lang/ruby:2.5 dev-lang/ruby:2.4 ) >=dev-cpp/gtest-1.8.0 dev-util/cucumber dev-util/aruba ) dev-libs/boost >=app-portage/elt-patches-20170815 !<sys-devel/gettext-0.18.1.1-r3 || ( >=sys-devel/automake-1.16.1:1.16 >=sys-devel/automake-1.15.1:1.15 ) >=sys-devel/autoconf-2.69 >=sys-devel/libtool-2.4
 DESCRIPTION=A suite of tools for thin provisioning on Linux
-EAPI=7
+EAPI=6
 HOMEPAGE=https://github.com/jthornber/thin-provisioning-tools
 IUSE=static test
 KEYWORDS=*
@@ -10,5 +9,5 @@ LICENSE=GPL-3
 RDEPEND=!static? ( dev-libs/expat dev-libs/libaio )
 SLOT=0
 SRC_URI=https://github.com/jthornber/thin-provisioning-tools/archive/v0.8.5.tar.gz -> thin-provisioning-tools-0.8.5.tar.gz
-_eclasses_=autotools	d0e5375d47f4c809f406eb892e531513	eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	libtool	f143db5a74ccd9ca28c1234deffede96	multilib	b2f01ad412baf81650c23fcf0975fa33	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607
-_md5_=88e0ddc490a467563a04dbddf741de7f
+_eclasses_=autotools	d0e5375d47f4c809f406eb892e531513	eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	libtool	f143db5a74ccd9ca28c1234deffede96	multilib	b2f01ad412baf81650c23fcf0975fa33	toolchain-funcs	209edad4a5c4812e7b2f8021650974f0
+_md5_=a8d352127e79868c33e43986682305da
