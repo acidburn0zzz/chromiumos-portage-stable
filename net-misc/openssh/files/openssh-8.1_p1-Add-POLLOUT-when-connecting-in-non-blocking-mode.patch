@@ -1,0 +1,115 @@
+From: Mattias Nissler <mnissler@chromium.org>
+To: openssh-unix-dev@mindrot.org
+Subject: [PATCH] Add POLLOUT when connect()ing in non-blocking mode.
+Date: Thu, 21 Nov 2019 00:34:50 +0100
+
+With the current POLLIN as the only requested event, there won't be a
+poll event reported when the TCP connection has been established
+successfully, but only after receiving data from the other side. This
+is a problem when connecting to servers that don't send their
+identification string immediately, e.g. the sslh multiplexer waits for
+the first client packet to identify the requested service. To make
+this work better and be consistent with blocking connect(), also
+request POLLOUT events such that poll() returns once the TCP
+connection has come up.
+---
+ misc.c | 20 +++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
+
+ Here is a reproduction of the issue:
+
+  (cr) mnissler@toroa ~ $ uname -r
+  4.19.67-2rodete2-amd64
+  (cr) mnissler@toroa ~ $ /usr/sbin/sslh -V
+  sslh-fork v1.18
+  (cr) mnissler@toroa ~ $ ssh -V
+  OpenSSH_8.1p1-hpn14v16, OpenSSL 1.0.2t  10 Sep 2019
+
+  Start sslh with a timeout of 2 seconds:
+
+  (cr) mnissler@toroa ~ $ /usr/sbin/sslh -p localhost:2222 -t 2 --ssh localhost:22 -f &
+  [1] 251851
+  sslh-fork v1.18 started
+
+  When passing ConnectTimeout=2, the client doesn't notice the TCP
+  connection coming up so the connection times out after 2 seconds:
+
+  (cr) mnissler@toroa ~ $ ssh -v -o ConnectTimeout=2 -p 2222 localhost
+  OpenSSH_8.1p1-hpn14v16, OpenSSL 1.0.2t  10 Sep 2019
+  debug1: Reading configuration data /home/mnissler/.ssh/config
+  debug1: Reading configuration data /etc/ssh/ssh_config
+  debug1: Connecting to localhost [::1] port 2222.
+  debug1: connect to address ::1 port 2222: Connection timed out
+  debug1: Connecting to localhost [127.0.0.1] port 2222.
+  debug1: connect to address 127.0.0.1 port 2222: Connection timed out
+  ssh: connect to host localhost port 2222: Connection timed out
+  ssh:connection from localhost:37766 to localhost:2222 forwarded from localhost:41614 to localhost:ssh
+
+  Increasing ConnectTimeout to 3, the connection comes up
+  successfully, but only after the sslh timeout expires, which causes
+  unnecessary delay:
+
+  (cr) mnissler@toroa ~ $ ssh -v -o ConnectTimeout=3 -p 2222 localhost
+  OpenSSH_8.1p1-hpn14v16, OpenSSL 1.0.2t  10 Sep 2019
+  debug1: Reading configuration data /home/mnissler/.ssh/config
+  debug1: Reading configuration data /etc/ssh/ssh_config
+  debug1: Connecting to localhost [::1] port 2222.
+  <<< hangs for 2 seconds here >>>
+  debug1: fd 3 clearing O_NONBLOCK
+  debug1: Connection established.
+
+--- a/misc.c
++++ b/misc.c
+@@ -238,12 +238,12 @@ set_rdomain(int fd, const char *name)
+ }
+ 
+ /*
+- * Wait up to *timeoutp milliseconds for fd to be readable. Updates
++ * Wait up to *timeoutp milliseconds for events on fd. Updates
+  * *timeoutp with time remaining.
+  * Returns 0 if fd ready or -1 on timeout or error (see errno).
+  */
+-int
+-waitrfd(int fd, int *timeoutp)
++static int
++waitfd(int fd, int *timeoutp, short events)
+ {
+ 	struct pollfd pfd;
+ 	struct timeval t_start;
+@@ -251,7 +251,7 @@ waitrfd(int fd, int *timeoutp)
+ 
+ 	monotime_tv(&t_start);
+ 	pfd.fd = fd;
+-	pfd.events = POLLIN;
++	pfd.events = events;
+ 	for (; *timeoutp >= 0;) {
+ 		r = poll(&pfd, 1, *timeoutp);
+ 		oerrno = errno;
+@@ -269,6 +269,16 @@ waitrfd(int fd, int *timeoutp)
+ 	return -1;
+ }
+ 
++/*
++ * Wait up to *timeoutp milliseconds for fd to be readable. Updates
++ * *timeoutp with time remaining.
++ * Returns 0 if fd ready or -1 on timeout or error (see errno).
++ */
++int
++waitrfd(int fd, int *timeoutp) {
++	return waitfd(fd, timeoutp, POLLIN);
++}
++
+ /*
+  * Attempt a non-blocking connect(2) to the specified address, waiting up to
+  * *timeoutp milliseconds for the connection to complete. If the timeout is
+@@ -295,7 +305,7 @@ timeout_connect(int sockfd, const struct sockaddr *serv_addr,
+ 	} else if (errno != EINPROGRESS)
+ 		return -1;
+ 
+-	if (waitrfd(sockfd, timeoutp) == -1)
++	if (waitfd(sockfd, timeoutp, POLLIN | POLLOUT) == -1)
+ 		return -1;
+ 
+ 	/* Completed or failed */
+-- 
+2.24.0.432.g9d3f5f5b63-goog
