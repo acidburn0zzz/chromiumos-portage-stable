@@ -1,9 +1,9 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="6"
+EAPI=7
 
-inherit toolchain-funcs multilib-minimal
+inherit toolchain-funcs multilib-minimal usr-ldscript
 
 MY_PN=${PN%-libs}
 MY_P="${MY_PN}-${PV}"
@@ -11,7 +11,7 @@ MY_P="${MY_PN}-${PV}"
 DESCRIPTION="e2fsprogs libraries (common error and subsystem)"
 HOMEPAGE="http://e2fsprogs.sourceforge.net/"
 SRC_URI="mirror://sourceforge/e2fsprogs/${MY_P}.tar.xz
-	mirror://kernel/linux/kernel/people/tytso/e2fsprogs/v${PV}/${MY_P}.tar.xz"
+	https://www.kernel.org/pub/linux/kernel/people/tytso/e2fsprogs/v${PV}/${MY_P}.tar.xz"
 
 LICENSE="GPL-2"
 SLOT="0"
@@ -21,7 +21,7 @@ IUSE="static-libs"
 RDEPEND="!sys-libs/com_err
 	!sys-libs/ss
 	!<sys-fs/e2fsprogs-1.41.8"
-DEPEND="virtual/pkgconfig"
+BDEPEND="virtual/pkgconfig"
 
 S="${WORKDIR}/${MY_P}"
 
@@ -72,9 +72,9 @@ multilib_src_test() {
 }
 
 multilib_src_install() {
-	emake -C lib/et V=1 DESTDIR="${D%/}" install || die "Failed to install libcom"
+	emake -C lib/et V=1 DESTDIR="${D}" install || die "Failed to install libcom"
 
-	emake -C lib/ss V=1 DESTDIR="${D%/}" install || die "Failed to install libss"
+	emake -C lib/ss V=1 DESTDIR="${D}" install || die "Failed to install libss"
 
 	# We call "gen_usr_ldscript -a" to ensure libs are present in /lib to support
 	# split /usr (e.g. "e2fsck" from sys-fs/e2fsprogs is installed in /sbin and
@@ -82,7 +82,7 @@ multilib_src_install() {
 	gen_usr_ldscript -a com_err ss $(usex kernel_linux '' 'uuid blkid')
 
 	if ! use static-libs ; then
-		find "${ED%/}" -name '*.a' -delete || die
+		find "${ED}" -name '*.a' -delete || die
 	fi
 }
 
