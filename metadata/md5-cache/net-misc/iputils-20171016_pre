@@ -10,5 +10,5 @@ RDEPEND=arping? ( !net-misc/arping ) rarpd? ( !net-misc/rarpd ) traceroute? ( !n
 REQUIRED_USE=ipv6? ( ssl? ( ^^ ( gcrypt nettle openssl ) ) )
 SLOT=0
 SRC_URI=https://github.com/iputils/iputils/archive/67e7d0daf1f231cc708217e6aec2f8d5ce7aeacf.tar.gz -> iputils-20171016_pre.tar.gz https://dev.gentoo.org/~whissi/dist/iputils/iputils-manpages-20171016_pre.tar.xz
-_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	fcaps	eeefea88d5fef2853d4c1e3770340302	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	b2f01ad412baf81650c23fcf0975fa33	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	fcaps	eeefea88d5fef2853d4c1e3770340302	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	b2f01ad412baf81650c23fcf0975fa33	toolchain-funcs	209edad4a5c4812e7b2f8021650974f0
 _md5_=f3b074f32eb8854c2202e398273f15ed

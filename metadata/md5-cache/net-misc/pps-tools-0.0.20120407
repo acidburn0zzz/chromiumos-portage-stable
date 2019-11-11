@@ -6,5 +6,5 @@ KEYWORDS=*
 LICENSE=GPL-2
 SLOT=0
 SRC_URI=https://github.com/ago/pps-tools/tarball/0deb9c7e135e9380a6d09e9d2e938a146bb698c8 -> pps-tools-git-0.0.20120407.tar.gz
-_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multilib	b2f01ad412baf81650c23fcf0975fa33	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multilib	b2f01ad412baf81650c23fcf0975fa33	toolchain-funcs	209edad4a5c4812e7b2f8021650974f0
 _md5_=e3cacaf3645ecaefd4c9a5ad545ff394

@@ -8,5 +8,5 @@ LICENSE=GPL-2
 RDEPEND=app-eselect/eselect-ctags
 SLOT=0
 SRC_URI=mirror://sourceforge/ctags/ctags-5.8.tar.gz ada? ( mirror://sourceforge/gnuada/ctags-ada-mode-4.3.11.tar.bz2 )
-_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multilib	b2f01ad412baf81650c23fcf0975fa33	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multilib	b2f01ad412baf81650c23fcf0975fa33	toolchain-funcs	209edad4a5c4812e7b2f8021650974f0
 _md5_=5daf81f9524cf7f0fd92657cfc823e7e

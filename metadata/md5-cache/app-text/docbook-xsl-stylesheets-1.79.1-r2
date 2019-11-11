@@ -5,9 +5,9 @@ HOMEPAGE=https://github.com/docbook/wiki/wiki
 IUSE=ruby
 KEYWORDS=*
 LICENSE=BSD
-RDEPEND=>=app-text/build-docbook-catalog-1.1 ruby? ( || ( dev-lang/ruby:2.3 dev-lang/ruby:2.2 dev-lang/ruby:2.4 dev-lang/ruby:2.5 ) virtual/rubygems )
+RDEPEND=>=app-text/build-docbook-catalog-1.1 ruby? ( || ( dev-lang/ruby:2.4 dev-lang/ruby:2.5 ) virtual/rubygems )
 RESTRICT=test
 SLOT=0
 SRC_URI=mirror://sourceforge/docbook/docbook-xsl-1.79.1.tar.bz2
-_eclasses_=ruby-single	7435c1687c234eb8cf5b212756f6381e	ruby-utils	e5942a80e3c3b936c6b84d6dc4af9f9c
+_eclasses_=ruby-single	7435c1687c234eb8cf5b212756f6381e	ruby-utils	5b782a86f95c84466cdb53f8c8a8be37
 _md5_=9da2ba16b2a1bb1b1005aeadd13b2c48

@@ -6,5 +6,5 @@ KEYWORDS=*
 LICENSE=GPL-2
 SLOT=0
 SRC_URI=mirror://sourceforge/pcalc/pcalc-2.tar.lzma
-_eclasses_=multilib	b2f01ad412baf81650c23fcf0975fa33	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607
+_eclasses_=multilib	b2f01ad412baf81650c23fcf0975fa33	toolchain-funcs	209edad4a5c4812e7b2f8021650974f0
 _md5_=7cc62a830b899520924e772f8c102346

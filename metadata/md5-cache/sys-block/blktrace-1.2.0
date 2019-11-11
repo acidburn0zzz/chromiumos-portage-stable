@@ -3,11 +3,11 @@ DEPEND=dev-libs/libaio sys-kernel/linux-headers doc? ( virtual/latex-base >=app-
 DESCRIPTION=show detailed info about what is happening on a block device io queue
 EAPI=6
 HOMEPAGE=http://git.kernel.dk/cgit/blktrace/
-IUSE=doc
+IUSE=doc kernel_linux
 KEYWORDS=*
 LICENSE=GPL-2
 RDEPEND=dev-libs/libaio
 SLOT=0
 SRC_URI=http://brick.kernel.dk/snaps/blktrace-1.2.0.tar.bz2
-_eclasses_=estack	43ddf5aaffa7a8d0482df54d25a66a1f	eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	linux-info	e60da1ae009f60d1c79c5af918dfd844	multilib	b2f01ad412baf81650c23fcf0975fa33	toolchain-funcs	1e35303c63cd707f6c3422b4493d5607	versionator	26ca8a8bd95d6a74122c08ba98a4ee72
+_eclasses_=eapi7-ver	756b3f27d8e46131d5cf3c51bd876446	eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	linux-info	6accc0e19163336db48a3c346993eb16	multilib	b2f01ad412baf81650c23fcf0975fa33	toolchain-funcs	209edad4a5c4812e7b2f8021650974f0
 _md5_=db4cfbea7359569c13315e1613680349

@@ -1,0 +1,14 @@
+BDEPEND=nls? ( sys-devel/gettext ) virtual/pkgconfig sys-apps/texinfo virtual/pkgconfig virtual/pkgconfig
+DEFINED_PHASES=compile configure install prepare
+DEPEND=~sys-libs/e2fsprogs-libs-1.45.4 >=sys-apps/util-linux-2.16 cron? ( sys-fs/lvm2[-device-mapper-only(-)] ) fuse? ( sys-fs/fuse:0 ) nls? ( virtual/libintl )
+DESCRIPTION=Standard EXT2/EXT3/EXT4 filesystem utilities
+EAPI=7
+HOMEPAGE=http://e2fsprogs.sourceforge.net/
+IUSE=cron fuse nls static-libs elibc_FreeBSD split-usr
+KEYWORDS=*
+LICENSE=GPL-2 BSD
+RDEPEND=~sys-libs/e2fsprogs-libs-1.45.4 >=sys-apps/util-linux-2.16 cron? ( sys-fs/lvm2[-device-mapper-only(-)] ) fuse? ( sys-fs/fuse:0 ) nls? ( virtual/libintl )
+SLOT=0
+SRC_URI=mirror://sourceforge/e2fsprogs/e2fsprogs-1.45.4.tar.xz https://www.kernel.org/pub/linux/kernel/people/tytso/e2fsprogs/v1.45.4/e2fsprogs-1.45.4.tar.xz elibc_mintlib? ( mirror://gentoo/e2fsprogs-1.42.9-mint-r1.patch.xz )
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	b2f01ad412baf81650c23fcf0975fa33	systemd	71fd8d2065d102753fb9e4d20eaf3e9f	toolchain-funcs	209edad4a5c4812e7b2f8021650974f0	udev	452708c3f55cf6e918b045adb949a9e6	usr-ldscript	766f0a506b45f02361ad1b8ca205b7e1
+_md5_=c601c317fef9e234282b7c88bdb912cf
