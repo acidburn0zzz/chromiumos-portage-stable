@@ -1,16 +1,16 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
-inherit autotools flag-o-matic toolchain-funcs user
+EAPI=7
+inherit flag-o-matic toolchain-funcs user
 
 DESCRIPTION="A Tool for network monitoring and data acquisition"
 HOMEPAGE="
-	http://www.tcpdump.org/
+	https://www.tcpdump.org/
 	https://github.com/the-tcpdump-group/tcpdump
 "
 SRC_URI="
-	http://www.tcpdump.org/release/${P}.tar.gz
+	https://www.tcpdump.org/release/${P}.tar.gz
 "
 
 LICENSE="BSD"
@@ -31,32 +31,17 @@ DEPEND="
 	${RDEPEND}
 	drop-root? ( virtual/pkgconfig )
 	test? (
-		|| ( app-arch/sharutils sys-freebsd/freebsd-ubin )
+		>=net-libs/libpcap-1.9.1
 		dev-lang/perl
+		|| ( app-arch/sharutils sys-freebsd/freebsd-ubin )
 	)
 "
-PATCHES=(
-	"${FILESDIR}"/${PN}-4.9.2-includedir.patch
-)
 
 pkg_setup() {
 	if use drop-root || use suid; then
 		enewgroup tcpdump
 		enewuser tcpdump -1 -1 -1 tcpdump
 	fi
-}
-
-src_prepare() {
-	default
-
-	mv aclocal.m4 acinclude.m4 || die
-
-	eautoreconf
-
-	sed -i -e '/^eapon1/d;' tests/TESTLIST || die
-
-	# bug 630394
-	sed -i -e '/^nbns-valgrind/d' tests/TESTLIST || die
 }
 
 src_configure() {
@@ -69,7 +54,7 @@ src_configure() {
 		$(use_enable samba smb) \
 		$(use_with drop-root chroot '') \
 		$(use_with smi) \
-		$(use_with ssl crypto "${EPREFIX}/usr") \
+		$(use_with ssl crypto "${ESYSROOT}/usr") \
 		$(usex drop-root "--with-user=tcpdump" "")
 }
 

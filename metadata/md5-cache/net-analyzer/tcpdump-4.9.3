@@ -1,0 +1,13 @@
+DEFINED_PHASES=configure install postinst preinst setup test
+DEPEND=drop-root? ( sys-libs/libcap-ng ) net-libs/libpcap smi? ( net-libs/libsmi ) ssl? ( !libressl? ( >=dev-libs/openssl-0.9.6m:0= ) libressl? ( dev-libs/libressl:= ) ) drop-root? ( virtual/pkgconfig ) test? ( >=net-libs/libpcap-1.9.1 dev-lang/perl || ( app-arch/sharutils sys-freebsd/freebsd-ubin ) ) sys-apps/baselayout
+DESCRIPTION=A Tool for network monitoring and data acquisition
+EAPI=7
+HOMEPAGE=https://www.tcpdump.org/ https://github.com/the-tcpdump-group/tcpdump
+IUSE=+drop-root libressl smi ssl samba suid test
+KEYWORDS=*
+LICENSE=BSD
+RDEPEND=drop-root? ( sys-libs/libcap-ng ) net-libs/libpcap smi? ( net-libs/libsmi ) ssl? ( !libressl? ( >=dev-libs/openssl-0.9.6m:0= ) libressl? ( dev-libs/libressl:= ) ) sys-apps/baselayout
+SLOT=0
+SRC_URI=https://www.tcpdump.org/release/tcpdump-4.9.3.tar.gz
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	b2f01ad412baf81650c23fcf0975fa33	toolchain-funcs	209edad4a5c4812e7b2f8021650974f0	user	9090dfc2ada1aeb498eed56b8ad04ce6
+_md5_=ff6d3e6bab7067cc80b7a57fa12c6bfc
