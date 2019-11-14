@@ -1,1 +1,0 @@
-cabal-1.24.2.0.ebuild
