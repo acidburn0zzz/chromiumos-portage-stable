@@ -10,4 +10,4 @@ RESTRICT=test
 SLOT=0
 SRC_URI=mirror://gnu/diffutils/diffutils-3.6.tar.xz mirror://gnu-alpha/diffutils/diffutils-3.6.tar.xz
 _eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	b2f01ad412baf81650c23fcf0975fa33	toolchain-funcs	209edad4a5c4812e7b2f8021650974f0
-_md5_=731a5808f049aafd90deb3a4e44b55a4
+_md5_=ecd2ad69ac9aa1b643b7c873643305f4
