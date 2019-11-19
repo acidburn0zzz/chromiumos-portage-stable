@@ -16,14 +16,14 @@ inherit multiprocessing versionator
 # @DESCRIPTION:
 # returns the name of the ghc executable
 ghc-getghc() {
-	type -P ${HC:-ghc}
+	type -P ${HC:-ghc} || echo false
 }
 
 # @FUNCTION: ghc-getghcpkg
 # @DESCRIPTION:
 # Internal function determines returns the name of the ghc-pkg executable
 ghc-getghcpkg() {
-	type -P ${HC_PKG:-ghc-pkg}
+	type -P ${HC_PKG:-ghc-pkg} || echo false
 }
 
 # @FUNCTION: ghc-getghcpkgbin
