@@ -9,5 +9,5 @@ LICENSE=BSD
 RDEPEND=>=dev-lang/ghc-7.4.1:=
 SLOT=0/4.9.0.0
 SRC_URI=mirror://hackage/packages/archive/fail/4.9.0.0/fail-4.9.0.0.tar.gz
-_eclasses_=estack	43ddf5aaffa7a8d0482df54d25a66a1f	eutils	06133990e861be0fe60c2b428fd025d9	ghc-package	a0d34e2f5f204f01c404ae1ce539542a	haskell-cabal	45605f3898bdc59eb016fb50ca27bf18	multilib	b2f01ad412baf81650c23fcf0975fa33	multiprocessing	e32940a7b2a9992ad217eccddb84d548	toolchain-funcs	209edad4a5c4812e7b2f8021650974f0	versionator	26ca8a8bd95d6a74122c08ba98a4ee72
+_eclasses_=estack	43ddf5aaffa7a8d0482df54d25a66a1f	eutils	06133990e861be0fe60c2b428fd025d9	ghc-package	a87d404fca43c39142c7df928fd1021a	haskell-cabal	45605f3898bdc59eb016fb50ca27bf18	multilib	b2f01ad412baf81650c23fcf0975fa33	multiprocessing	e32940a7b2a9992ad217eccddb84d548	toolchain-funcs	209edad4a5c4812e7b2f8021650974f0	versionator	26ca8a8bd95d6a74122c08ba98a4ee72
 _md5_=e365ff9c9f8c2573687b70393645e884
