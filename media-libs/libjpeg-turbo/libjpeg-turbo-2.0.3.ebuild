@@ -1,9 +1,9 @@
-# Copyright 1999-2018 Gentoo Authors
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
-inherit autotools libtool ltprune java-pkg-opt-2 libtool toolchain-funcs multilib-minimal
+inherit cmake-multilib java-pkg-opt-2 libtool toolchain-funcs
 
 DESCRIPTION="MMX, SSE, and SSE2 SIMD accelerated JPEG library"
 HOMEPAGE="https://libjpeg-turbo.org/ https://sourceforge.net/projects/libjpeg-turbo/"
@@ -12,6 +12,7 @@ SRC_URI="mirror://sourceforge/${PN}/${P}.tar.gz
 
 LICENSE="BSD IJG"
 SLOT="0"
+[[ "$(ver_cut 3)" -ge 90 ]] || \
 KEYWORDS="*"
 IUSE="java static-libs"
 
@@ -33,82 +34,59 @@ DEPEND="${COMMON_DEPEND}
 
 MULTILIB_WRAPPED_HEADERS=( /usr/include/jconfig.h )
 
-PATCHES=(
-	"${FILESDIR}"/${PN}-1.2.0-x32.patch #420239
-	"${FILESDIR}"/${P}-divzero_fix.patch #658624
-	"${FILESDIR}"/${P}-cve-2018-11813.patch
-)
-
 src_prepare() {
 	default
 
-	eautoreconf
-
+	cmake-utils_src_prepare
 	java-pkg-opt-2_src_prepare
 }
 
 multilib_src_configure() {
-	local myconf=()
-	if multilib_is_native_abi; then
-		myconf+=( $(use_with java) )
-		if use java; then
-			export JAVACFLAGS="$(java-pkg_javac-args)"
-			export JNI_CFLAGS="$(java-pkg_get-jni-cflags)"
-		fi
-	else
-		myconf+=( --without-java )
+	if multilib_is_native_abi && use java ; then
+		export JAVACFLAGS="$(java-pkg_javac-args)"
+		export JNI_CFLAGS="$(java-pkg_get-jni-cflags)"
 	fi
-	[[ ${ABI} == "x32" ]] && myconf+=( --without-simd ) #420239
 
-	# Force /bin/bash until upstream generates a new version. #533902
-	CONFIG_SHELL="${EPREFIX}"/bin/bash \
-	ECONF_SOURCE=${S} \
-	econf \
-		$(use_enable static-libs static) \
-		--with-mem-srcdst \
-		"${myconf[@]}"
+	local mycmakeargs=(
+		-DCMAKE_INSTALL_DEFAULT_DOCDIR="${EPREFIX}/usr/share/doc/${PF}"
+		-DENABLE_STATIC="$(usex static-libs)"
+		-DWITH_JAVA="$(multilib_native_usex java)"
+		-DWITH_MEM_SRCDST=ON
+	)
+	[[ ${ABI} == "x32" ]] && mycmakeargs+=( -DREQUIRE_SIMD=OFF ) #420239
+	cmake-utils_src_configure
 }
 
 multilib_src_compile() {
-	local _java_makeopts
-	use java && _java_makeopts="-j1"
-	emake ${_java_makeopts}
+	cmake-utils_src_compile
 
-	if multilib_is_native_abi; then
-		pushd ../debian/extra >/dev/null
+	if multilib_is_native_abi ; then
+		pushd "${WORKDIR}/debian/extra" &>/dev/null || die
 		emake CC="$(tc-getCC)" CFLAGS="${LDFLAGS} ${CFLAGS}"
-		popd >/dev/null
+		popd &>/dev/null || die
 	fi
 }
 
-multilib_src_test() {
-	emake test
-}
-
 multilib_src_install() {
-	emake \
-		DESTDIR="${D}" \
-		docdir="${EPREFIX}"/usr/share/doc/${PF} \
-		exampledir="${EPREFIX}"/usr/share/doc/${PF} \
-		install
+	cmake-utils_src_install
 
-	if multilib_is_native_abi; then
-		pushd "${WORKDIR}"/debian/extra >/dev/null
+	if multilib_is_native_abi ; then
+		pushd "${WORKDIR}/debian/extra" &>/dev/null || die
 		emake \
 			DESTDIR="${D}" prefix="${EPREFIX}"/usr \
 			INSTALL="install -m755" INSTALLDIR="install -d -m755" \
 			install
-		popd >/dev/null
 
-		if use java; then
-			rm -rf "${ED}"/usr/classes
+		popd || die
+		if use java ; then
+			rm -rf "${ED%/}"/usr/classes || die
 			java-pkg_dojar java/turbojpeg.jar
 		fi
 	fi
 }
 
 multilib_src_install_all() {
-	prune_libtool_files
+	find "${ED}" -type f -name '*.la' -delete || die
 
 	insinto /usr/share/doc/${PF}/html
 	doins -r "${S}"/doc/html/*
