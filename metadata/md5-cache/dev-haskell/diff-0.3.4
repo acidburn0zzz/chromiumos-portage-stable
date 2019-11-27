@@ -1,13 +1,13 @@
 DEFINED_PHASES=compile configure install postinst postrm setup test
-DEPEND=>=dev-lang/ghc-7.4.1:= >=dev-haskell/cabal-1.10 doc? ( || ( dev-haskell/haddock >=dev-lang/ghc-7.10.2 ) ) hscolour? ( dev-haskell/hscolour )
-DESCRIPTION=Haskell 98 phantom types to avoid unsafely passing dummy arguments
+DEPEND=>=dev-lang/ghc-7.4.1:= >=dev-haskell/cabal-1.8 test? ( dev-haskell/quickcheck dev-haskell/test-framework dev-haskell/test-framework-quickcheck2 ) doc? ( || ( dev-haskell/haddock >=dev-lang/ghc-7.10.2 ) ) hscolour? ( dev-haskell/hscolour )
+DESCRIPTION=O(ND) diff algorithm in haskell
 EAPI=6
-HOMEPAGE=https://github.com/ekmett/tagged
-IUSE=doc hscolour profile
+HOMEPAGE=http://hackage.haskell.org/package/Diff
+IUSE=doc hscolour profile test
 KEYWORDS=*
 LICENSE=BSD
 RDEPEND=>=dev-lang/ghc-7.4.1:=
-SLOT=0/0.8.4
-SRC_URI=mirror://hackage/packages/archive/tagged/0.8.4/tagged-0.8.4.tar.gz
+SLOT=0/0.3.4
+SRC_URI=https://hackage.haskell.org/package/Diff-0.3.4/Diff-0.3.4.tar.gz
 _eclasses_=estack	43ddf5aaffa7a8d0482df54d25a66a1f	eutils	06133990e861be0fe60c2b428fd025d9	ghc-package	a87d404fca43c39142c7df928fd1021a	haskell-cabal	45605f3898bdc59eb016fb50ca27bf18	multilib	b2f01ad412baf81650c23fcf0975fa33	multiprocessing	e32940a7b2a9992ad217eccddb84d548	toolchain-funcs	209edad4a5c4812e7b2f8021650974f0	versionator	26ca8a8bd95d6a74122c08ba98a4ee72
-_md5_=0cf27210fd49981396913d428f74c190
+_md5_=1ea9d1e45a662539a31474ef01d1043d
