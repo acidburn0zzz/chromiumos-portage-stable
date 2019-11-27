@@ -52,7 +52,7 @@ if [[ -z ${_GO_MODULE} ]]; then
 
 _GO_MODULE=1
 
-BDEPEND=">=dev-lang/go-1.12"
+BDEPEND=">=dev-lang/go-1.11"
 
 # Force go to build in module mode.
 # In this mode the GOPATH environment variable is ignored.
