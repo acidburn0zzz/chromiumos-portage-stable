@@ -9,5 +9,5 @@ LICENSE=BSD
 RDEPEND=dev-libs/libdaemon selinux? ( sec-policy/selinux-radvd ) sys-apps/baselayout
 SLOT=0
 SRC_URI=http://v6web.litech.org/radvd/dist/radvd-2.17.tar.gz
-_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multilib	b2f01ad412baf81650c23fcf0975fa33	readme.gentoo-r1	22ae82e140bdd95d17a34fd5fd733190	systemd	71fd8d2065d102753fb9e4d20eaf3e9f	toolchain-funcs	209edad4a5c4812e7b2f8021650974f0	user	9b418e566f412ef04237d17d3e63d94a
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multilib	b2f01ad412baf81650c23fcf0975fa33	readme.gentoo-r1	22ae82e140bdd95d17a34fd5fd733190	systemd	71fd8d2065d102753fb9e4d20eaf3e9f	toolchain-funcs	209edad4a5c4812e7b2f8021650974f0	user	80df3e896cd7f906710429455a106daf
 _md5_=0a1f0193ce870ace90f43a20140ab612
