@@ -1,8 +1,7 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# See chromium:998929, EAPI=7 will trigger assertion error, use 6 for now.
-EAPI=6
+EAPI=7
 inherit libtool multilib-minimal toolchain-funcs
 
 DESCRIPTION="Multi-format archive and compression library"
@@ -12,10 +11,11 @@ SRC_URI="https://www.libarchive.org/downloads/${P}.tar.gz"
 LICENSE="BSD BSD-2 BSD-4 public-domain"
 SLOT="0/13"
 KEYWORDS="*"
-IUSE="acl +bzip2 +e2fsprogs expat +iconv kernel_linux libressl lz4 +lzma lzo nettle static-libs +threads xattr +zlib zstd"
+IUSE="acl blake2 +bzip2 +e2fsprogs expat +iconv kernel_linux libressl lz4 +lzma lzo nettle static-libs +threads xattr +zlib zstd"
 
 RDEPEND="
 	acl? ( virtual/acl[${MULTILIB_USEDEP}] )
+	blake2? ( app-crypt/libb2[${MULTILIB_USEDEP}] )
 	bzip2? ( app-arch/bzip2[${MULTILIB_USEDEP}] )
 	expat? ( dev-libs/expat[${MULTILIB_USEDEP}] )
 	!expat? ( dev-libs/libxml2[${MULTILIB_USEDEP}] )
@@ -38,10 +38,8 @@ DEPEND="${RDEPEND}
 	)"
 
 PATCHES=(
-	"${FILESDIR}/archive_read-fix-handling-of-sparse-files.patch"
-	"${FILESDIR}/archive_read_next_header2-clean-old-entry-entry-data.patch"
-	"${FILESDIR}/fix-sparse-file-offset-overflow-on-32-bit-systems.patch"
 	"${FILESDIR}"/${PN}-3.3.3-libressl.patch
+	"${FILESDIR}"/${P}-without_zlib_build_fix.patch #693202
 )
 
 # Various test problems, starting with the fact that sandbox
@@ -56,11 +54,11 @@ src_prepare() {
 multilib_src_configure() {
 	export ac_cv_header_ext2fs_ext2_fs_h=$(usex e2fsprogs) #354923
 
-	local myconf=()
-	myconf=(
+	local myconf=(
 		$(use_enable acl)
 		$(use_enable static-libs static)
 		$(use_enable xattr)
+		$(use_with blake2 libb2)
 		$(use_with bzip2 bz2lib)
 		$(use_with expat)
 		$(use_with !expat xml2)
@@ -128,7 +126,7 @@ multilib_src_install() {
 	fi
 
 	# Libs.private: should be used from libarchive.pc instead
-	find "${ED}" -name "*.la" -delete || die
+	find "${ED}" -type f -name "*.la" -delete || die
 }
 
 multilib_src_install_all() {
