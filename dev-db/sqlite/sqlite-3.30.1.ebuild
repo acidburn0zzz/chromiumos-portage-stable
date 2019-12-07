@@ -1,67 +1,130 @@
-# Copyright 1999-2019 Arfrever Frehtes Taifersar Arahesis and others
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="6"
+EAPI="7"
 
-inherit autotools flag-o-matic multilib-minimal toolchain-funcs versionator
+inherit autotools flag-o-matic multilib-minimal toolchain-funcs
 
-SRC_PV="$(printf "%u%02u%02u%02u" $(get_version_components))"
-DOC_PV="${SRC_PV}"
-# DOC_PV="$(printf "%u%02u%02u00" $(get_version_components $(get_version_component_range 1-3)))"
+if [[ "${PV}" != "9999" ]]; then
+    SRC_PV="$(printf "%u%02u%02u%02u" $(ver_rs 1- " "))"
+    DOC_PV="${SRC_PV}"
+    # DOC_PV="$(printf "%u%02u%02u00" $(ver_rs 1-3 " "))"
+fi
 
 DESCRIPTION="SQL database engine"
 HOMEPAGE="https://sqlite.org/"
-SRC_URI="doc? ( https://sqlite.org/2019/${PN}-doc-${DOC_PV}.zip )
-	tcl? ( https://sqlite.org/2019/${PN}-src-${SRC_PV}.zip )
-	test? ( https://sqlite.org/2019/${PN}-src-${SRC_PV}.zip )
-	tools? ( https://sqlite.org/2019/${PN}-src-${SRC_PV}.zip )
-	!tcl? ( !test? ( !tools? ( https://sqlite.org/2019/${PN}-autoconf-${SRC_PV}.tar.gz ) ) )"
+if [[ "${PV}" == "9999" ]]; then
+	SRC_URI=""
+else
+	SRC_URI="doc? ( https://sqlite.org/2019/${PN}-doc-${DOC_PV}.zip )
+		tcl? ( https://sqlite.org/2019/${PN}-src-${SRC_PV}.zip )
+		test? ( https://sqlite.org/2019/${PN}-src-${SRC_PV}.zip )
+		tools? ( https://sqlite.org/2019/${PN}-src-${SRC_PV}.zip )
+		!tcl? ( !test? ( !tools? ( https://sqlite.org/2019/${PN}-autoconf-${SRC_PV}.tar.gz ) ) )"
+fi
 
 LICENSE="public-domain"
 SLOT="3"
 KEYWORDS="*"
 IUSE="debug doc icu +readline secure-delete static-libs tcl test tools"
+if [[ "${PV}" == "9999" ]]; then
+	PROPERTIES="live"
+fi
 RESTRICT="!test? ( test )"
 
-RDEPEND="
-	sys-libs/zlib:0=[${MULTILIB_USEDEP}]
+if [[ "${PV}" == "9999" ]]; then
+	BDEPEND=">=dev-lang/tcl-8.6:0
+		dev-vcs/fossil"
+else
+	BDEPEND="doc? ( app-arch/unzip )
+		tcl? (
+			app-arch/unzip
+			>=dev-lang/tcl-8.6:0
+		)
+		test? (
+			app-arch/unzip
+			>=dev-lang/tcl-8.6:0
+		)
+		tools? (
+			app-arch/unzip
+			>=dev-lang/tcl-8.6:0
+		)"
+fi
+RDEPEND="sys-libs/zlib:0=[${MULTILIB_USEDEP}]
 	icu? ( dev-libs/icu:0=[${MULTILIB_USEDEP}] )
 	readline? ( sys-libs/readline:0=[${MULTILIB_USEDEP}] )
 	tcl? ( dev-lang/tcl:0=[${MULTILIB_USEDEP}] )
 	tools? ( dev-lang/tcl:0=[${MULTILIB_USEDEP}] )"
 DEPEND="${RDEPEND}
-	doc? ( app-arch/unzip )
-	tcl? (
-		app-arch/unzip
-		>=dev-lang/tcl-8.6:0
-	)
-	test? (
-		app-arch/unzip
-		>=dev-lang/tcl-8.6:0
-	)
-	tools? (
-		app-arch/unzip
-		>=dev-lang/tcl-8.6:0
-	)
 	test? ( >=dev-lang/tcl-8.6:0[${MULTILIB_USEDEP}] )"
 
 full_archive() {
-	use tcl || use test || use tools
+	[[ "${PV}" == "9999" ]] || use tcl || use test || use tools
 }
 
 pkg_setup() {
-	if full_archive; then
-		S="${WORKDIR}/${PN}-src-${SRC_PV}"
+	if [[ "${PV}" == "9999" ]]; then
+		S="${WORKDIR}/${PN}"
 	else
-		S="${WORKDIR}/${PN}-autoconf-${SRC_PV}"
+		if full_archive; then
+			S="${WORKDIR}/${PN}-src-${SRC_PV}"
+		else
+			S="${WORKDIR}/${PN}-autoconf-${SRC_PV}"
+		fi
+	fi
+}
+
+src_unpack() {
+	if [[ "${PV}" == "9999" ]]; then
+		local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
+		addwrite "${distdir}"
+		mkdir -p "${distdir}/fossil-src/${PN}" || die
+
+		mkdir "${WORKDIR}/${PN}" || die
+		pushd "${WORKDIR}/${PN}" > /dev/null || die
+		if [[ ! -f "${distdir}/fossil-src/${PN}/sqlite.fossil" ]]; then
+			einfo fossil clone --verbose https://sqlite.org/src sqlite.fossil
+			fossil clone --verbose https://sqlite.org/src sqlite.fossil || die
+			echo
+		else
+			cp -p "${distdir}/fossil-src/${PN}/sqlite.fossil" . || die
+			einfo fossil pull --repository sqlite.fossil --verbose https://sqlite.org/src
+			fossil pull --repository sqlite.fossil --verbose https://sqlite.org/src || die
+			echo
+		fi
+		cp -p sqlite.fossil "${distdir}/fossil-src/${PN}" || die
+		einfo fossil open --quiet sqlite.fossil
+		fossil open --quiet sqlite.fossil || die
+		echo
+		popd > /dev/null || die
+
+		if use doc; then
+			mkdir "${WORKDIR}/${PN}-doc" || die
+			pushd "${WORKDIR}/${PN}-doc" > /dev/null || die
+			if [[ ! -f "${distdir}/fossil-src/${PN}/sqlite-doc.fossil" ]]; then
+				einfo fossil clone --verbose https://sqlite.org/docsrc sqlite-doc.fossil
+				fossil clone --verbose https://sqlite.org/docsrc sqlite-doc.fossil || die
+				echo
+			else
+				cp -p "${distdir}/fossil-src/${PN}/sqlite-doc.fossil" . || die
+				einfo fossil pull --repository sqlite-doc.fossil --verbose https://sqlite.org/docsrc
+				fossil pull --repository sqlite-doc.fossil --verbose https://sqlite.org/docsrc || die
+				echo
+			fi
+			cp -p sqlite-doc.fossil "${distdir}/fossil-src/${PN}" || die
+			einfo fossil open --quiet sqlite-doc.fossil
+			fossil open --quiet sqlite-doc.fossil || die
+			echo
+			popd > /dev/null || die
+		fi
+	else
+		default
 	fi
 }
 
 src_prepare() {
 	if full_archive; then
-		eapply "${FILESDIR}/${PN}-3.28.0-full_archive-build.patch"
-		eapply "${FILESDIR}/${PN}-3.28.0-full_archive-segmentation_fault_fixes.patch"
-		eapply "${FILESDIR}/${PN}-3.28.0-full_archive-tests.patch"
+		eapply "${FILESDIR}/${PN}-3.29.0-full_archive-build.patch"
 
 		eapply_user
 
@@ -70,7 +133,6 @@ src_prepare() {
 		sed -e "s/AC_CHECK_FUNCS(.*)/AC_CHECK_FUNCS([fdatasync fullfsync gmtime_r isnan localtime_r localtime_s malloc_usable_size posix_fallocate pread pread64 pwrite pwrite64 strchrnul usleep utime])/" -i configure.ac || die "sed failed"
 	else
 		eapply "${FILESDIR}/${PN}-3.25.0-nonfull_archive-build.patch"
-		eapply "${FILESDIR}/${PN}-3.28.0-nonfull_archive-segmentation_fault_fixes.patch"
 
 		eapply_user
 
@@ -88,7 +150,8 @@ src_prepare() {
 }
 
 multilib_src_configure() {
-	local CPPFLAGS="${CPPFLAGS}" CFLAGS="${CFLAGS}" options=()
+	local -x CPPFLAGS="${CPPFLAGS}" CFLAGS="${CFLAGS}"
+	local options=()
 
 	options+=(
 		--enable-$(full_archive && echo load-extension || echo dynamic-extensions)
@@ -186,12 +249,6 @@ multilib_src_configure() {
 	# Support LIMIT and ORDER BY clauses on DELETE and UPDATE statements.
 	# https://sqlite.org/compile.html#enable_update_delete_limit
 	append-cppflags -DSQLITE_ENABLE_UPDATE_DELETE_LIMIT
-
-	# Support PRAGMA function_list, PRAGMA module_list and PRAGMA pragma_list statements.
-	# https://sqlite.org/pragma.html#pragma_function_list
-	# https://sqlite.org/pragma.html#pragma_module_list
-	# https://sqlite.org/pragma.html#pragma_pragma_list
-	append-cppflags -DSQLITE_INTROSPECTION_PRAGMAS
 
 	# Support soundex() function.
 	# https://sqlite.org/lang_corefunc.html#soundex
@@ -317,12 +374,12 @@ multilib_src_install() {
 }
 
 multilib_src_install_all() {
-	find "${D}" -name "*.la" -delete || die
+	find "${D}" -name "*.la" -type f -delete || die
 
 	doman sqlite3.1
 
 	if use doc; then
-		rm "${WORKDIR}/${PN}-doc-${DOC_PV}/"*.{db,txt}
+		rm "${WORKDIR}/${PN}-doc-${DOC_PV}/"*.{db,txt} || die
 		(
 			docinto html
 			dodoc -r "${WORKDIR}/${PN}-doc-${DOC_PV}/"*
