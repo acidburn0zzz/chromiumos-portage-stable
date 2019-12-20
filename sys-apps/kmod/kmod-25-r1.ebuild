@@ -54,6 +54,10 @@ REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
 DOCS="NEWS README TODO"
 
+PATCHES=(
+	"${FILESDIR}/${PN}-was_space-false.patch"
+)
+
 src_prepare() {
 	default
 
