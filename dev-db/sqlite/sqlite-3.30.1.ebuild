@@ -144,6 +144,9 @@ src_prepare() {
 			-i configure.ac || die "sed failed"
 	fi
 
+	# Fix CVE-2019-19880.
+	eapply "${FILESDIR}/sqlite-3.30.1-CVE-2019-19880.patch"
+
 	eautoreconf
 
 	multilib_copy_sources
