@@ -6,7 +6,7 @@ inherit autotools multilib-minimal ltprune
 
 DESCRIPTION="A system-independent library for user-level network packet capture"
 HOMEPAGE="
-	http://www.tcpdump.org/
+	https://www.tcpdump.org/
 	https://github.com/the-tcpdump-group/libpcap
 "
 SRC_URI="
@@ -33,8 +33,6 @@ DEPEND="
 S=${WORKDIR}/${PN}-${P/_}
 
 PATCHES=(
-	"${FILESDIR}"/${PN}-1.6.1-prefix-solaris.patch
-	"${FILESDIR}"/${PN}-1.8.1-darwin.patch
 	"${FILESDIR}"/${PN}-1.8.1-usbmon.patch
 	"${FILESDIR}"/${PN}-1.9.0-pcap-config-includedir.patch
 )
