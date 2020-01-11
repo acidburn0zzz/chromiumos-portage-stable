@@ -2,11 +2,11 @@ DEFINED_PHASES=compile configure install prepare test unpack
 DEPEND=virtual/perl-MIME-Base64 dev-lang/perl:=[-build(-)]
 DESCRIPTION=A URI Perl Module
 EAPI=5
-HOMEPAGE=http://search.cpan.org/dist/URI/
+HOMEPAGE=https://metacpan.org/release/URI
 KEYWORDS=*
 LICENSE=|| ( Artistic GPL-1+ )
 RDEPEND=virtual/perl-MIME-Base64 dev-lang/perl:=[-build(-)]
 SLOT=0
 SRC_URI=mirror://cpan/authors/id/G/GA/GAAS/URI-1.60.tar.gz
-_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multilib	b2f01ad412baf81650c23fcf0975fa33	multiprocessing	e32940a7b2a9992ad217eccddb84d548	perl-functions	01e8c68d5a528bbcda4d3c60205983df	perl-module	863b35d127db98823d439f8d73c2d011	toolchain-funcs	209edad4a5c4812e7b2f8021650974f0	unpacker	04385b0f181c42fa9c18ec0e31729d1f
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multilib	b2f01ad412baf81650c23fcf0975fa33	multiprocessing	e32940a7b2a9992ad217eccddb84d548	perl-functions	6ec4c4d8fc8324200f1c14e8d158c59b	perl-module	97206c028d9bdc9f248e022ac5c9fc83	toolchain-funcs	209edad4a5c4812e7b2f8021650974f0	unpacker	04385b0f181c42fa9c18ec0e31729d1f
 _md5_=44f2c1abf8598222e5b37f53fa0e0ea0

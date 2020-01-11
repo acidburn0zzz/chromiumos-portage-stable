@@ -1,0 +1,10 @@
+DEFINED_PHASES=install
+DESCRIPTION=GNU Autoconf Macro Archive
+EAPI=6
+HOMEPAGE=https://www.gnu.org/software/autoconf-archive/
+KEYWORDS=*
+LICENSE=GPL-3
+RDEPEND=!=gnome-base/gnome-common-3.14.0 !>=gnome-base/gnome-common-3.14.0-r1[-autoconf-archive(+)]
+SLOT=0
+SRC_URI=mirror://gnu/autoconf-archive/autoconf-archive-2018.03.13.tar.xz
+_md5_=c049b3eb45460b9b75e4ad15b2e71ffb
