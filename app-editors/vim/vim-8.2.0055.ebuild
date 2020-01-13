@@ -1,9 +1,9 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
-VIM_VERSION="8.1"
-PYTHON_COMPAT=( python{2_7,3_5,3_6,3_7} )
+VIM_VERSION="8.2"
+PYTHON_COMPAT=( python{2_7,3_6,3_7} )
 PYTHON_REQ_USE="threads(+)"
 USE_RUBY="ruby24 ruby25 ruby26"
 
@@ -23,7 +23,7 @@ HOMEPAGE="https://vim.sourceforge.io/ https://github.com/vim/vim"
 
 SLOT="0"
 LICENSE="vim"
-IUSE="X acl cscope debug gpm lua luajit minimal nls perl python racket ruby selinux tcl terminal vim-pager"
+IUSE="X acl cscope debug gpm lua luajit minimal nls perl python racket ruby selinux sound tcl terminal vim-pager"
 REQUIRED_USE="
 	python? ( ${PYTHON_REQUIRED_USE} )
 	vim-pager? ( !minimal )
@@ -47,6 +47,7 @@ RDEPEND="
 	racket? ( dev-scheme/racket )
 	ruby? ( ${RUBY_DEPS} )
 	selinux? ( sys-libs/libselinux )
+	sound? ( media-libs/libcanberra )
 	tcl? ( dev-lang/tcl:0= )
 	X? ( x11-libs/libXt )
 "
@@ -174,6 +175,7 @@ src_configure() {
 		myconf=(
 			--with-features=tiny
 			--disable-nls
+			--disable-canberra
 			--disable-acl
 			--enable-gui=no
 			--without-x
@@ -192,6 +194,7 @@ src_configure() {
 
 		myconf=(
 			--with-features=huge
+			$(use_enable sound canberra)
 			$(use_enable acl)
 			$(use_enable cscope)
 			$(use_enable gpm)
