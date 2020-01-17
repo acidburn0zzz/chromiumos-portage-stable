@@ -1,0 +1,14 @@
+DEFINED_PHASES=compile configure install prepare test
+DEPEND=>=virtual/perl-ExtUtils-MakeMaker-6.170.0 test? ( virtual/perl-Test-Simple ) dev-lang/perl
+DESCRIPTION=A Perl module that offers a simple to process namespaced XML names
+EAPI=6
+HOMEPAGE=https://metacpan.org/release/XML-NamespaceSupport
+IUSE=test
+KEYWORDS=*
+LICENSE=|| ( Artistic GPL-1+ )
+RDEPEND=dev-lang/perl:=
+RESTRICT=!test? ( test )
+SLOT=0
+SRC_URI=mirror://cpan/authors/id/P/PE/PERIGRIN/XML-NamespaceSupport-1.12.tar.gz
+_eclasses_=multiprocessing	e32940a7b2a9992ad217eccddb84d548	perl-functions	6ec4c4d8fc8324200f1c14e8d158c59b	perl-module	97206c028d9bdc9f248e022ac5c9fc83
+_md5_=f4cf394cfffa803eb2ff6f237e6a96e4

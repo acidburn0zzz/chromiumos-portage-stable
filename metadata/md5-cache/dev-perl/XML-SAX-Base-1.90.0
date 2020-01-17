@@ -1,0 +1,14 @@
+DEFINED_PHASES=compile configure install prepare test
+DEPEND=!<dev-perl/XML-SAX-0.990.0 virtual/perl-ExtUtils-MakeMaker test? ( >=virtual/perl-Test-Simple-0.880.0 ) dev-lang/perl
+DESCRIPTION=Base class SAX Drivers and Filters
+EAPI=6
+HOMEPAGE=https://metacpan.org/release/XML-SAX-Base
+IUSE=test
+KEYWORDS=*
+LICENSE=|| ( Artistic GPL-1+ )
+RDEPEND=!<dev-perl/XML-SAX-0.990.0 dev-lang/perl:=
+RESTRICT=!test? ( test )
+SLOT=0
+SRC_URI=mirror://cpan/authors/id/G/GR/GRANTM/XML-SAX-Base-1.09.tar.gz
+_eclasses_=multiprocessing	e32940a7b2a9992ad217eccddb84d548	perl-functions	6ec4c4d8fc8324200f1c14e8d158c59b	perl-module	97206c028d9bdc9f248e022ac5c9fc83
+_md5_=106ab89ff83f9f55abc42e69f37c722c
