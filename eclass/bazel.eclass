@@ -62,6 +62,11 @@ bazel_get_flags() {
 	for i in ${BUILD_LDFLAGS}; do
 		fs+=( "--host_linkopt=${i}" )
 	done
+
+	# Temporarily disable sanitizer blacklist until upstream issue
+	# https://github.com/bazelbuild/bazel/issues/10561 is fixed.
+	fs+=( "--copt=-fno-sanitize-blacklist" )
+
 	echo "${fs[*]}"
 }
 
