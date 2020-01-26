@@ -1,18 +1,18 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
-PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
+PYTHON_COMPAT=( python2_7 python3_{6,7} )
 PYTHON_REQ_USE="threads(+)"
 
-inherit distutils-r1 flag-o-matic toolchain-funcs elisp-common
+inherit distutils-r1 toolchain-funcs elisp-common
 
 MY_PN="Cython"
 MY_P="${MY_PN}-${PV/_/}"
 
 DESCRIPTION="A Python to C compiler"
-HOMEPAGE="http://cython.org https://pypi.org/project/Cython/"
+HOMEPAGE="https://cython.org https://pypi.org/project/Cython/"
 SRC_URI="mirror://pypi/${MY_PN:0:1}/${MY_PN}/${MY_P}.tar.gz"
 
 LICENSE="Apache-2.0"
@@ -20,34 +20,35 @@ SLOT="0"
 KEYWORDS="*"
 
 IUSE="doc emacs test"
+RESTRICT="!test? ( test )"
 
 RDEPEND="
-	emacs? ( virtual/emacs )
+	emacs? ( >=app-editors/emacs-23.1:* )
 "
-# On testing, setuptools invokes an error in running the testsuite cited in a number of recent bugs
-# spanning several packages. This bug has been fixed in the recent release of version 9.1
 DEPEND="${RDEPEND}
-	>=dev-python/setuptools-9.1[${PYTHON_USEDEP}]
+	dev-python/setuptools[${PYTHON_USEDEP}]
 	doc? ( dev-python/sphinx[${PYTHON_USEDEP}] )
 	test? ( dev-python/numpy[${PYTHON_USEDEP}] )"
 
 SITEFILE=50cython-gentoo.el
 S="${WORKDIR}/${MY_PN}-${PV%_*}"
 
-PATCHES=(
-	"${FILESDIR}"/0.25.2-test-cpdef_enums-L-suffix.patch
-)
+python_prepare_all() {
+	# tests behavior that is illegal in Python 3.7+
+	# https://github.com/cython/cython/issues/2454
+	sed -i -e '/with_outer_raising/,/return/d' tests/run/generators_py.py || die
+
+	distutils-r1_python_prepare_all
+}
 
 python_compile() {
 	if ! python_is_python3; then
-		local CFLAGS="${CFLAGS}"
-		local CXXFLAGS="${CXXFLAGS}"
-		append-flags -fno-strict-aliasing
+		local CFLAGS="${CFLAGS} -fno-strict-aliasing"
+		local CXXFLAGS="${CXXFLAGS} -fno-strict-aliasing"
 	fi
 
 	# Python gets confused when it is in sys.path before build.
-	local PYTHONPATH=
-	export PYTHONPATH
+	local -x PYTHONPATH=
 
 	distutils-r1_python_compile
 }
@@ -55,17 +56,19 @@ python_compile() {
 python_compile_all() {
 	use emacs && elisp-compile Tools/cython-mode.el
 
-	use doc && unset XDG_CONFIG_HOME && emake -C docs html
+	use doc && emake -C docs html
 }
 
 python_test() {
 	tc-export CC
+	# https://github.com/cython/cython/issues/1911
+	local -x CFLAGS="${CFLAGS} -fno-strict-overflow"
 	"${PYTHON}" runtests.py -vv --work-dir "${BUILD_DIR}"/tests \
 		|| die "Tests fail with ${EPYTHON}"
 }
 
 python_install_all() {
-	local DOCS=( CHANGES.rst README.txt ToDo.txt USAGE.txt )
+	local DOCS=( CHANGES.rst README.rst ToDo.txt USAGE.txt )
 	use doc && local HTML_DOCS=( docs/build/html/. )
 	distutils-r1_python_install_all
 
