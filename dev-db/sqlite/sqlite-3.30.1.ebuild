@@ -147,6 +147,9 @@ src_prepare() {
 	# Fix CVE-2019-19880.
 	eapply "${FILESDIR}/sqlite-3.30.1-CVE-2019-19880.patch"
 
+	# Fix CVE-2019-20218.
+	eapply "${FILESDIR}/sqlite-3.30.1-CVE-2019-20218.patch"
+
 	eautoreconf
 
 	multilib_copy_sources
