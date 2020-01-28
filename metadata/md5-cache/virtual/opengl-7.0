@@ -1,7 +1,0 @@
-DEFINED_PHASES=-
-DESCRIPTION=Virtual for OpenGL implementation
-EAPI=0
-KEYWORDS=*
-RDEPEND=|| ( media-libs/mesa media-libs/opengl-apple )
-SLOT=0
-_md5_=4ff9a4c8c4ce4ade9d677cbdb7576b46
