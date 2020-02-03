@@ -15,7 +15,7 @@ SRC_URI="https://www.iana.org/time-zones/repository/releases/tzdata${data_ver}.t
 LICENSE="BSD public-domain"
 SLOT="0"
 KEYWORDS="*"
-IUSE="nls leaps_timezone elibc_FreeBSD"
+IUSE="nls leaps-timezone elibc_FreeBSD"
 
 DEPEND="nls? ( virtual/libintl )"
 RDEPEND="${DEPEND}
@@ -56,7 +56,7 @@ src_configure() {
 
 _emake() {
 	emake \
-		REDO=$(usex leaps_timezone posix_right posix_only) \
+		REDO=$(usex leaps-timezone posix_right posix_only) \
 		TZDATA_TEXT= \
 		TOPDIR="${EPREFIX}" \
 		ZICDIR='$(TOPDIR)/usr/bin' \
@@ -85,7 +85,7 @@ src_compile() {
 
 src_test() {
 	# VALIDATE_ENV is used for extended/web based tests.  Punt on them.
-	emake -j1 check VALIDATE_ENV=true
+	emake check VALIDATE_ENV=true
 }
 
 src_install() {

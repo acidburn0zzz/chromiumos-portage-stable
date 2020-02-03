@@ -25,9 +25,8 @@ RDEPEND="
 	scanner? ( media-gfx/sane-backends )
 	tiff? ( media-libs/tiff )
 	zlib? ( sys-libs/zlib )
-	!dev-python/pillow"
+	!dev-python/pillow[${PYTHON_USEDEP}]"
 DEPEND="${RDEPEND}"
-RDEPEND+=" !dev-python/pillow"
 
 # Tests don't handle missing jpeg, tiff & zlib properly.
 REQUIRED_USE="test? ( jpeg tiff zlib )"
