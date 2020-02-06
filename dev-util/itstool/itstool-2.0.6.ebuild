@@ -1,10 +1,9 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-util/itstool/itstool-2.0.2.ebuild,v 1.9 2014/09/15 08:19:58 ago Exp $
 
-EAPI=5
+EAPI=7
 
-PYTHON_COMPAT=( python{2_6,2_7} )
+PYTHON_COMPAT=( python3_{6,7,8} )
 PYTHON_REQ_USE="xml"
 
 inherit python-single-r1
@@ -13,8 +12,8 @@ DESCRIPTION="Translation tool for XML documents that uses gettext files and ITS 
 HOMEPAGE="http://itstool.org/"
 SRC_URI="http://files.itstool.org/itstool/${P}.tar.bz2"
 
-# files in /usr/share/itstool/its are HPND/as-is || GPL-3
-LICENSE="GPL-3+ || ( HPND GPL-3+ )"
+# files in /usr/share/itstool/its are under a special exception || GPL-3+
+LICENSE="GPL-3+"
 SLOT="0"
 KEYWORDS="*"
 IUSE=""
@@ -24,12 +23,11 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 RDEPEND="${PYTHON_DEPS}
 	dev-libs/libxml2[python,${PYTHON_USEDEP}]"
 DEPEND="${RDEPEND}"
+BDEPEND=""
 
-pkg_setup() {
-	DOCS=(ChangeLog NEWS) # AUTHORS, README are empty
-	python-single-r1_pkg_setup
-}
+DOCS=(ChangeLog NEWS) # AUTHORS, README are empty
 
-src_prepare() {
-	python_fix_shebang .
+src_test() {
+	:
+	#"${PYTHON}" tests/run_tests.py || die "test suite failed" # Test suite not shipped in tarball
 }
