@@ -1,0 +1,29 @@
+From f975f6bfcc88ce8cb653efa580ea73a8c22e17df Mon Sep 17 00:00:00 2001
+From: Lucas De Marchi <lucas.demarchi@intel.com>
+Date: Mon, 20 Jan 2020 16:15:38 -0300
+Subject: libkmod: reset was_space on second pass
+
+The softdep config parser uses a 2-pass approach to use a single
+allocation for all the softdep struct. However "was_space" variable
+isn't reset between them. This can lead to a buffer overflow.
+
+Reported-by: Jorge Lucangeli Obes <jorgelo@google.com>
+Link: https://lore.kernel.org/linux-modules/CAKYuF5QhGCPCazHQjN-=kFc5kHs7Ok8WqmmGLo31CiOEN8TYdA@mail.gmail.com
+---
+ libkmod/libkmod-config.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/libkmod/libkmod-config.c b/libkmod/libkmod-config.c
+index aaac0a1..7b62367 100644
+--- a/libkmod/libkmod-config.c
++++ b/libkmod/libkmod-config.c
+@@ -335,6 +335,7 @@ static int kmod_config_add_softdep(struct kmod_config *config,
+ 	n_pre = 0;
+ 	n_post = 0;
+ 	mode = S_NONE;
++	was_space = false;
+ 	for (p = s = line; ; s++) {
+ 		size_t plen;
+
+--
+cgit 1.2-0.3.lf.el7
