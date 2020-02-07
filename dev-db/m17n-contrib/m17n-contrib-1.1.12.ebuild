@@ -10,7 +10,7 @@ SRC_URI="http://www.m17n.org/m17n-lib-download/${P}.tar.gz"
 
 LICENSE="LGPL-2.1"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="*"
 IUSE=""
 
 DEPEND=""

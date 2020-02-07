@@ -1,10 +1,10 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 
-PYTHON_COMPAT=( python2_7 )
-PYTHON_REQ_USE="threads"
+PYTHON_COMPAT=( python3_{6,7,8} )
+PYTHON_REQ_USE="threads(+)"
 
 inherit waf-utils python-single-r1 multilib multilib-minimal
 
@@ -19,7 +19,14 @@ IUSE="compat +python"
 
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
-RDEPEND="python? ( ${PYTHON_DEPS} )
+RDEPEND="!elibc_FreeBSD? (
+			!elibc_SunOS? (
+				!elibc_Darwin? (
+					dev-libs/libbsd[${MULTILIB_USEDEP}]
+				)
+			)
+		)
+	python? ( ${PYTHON_DEPS} )
 	!!<sys-libs/talloc-2.0.5"
 DEPEND="${RDEPEND}
 	sys-devel/gettext
@@ -51,15 +58,12 @@ src_prepare() {
 }
 
 multilib_src_configure() {
-	local extra_opts=()
-
-	use compat && extra_opts+=( --enable-talloc-compat1 )
-	if ! multilib_is_native_abi || ! use python; then
-		extra_opts+=( --disable-python )
-	fi
-
-	waf-utils_src_configure \
-		"${extra_opts[@]}"
+	local extra_opts=(
+		$(usex compat --enable-talloc-compat1 '')
+		$(multilib_native_usex python '' --disable-python)
+		$([[ ${CHOST} == *-solaris* ]] && echo '--disable-symbol-versions')
+	)
+	waf-utils_src_configure "${extra_opts[@]}"
 }
 
 multilib_src_compile() {

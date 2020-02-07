@@ -1,19 +1,19 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/sys-devel/flex/flex-2.5.39-r1.ebuild,v 1.10 2014/09/15 08:23:54 ago Exp $
 
-EAPI="4"
+EAPI="6"
 
-inherit eutils flag-o-matic multilib-minimal
+inherit eutils flag-o-matic libtool multilib-minimal
 
 DESCRIPTION="The Fast Lexical Analyzer"
-HOMEPAGE="http://flex.sourceforge.net/"
-SRC_URI="mirror://sourceforge/flex/${P}.tar.xz"
+HOMEPAGE="https://flex.sourceforge.net/ https://github.com/westes/flex"
+SRC_URI="https://github.com/westes/${PN}/releases/download/v${PV}/${P}.tar.gz"
 
 LICENSE="FLEX"
 SLOT="0"
 KEYWORDS="*"
 IUSE="nls static test"
+RESTRICT="!test? ( test )"
 
 # We want bison explicitly and not yacc in general #381273
 RDEPEND="sys-devel/m4"
@@ -21,6 +21,24 @@ DEPEND="${RDEPEND}
 	app-arch/xz-utils
 	nls? ( sys-devel/gettext )
 	test? ( sys-devel/bison )"
+
+PATCHES=(
+	"${FILESDIR}"/${PN}-2.6.4-libobjdir.patch
+	"${FILESDIR}"/${PN}-2.6.4-fix-build-with-glibc2.6+.patch
+)
+
+src_prepare() {
+	default
+
+	# Disable running in the tests/ subdir as it has a bunch of built sources
+	# that cannot be made conditional (automake limitation). #568842
+	if ! use test ; then
+		sed -i \
+			-e '/^SUBDIRS =/,/^$/{/tests/d}' \
+			Makefile.in || die
+	fi
+	elibtoolize # Prefix always needs this
+}
 
 src_configure() {
 	use static && append-ldflags -static
@@ -41,6 +59,7 @@ multilib_src_compile() {
 	if multilib_is_native_abi; then
 		default
 	else
+		cd src || die
 		emake -f Makefile -f - lib <<< 'lib: $(lib_LTLIBRARIES)'
 	fi
 }
@@ -53,6 +72,7 @@ multilib_src_install() {
 	if multilib_is_native_abi; then
 		default
 	else
+		cd src || die
 		emake DESTDIR="${D}" install-libLTLIBRARIES install-includeHEADERS
 	fi
 }
@@ -61,6 +81,6 @@ multilib_src_install_all() {
 	einstalldocs
 	dodoc ONEWS
 	prune_libtool_files --all
-	rm "${ED}"/usr/share/doc/${PF}/{COPYING,flex.pdf} || die
+	rm "${ED}"/usr/share/doc/${PF}/COPYING || die
 	dosym flex /usr/bin/lex
 }
