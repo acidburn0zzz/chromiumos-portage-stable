@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -38,11 +38,7 @@ DEPEND="${RDEPEND}
 	)"
 
 PATCHES=(
-	"${FILESDIR}/archive_read-fix-handling-of-sparse-files.patch"
-	"${FILESDIR}/archive_read_next_header2-clean-old-entry-entry-data.patch"
-	"${FILESDIR}/fix-sparse-file-offset-overflow-on-32-bit-systems.patch"
 	"${FILESDIR}"/${PN}-3.3.3-libressl.patch
-	"${FILESDIR}"/${P}-without_zlib_build_fix.patch #693202
 )
 
 # Various test problems, starting with the fact that sandbox
