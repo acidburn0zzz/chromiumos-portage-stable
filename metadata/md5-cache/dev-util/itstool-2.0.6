@@ -1,0 +1,14 @@
+DEFINED_PHASES=setup test
+DEPEND=python_single_target_python3_6? ( dev-lang/python:3.6[xml] ) python_single_target_python3_7? ( dev-lang/python:3.7[xml] ) python_single_target_python3_8? ( dev-lang/python:3.8[xml] ) >=dev-lang/python-exec-2:=[python_targets_python3_6(-)?,python_targets_python3_7(-)?,python_targets_python3_8(-)?,-python_single_target_pypy3(-),-python_single_target_python2_7(-),python_single_target_python3_6(+)?,python_single_target_python3_7(+)?,python_single_target_python3_8(+)?] dev-libs/libxml2[python,python_targets_python3_6(-)?,python_targets_python3_7(-)?,python_targets_python3_8(-)?,-python_single_target_pypy3(-),-python_single_target_python2_7(-),python_single_target_python3_6(+)?,python_single_target_python3_7(+)?,python_single_target_python3_8(+)?]
+DESCRIPTION=Translation tool for XML documents that uses gettext files and ITS rules
+EAPI=7
+HOMEPAGE=http://itstool.org/
+IUSE=python_targets_python3_6 python_targets_python3_7 python_targets_python3_8 python_single_target_python3_6 python_single_target_python3_7 python_single_target_python3_8
+KEYWORDS=*
+LICENSE=GPL-3+
+RDEPEND=python_single_target_python3_6? ( dev-lang/python:3.6[xml] ) python_single_target_python3_7? ( dev-lang/python:3.7[xml] ) python_single_target_python3_8? ( dev-lang/python:3.8[xml] ) >=dev-lang/python-exec-2:=[python_targets_python3_6(-)?,python_targets_python3_7(-)?,python_targets_python3_8(-)?,-python_single_target_pypy3(-),-python_single_target_python2_7(-),python_single_target_python3_6(+)?,python_single_target_python3_7(+)?,python_single_target_python3_8(+)?] dev-libs/libxml2[python,python_targets_python3_6(-)?,python_targets_python3_7(-)?,python_targets_python3_8(-)?,-python_single_target_pypy3(-),-python_single_target_python2_7(-),python_single_target_python3_6(+)?,python_single_target_python3_7(+)?,python_single_target_python3_8(+)?]
+REQUIRED_USE=^^ ( python_single_target_python3_6 python_single_target_python3_7 python_single_target_python3_8 ) python_single_target_python3_6? ( python_targets_python3_6 ) python_single_target_python3_7? ( python_targets_python3_7 ) python_single_target_python3_8? ( python_targets_python3_8 )
+SLOT=0
+SRC_URI=http://files.itstool.org/itstool/itstool-2.0.6.tar.bz2
+_eclasses_=multilib	b2f01ad412baf81650c23fcf0975fa33	python-single-r1	3a0fc81f484bfdbd9c2b7448015a36e4	python-utils-r1	931c328767d245c08a16a3f87be9ce9c	toolchain-funcs	209edad4a5c4812e7b2f8021650974f0
+_md5_=f74c7129eb64c408f5bd627c9a4fc4cc
