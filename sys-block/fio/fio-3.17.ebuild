@@ -1,9 +1,9 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI="7"
 
-PYTHON_COMPAT=( python2_7 python3_5 python3_6 )
+PYTHON_COMPAT=( python2_7 python3_6 )
 
 inherit python-r1 toolchain-funcs
 
@@ -55,7 +55,7 @@ S="${WORKDIR}/${MY_P}"
 
 PATCHES=(
 	"${FILESDIR}"/fio-2.2.13-libmtd.patch
-	"${FILESDIR}"/fio-3.16-snprintf.patch
+	"${FILESDIR}"/fio-3.16-verify_only_numberio.patch
 )
 
 python_check_deps() {
