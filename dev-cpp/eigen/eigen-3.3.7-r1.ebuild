@@ -41,6 +41,10 @@ DEPEND="
 # METIS-5
 # GOOGLEHASH
 
+PATCHES=(
+	"${FILESDIR}/eigen-add-sstream-include.patch"
+)
+
 src_unpack() {
 	default
 	mv ${PN}* ${P} || die
