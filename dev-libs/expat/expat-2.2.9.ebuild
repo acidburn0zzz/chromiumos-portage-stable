@@ -1,9 +1,9 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 AUTOTOOLS_AUTO_DEPEND=no
-inherit autotools eutils libtool multilib toolchain-funcs multilib-minimal
+inherit autotools eutils libtool multilib toolchain-funcs multilib-minimal usr-ldscript
 
 DESCRIPTION="Stream-oriented XML parser library"
 HOMEPAGE="https://libexpat.github.io/"
@@ -13,7 +13,7 @@ LICENSE="MIT"
 SLOT="0"
 KEYWORDS="*"
 IUSE="elibc_FreeBSD examples static-libs unicode"
-DEPEND="unicode? ( ${AUTOTOOLS_DEPEND} )"
+BDEPEND="unicode? ( ${AUTOTOOLS_DEPEND} )"
 
 DOCS=( README.md )
 
@@ -83,13 +83,16 @@ multilib_src_install() {
 multilib_src_install_all() {
 	einstalldocs
 
+	doman doc/xmlwf.1
+
 	# Note: Use of HTML_DOCS would add unwanted "doc" subfolder
 	docinto html
 	dodoc doc/*.{css,html,png}
 
 	if use examples; then
-		insinto /usr/share/doc/${PF}/examples
-		doins examples/*.c
+		docinto examples
+		dodoc examples/*.c
+		docompress -x usr/share/doc/${PF}/examples
 	fi
 
 	find "${D}" -name '*.la' -type f -delete || die
