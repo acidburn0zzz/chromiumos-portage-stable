@@ -3,7 +3,7 @@
 
 EAPI=7
 
-inherit bash-completion-r1
+inherit bash-completion-r1 libtool
 
 DESCRIPTION="Libraries and applications to access smartcards"
 HOMEPAGE="https://github.com/OpenSC/OpenSC/wiki"
@@ -38,6 +38,11 @@ REQUIRED_USE="
 PATCHES=(
 	"${FILESDIR}/${P}-p11test_common.h.patch"
 )
+
+src_prepare() {
+	default
+	elibtoolize
+}
 
 src_configure() {
 	econf \
