@@ -1,7 +1,7 @@
-# Copyright 1999-2018 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
 inherit cmake-multilib
 
@@ -10,7 +10,7 @@ if [[ ${PV} == 9999 ]]; then
 	EGIT_REPO_URI="https://github.com/lz4/lz4.git"
 	EGIT_BRANCH=dev
 else
-	SRC_URI="https://github.com/Cyan4973/lz4/archive/v${PV}.tar.gz -> ${P}.tar.gz"
+	SRC_URI="https://github.com/lz4/lz4/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 	KEYWORDS="*"
 fi
 
@@ -19,7 +19,7 @@ HOMEPAGE="https://github.com/lz4/lz4"
 
 LICENSE="BSD-2 GPL-2"
 # https://abi-laboratory.pro/tracker/timeline/lz4/
-SLOT="0/r131"
+SLOT="0/r132"
 IUSE="static-libs"
 
 CMAKE_USE_DIR=${S}/contrib/cmake_unofficial
