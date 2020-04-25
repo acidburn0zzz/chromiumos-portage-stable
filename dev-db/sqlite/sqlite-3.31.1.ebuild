@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI="7"
@@ -6,9 +6,9 @@ EAPI="7"
 inherit autotools flag-o-matic multilib-minimal toolchain-funcs
 
 if [[ "${PV}" != "9999" ]]; then
-    SRC_PV="$(printf "%u%02u%02u%02u" $(ver_rs 1- " "))"
-    DOC_PV="${SRC_PV}"
-    # DOC_PV="$(printf "%u%02u%02u00" $(ver_rs 1-3 " "))"
+	SRC_PV="$(printf "%u%02u%02u%02u" $(ver_rs 1- " "))"
+	DOC_PV="${SRC_PV}"
+	# DOC_PV="$(printf "%u%02u%02u00" $(ver_rs 1-3 " "))"
 fi
 
 DESCRIPTION="SQL database engine"
@@ -16,11 +16,11 @@ HOMEPAGE="https://sqlite.org/"
 if [[ "${PV}" == "9999" ]]; then
 	SRC_URI=""
 else
-	SRC_URI="doc? ( https://sqlite.org/2019/${PN}-doc-${DOC_PV}.zip )
-		tcl? ( https://sqlite.org/2019/${PN}-src-${SRC_PV}.zip )
-		test? ( https://sqlite.org/2019/${PN}-src-${SRC_PV}.zip )
-		tools? ( https://sqlite.org/2019/${PN}-src-${SRC_PV}.zip )
-		!tcl? ( !test? ( !tools? ( https://sqlite.org/2019/${PN}-autoconf-${SRC_PV}.tar.gz ) ) )"
+	SRC_URI="doc? ( https://sqlite.org/2020/${PN}-doc-${DOC_PV}.zip )
+		tcl? ( https://sqlite.org/2020/${PN}-src-${SRC_PV}.zip )
+		test? ( https://sqlite.org/2020/${PN}-src-${SRC_PV}.zip )
+		tools? ( https://sqlite.org/2020/${PN}-src-${SRC_PV}.zip )
+		!tcl? ( !test? ( !tools? ( https://sqlite.org/2020/${PN}-autoconf-${SRC_PV}.tar.gz ) ) )"
 fi
 
 LICENSE="public-domain"
@@ -124,7 +124,9 @@ src_unpack() {
 
 src_prepare() {
 	if full_archive; then
-		eapply "${FILESDIR}/${PN}-3.29.0-full_archive-build.patch"
+		eapply "${FILESDIR}/${PN}-3.31.0-full_archive-build.patch"
+		eapply "${FILESDIR}/${PN}-3.31.1-full_archive-architectures.patch"
+		eapply "${FILESDIR}/${PN}-3.31.1-full_archive-security_fixes.patch"
 
 		eapply_user
 
@@ -133,6 +135,8 @@ src_prepare() {
 		sed -e "s/AC_CHECK_FUNCS(.*)/AC_CHECK_FUNCS([fdatasync fullfsync gmtime_r isnan localtime_r localtime_s malloc_usable_size posix_fallocate pread pread64 pwrite pwrite64 strchrnul usleep utime])/" -i configure.ac || die "sed failed"
 	else
 		eapply "${FILESDIR}/${PN}-3.25.0-nonfull_archive-build.patch"
+		eapply "${FILESDIR}/${PN}-3.31.1-nonfull_archive-architectures.patch"
+		eapply "${FILESDIR}/${PN}-3.31.1-nonfull_archive-security_fixes.patch"
 
 		eapply_user
 
@@ -143,12 +147,6 @@ src_prepare() {
 			-e "/AC_CHECK_FUNCS(posix_fallocate)/d" \
 			-i configure.ac || die "sed failed"
 	fi
-
-	# Fix CVE-2019-19880.
-	eapply "${FILESDIR}/sqlite-3.30.1-CVE-2019-19880.patch"
-
-	# Fix CVE-2019-20218.
-	eapply "${FILESDIR}/sqlite-3.30.1-CVE-2019-20218.patch"
 
 	eautoreconf
 
