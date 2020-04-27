@@ -1,5 +1,5 @@
 DEFINED_PHASES=compile configure install prepare test
-DEPEND=truetype? ( media-libs/freetype:2 ) jpeg? ( virtual/jpeg ) scanner? ( media-gfx/sane-backends ) tiff? ( media-libs/tiff ) zlib? ( sys-libs/zlib ) !dev-python/pillow[python_targets_python2_7(-)?,-python_single_target_python2_7(-)] python_targets_python2_7? ( >=dev-lang/python-2.7.5-r2:2.7[tk?] ) >=dev-lang/python-exec-2:=[python_targets_python2_7(-)?,-python_single_target_python2_7(-)]
+DEPEND=truetype? ( media-libs/freetype:2 ) jpeg? ( virtual/jpeg ) scanner? ( media-gfx/sane-backends ) tiff? ( media-libs/tiff ) zlib? ( sys-libs/zlib ) !dev-python/pillow[python_targets_python2_7(-)?,-python_single_target_python2_7(-)] python_targets_python2_7? ( >=dev-lang/python-2.7.5-r2:2.7[tk?] ) >=dev-lang/python-exec-2:=[python_targets_python2_7(-)?,-python_single_target_python2_7(-)] dev-python/setuptools[python_targets_python2_7(-)?,-python_single_target_python2_7(-)]
 DESCRIPTION=Python Imaging Library (PIL)
 EAPI=5
 HOMEPAGE=http://www.pythonware.com/products/pil/index.htm
@@ -10,5 +10,5 @@ RDEPEND=truetype? ( media-libs/freetype:2 ) jpeg? ( virtual/jpeg ) scanner? ( me
 REQUIRED_USE=test? ( jpeg tiff zlib ) || ( python_targets_python2_7 )
 SLOT=0
 SRC_URI=http://www.effbot.org/downloads/Imaging-1.1.7.tar.gz
-_eclasses_=distutils-r1	71a5ee567fb298e553ce8d1319279151	eutils	06133990e861be0fe60c2b428fd025d9	multibuild	40fe59465edacd730c644ec2bc197809	multilib	b2f01ad412baf81650c23fcf0975fa33	multiprocessing	e32940a7b2a9992ad217eccddb84d548	python-r1	ce1cd23cfdc1848e8e32743efe34f299	python-utils-r1	931c328767d245c08a16a3f87be9ce9c	toolchain-funcs	209edad4a5c4812e7b2f8021650974f0	xdg-utils	ff2ff954e6b17929574eee4efc5152ba
+_eclasses_=distutils-r1	198e3b9ddb55ae36b2a50b07ca2877ef	eutils	06133990e861be0fe60c2b428fd025d9	multibuild	40fe59465edacd730c644ec2bc197809	multilib	b2f01ad412baf81650c23fcf0975fa33	multiprocessing	e32940a7b2a9992ad217eccddb84d548	python-r1	ce1cd23cfdc1848e8e32743efe34f299	python-utils-r1	931c328767d245c08a16a3f87be9ce9c	toolchain-funcs	209edad4a5c4812e7b2f8021650974f0	xdg-utils	ff2ff954e6b17929574eee4efc5152ba
 _md5_=3cb1be2bd6bfc08e6052fba8b2074254

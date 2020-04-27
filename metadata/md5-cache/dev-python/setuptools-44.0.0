@@ -12,5 +12,5 @@ REQUIRED_USE=|| ( python_targets_pypy3 python_targets_python2_7 python_targets_p
 RESTRICT=!test? ( test )
 SLOT=0
 SRC_URI=mirror://pypi/s/setuptools/setuptools-44.0.0.zip
-_eclasses_=distutils-r1	71a5ee567fb298e553ce8d1319279151	multibuild	40fe59465edacd730c644ec2bc197809	multilib	b2f01ad412baf81650c23fcf0975fa33	multiprocessing	e32940a7b2a9992ad217eccddb84d548	python-r1	ce1cd23cfdc1848e8e32743efe34f299	python-utils-r1	931c328767d245c08a16a3f87be9ce9c	toolchain-funcs	209edad4a5c4812e7b2f8021650974f0
+_eclasses_=distutils-r1	198e3b9ddb55ae36b2a50b07ca2877ef	multibuild	40fe59465edacd730c644ec2bc197809	multilib	b2f01ad412baf81650c23fcf0975fa33	multiprocessing	e32940a7b2a9992ad217eccddb84d548	python-r1	ce1cd23cfdc1848e8e32743efe34f299	python-utils-r1	931c328767d245c08a16a3f87be9ce9c	toolchain-funcs	209edad4a5c4812e7b2f8021650974f0
 _md5_=9b39d9322b56e8f204c483eb632898cb
