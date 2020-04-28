@@ -1,9 +1,9 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=5
+EAPI=6
 
-inherit eutils flag-o-matic toolchain-funcs
+inherit flag-o-matic toolchain-funcs
 
 DESCRIPTION="GNU regular expression matcher"
 HOMEPAGE="https://www.gnu.org/software/grep/"
@@ -31,6 +31,8 @@ src_prepare() {
 		-e "s:@SHELL@:${EPREFIX}/bin/sh:g" \
 		-e "s:@grep@:${EPREFIX}/bin/grep:" \
 		src/egrep.sh || die #523898
+
+	default
 }
 
 src_configure() {

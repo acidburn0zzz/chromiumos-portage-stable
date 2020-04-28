@@ -1,8 +1,9 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=5
-PYTHON_COMPAT=( python2_7 python3_{4,5,6,7} pypy{,3} )
+EAPI=7
+DISTUTILS_USE_SETUPTOOLS=no
+PYTHON_COMPAT=( python2_7 python3_{6,7,8} pypy3 )
 PYTHON_REQ_USE="xml(+)"
 
 inherit distutils-r1
@@ -21,19 +22,20 @@ HOMEPAGE="https://github.com/pypa/setuptools https://pypi.org/project/setuptools
 LICENSE="MIT"
 SLOT="0"
 IUSE="test"
+RESTRICT="!test? ( test )"
 
-RDEPEND="
-"
-DEPEND="${RDEPEND}
+BDEPEND="
 	app-arch/unzip
 	test? (
+		dev-python/mock[${PYTHON_USEDEP}]
 		dev-python/pip[${PYTHON_USEDEP}]
-		>=dev-python/pytest-3.1.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-3.7.0[${PYTHON_USEDEP}]
 		dev-python/pytest-fixture-config[${PYTHON_USEDEP}]
 		dev-python/pytest-virtualenv[${PYTHON_USEDEP}]
-		>=dev-python/backports-unittest-mock-1.2[${PYTHON_USEDEP}]
 		dev-python/wheel[${PYTHON_USEDEP}]
-		virtual/python-futures[${PYTHON_USEDEP}]
+		$(python_gen_cond_dep '
+			dev-python/futures[${PYTHON_USEDEP}]
+		' -2)
 	)
 "
 PDEPEND="
@@ -43,6 +45,12 @@ PDEPEND="
 DISTUTILS_IN_SOURCE_BUILD=1
 
 DOCS=( {CHANGES,README}.rst docs/{easy_install.txt,pkg_resources.txt,setuptools.txt} )
+
+PATCHES=(
+	# fix regression introduced by reinventing deprecated 'imp'
+	# https://github.com/pypa/setuptools/pull/1905
+	"${FILESDIR}"/setuptools-42.0.0-imp-fix.patch
+)
 
 python_prepare_all() {
 	if [[ ${PV} == "9999" ]]; then
@@ -62,7 +70,7 @@ python_prepare_all() {
 python_test() {
 	# test_easy_install raises a SandboxViolation due to ${HOME}/.pydistutils.cfg
 	# It tries to sandbox the test in a tempdir
-	HOME="${PWD}" py.test --verbose ${PN} || die "Tests failed under ${EPYTHON}"
+	HOME="${PWD}" pytest -vv ${PN} || die "Tests failed under ${EPYTHON}"
 }
 
 python_install() {
