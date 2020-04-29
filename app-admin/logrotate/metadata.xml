@@ -23,4 +23,7 @@
 		<flag name="cron">Installs cron file</flag>
 		<flag name="selinux">Installs Security Enhanced Linux support</flag>
 	</use>
+	<upstream>
+		<remote-id type="cpe">cpe:/a:logrotate_project:logrotate</flag>
+	</upstream>
 </pkgmetadata>

@@ -17,4 +17,7 @@
 		</flag>
 		<flag name="sasl">Enable SASL support in the LDAP module</flag>
 	</use>
+	<upstream>
+		<remote-id type="cpe">cpe:/a:ibm:autofs</remote-id>
+	</upstream>
 </pkgmetadata>
