@@ -1,11 +1,11 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # TODO: Add python support.
 
-EAPI="5"
+EAPI=7
 
-inherit eutils multilib-minimal
+inherit multilib-minimal
 
 DESCRIPTION="high level interface to Linux seccomp filter"
 HOMEPAGE="https://github.com/seccomp/libseccomp"
@@ -20,20 +20,26 @@ IUSE="static-libs"
 # version here, just be safe and pull in the latest stable ones. #551248
 DEPEND=">=sys-kernel/linux-headers-4.3"
 
+PATCHES=(
+	"${FILESDIR}/${P}-missing_SNR_ppoll_defs.patch"
+)
+
 src_prepare() {
+	default
 	sed -i \
 		-e '/_LDFLAGS/s:-static::' \
 		tools/Makefile.in || die
 }
 
 multilib_src_configure() {
-	ECONF_SOURCE=${S} \
-	econf \
-		$(use_enable static-libs static) \
+	local myeconfargs=(
+		$(use_enable static-libs static)
 		--disable-python
+	)
+	ECONF_SOURCE="${S}" econf "${myeconfargs[@]}"
 }
 
 multilib_src_install_all() {
-	find "${ED}" -name libseccomp.la -delete
+	find "${ED}" -type f -name libseccomp.la -delete || die
 	einstalldocs
 }
