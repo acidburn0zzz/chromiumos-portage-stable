@@ -1,30 +1,28 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=5
+EAPI=6
 
-inherit eutils libtool multilib-minimal
+inherit libtool multilib-minimal
 
 DESCRIPTION="Portable Network Graphics library"
 HOMEPAGE="http://www.libpng.org/"
 SRC_URI="mirror://sourceforge/${PN}/${P}.tar.xz
 	apng? ( mirror://sourceforge/apng/${P}-apng.patch.gz )"
 
-LICENSE="libpng"
+LICENSE="libpng2"
 SLOT="0/16"
 KEYWORDS="*"
-IUSE="apng neon static-libs"
+IUSE="apng cpu_flags_x86_sse neon static-libs"
 
-RDEPEND=">=sys-libs/zlib-1.2.8-r1:=[${MULTILIB_USEDEP}]
-	abi_x86_32? ( !<=app-emulation/emul-linux-x86-baselibs-20130224-r1
-		!app-emulation/emul-linux-x86-baselibs[-abi_x86_32(-)] )"
+RDEPEND=">=sys-libs/zlib-1.2.8-r1:=[${MULTILIB_USEDEP}]"
 DEPEND="${RDEPEND}
 	app-arch/xz-utils"
 
 src_prepare() {
 	default
 	if use apng; then
-		epatch "${WORKDIR}"/${PN}-*-apng.patch
+		eapply -p0 "${WORKDIR}"/${PN}-*-apng.patch
 		# Don't execute symbols check with apng patch wrt #378111
 		sed -i -e '/^check/s:scripts/symbols.chk::' Makefile.in || die
 	fi
@@ -32,13 +30,16 @@ src_prepare() {
 }
 
 multilib_src_configure() {
-	ECONF_SOURCE="${S}" econf \
-		$(use_enable static-libs static) \
+	local myeconfargs=(
+		$(use_enable cpu_flags_x86_sse intel-sse)
+		$(use_enable static-libs static)
 		--enable-arm-neon=$(usex neon)
+	)
+	ECONF_SOURCE="${S}" econf "${myeconfargs[@]}"
 }
 
 multilib_src_install_all() {
 	DOCS=( ANNOUNCE CHANGES libpng-manual.txt README TODO )
 	einstalldocs
-	prune_libtool_files --all
+	find "${ED}" -name '*.la' -delete || die
 }
