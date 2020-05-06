@@ -1,7 +1,7 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 2003-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
 inherit flag-o-matic multilib-minimal
 
@@ -14,19 +14,21 @@ SLOT="0"
 KEYWORDS="*"
 IUSE="bzip2 lzma nls static-libs test +threads +utils"
 
-RDEPEND=">=sys-libs/zlib-1.2.8-r1[${MULTILIB_USEDEP}]
-	bzip2? ( >=app-arch/bzip2-1.0.6-r4[${MULTILIB_USEDEP}] )
-	lzma? ( >=app-arch/xz-utils-5.0.5-r1[${MULTILIB_USEDEP}] )
+RDEPEND=">=sys-libs/zlib-1.2.8-r1[static-libs?,${MULTILIB_USEDEP}]
+	bzip2? ( >=app-arch/bzip2-1.0.6-r4[static-libs?,${MULTILIB_USEDEP}] )
+	lzma? ( >=app-arch/xz-utils-5.0.5-r1[static-libs?,${MULTILIB_USEDEP}] )
 	!dev-libs/libelf"
-DEPEND="${RDEPEND}
-	nls? ( sys-devel/gettext )
+DEPEND="${RDEPEND}"
+BDEPEND="nls? ( sys-devel/gettext )
 	>=sys-devel/flex-2.5.4a
 	sys-devel/m4"
 
+RESTRICT="!test? ( test )"
+
 PATCHES=(
 	"${FILESDIR}"/${PN}-0.118-PaX-support.patch
-	"${FILESDIR}"/${PN}-0.173-partial-core.patch
 	"${FILESDIR}"/${PN}-0.175-disable-biarch-test-PR24158.patch
+	"${FILESDIR}"/${PN}-0.177-disable-large.patch
 )
 
 src_prepare() {
