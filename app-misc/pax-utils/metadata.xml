@@ -14,6 +14,6 @@
     <flag name="python">Install a more powerful/faster version of lddtree</flag>
   </use>
   <upstream>
-    <remote-id type="cpe">cpe:/a:gentoo:pax-utils</flag>
+    <remote-id type="cpe">cpe:/a:gentoo:pax-utils</remote-id>
 </upstream>
 </pkgmetadata>

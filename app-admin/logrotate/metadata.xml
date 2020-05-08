@@ -24,6 +24,6 @@
 		<flag name="selinux">Installs Security Enhanced Linux support</flag>
 	</use>
 	<upstream>
-		<remote-id type="cpe">cpe:/a:logrotate_project:logrotate</flag>
+		<remote-id type="cpe">cpe:/a:logrotate_project:logrotate</remote-id>
 	</upstream>
 </pkgmetadata>
