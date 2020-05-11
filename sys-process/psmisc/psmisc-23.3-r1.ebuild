@@ -1,7 +1,7 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
 DESCRIPTION="A set of tools that use the proc filesystem"
 HOMEPAGE="http://psmisc.sourceforge.net/"
@@ -23,29 +23,23 @@ DOCS=( AUTHORS ChangeLog NEWS README )
 
 src_configure() {
 	local myeconfargs=(
-		$(use_enable selinux)
 		--disable-harden-flags
 		$(use_enable ipv6)
 		$(use_enable nls)
+		$(use_enable selinux)
 	)
 	econf "${myeconfargs[@]}"
-}
-
-src_compile() {
-	# peekfd is a fragile crap hack #330631
-	nonfatal emake -C src peekfd || touch src/peekfd{.o,}
-	emake
 }
 
 src_install() {
 	default
 
-	use X || rm -f "${ED%/}"/usr/bin/pstree.x11
+	use X || rm -f "${ED}"/usr/bin/pstree.x11
 
-	[[ -s ${ED%/}/usr/bin/peekfd ]] || rm -f "${ED%/}"/usr/bin/peekfd
-	[[ -e ${ED%/}/usr/bin/peekfd ]] || rm -f "${ED%/}"/usr/share/man/man1/peekfd.1
+	[[ -s ${ED}/usr/bin/peekfd ]] || rm -f "${ED}"/usr/bin/peekfd
+	[[ -e ${ED}/usr/bin/peekfd ]] || rm -f "${ED}"/usr/share/man/man1/peekfd.1
 
 	# fuser is needed by init.d scripts; use * wildcard for #458250
 	dodir /bin
-	mv "${ED%/}"/usr/bin/*fuser "${ED%/}"/bin || die
+	mv "${ED}"/usr/bin/*fuser "${ED}"/bin || die
 }
