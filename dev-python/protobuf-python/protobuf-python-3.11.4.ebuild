@@ -1,35 +1,47 @@
-# Copyright 1999-2018 Gentoo Authors
+# Copyright 2008-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="6"
-PYTHON_COMPAT=(python{2_7,3_4,3_5,3_6,3_7})
+EAPI="7"
+PYTHON_COMPAT=(python{2_7,3_6,3_7,3_8})
+DISTUTILS_USE_SETUPTOOLS="manual"
 
 inherit distutils-r1
 
+if [[ "${PV}" == "9999" ]]; then
+	inherit git-r3
+
+	EGIT_REPO_URI="https://github.com/protocolbuffers/protobuf"
+	EGIT_SUBMODULES=()
+fi
+
 DESCRIPTION="Google's Protocol Buffers - Python bindings"
 HOMEPAGE="https://developers.google.com/protocol-buffers/ https://github.com/protocolbuffers/protobuf"
-SRC_URI="https://github.com/protocolbuffers/protobuf/archive/v${PV}.tar.gz -> protobuf-${PV}.tar.gz"
+if [[ "${PV}" == "9999" ]]; then
+	SRC_URI=""
+else
+	SRC_URI="https://github.com/protocolbuffers/protobuf/archive/v${PV}.tar.gz -> protobuf-${PV}.tar.gz"
+fi
 
 LICENSE="BSD"
-SLOT="0/17"
+SLOT="0/22"
 KEYWORDS="*"
 IUSE=""
 
-DEPEND="${PYTHON_DEPS}
+BDEPEND="${PYTHON_DEPS}
 	~dev-libs/protobuf-${PV}
 	dev-python/namespace-google[${PYTHON_USEDEP}]
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	dev-python/six[${PYTHON_USEDEP}]"
-RDEPEND="${DEPEND}
+DEPEND="${PYTHON_DEPS}
+	~dev-libs/protobuf-${PV}"
+RDEPEND="${BDEPEND}
 	!<dev-libs/protobuf-3[python(-)]"
 
 S="${WORKDIR}/protobuf-${PV}/python"
 
-python_prepare_all() {
-	eapply -p2 "${FILESDIR}/${PN}-3.5.2-google.protobuf.pyext._message.MessageMeta.patch"
-	eapply -p2 "${FILESDIR}/${PN}-3.6.1-python-3.7.patch"
-	distutils-r1_python_prepare_all
-}
+if [[ "${PV}" == "9999" ]]; then
+	EGIT_CHECKOUT_DIR="${WORKDIR}/protobuf-${PV}"
+fi
 
 python_configure_all() {
 	mydistutilsargs=(--cpp_implementation)
@@ -47,5 +59,5 @@ python_test() {
 python_install_all() {
 	distutils-r1_python_install_all
 
-	find "${D}" -name "*.pth" -delete || die
+	find "${D}" -name "*.pth" -type f -delete || die
 }
