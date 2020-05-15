@@ -1,38 +1,42 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=5
+EAPI=7
 
-PYTHON_COMPAT=( python3_{4,5,6} )
+PYTHON_COMPAT=( python3_{6,7,8} )
 
 inherit flag-o-matic python-any-r1 toolchain-funcs
 
 DESCRIPTION="Network utility to retrieve files from the WWW"
 HOMEPAGE="https://www.gnu.org/software/wget/"
-SRC_URI="mirror://gnu/wget/${P}.tar.xz"
+SRC_URI="mirror://gnu/wget/${P}.tar.gz"
 
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="*"
-IUSE="debug gnutls idn ipv6 libressl nls ntlm pcre +ssl static test uuid zlib"
+IUSE="cookie_check debug gnutls idn ipv6 libressl metalink nls ntlm pcre +ssl static test uuid zlib"
 REQUIRED_USE=" ntlm? ( !gnutls ssl ) gnutls? ( ssl )"
+RESTRICT="!test? ( test )"
 
 # Force a newer libidn2 to avoid libunistring deps. #612498
-LIB_DEPEND="idn? ( >=net-dns/libidn2-0.14[static-libs(+)] )
-	pcre? ( dev-libs/libpcre[static-libs(+)] )
+LIB_DEPEND="
+	cookie_check? ( net-libs/libpsl )
+	idn? ( >=net-dns/libidn2-0.14:=[static-libs(+)] )
+	metalink? ( media-libs/libmetalink )
+	pcre? ( dev-libs/libpcre2[static-libs(+)] )
 	ssl? (
 		gnutls? ( net-libs/gnutls:0=[static-libs(+)] )
 		!gnutls? (
 			!libressl? ( dev-libs/openssl:0=[static-libs(+)] )
-			libressl? ( dev-libs/libressl[static-libs(+)] )
+			libressl? ( dev-libs/libressl:0=[static-libs(+)] )
 		)
 	)
 	uuid? ( sys-apps/util-linux[static-libs(+)] )
-	zlib? ( sys-libs/zlib[static-libs(+)] )"
+	zlib? ( sys-libs/zlib[static-libs(+)] )
+"
 RDEPEND="!static? ( ${LIB_DEPEND//\[static-libs(+)]} )"
-DEPEND="${RDEPEND}
-	app-arch/xz-utils
-	virtual/pkgconfig
+DEPEND="
+	${RDEPEND}
 	static? ( ${LIB_DEPEND} )
 	test? (
 		${PYTHON_DEPS}
@@ -41,27 +45,30 @@ DEPEND="${RDEPEND}
 		dev-perl/HTTP-Message
 		dev-perl/IO-Socket-SSL
 	)
-	nls? ( sys-devel/gettext )"
+"
+BDEPEND="
+	app-arch/xz-utils
+	virtual/pkgconfig
+	nls? ( sys-devel/gettext )
+"
 
 DOCS=( AUTHORS MAILING-LIST NEWS README doc/sample.wgetrc )
 
-PATCHES=(
-	"${FILESDIR}"/${P}-CRLF_injection.patch
-	"${FILESDIR}"/${PN}-1.19.1-fix-Perl-warnings-in-tests.patch
-	"${FILESDIR}"/${PN}-1.19.1-fix-Python-test-suite.patch
-	"${FILESDIR}"/${PN}-1.19.1-CVE-2017-13089.patch
-	"${FILESDIR}"/${PN}-1.19.1-CVE-2017-13090.patch
-)
+PATCHES=( "${FILESDIR}"/${P}-gcc10-fno-common.patch )
 
 pkg_setup() {
 	use test && python-any-r1_pkg_setup
 }
 
 src_prepare() {
-	epatch "${PATCHES[@]}"
+	default
 
 	# revert some hack that breaks linking, bug #585924
-	if [[ ${CHOST} == *-darwin* ]] || [[ ${CHOST} == *-solaris* ]] || [[ ${CHOST} == *-uclibc* ]]; then
+	if [[ ${CHOST} == *-darwin* ]] \
+	|| [[ ${CHOST} == *-solaris* ]] \
+	|| [[ ${CHOST} == *-uclibc* ]] \
+	|| [[ ${CHOST} == *-cygwin* ]] \
+	; then
 		sed -i \
 			-e 's/^  LIBICONV=$/:/' \
 			configure || die
@@ -83,24 +90,29 @@ src_configure() {
 	# controls the search path (which is why we turn it off below).
 	# Further, libunistring is only needed w/older libidn2 installs,
 	# and since we force the latest, we can force off libunistring. #612498
-	ac_cv_libunistring=no \
-	econf \
-		--disable-assert \
-		--disable-rpath \
-		--without-included-libunistring \
-		--without-libunistring-prefix \
-		$(use_enable debug) \
-		$(use_enable idn iri) \
-		$(use_enable ipv6) \
-		$(use_enable nls) \
-		$(use_enable ntlm) \
-		$(use_enable pcre) \
-		$(use_enable ssl digest) \
-		$(use_enable ssl opie) \
-		$(use_with idn libidn) \
-		$(use_with ssl ssl $(usex gnutls gnutls openssl)) \
-		$(use_with uuid libuuid) \
+	local myeconfargs=(
+		--disable-assert
+		--disable-pcre
+		--disable-rpath
+		--without-included-libunistring
+		--without-libunistring-prefix
+		$(use_enable debug)
+		$(use_enable idn iri)
+		$(use_enable ipv6)
+		$(use_enable nls)
+		$(use_enable ntlm)
+		$(use_enable pcre pcre2)
+		$(use_enable ssl digest)
+		$(use_enable ssl opie)
+		$(use_with cookie_check libpsl)
+		$(use_with idn libidn)
+		$(use_with metalink)
+		$(use_with ssl ssl $(usex gnutls gnutls openssl))
+		$(use_with uuid libuuid)
 		$(use_with zlib)
+	)
+	ac_cv_libunistring=no \
+	econf "${myeconfargs[@]}"
 }
 
 src_install() {
