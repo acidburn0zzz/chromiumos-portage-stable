@@ -12,7 +12,7 @@ SRC_URI="https://curl.haxx.se/download/${P}.tar.xz"
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS="*"
-IUSE="adns alt-svc brotli http2 idn ipv6 kerberos ldap metalink +progress-meter rtmp samba ssh ssl static-libs test threads"
+IUSE="adns alt-svc brotli +ftp gopher http2 idn +imap ipv6 kerberos ldap metalink +pop3 +progress-meter rtmp samba +smtp ssh ssl static-libs test telnet +tftp threads"
 IUSE+=" curl_ssl_gnutls curl_ssl_libressl curl_ssl_mbedtls curl_ssl_nss +curl_ssl_openssl curl_ssl_winssl"
 IUSE+=" nghttp3 quiche"
 IUSE+=" elibc_Winnt"
@@ -48,7 +48,7 @@ RDEPEND="ldap? ( net-nds/openldap[${MULTILIB_USEDEP}] )
 		net-libs/nghttp3[${MULTILIB_USEDEP}]
 		net-libs/ngtcp2[ssl,${MULTILIB_USEDEP}]
 	)
-	quiche? ( net-libs/quiche[${MULTILIB_USEDEP}] )
+	quiche? ( >=net-libs/quiche-0.3.0[${MULTILIB_USEDEP}] )
 	idn? ( net-dns/libidn2:0=[static-libs?,${MULTILIB_USEDEP}] )
 	adns? ( net-dns/c-ares:0[${MULTILIB_USEDEP}] )
 	kerberos? ( >=virtual/krb5-0-r1[${MULTILIB_USEDEP}] )
@@ -164,21 +164,21 @@ multilib_src_configure() {
 		--enable-dict \
 		--disable-esni \
 		--enable-file \
-		--enable-ftp \
-		--enable-gopher \
+		$(use_enable ftp) \
+		$(use_enable gopher) \
 		--enable-http \
-		--enable-imap \
+		$(use_enable imap) \
 		$(use_enable ldap) \
 		$(use_enable ldap ldaps) \
 		--disable-ntlm-wb \
-		--enable-pop3 \
+		$(use_enable pop3) \
 		--enable-rt  \
 		--enable-rtsp \
 		$(use_enable samba smb) \
 		$(use_with ssh libssh2) \
-		--enable-smtp \
-		--enable-telnet \
-		--enable-tftp \
+		$(use_enable smtp) \
+		$(use_enable telnet) \
+		$(use_enable tftp) \
 		--enable-tls-srp \
 		$(use_enable adns ares) \
 		--enable-cookies \
@@ -189,7 +189,6 @@ multilib_src_configure() {
 		--enable-http-auth \
 		$(use_enable ipv6) \
 		--enable-largefile \
-		--without-libpsl \
 		--enable-manual \
 		--enable-mime \
 		--enable-netrc \
@@ -209,6 +208,7 @@ multilib_src_configure() {
 		$(use_with kerberos gssapi "${EPREFIX}"/usr) \
 		$(use_with metalink libmetalink) \
 		$(use_with http2 nghttp2) \
+		--without-libpsl \
 		$(use_with nghttp3) \
 		$(use_with nghttp3 ngtcp2) \
 		$(use_with quiche) \
