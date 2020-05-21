@@ -1,8 +1,7 @@
-# Copyright 1999-2018 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
-
+EAPI=7
 inherit toolchain-funcs multilib-minimal
 
 DESCRIPTION="HTTP request/response parser for C"
@@ -10,7 +9,7 @@ HOMEPAGE="https://github.com/nodejs/http-parser"
 SRC_URI="https://github.com/nodejs/http-parser/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="MIT"
-SLOT="0/2.8.0"
+SLOT="0/2.9.0"
 KEYWORDS="*"
 IUSE="static-libs"
 

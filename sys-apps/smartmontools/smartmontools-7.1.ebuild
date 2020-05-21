@@ -1,4 +1,4 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI="6"
@@ -18,7 +18,7 @@ HOMEPAGE="https://www.smartmontools.org"
 
 LICENSE="GPL-2"
 SLOT="0"
-IUSE="caps +daemon selinux static update_drivedb"
+IUSE="caps +daemon selinux static systemd update_drivedb"
 
 DEPEND="
 	caps? (
@@ -34,6 +34,7 @@ DEPEND="
 RDEPEND="${DEPEND}
 	daemon? ( virtual/mailx )
 	selinux? ( sec-policy/selinux-smartmon )
+	systemd? ( sys-apps/systemd )
 	update_drivedb? (
 		app-crypt/gnupg
 		|| (
@@ -47,14 +48,8 @@ RDEPEND="${DEPEND}
 
 REQUIRED_USE="( caps? ( daemon ) )"
 
-PATCHES=(
-	"${FILESDIR}"/${P}-fix-build-on-musl.patch
-	"${FILESDIR}"/${P}-set-broadcast-nsid.patch
-)
-
 src_prepare() {
 	default
-
 	eautoreconf
 }
 
@@ -63,14 +58,15 @@ src_configure() {
 	# The build installs /etc/init.d/smartd, but we clobber it
 	# in our src_install, so no need to manually delete it.
 	myeconfargs=(
-		--docdir="${EPREFIX}/usr/share/doc/${PF}"
 		--with-drivedbdir="${EPREFIX}/var/db/${PN}" #575292
 		--with-initscriptdir="${EPREFIX}/etc/init.d"
+		#--with-smartdscriptdir="${EPREFIX}/usr/share/${PN}"
 		$(use_with caps libcap-ng)
 		$(use_with selinux)
-		--with-systemdsystemunitdir="$(systemd_get_systemunitdir)"
+		$(use_with systemd libsystemd)
 		$(use_with update_drivedb gnupg)
 		$(use_with update_drivedb update-smart-drivedb)
+		$(usex systemd "--with-systemdsystemunitdir=$(systemd_get_systemunitdir)" '')
 	)
 	econf "${myeconfargs[@]}"
 }
@@ -83,7 +79,6 @@ src_install() {
 
 		newinitd "${FILESDIR}"/smartd-r1.rc smartd
 		newconfd "${FILESDIR}"/smartd.confd smartd
-		systemd_newunit "${FILESDIR}"/smartd.systemd smartd.service
 	else
 		dosbin smartctl
 		doman smartctl.8
@@ -122,8 +117,8 @@ src_install() {
 
 pkg_postinst() {
 	if use daemon || use update_drivedb; then
-		local initial_db_file="${EPREFIX%/}/usr/share/${PN}/drivedb.h"
-		local db_path="${EPREFIX%/}/var/db/${PN}"
+		local initial_db_file="${EPREFIX}/usr/share/${PN}/drivedb.h"
+		local db_path="${EPREFIX}/var/db/${PN}"
 
 		if [[ ! -f "${db_path}/drivedb.h" ]] ; then
 			# No initial database found

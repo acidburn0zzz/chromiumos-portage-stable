@@ -1,13 +1,13 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=5
+EAPI=6
 
-inherit autotools eutils multilib-minimal
+inherit autotools eutils ltprune multilib-minimal
 
 DESCRIPTION="C library that resolves names asynchronously"
-HOMEPAGE="http://c-ares.haxx.se/"
-SRC_URI="http://${PN}.haxx.se/download/${P}.tar.gz"
+HOMEPAGE="https://c-ares.haxx.se/"
+SRC_URI="https://${PN}.haxx.se/download/${P}.tar.gz"
 
 LICENSE="MIT"
 KEYWORDS="*"
@@ -23,7 +23,8 @@ MULTILIB_WRAPPED_HEADERS=(
 )
 
 src_prepare() {
-	epatch "${FILESDIR}"/${PN}-1.12.0-remove-tests.patch
+	eapply "${FILESDIR}"/${PN}-1.12.0-remove-tests.patch
+	eapply_user
 	eautoreconf
 }
 
