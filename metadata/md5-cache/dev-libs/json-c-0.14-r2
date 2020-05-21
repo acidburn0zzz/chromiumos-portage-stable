@@ -1,4 +1,4 @@
-BDEPEND=dev-util/ninja >=dev-util/cmake-3.9.6
+BDEPEND=dev-util/ninja dev-util/cmake
 DEFINED_PHASES=compile configure install prepare test
 DESCRIPTION=A JSON implementation in C
 EAPI=7
@@ -8,5 +8,5 @@ KEYWORDS=*
 LICENSE=MIT
 SLOT=0/5
 SRC_URI=https://s3.amazonaws.com/json-c_releases/releases/json-c-0.14.tar.gz
-_eclasses_=cmake-multilib	9400794da450ca9e38faef6eefbb3957	cmake-utils	91d6ef31dc426240577497cacbf2508c	eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multibuild	40fe59465edacd730c644ec2bc197809	multilib	b2f01ad412baf81650c23fcf0975fa33	multilib-build	1979aa0ff4d356d32507ca4650d9f37d	multilib-minimal	8bddda43703ba94d8341f4e247f97566	multiprocessing	e32940a7b2a9992ad217eccddb84d548	ninja-utils	132cbb376048d079b5a012f5467c4e7f	toolchain-funcs	209edad4a5c4812e7b2f8021650974f0	xdg-utils	ff2ff954e6b17929574eee4efc5152ba
+_eclasses_=cmake	b22e256fd899c7e0c747e8834eff121a	cmake-multilib	b396704c8c04bb210b7b45dff5c67fea	eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multibuild	40fe59465edacd730c644ec2bc197809	multilib	b2f01ad412baf81650c23fcf0975fa33	multilib-build	1979aa0ff4d356d32507ca4650d9f37d	multilib-minimal	8bddda43703ba94d8341f4e247f97566	multiprocessing	e32940a7b2a9992ad217eccddb84d548	ninja-utils	132cbb376048d079b5a012f5467c4e7f	toolchain-funcs	209edad4a5c4812e7b2f8021650974f0	xdg-utils	ff2ff954e6b17929574eee4efc5152ba
 _md5_=3451e10a3b0697d1b35b2b940b9f6632
