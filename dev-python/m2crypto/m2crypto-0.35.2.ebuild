@@ -1,9 +1,9 @@
-# Copyright 2018-2019 Gentoo Authors
+# Copyright 2018-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
-PYTHON_COMPAT=( python2_7 python3_{5..7})
+PYTHON_COMPAT=( python2_7 python3_{6,7,8})
 PYTHON_REQ_USE="threads(+)"
 
 inherit distutils-r1 toolchain-funcs
@@ -21,9 +21,12 @@ IUSE="libressl"
 RDEPEND="
 	!libressl? ( dev-libs/openssl:0= )
 	libressl? ( dev-libs/libressl:0= )
-	virtual/python-typing[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		dev-python/typing[${PYTHON_USEDEP}]
+	' -2)
 "
-DEPEND="${RDEPEND}
+DEPEND="${RDEPEND}"
+BDEPEND="
 	>=dev-lang/swig-2.0.9
 	dev-python/setuptools[${PYTHON_USEDEP}]
 "
@@ -54,7 +57,7 @@ python_compile() {
 	# https://bugs.gentoo.org/674112
 	swig_define __ARM_PCS_VFP
 
-	distutils-r1_python_compile --openssl="${SYSROOT}"/usr
+	distutils-r1_python_compile --openssl="${ESYSROOT}"/usr
 }
 
 python_test() {
