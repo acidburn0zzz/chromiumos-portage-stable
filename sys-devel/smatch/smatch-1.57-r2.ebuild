@@ -39,11 +39,12 @@ src_prepare() {
 	sed -i \
 		-e '/^PREFIX=/s:=.*:=/usr:' \
 		-e '/^CFLAGS =/{s:=:+=:;s:-O2 -finline-functions:${CPPFLAGS}:}' \
+		-e "s:pkg-config:$(tc-getPKG_CONFIG):" \
 		Makefile || die
 }
 
 src_compile() {
-	emake PREFIX=/usr V=1 CC="$(tc-getCC)" smatch
+	emake PREFIX=/usr V=1 CC="$(tc-getCC)" HAVE_GTK2=no HAVE_LLVM=no HAVE_LIBXML=no smatch
 }
 
 src_install() {
