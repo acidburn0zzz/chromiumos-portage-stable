@@ -64,6 +64,7 @@ src_prepare() {
 	# Make sure we always use the system copies.
 	rm -rf util/{et,ss,verto}
 	sed -i 's:^[[:space:]]*util/verto$::' configure.in || die
+	sed -i 's:pkg-config:${PKG_CONFIG}:' configure.in || die
 
 	eapply_user
 	eautoreconf
@@ -82,6 +83,7 @@ multilib_src_configure() {
 	ECONF_SOURCE=${S} \
 	WARN_CFLAGS="set" \
 	econf \
+		PKG_CONFIG="$(tc-getPKG_CONFIG)" \
 		$(use_with openldap ldap) \
 		"$(multilib_native_use_with test tcl "${EPREFIX}/usr")" \
 		$(use_enable nls) \
