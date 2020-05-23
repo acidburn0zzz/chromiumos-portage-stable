@@ -1,7 +1,7 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
 inherit autotools toolchain-funcs
 
@@ -32,14 +32,19 @@ PATCHES=(
 	"${FILESDIR}/${PN}-0.1.9998_pre20171020-gold.patch"
 )
 
+pkg_setup() {
+	# Package fails with distcc (bug #255371)
+	export DISTCC_DISABLE=1
+}
+
 src_prepare() {
 	rm -rf "${S}/kBuild/bin"
 
 	default
 
 	# Add a file with the svn revision this package was pulled from
-	#printf '%s\n' "KBUILD_SVN_REV := $(ver_cut 4)" \
-	#	> SvnInfo.kmk || die
+	printf '%s\n' "KBUILD_SVN_REV := $(ver_cut 4)" \
+		> SvnInfo.kmk || die
 
 	# bootstrapping breaks because of missing po/Makefile.in.in (r3149)
 	sed '/^AC_CONFIG_FILES/s@ po/Makefile\.in@@' \
@@ -54,7 +59,7 @@ src_prepare() {
 
 	sed -e "s@_LDFLAGS\.$(tc-arch)*.*=@& ${LDFLAGS}@g" \
 		-i "${S}"/Config.kmk || die #332225
-	tc-export CC RANLIB #AR does not work here
+	tc-export CC PKG_CONFIG RANLIB #AR does not work here
 }
 
 src_compile() {
