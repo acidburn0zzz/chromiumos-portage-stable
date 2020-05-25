@@ -13,11 +13,7 @@ SRC_URI="http://dist.schmorp.de/libev/${P}.tar.gz
 LICENSE="|| ( BSD GPL-2 )"
 SLOT="0"
 KEYWORDS="*"
-IUSE="elibc_glibc static-libs"
-
-# Bug #283558
-DEPEND="elibc_glibc? ( >=sys-libs/glibc-2.9_p20081201 )"
-RDEPEND="${DEPEND}"
+IUSE="static-libs"
 
 DOCS=( Changes README )
 

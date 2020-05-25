@@ -1,7 +1,0 @@
-DEFINED_PHASES=-
-DESCRIPTION=Virtual for Kerberos V implementation
-EAPI=3
-KEYWORDS=*
-RDEPEND=|| ( app-crypt/mit-krb5 app-crypt/heimdal )
-SLOT=0
-_md5_=8932bcb64ea912978b2904daf29b55f7

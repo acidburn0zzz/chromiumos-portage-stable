@@ -1,0 +1,12 @@
+DEFINED_PHASES=configure install
+DEPEND=>=sys-libs/ncurses-5.7-r7:0= nls? ( virtual/libintl ) selinux? ( sys-libs/libselinux ) >=sys-devel/libtool-2.2.6b nls? ( sys-devel/gettext )
+DESCRIPTION=A set of tools that use the proc filesystem
+EAPI=7
+HOMEPAGE=http://psmisc.sourceforge.net/
+IUSE=ipv6 nls selinux X
+KEYWORDS=*
+LICENSE=GPL-2
+RDEPEND=>=sys-libs/ncurses-5.7-r7:0= nls? ( virtual/libintl ) selinux? ( sys-libs/libselinux )
+SLOT=0
+SRC_URI=mirror://sourceforge/psmisc/psmisc-23.3.tar.xz
+_md5_=30ce123c2930285507661faeedde4a88
