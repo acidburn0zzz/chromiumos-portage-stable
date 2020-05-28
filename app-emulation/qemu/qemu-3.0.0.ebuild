@@ -375,7 +375,7 @@ src_prepare() {
 	default
 
 	# Fix ld and objcopy being called directly
-	tc-export AR LD OBJCOPY
+	tc-export AR LD OBJCOPY PKG_CONFIG
 
 	# Verbose builds
 	MAKEOPTS+=" V=1"
