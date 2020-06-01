@@ -1,13 +1,15 @@
+BDEPEND=nls? ( sys-devel/gettext )
 DEFINED_PHASES=compile configure prepare setup
-DEPEND=selinux? ( sys-libs/libselinux ) nls? ( virtual/libintl ) test? ( || ( dev-lang/python:3.7 dev-lang/python:3.6 >=dev-lang/python-2.7.5-r2:2.7 ) ) nls? ( sys-devel/gettext )
+DEPEND=selinux? ( sys-libs/libselinux ) nls? ( virtual/libintl ) test? ( || ( dev-lang/python:3.7 dev-lang/python:3.6 ) )
 DESCRIPTION=GNU utilities for finding files
-EAPI=5
+EAPI=7
 HOMEPAGE=https://www.gnu.org/software/findutils/
 IUSE=nls selinux static test
 KEYWORDS=*
 LICENSE=GPL-3+
 RDEPEND=selinux? ( sys-libs/libselinux ) nls? ( virtual/libintl )
+RESTRICT=!test? ( test )
 SLOT=0
-SRC_URI=mirror://gnu/findutils/findutils-4.6.0.tar.gz
+SRC_URI=mirror://gnu/findutils/findutils-4.7.0.tar.xz
 _eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	b2f01ad412baf81650c23fcf0975fa33	python-any-r1	4900ae970f827a22d33d41bd8b8f9ace	python-utils-r1	931c328767d245c08a16a3f87be9ce9c	toolchain-funcs	209edad4a5c4812e7b2f8021650974f0
-_md5_=5b83b360f5e160d2b4b32adfd60d413c
+_md5_=c567e02e5065cd65846336d3447b28f3
