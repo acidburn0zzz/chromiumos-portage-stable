@@ -1,7 +1,7 @@
-# Copyright 1999-2018 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
 inherit multilib-minimal toolchain-funcs
 
@@ -16,7 +16,7 @@ SRC_URI="https://github.com/google/re2/archive/${RE2_VER}.tar.gz -> re2-${RE2_VE
 LICENSE="BSD"
 # NOTE: Always run libre2 through abi-compliance-checker!
 # https://abi-laboratory.pro/tracker/timeline/re2/
-SONAME="gentoo-2017-03-01"
+SONAME="7"
 SLOT="0/${SONAME}"
 KEYWORDS="*"
 IUSE="icu"
@@ -31,8 +31,11 @@ DOCS=( AUTHORS CONTRIBUTORS README doc/syntax.txt )
 HTML_DOCS=( doc/syntax.html )
 
 src_prepare() {
+	local PATCHES=(
+		"${FILESDIR}"/0.2020.05.01-test-memory-budget.patch
+	)
 	default
-	grep -qv '^SONAME=0$' Makefile || die "Check SONAME in Makefile"
+	grep -q "^SONAME=${SONAME}\$" Makefile || die "SONAME mismatch"
 	if use icu; then
 		sed -i -e 's:^# \(\(CC\|LD\)ICU=.*\):\1:' Makefile || die
 	fi
