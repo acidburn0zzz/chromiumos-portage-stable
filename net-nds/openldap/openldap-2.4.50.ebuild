@@ -1,26 +1,30 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
-inherit db-use flag-o-matic multilib multilib-minimal ssl-cert eapi7-ver toolchain-funcs autotools user systemd
+inherit autotools db-use flag-o-matic multilib-minimal ssl-cert toolchain-funcs user systemd
 
 BIS_PN=rfc2307bis.schema
 BIS_PV=20140524
 BIS_P="${BIS_PN}-${BIS_PV}"
 
 DESCRIPTION="LDAP suite of application and development tools"
-HOMEPAGE="http://www.OpenLDAP.org/"
+HOMEPAGE="https://www.OpenLDAP.org/"
 
-# mirrors are mostly not working, using canonical URI
-SRC_URI="ftp://ftp.openldap.org/pub/OpenLDAP/openldap-release/${P}.tgz
-		 mirror://gentoo/${BIS_P}"
+# upstream mirrors are mostly not working, using canonical URI
+SRC_URI="
+	https://openldap.org/software/download/OpenLDAP/openldap-release/${P}.tgz
+	http://gpl.savoirfairelinux.net/pub/mirrors/openldap/openldap-release/${P}.tgz
+	http://repository.linagora.org/OpenLDAP/openldap-release/${P}.tgz
+	http://mirror.eu.oneandone.net/software/openldap/openldap-release/${P}.tgz
+	mirror://gentoo/${BIS_P}"
 
 LICENSE="OPENLDAP GPL-2"
 SLOT="0"
 KEYWORDS="*"
 
-IUSE_DAEMON="crypt samba slp tcpd experimental minimal"
+IUSE_DAEMON="crypt samba tcpd experimental minimal"
 IUSE_BACKEND="+berkdb"
 IUSE_OVERLAY="overlays perl"
 IUSE_OPTIONAL="gnutls iodbc sasl ssl odbc debug ipv6 libressl +syslog selinux static-libs test"
@@ -28,6 +32,7 @@ IUSE_CONTRIB="smbkrb5passwd kerberos kinit pbkdf2 sha2"
 IUSE_CONTRIB="${IUSE_CONTRIB} -cxx"
 IUSE="${IUSE_DAEMON} ${IUSE_BACKEND} ${IUSE_OVERLAY} ${IUSE_OPTIONAL} ${IUSE_CONTRIB}"
 
+RESTRICT="!test? ( test )"
 REQUIRED_USE="cxx? ( sasl )
 	pbkdf2? ( ssl )
 	test? ( berkdb )
@@ -42,7 +47,7 @@ BDB_PKGS=''
 for _slot in $BDB_SLOTS; do BDB_PKGS="${BDB_PKGS} sys-libs/db:${_slot}" ; done
 
 # openssl is needed to generate lanman-passwords required by samba
-CDEPEND="
+COMMON_DEPEND="
 	ssl? (
 		!gnutls? (
 			!libressl? ( >=dev-libs/openssl-1.0.1h-r2:0=[${MULTILIB_USEDEP}] )
@@ -61,7 +66,6 @@ CDEPEND="
 		tcpd? ( sys-apps/tcp-wrappers )
 		odbc? ( !iodbc? ( dev-db/unixODBC )
 			iodbc? ( dev-db/libiodbc ) )
-		slp? ( net-libs/openslp )
 		perl? ( dev-lang/perl:=[-build(-)] )
 		samba? (
 			!libressl? ( dev-libs/openssl:0= )
@@ -83,9 +87,10 @@ CDEPEND="
 		cxx? ( dev-libs/cyrus-sasl:= )
 	)
 "
-DEPEND="${CDEPEND}
-	sys-apps/groff"
-RDEPEND="${CDEPEND}
+DEPEND="${COMMON_DEPEND}
+	sys-apps/groff
+"
+RDEPEND="${COMMON_DEPEND}
 	selinux? ( sec-policy/selinux-ldap )
 "
 # for tracking versions
@@ -452,7 +457,7 @@ multilib_src_configure() {
 		# slapd options
 		myconf+=(
 			$(use_enable crypt)
-			$(use_enable slp)
+			--disable-slp
 			$(use_enable samba lmpasswd)
 			$(use_enable syslog)
 		)
@@ -509,6 +514,7 @@ multilib_src_configure() {
 	done
 
 	tc-export AR CC CXX
+	CONFIG_SHELL="/bin/bash" \
 	ECONF_SOURCE="${S}" \
 	STRIP=/bin/true \
 	econf \
@@ -696,7 +702,7 @@ multilib_src_compile() {
 		# lastmod may not play well with other overlays
 		build_contrib_module "lastmod" "lastmod.c" "lastmod"
 		build_contrib_module "noopsrch" "noopsrch.c" "noopsrch"
-		build_contrib_module "nops" "nops.c" "nops-overlay"
+		#build_contrib_module "nops" "nops.c" "nops-overlay" https://bugs.gentoo.org/641576
 		#build_contrib_module "nssov" "nssov.c" "nssov-overlay" RESO:LATER
 		build_contrib_module "trace" "trace.c" "trace"
 		popd &>/dev/null || die
@@ -718,7 +724,7 @@ multilib_src_compile() {
 multilib_src_test() {
 	if multilib_is_native_abi; then
 		cd tests || die
-		emake tests || die "make tests failed"
+		emake tests
 	fi
 }
 
@@ -736,19 +742,19 @@ multilib_src_install() {
 		use prefix || fowners ldap:ldap /var/lib/openldap-data
 		fperms 0700 /var/lib/openldap-data
 
-		echo "OLDPF='${PF}'" > "${ED%/}${OPENLDAP_DEFAULTDIR_VERSIONTAG}/${OPENLDAP_VERSIONTAG}"
-		echo "# do NOT delete this. it is used"	>> "${ED%/}${OPENLDAP_DEFAULTDIR_VERSIONTAG}/${OPENLDAP_VERSIONTAG}"
-		echo "# to track versions for upgrading." >> "${ED%/}${OPENLDAP_DEFAULTDIR_VERSIONTAG}/${OPENLDAP_VERSIONTAG}"
+		echo "OLDPF='${PF}'" > "${ED}${OPENLDAP_DEFAULTDIR_VERSIONTAG}/${OPENLDAP_VERSIONTAG}"
+		echo "# do NOT delete this. it is used"	>> "${ED}${OPENLDAP_DEFAULTDIR_VERSIONTAG}/${OPENLDAP_VERSIONTAG}"
+		echo "# to track versions for upgrading." >> "${ED}${OPENLDAP_DEFAULTDIR_VERSIONTAG}/${OPENLDAP_VERSIONTAG}"
 
 		# use our config
-		rm "${ED%/}"/etc/openldap/slapd.conf
+		rm "${ED}"/etc/openldap/slapd.conf
 		insinto /etc/openldap
 		newins "${FILESDIR}"/${PN}-2.4.40-slapd-conf slapd.conf
-		configfile="${ED%/}"/etc/openldap/slapd.conf
+		configfile="${ED}"/etc/openldap/slapd.conf
 
 		# populate with built backends
 		ebegin "populate config with built backends"
-		for x in "${ED%/}"/usr/$(get_libdir)/openldap/openldap/back_*.so; do
+		for x in "${ED}"/usr/$(get_libdir)/openldap/openldap/back_*.so; do
 			einfo "Adding $(basename ${x})"
 			sed -e "/###INSERTDYNAMICMODULESHERE###$/a# moduleload\t$(basename ${x})" -i "${configfile}" || die
 		done
@@ -771,12 +777,10 @@ multilib_src_install() {
 		systemd_newtmpfilesd "${FILESDIR}"/slapd.tmpfilesd slapd.conf
 
 		# If built without SLP, we don't need to be before avahi
-		if ! use slp ; then
 			sed -i \
 				-e '/before/{s/avahi-daemon//g}' \
-				"${ED%/}"/etc/init.d/slapd \
+				"${ED}"/etc/init.d/slapd \
 				|| die
-		fi
 
 		if use cxx ; then
 			einfo "Install the ldapc++ library"
@@ -809,7 +813,7 @@ multilib_src_install() {
 		for l in */*.la */*/*.la; do
 			[[ -e ${l} ]] || continue
 			"${lt}" --mode=install cp ${l} \
-				"${ED%/}"/usr/$(get_libdir)/openldap/openldap || \
+				"${ED}"/usr/$(get_libdir)/openldap/openldap || \
 				die "installing ${l} failed"
 		done
 
@@ -866,7 +870,7 @@ pkg_postinst() {
 		# and a misconfiguration if multiple machines use the same key and cert.
 		if use ssl; then
 			install_cert /etc/openldap/ssl/ldap
-			use prefix || chown ldap:ldap "${EROOT}"etc/openldap/ssl/ldap.*
+			use prefix || chown ldap:ldap "${EROOT}"/etc/openldap/ssl/ldap.*
 			ewarn "Self-signed SSL certificates are treated harshly by OpenLDAP 2.[12]"
 			ewarn "Self-signed SSL certificates are treated harshly by OpenLDAP 2.[12]"
 			ewarn "add 'TLS_REQCERT allow' if you want to use them."
@@ -881,11 +885,13 @@ pkg_postinst() {
 		fi
 
 		# These lines force the permissions of various content to be correct
-		use prefix || chown ldap:ldap "${EROOT}"var/run/openldap
-		chmod 0755 "${EROOT}"var/run/openldap
-		use prefix || chown root:ldap "${EROOT}"etc/openldap/slapd.conf{,.default}
-		chmod 0640 "${EROOT}"etc/openldap/slapd.conf{,.default}
-		use prefix || chown ldap:ldap "${EROOT}"var/lib/openldap-data
+		if [[ -d "${EROOT}"/var/run/openldap ]]; then
+			use prefix || { chown ldap:ldap "${EROOT}"/var/run/openldap || die; }
+			chmod 0755 "${EROOT}"/var/run/openldap || die
+		fi
+		use prefix || chown root:ldap "${EROOT}"/etc/openldap/slapd.conf{,.default}
+		chmod 0640 "${EROOT}"/etc/openldap/slapd.conf{,.default} || die
+		use prefix || chown ldap:ldap "${EROOT}"/var/lib/openldap-data
 	fi
 
 	if has_version 'net-nds/openldap[-minimal]' && ((${OPENLDAP_PRINT_MESSAGES})); then
