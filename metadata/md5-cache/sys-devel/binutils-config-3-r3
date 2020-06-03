@@ -1,9 +1,0 @@
-DEFINED_PHASES=install
-DESCRIPTION=Utility to change the binutils version being used
-EAPI=0
-HOMEPAGE=http://www.gentoo.org/
-KEYWORDS=*
-LICENSE=GPL-2
-RDEPEND=userland_GNU? ( !<sys-apps/findutils-4.2 )
-SLOT=0
-_md5_=2f92dd4462a8688b1bbaac3ad3ebe070
