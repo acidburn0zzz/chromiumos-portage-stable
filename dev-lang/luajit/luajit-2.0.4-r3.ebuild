@@ -29,7 +29,6 @@ src_prepare(){
 	if [[ -n ${HOTFIX} ]]; then
 		epatch "${DISTDIR}/${HOTFIX}"
 	fi
-	epatch "${FILESDIR}/${P}-unwind.patch"
 }
 
 _emake() {
