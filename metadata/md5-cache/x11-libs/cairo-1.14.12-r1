@@ -12,4 +12,4 @@ RESTRICT=test
 SLOT=0
 SRC_URI=https://www.cairographics.org/releases/cairo-1.14.12.tar.xz
 _eclasses_=autotools	d0e5375d47f4c809f406eb892e531513	eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	libtool	f143db5a74ccd9ca28c1234deffede96	multibuild	40fe59465edacd730c644ec2bc197809	multilib	b2f01ad412baf81650c23fcf0975fa33	multilib-build	1979aa0ff4d356d32507ca4650d9f37d	multilib-minimal	8bddda43703ba94d8341f4e247f97566	toolchain-funcs	209edad4a5c4812e7b2f8021650974f0
-_md5_=0c551a6e5f3f25179653a0687ddad23f
+_md5_=7dc6622054ea4ff05067c096a1226554
