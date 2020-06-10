@@ -50,6 +50,7 @@ src_prepare() {
 multilib_src_configure() {
 	# --disable-openssl bug #427526
 	ECONF_SOURCE="${S}" econf \
+		CC_FOR_BUILD="$(tc-getBUILD_CC)" \
 		--libdir="${EPREFIX}"/usr/$(get_libdir) \
 		--disable-openssl \
 		--disable-fat \
