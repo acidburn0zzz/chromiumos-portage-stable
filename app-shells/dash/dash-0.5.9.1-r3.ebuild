@@ -60,6 +60,7 @@ src_configure() {
 	# Autotools use $LINENO as a proxy for extended debug support
 	# (i.e. they're running bash), so disable that. #527644
 	local myeconfargs=(
+		CC_FOR_BUILD="$(tc-getBUILD_CC)"
 		--bindir="${EPREFIX}"/bin
 		--enable-fnmatch
 		--disable-lineno
