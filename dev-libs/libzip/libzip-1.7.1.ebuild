@@ -1,9 +1,9 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
-inherit cmake-utils multibuild
+inherit cmake multibuild
 
 DESCRIPTION="Library for manipulating zip archives"
 HOMEPAGE="https://nih.at/libzip/"
@@ -12,25 +12,30 @@ SRC_URI="https://www.nih.at/libzip/${P}.tar.xz"
 LICENSE="BSD"
 SLOT="0/5"
 KEYWORDS="*"
-IUSE="bzip2 doc gnutls libressl ssl static-libs test"
+IUSE="bzip2 gnutls libressl lzma mbedtls ssl static-libs test tools"
+REQUIRED_USE="test? ( tools )"
+
+RESTRICT="!test? ( test )"
 
 DEPEND="
 	sys-libs/zlib
-	bzip2? ( app-arch/bzip2 )
+	bzip2? ( app-arch/bzip2:= )
+	lzma? ( app-arch/xz-utils )
 	ssl? (
-		gnutls? ( net-libs/gnutls )
+		gnutls? (
+			dev-libs/nettle:0=
+			>=net-libs/gnutls-3.6.5:=
+		)
 		!gnutls? (
-			!libressl? ( dev-libs/openssl:0= )
-			libressl? ( dev-libs/libressl:0= )
+			mbedtls? ( net-libs/mbedtls:= )
+			!mbedtls? (
+				!libressl? ( dev-libs/openssl:0= )
+				libressl? ( dev-libs/libressl:0= )
+			)
 		)
 	)
 "
 RDEPEND="${DEPEND}"
-
-PATCHES=(
-	"${FILESDIR}/${P}-options.patch"
-	"${FILESDIR}/${P}-bzip2.patch"
-)
 
 pkg_setup() {
 	# Upstream doesn't support building dynamic & static
@@ -44,6 +49,7 @@ src_configure() {
 			-DBUILD_EXAMPLES=OFF # nothing is installed
 			-DENABLE_COMMONCRYPTO=OFF # not in tree
 			-DENABLE_BZIP2=$(usex bzip2)
+			-DENABLE_LZMA=$(usex lzma)
 		)
 		if [[ ${MULTIBUILD_VARIANT} = static-libs ]]; then
 			mycmakeargs+=(
@@ -54,36 +60,53 @@ src_configure() {
 			)
 		else
 			mycmakeargs+=(
-				-DBUILD_DOC=$(usex doc)
+				-DBUILD_DOC=ON
 				-DBUILD_REGRESS=$(usex test)
+				-DBUILD_TOOLS=$(usex tools)
 			)
 		fi
 
 		if use ssl; then
-			mycmakeargs+=(
-				-DENABLE_GNUTLS=$(usex gnutls)
-				-DENABLE_OPENSSL=$(usex !gnutls)
-			)
+			if use gnutls; then
+				mycmakeargs+=(
+					-DENABLE_GNUTLS=$(usex gnutls)
+					-DENABLE_MBEDTLS=OFF
+					-DENABLE_OPENSSL=OFF
+				)
+			elif use mbedtls; then
+				mycmakeargs+=(
+					-DENABLE_GNUTLS=OFF
+					-DENABLE_MBEDTLS=$(usex mbedtls)
+					-DENABLE_OPENSSL=OFF
+				)
+			else
+				mycmakeargs+=(
+					-DENABLE_GNUTLS=OFF
+					-DENABLE_MBEDTLS=OFF
+					-DENABLE_OPENSSL=ON
+				)
+			fi
 		else
 			mycmakeargs+=(
 				-DENABLE_GNUTLS=OFF
+				-DENABLE_MBEDTLS=OFF
 				-DENABLE_OPENSSL=OFF
 			)
 		fi
-		cmake-utils_src_configure
+		cmake_src_configure
 	}
 
 	multibuild_foreach_variant myconfigure
 }
 
 src_compile() {
-	multibuild_foreach_variant cmake-utils_src_compile
+	multibuild_foreach_variant cmake_src_compile
 }
 
 src_test() {
-	[[ ${MULTIBUILD_VARIANT} = shared ]] && cmake-utils_src_test
+	[[ ${MULTIBUILD_VARIANT} = shared ]] && cmake_src_test
 }
 
 src_install() {
-	multibuild_foreach_variant cmake-utils_src_install
+	multibuild_foreach_variant cmake_src_install
 }
