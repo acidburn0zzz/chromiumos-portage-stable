@@ -18,6 +18,7 @@ IUSE="doc static-libs threads"
 PATCHES=(
 	"${FILESDIR}/${PN}-0.14-cmake-static-libs.patch"
 	"${FILESDIR}/${P}-security-fix.patch"
+	"${FILESDIR}/${PN}-0.14-object-limitation.patch"
 )
 
 MULTILIB_WRAPPED_HEADERS=(
