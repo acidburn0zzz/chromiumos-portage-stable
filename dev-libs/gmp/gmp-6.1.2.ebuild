@@ -3,7 +3,7 @@
 
 EAPI="5"
 
-inherit flag-o-matic eutils libtool multilib-minimal
+inherit flag-o-matic eutils libtool multilib-minimal toolchain-funcs
 
 MY_PV=${PV/_p*}
 MY_PV=${MY_PV/_/-}
@@ -77,6 +77,7 @@ multilib_src_configure() {
 
 	tc-export CC
 	ECONF_SOURCE="${S}" econf \
+		CC_FOR_BUILD="$(tc-getBUILD_CC)" \
 		--localstatedir="${EPREFIX}"/var/state/gmp \
 		--enable-shared \
 		$(use_enable asm assembly) \

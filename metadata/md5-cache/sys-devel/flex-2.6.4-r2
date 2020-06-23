@@ -1,0 +1,14 @@
+DEFINED_PHASES=compile configure install prepare test
+DEPEND=sys-devel/m4 app-arch/xz-utils nls? ( sys-devel/gettext ) test? ( sys-devel/bison ) >=app-portage/elt-patches-20170815
+DESCRIPTION=The Fast Lexical Analyzer
+EAPI=6
+HOMEPAGE=https://flex.sourceforge.net/ https://github.com/westes/flex
+IUSE=nls static test abi_x86_32 abi_x86_64 abi_x86_x32 abi_mips_n32 abi_mips_n64 abi_mips_o32 abi_ppc_32 abi_ppc_64 abi_s390_32 abi_s390_64 abi_arm_32 abi_arm_64
+KEYWORDS=*
+LICENSE=FLEX
+RDEPEND=sys-devel/m4
+RESTRICT=!test? ( test )
+SLOT=0
+SRC_URI=https://github.com/westes/flex/releases/download/v2.6.4/flex-2.6.4.tar.gz
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	libtool	f143db5a74ccd9ca28c1234deffede96	multibuild	40fe59465edacd730c644ec2bc197809	multilib	b2f01ad412baf81650c23fcf0975fa33	multilib-build	1979aa0ff4d356d32507ca4650d9f37d	multilib-minimal	8bddda43703ba94d8341f4e247f97566	toolchain-funcs	209edad4a5c4812e7b2f8021650974f0
+_md5_=963db147a57806215d3d4d6bacffdde7
