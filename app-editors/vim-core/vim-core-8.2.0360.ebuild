@@ -1,9 +1,9 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 VIM_VERSION="8.2"
-inherit estack vim-doc flag-o-matic bash-completion-r1 prefix desktop gnome2-utils
+inherit estack vim-doc flag-o-matic bash-completion-r1 prefix desktop xdg-utils
 
 if [[ ${PV} == 9999* ]] ; then
 	inherit git-r3
@@ -11,7 +11,7 @@ if [[ ${PV} == 9999* ]] ; then
 	EGIT_CHECKOUT_DIR=${WORKDIR}/vim-${PV}
 else
 	SRC_URI="https://github.com/vim/vim/archive/v${PV}.tar.gz -> vim-${PV}.tar.gz
-		https://dev.gentoo.org/~radhermit/vim/vim-8.0.0938-gentoo-patches.tar.bz2"
+		https://dev.gentoo.org/~radhermit/vim/vim-8.2.0210-gentoo-patches.tar.bz2"
 	KEYWORDS="*"
 fi
 
@@ -213,7 +213,7 @@ pkg_postinst() {
 	update_vim_helptags
 
 	# update icon cache
-	gnome2_icon_cache_update
+	xdg_icon_cache_update
 }
 
 pkg_postrm() {
@@ -221,5 +221,5 @@ pkg_postrm() {
 	update_vim_helptags
 
 	# update icon cache
-	gnome2_icon_cache_update
+	xdg_icon_cache_update
 }

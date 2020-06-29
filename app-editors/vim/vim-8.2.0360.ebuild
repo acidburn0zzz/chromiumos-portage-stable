@@ -1,11 +1,11 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 VIM_VERSION="8.2"
-PYTHON_COMPAT=( python{2_7,3_6,3_7} )
+PYTHON_COMPAT=( python3_{6,7,8} )
 PYTHON_REQ_USE="threads(+)"
-USE_RUBY="ruby24 ruby25 ruby26"
+USE_RUBY="ruby24 ruby25 ruby26 ruby27"
 
 inherit vim-doc flag-o-matic bash-completion-r1 python-single-r1 ruby-single desktop xdg-utils
 
@@ -14,7 +14,7 @@ if [[ ${PV} == 9999* ]] ; then
 	EGIT_REPO_URI="https://github.com/vim/vim.git"
 else
 	SRC_URI="https://github.com/vim/vim/archive/v${PV}.tar.gz -> ${P}.tar.gz
-		https://dev.gentoo.org/~radhermit/vim/vim-8.0.0938-gentoo-patches.tar.bz2"
+		https://dev.gentoo.org/~radhermit/vim/vim-8.2.0210-gentoo-patches.tar.bz2"
 	KEYWORDS="*"
 fi
 
@@ -203,9 +203,7 @@ src_configure() {
 			$(use_with luajit)
 			$(use_enable nls)
 			$(use_enable perl perlinterp)
-			$(use_enable python pythoninterp)
 			$(use_enable python python3interp)
-			$(use_with python python-command $(type -P $(eselect python show --python2)))
 			$(use_with python python3-command $(type -P $(eselect python show --python3)))
 			$(use_enable racket mzschemeinterp)
 			$(use_enable ruby rubyinterp)
