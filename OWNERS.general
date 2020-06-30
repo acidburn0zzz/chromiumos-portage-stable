@@ -1,5 +1,9 @@
 # Ebuild/eclass experts!
-ebuild-reviews@chromium.org
+# Prefer sending reviews to the alias, since it
+# allows the load to be spread around.
+ebuild-reviews@google.com
+
+# Individual reviewers if needed.
 allenwebb@google.com
 bmgordon@chromium.org
 chirantan@chromium.org
