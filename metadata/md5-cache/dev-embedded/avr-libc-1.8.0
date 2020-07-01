@@ -8,5 +8,5 @@ KEYWORDS=*
 LICENSE=BSD
 SLOT=0
 SRC_URI=http://savannah.nongnu.org/download/avr-libc/avr-libc-1.8.0.tar.bz2 http://savannah.nongnu.org/download/avr-libc/avr-libc-manpages-1.8.0.tar.bz2 doc? ( http://savannah.nongnu.org/download/avr-libc/avr-libc-user-manual-1.8.0.tar.bz2 )
-_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	b2f01ad412baf81650c23fcf0975fa33	toolchain-funcs	209edad4a5c4812e7b2f8021650974f0
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	2477ebe553d3e4d2c606191fe6c33602	toolchain-funcs	605c126bed8d87e4378d5ff1645330cb
 _md5_=299a81a509eed82f7f1dd73557c89093

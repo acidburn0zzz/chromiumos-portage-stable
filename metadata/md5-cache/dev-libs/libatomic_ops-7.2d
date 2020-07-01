@@ -6,5 +6,5 @@ KEYWORDS=*
 LICENSE=MIT boehm-gc GPL-2+
 SLOT=0
 SRC_URI=http://www.hpl.hp.com/personal/Hans_Boehm/gc/gc_source/gc-7.2d.tar.gz
-_eclasses_=multilib	b2f01ad412baf81650c23fcf0975fa33	toolchain-funcs	209edad4a5c4812e7b2f8021650974f0
+_eclasses_=multilib	2477ebe553d3e4d2c606191fe6c33602	toolchain-funcs	605c126bed8d87e4378d5ff1645330cb
 _md5_=2a66c5f99dc1ccd7048b4e4128a4689f

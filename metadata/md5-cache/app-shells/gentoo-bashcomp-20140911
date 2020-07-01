@@ -6,5 +6,5 @@ KEYWORDS=*
 LICENSE=GPL-2
 SLOT=0
 SRC_URI=https://dev.gentoo.org/~mgorny/dist/gentoo-bashcomp-20140911.tar.bz2
-_eclasses_=bash-completion-r1	47a7402d95930413ce25ba8d857339bb	multilib	b2f01ad412baf81650c23fcf0975fa33	toolchain-funcs	209edad4a5c4812e7b2f8021650974f0
+_eclasses_=bash-completion-r1	47a7402d95930413ce25ba8d857339bb	multilib	2477ebe553d3e4d2c606191fe6c33602	toolchain-funcs	605c126bed8d87e4378d5ff1645330cb
 _md5_=0b39063e426ae93a03607ed65d2335b7

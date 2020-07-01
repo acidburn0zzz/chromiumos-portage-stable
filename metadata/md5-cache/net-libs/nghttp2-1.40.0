@@ -10,5 +10,5 @@ RDEPEND=cxx? ( !libressl? ( >=dev-libs/openssl-1.0.2:0=[-bindist,abi_x86_32(-)?,
 RESTRICT=!test? ( test )
 SLOT=0/1.14
 SRC_URI=https://github.com/nghttp2/nghttp2/releases/download/v1.40.0/nghttp2-1.40.0.tar.xz
-_eclasses_=multibuild	40fe59465edacd730c644ec2bc197809	multilib	b2f01ad412baf81650c23fcf0975fa33	multilib-build	1979aa0ff4d356d32507ca4650d9f37d	multilib-minimal	8bddda43703ba94d8341f4e247f97566	toolchain-funcs	209edad4a5c4812e7b2f8021650974f0
+_eclasses_=multibuild	40fe59465edacd730c644ec2bc197809	multilib	2477ebe553d3e4d2c606191fe6c33602	multilib-build	1979aa0ff4d356d32507ca4650d9f37d	multilib-minimal	8bddda43703ba94d8341f4e247f97566	toolchain-funcs	605c126bed8d87e4378d5ff1645330cb
 _md5_=0372cd42677d82d00e4e2a12372b7a23
