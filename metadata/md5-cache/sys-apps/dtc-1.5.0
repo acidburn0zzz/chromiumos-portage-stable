@@ -1,0 +1,12 @@
+DEFINED_PHASES=install prepare
+DEPEND=sys-devel/bison sys-devel/flex
+DESCRIPTION=Open Firmware device tree compiler
+EAPI=6
+HOMEPAGE=https://devicetree.org/ https://git.kernel.org/cgit/utils/dtc/dtc.git/
+IUSE=static-libs
+KEYWORDS=*
+LICENSE=GPL-2
+SLOT=0
+SRC_URI=https://www.kernel.org/pub/software/utils/dtc/dtc-1.5.0.tar.xz
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	multilib	2477ebe553d3e4d2c606191fe6c33602	toolchain-funcs	605c126bed8d87e4378d5ff1645330cb
+_md5_=56468d161301e15e3419fa6433b1fa38
