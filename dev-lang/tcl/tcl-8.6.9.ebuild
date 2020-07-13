@@ -1,9 +1,9 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
-inherit autotools eutils flag-o-matic multilib multilib-minimal toolchain-funcs versionator
+inherit autotools flag-o-matic multilib-minimal toolchain-funcs
 
 MY_P="${PN}${PV}"
 
@@ -18,17 +18,13 @@ IUSE="debug +threads"
 
 RDEPEND=">=sys-libs/zlib-1.2.8-r1[${MULTILIB_USEDEP}]"
 DEPEND="${RDEPEND}"
-# Bug 629680: need to disable testing since network-sandbox creates false negatives
-RESTRICT="test"
 
 SPARENT="${WORKDIR}/${MY_P}"
 S="${SPARENT}"/unix
 
 PATCHES=(
 	"${FILESDIR}"/${PN}-8.5.13-multilib.patch
-
-	# Bug 125971
-	"${FILESDIR}"/${PN}-8.5.14-conf.patch
+	"${FILESDIR}"/${PN}-8.6.8-conf.patch # Bug 125971
 )
 
 src_prepare() {
@@ -77,7 +73,7 @@ multilib_src_configure() {
 
 multilib_src_install() {
 	#short version number
-	local v1=$(get_version_component_range 1-2)
+	local v1=$(ver_cut 1-2)
 	local mylibdir=$(get_libdir)
 
 	S= default
@@ -91,7 +87,7 @@ multilib_src_install() {
 		-e "/^TCL_BUILD_STUB_LIB_SPEC=/s:-L$(pwd) *::g" \
 		-e "/^TCL_STUB_LIB_SPEC=/s:-L${EPREFIX}/usr/${mylibdir} *::g" \
 		-e "/^TCL_BUILD_STUB_LIB_PATH=/s:$(pwd):${EPREFIX}/usr/${mylibdir}:g" \
-		-e "/^TCL_LIB_FILE=/s:'libtcl${v1}..TCL_DBGX..so':\"libtcl${v1}\$\{TCL_DBGX\}.so\":g" \
+		-e "/^TCL_LIBW_FILE=/s:'libtcl${v1}..TCL_DBGX..so':\"libtcl${v1}\$\{TCL_DBGX\}.so\":g" \
 		-i "${ED}"/usr/${mylibdir}/tclConfig.sh || die
 	if use prefix && [[ ${CHOST} != *-darwin* && ${CHOST} != *-mint* ]] ; then
 		sed \
@@ -119,7 +115,7 @@ multilib_src_install() {
 
 pkg_postinst() {
 	for version in ${REPLACING_VERSIONS}; do
-		if ! version_is_at_least 8.6 ${version}; then
+		if ver_test 8.6 -lt ${version}; then
 			echo
 			ewarn "You're upgrading from <${P}, you must recompile the other"
 			ewarn "packages on your system that link with tcl after the upgrade"
