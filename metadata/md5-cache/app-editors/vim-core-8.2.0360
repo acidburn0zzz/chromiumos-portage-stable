@@ -1,0 +1,14 @@
+DEFINED_PHASES=compile configure install postinst postrm prepare setup test
+DEPEND=sys-devel/autoconf
+DESCRIPTION=vim and gvim shared files
+EAPI=7
+HOMEPAGE=https://vim.sourceforge.io/ https://github.com/vim/vim
+IUSE=nls acl minimal
+KEYWORDS=*
+LICENSE=vim
+PDEPEND=!minimal? ( app-vim/gentoo-syntax )
+RDEPEND=!!<app-editors/gvim-8.1.0648
+SLOT=0
+SRC_URI=https://github.com/vim/vim/archive/v8.2.0360.tar.gz -> vim-8.2.0360.tar.gz https://dev.gentoo.org/~radhermit/vim/vim-8.2.0210-gentoo-patches.tar.bz2
+_eclasses_=bash-completion-r1	47a7402d95930413ce25ba8d857339bb	desktop	b1d22ac8bdd4679ab79c71aca235009d	estack	43ddf5aaffa7a8d0482df54d25a66a1f	eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	2477ebe553d3e4d2c606191fe6c33602	prefix	e51c7882b7b721e54e684f7eb143cbfe	toolchain-funcs	605c126bed8d87e4378d5ff1645330cb	vim-doc	6bd5bb2529af326fe3359e975a3439d0	xdg-utils	ff2ff954e6b17929574eee4efc5152ba
+_md5_=67cdb76bbe7c0e090b30d2c80e29ce74

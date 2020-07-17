@@ -9,5 +9,5 @@ LICENSE=BSD
 RDEPEND=tcmalloc? ( dev-util/google-perftools ) snappy? ( app-arch/snappy static-libs? ( app-arch/snappy[static-libs] ) )
 SLOT=0
 SRC_URI=https://github.com/google/leveldb/archive/v1.18.tar.gz -> leveldb-1.18.tar.gz
-_eclasses_=estack	43ddf5aaffa7a8d0482df54d25a66a1f	eutils	06133990e861be0fe60c2b428fd025d9	multilib	b2f01ad412baf81650c23fcf0975fa33	toolchain-funcs	209edad4a5c4812e7b2f8021650974f0	versionator	26ca8a8bd95d6a74122c08ba98a4ee72
+_eclasses_=estack	43ddf5aaffa7a8d0482df54d25a66a1f	eutils	06133990e861be0fe60c2b428fd025d9	multilib	2477ebe553d3e4d2c606191fe6c33602	toolchain-funcs	605c126bed8d87e4378d5ff1645330cb	versionator	26ca8a8bd95d6a74122c08ba98a4ee72
 _md5_=79627cf4667a7505449d08c5006e47c9

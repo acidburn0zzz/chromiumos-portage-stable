@@ -9,5 +9,5 @@ LICENSE=GPL-2
 RDEPEND=conntrack? ( >=net-libs/libnetfilter_conntrack-1.0.6 ) netlink? ( net-libs/libnfnetlink ) nftables? ( >=net-libs/libmnl-1.0:0= >=net-libs/libnftnl-1.0.5:0= ) pcap? ( net-libs/libpcap ) nftables? ( net-misc/ethertypes )
 SLOT=0/12
 SRC_URI=https://www.netfilter.org/projects/iptables/files/iptables-1.6.2.tar.bz2
-_eclasses_=autotools	d0e5375d47f4c809f406eb892e531513	eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	libtool	f143db5a74ccd9ca28c1234deffede96	ltprune	2770eed66a9b8ef944714cd0e968182e	multilib	b2f01ad412baf81650c23fcf0975fa33	systemd	71fd8d2065d102753fb9e4d20eaf3e9f	toolchain-funcs	209edad4a5c4812e7b2f8021650974f0	usr-ldscript	766f0a506b45f02361ad1b8ca205b7e1
+_eclasses_=autotools	d0e5375d47f4c809f406eb892e531513	eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	libtool	f143db5a74ccd9ca28c1234deffede96	ltprune	2770eed66a9b8ef944714cd0e968182e	multilib	2477ebe553d3e4d2c606191fe6c33602	systemd	71fd8d2065d102753fb9e4d20eaf3e9f	toolchain-funcs	605c126bed8d87e4378d5ff1645330cb	usr-ldscript	766f0a506b45f02361ad1b8ca205b7e1
 _md5_=a7b037db400c0995509afdb768fb2894

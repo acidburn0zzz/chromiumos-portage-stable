@@ -10,5 +10,5 @@ RDEPEND=!<app-arch/lzma-4.63 !<app-arch/p7zip-4.57
 RESTRICT=!extra-filters? ( test )
 SLOT=0
 SRC_URI=https://tukaani.org/xz/xz-5.2.4.tar.gz
-_eclasses_=libtool	f143db5a74ccd9ca28c1234deffede96	multibuild	40fe59465edacd730c644ec2bc197809	multilib	b2f01ad412baf81650c23fcf0975fa33	multilib-build	1979aa0ff4d356d32507ca4650d9f37d	multilib-minimal	8bddda43703ba94d8341f4e247f97566	preserve-libs	ef207dc62baddfddfd39a164d9797648	toolchain-funcs	209edad4a5c4812e7b2f8021650974f0	usr-ldscript	766f0a506b45f02361ad1b8ca205b7e1
+_eclasses_=libtool	f143db5a74ccd9ca28c1234deffede96	multibuild	40fe59465edacd730c644ec2bc197809	multilib	2477ebe553d3e4d2c606191fe6c33602	multilib-build	1979aa0ff4d356d32507ca4650d9f37d	multilib-minimal	8bddda43703ba94d8341f4e247f97566	preserve-libs	ef207dc62baddfddfd39a164d9797648	toolchain-funcs	605c126bed8d87e4378d5ff1645330cb	usr-ldscript	766f0a506b45f02361ad1b8ca205b7e1
 _md5_=d06b1fcdfb6b53d0f9c71382a97b9b31

@@ -155,20 +155,24 @@ esac
 case ${RUBY_FAKEGEM_RECIPE_TEST} in
 	rake)
 		IUSE+=" test"
+		RESTRICT+=" !test? ( test )"
 		ruby_add_bdepend "test? ( dev-ruby/rake )"
 		;;
 	rspec)
 		IUSE+=" test"
+		RESTRICT+=" !test? ( test )"
 		# Also require a new enough rspec-core version that installs the
 		# rspec-2 wrapper.
 		ruby_add_bdepend "test? ( dev-ruby/rspec:2 >=dev-ruby/rspec-core-2.14.8-r2 )"
 		;;
 	rspec3)
 		IUSE+=" test"
+		RESTRICT+=" !test? ( test )"
 		ruby_add_bdepend "test? ( dev-ruby/rspec:3 )"
 		;;
 	cucumber)
 		IUSE+=" test"
+		RESTRICT+=" !test? ( test )"
 		ruby_add_bdepend "test? ( dev-util/cucumber )"
 		;;
 	*)
@@ -176,7 +180,7 @@ case ${RUBY_FAKEGEM_RECIPE_TEST} in
 		;;
 esac
 
-SRC_URI="mirror://rubygems/${RUBY_FAKEGEM_NAME}-${RUBY_FAKEGEM_VERSION}${RUBY_FAKEGEM_SUFFIX:+-${RUBY_FAKEGEM_SUFFIX}}.gem"
+SRC_URI="https://rubygems.org/gems/${RUBY_FAKEGEM_NAME}-${RUBY_FAKEGEM_VERSION}${RUBY_FAKEGEM_SUFFIX:+-${RUBY_FAKEGEM_SUFFIX}}.gem"
 
 ruby_add_bdepend virtual/rubygems
 ruby_add_rdepend virtual/rubygems
@@ -207,7 +211,7 @@ ruby_fakegem_gemsdir() {
 }
 
 # @FUNCTION: ruby_fakegem_doins
-# @USAGE: file [file...]
+# @USAGE: <file> [file...]
 # @DESCRIPTION:
 # Installs the specified file(s) into the gems directory.
 ruby_fakegem_doins() {
@@ -217,8 +221,8 @@ ruby_fakegem_doins() {
 	) || die "failed $0 $@"
 }
 
-# @FUNCTION: ruby_fakegem_newsins
-# @USAGE: file filename
+# @FUNCTION: ruby_fakegem_newins
+# @USAGE: <file> <newname>
 # @DESCRIPTION:
 # Installs the specified file into the gems directory using the provided filename.
 ruby_fakegem_newins() {
@@ -262,7 +266,7 @@ ruby_fakegem_install_gemspec() {
 }
 
 # @FUNCTION: ruby_fakegem_gemspec_gemspec
-# @USAGE: gemspec-input gemspec-output
+# @USAGE: <gemspec-input> <gemspec-output>
 # @DESCRIPTION:
 # Generates an installable version of the specification indicated by
 # RUBY_FAKEGEM_GEMSPEC. This file is eval'ed to produce a final specification
@@ -272,7 +276,7 @@ ruby_fakegem_gemspec_gemspec() {
 }
 
 # @FUNCTION: ruby_fakegem_metadata_gemspec
-# @USAGE: gemspec-metadata gemspec-output
+# @USAGE: <gemspec-metadata> <gemspec-output>
 # @DESCRIPTION:
 # Generates an installable version of the specification indicated by
 # the metadata distributed by the gem itself. This is similar to how
@@ -282,7 +286,7 @@ ruby_fakegem_metadata_gemspec() {
 }
 
 # @FUNCTION: ruby_fakegem_genspec
-# @USAGE: output-gemspec
+# @USAGE: <output-gemspec>
 # @DESCRIPTION:
 # Generates a gemspec for the package and places it into the "specifications"
 # directory of RubyGems.
@@ -327,7 +331,7 @@ EOF
 }
 
 # @FUNCTION: ruby_fakegem_binwrapper
-# @USAGE: command [path] [content]
+# @USAGE: <command> [path] [content]
 # @DESCRIPTION:
 # Creates a new binary wrapper for a command installed by the RubyGem.
 # path defaults to /usr/bin/$command content is optional and can be used
