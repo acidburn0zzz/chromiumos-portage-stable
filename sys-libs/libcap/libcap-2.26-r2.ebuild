@@ -6,7 +6,7 @@ EAPI=6
 inherit multilib multilib-minimal toolchain-funcs pam
 
 DESCRIPTION="POSIX 1003.1e capabilities"
-HOMEPAGE="http://www.friedhoff.org/posixfilecaps.html"
+HOMEPAGE="https://sites.google.com/site/fullycapable/"
 SRC_URI="mirror://kernel/linux/libs/security/linux-privs/libcap2/${P}.tar.xz"
 
 # it's available under either of the licenses
