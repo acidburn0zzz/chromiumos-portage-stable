@@ -1,0 +1,14 @@
+BDEPEND=python_targets_pypy3? ( >=dev-python/pypy3-7.3.0:0= ) python_targets_python3_6? ( dev-lang/python:3.6 ) python_targets_python3_7? ( dev-lang/python:3.7 ) python_targets_python3_8? ( dev-lang/python:3.8 ) python_targets_python3_9? ( dev-lang/python:3.9 ) >=dev-lang/python-exec-2:=[python_targets_pypy3(-)?,python_targets_python3_6(-)?,python_targets_python3_7(-)?,python_targets_python3_8(-)?,python_targets_python3_9(-)?,-python_single_target_pypy3(-),-python_single_target_python3_6(-),-python_single_target_python3_7(-),-python_single_target_python3_8(-),-python_single_target_python3_9(-)] dev-python/setuptools[python_targets_pypy3(-)?,python_targets_python3_6(-)?,python_targets_python3_7(-)?,python_targets_python3_8(-)?,python_targets_python3_9(-)?,-python_single_target_pypy3(-),-python_single_target_python3_6(-),-python_single_target_python3_7(-),-python_single_target_python3_8(-),-python_single_target_python3_9(-)]
+DEFINED_PHASES=compile configure install prepare test
+DESCRIPTION=Py3k port of sgmllib
+EAPI=7
+HOMEPAGE=https://pypi.org/project/sgmllib3k/
+IUSE=python_targets_pypy3 python_targets_python3_6 python_targets_python3_7 python_targets_python3_8 python_targets_python3_9
+KEYWORDS=*
+LICENSE=PSF-2
+RDEPEND=python_targets_pypy3? ( >=dev-python/pypy3-7.3.0:0= ) python_targets_python3_6? ( dev-lang/python:3.6 ) python_targets_python3_7? ( dev-lang/python:3.7 ) python_targets_python3_8? ( dev-lang/python:3.8 ) python_targets_python3_9? ( dev-lang/python:3.9 ) >=dev-lang/python-exec-2:=[python_targets_pypy3(-)?,python_targets_python3_6(-)?,python_targets_python3_7(-)?,python_targets_python3_8(-)?,python_targets_python3_9(-)?,-python_single_target_pypy3(-),-python_single_target_python3_6(-),-python_single_target_python3_7(-),-python_single_target_python3_8(-),-python_single_target_python3_9(-)]
+REQUIRED_USE=|| ( python_targets_pypy3 python_targets_python3_6 python_targets_python3_7 python_targets_python3_8 python_targets_python3_9 )
+SLOT=0
+SRC_URI=mirror://pypi/s/sgmllib3k/sgmllib3k-1.0.0.tar.gz
+_eclasses_=distutils-r1	198e3b9ddb55ae36b2a50b07ca2877ef	multibuild	40fe59465edacd730c644ec2bc197809	multilib	2477ebe553d3e4d2c606191fe6c33602	multiprocessing	e32940a7b2a9992ad217eccddb84d548	python-r1	79e26ce8f853c9daebe9a4956e37cc1b	python-utils-r1	157a6a7a3e99c7dbdf81acc9dd4f57cd	toolchain-funcs	605c126bed8d87e4378d5ff1645330cb
+_md5_=013b6a92b665e7dc59089073b03d3f98
