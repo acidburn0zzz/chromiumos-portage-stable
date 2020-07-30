@@ -1,11 +1,12 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
+
 PYTHON_COMPAT=( python2_7 )
 PYTHON_REQ_USE="xml"
 
-inherit autotools ltprune python-r1 toolchain-funcs multilib-minimal
+inherit autotools multilib-minimal python-r1 toolchain-funcs
 
 DESCRIPTION="XSLT libraries and tools"
 HOMEPAGE="http://www.xmlsoft.org/"
@@ -19,11 +20,12 @@ IUSE="crypt debug examples python static-libs elibc_Darwin"
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
 RDEPEND="
-	>=dev-libs/libxml2-2.9.1-r5:2[${MULTILIB_USEDEP}]
+	>=dev-libs/libxml2-2.9.10:2[${MULTILIB_USEDEP}]
 	crypt?  ( >=dev-libs/libgcrypt-1.5.3:0=[${MULTILIB_USEDEP}] )
 	python? (
 		${PYTHON_DEPS}
-		dev-libs/libxml2:2[python,${PYTHON_USEDEP}] )
+		dev-libs/libxml2:2[python,${PYTHON_USEDEP}]
+	)
 "
 DEPEND="${RDEPEND}"
 
@@ -42,7 +44,7 @@ src_prepare() {
 
 	# Simplify python setup
 	# https://bugzilla.gnome.org/show_bug.cgi?id=758095
-	eapply "${FILESDIR}"/${PV}-simplify-python.patch
+	eapply "${FILESDIR}"/${PN}-1.1.34-simplify-python.patch
 	eapply "${FILESDIR}"/${PN}-1.1.28-disable-static-modules.patch
 
 	eautoreconf
@@ -109,7 +111,7 @@ multilib_src_install_all() {
 		rm -r "${ED}"/usr/share/doc/${PF}/python/examples || die
 	fi
 
-	prune_libtool_files --modules
+	find "${ED}" -type f -name "*.la" -delete || die
 }
 
 libxslt_foreach_py_emake() {

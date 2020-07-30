@@ -5,17 +5,11 @@ Subject: [PATCH] Simplify python setup in autoconf
 
 AM_PATH_PYTHON does most of the job without using pkg-config as expected
 from the rest of the autoconf script.
----
- Makefile.am        |  14 +++++--
- configure.ac       | 119 ++++++++++++++---------------------------------------
- python/Makefile.am |  28 ++++---------
- 3 files changed, 49 insertions(+), 112 deletions(-)
-
 diff --git a/Makefile.am b/Makefile.am
-index ff10f574..65decb3c 100644
+index 2c417d0..a65a2b7 100644
 --- a/Makefile.am
 +++ b/Makefile.am
-@@ -2,9 +2,13 @@ SUBDIRS = \
+@@ -2,9 +2,14 @@ SUBDIRS = \
  	libxslt \
  	libexslt \
  	xsltproc \
@@ -24,15 +18,16 @@ index ff10f574..65decb3c 100644
 -	tests
 +	doc
 +
++
 +if WITH_PYTHON
-+SUBDIRS += python
++	SUBDIRS += python
 +endif
 +
 +SUBDIRS += tests
  
  DIST_SUBDIRS = libxslt libexslt xsltproc python doc tests
  
-@@ -51,7 +55,9 @@ tests: dummy
+@@ -52,7 +57,9 @@ tests: dummy
  	@echo '## Running the regression test suite'
  	@(cd tests ; $(MAKE) -s tests)
  	@(cd xsltproc ; $(MAKE) -s tests)
@@ -44,10 +39,10 @@ index ff10f574..65decb3c 100644
  valgrind:
  	@echo '## Running the regression tests under Valgrind'
 diff --git a/configure.ac b/configure.ac
-index d6aa3664..0a538944 100644
+index 325a7be..ee1eabd 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -293,90 +293,37 @@ dnl
+@@ -227,90 +227,37 @@ dnl
  dnl check for python
  dnl
  
@@ -169,7 +164,7 @@ index d6aa3664..0a538944 100644
  
  AC_ARG_WITH(crypto, [  --with-crypto           Add crypto support to exslt (on)])
  WITH_CRYPTO=0
-@@ -678,10 +625,6 @@ AC_SUBST(PYTHONSODV)
+@@ -634,10 +581,6 @@ AC_SUBST(PYTHONSODV)
  AC_SUBST(XML_CONFIG)
  AC_SUBST(LIBXML_LIBS)
  AC_SUBST(LIBXML_CFLAGS)
@@ -181,21 +176,18 @@ index d6aa3664..0a538944 100644
  XSLT_LIBDIR='-L${libdir}'
  XSLT_INCLUDEDIR='-I${includedir}'
 diff --git a/python/Makefile.am b/python/Makefile.am
-index fa58b78f..3a5ecd6a 100644
+index 17a0d17..1c57a63 100644
 --- a/python/Makefile.am
 +++ b/python/Makefile.am
-@@ -5,9 +5,9 @@ SUBDIRS= . tests
+@@ -5,7 +5,7 @@ SUBDIRS= . tests
  
  AM_CFLAGS = $(LIBXML_CFLAGS)
  
 -DOCS_DIR = $(datadir)/doc/libxslt-python-$(LIBXSLT_VERSION)
 +docsdir = $(datadir)/doc/libxslt-python-$(LIBXSLT_VERSION)
  # libxsltclass.txt is generated
--DOCS = TODO
-+dist_docs_DATA = TODO
+ DOCS=
  
- EXTRA_DIST = 			\
- 	libxslt.c		\
 @@ -16,10 +16,7 @@ EXTRA_DIST = 			\
  	libxml_wrap.h		\
  	libxslt_wrap.h		\
@@ -203,7 +195,7 @@ index fa58b78f..3a5ecd6a 100644
 -	libxslt-python-api.xml	\
 -	$(DOCS)
 -
--libxsltmod_la_LDFLAGS =  $(WIN32_EXTRA_LDFLAGS) -module -avoid-version
+-libxsltmod_la_LDFLAGS =  -module -avoid-version
 +	libxslt-python-api.xml
  
  if WITH_PYTHON
@@ -245,6 +237,3 @@ index fa58b78f..3a5ecd6a 100644
  GENERATE = generator.py
  API_DESC = $(top_srcdir)/doc/libxslt-api.xml $(srcdir)/libxslt-python-api.xml
  GENERATED= libxsltclass.py \
--- 
-2.14.1
-
