@@ -19,7 +19,7 @@ REQUIRED_USE="pygobject? ( || ( $(python_gen_useflags 'python2*') ) )"
 RDEPEND="
 	dev-python/six[${PYTHON_USEDEP}]
 	virtual/udev
-	pygobject? ( dev-python/pygobject:2[$(python_gen_usedep 'python2*')] )
+	pygobject? ( $(python_gen_cond_dep 'dev-python/pygobject:2[${PYTHON_USEDEP}]' 'python2*') )
 	qt5? ( dev-python/PyQt5[${PYTHON_USEDEP}] )
 "
 DEPEND="${RDEPEND}
