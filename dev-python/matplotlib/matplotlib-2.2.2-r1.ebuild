@@ -33,7 +33,6 @@ REQUIRED_USE="
 		)"
 
 # #456704 -- a lot of py2-only deps
-PY2_USEDEP=$(python_gen_usedep python2_7)
 PY2_DEPEND="
 	$(python_gen_cond_dep 'dev-python/functools32[${PYTHON_USEDEP}]' python2_7)
 	$(python_gen_cond_dep 'dev-python/subprocess32[${PYTHON_USEDEP}]' python2_7)
@@ -54,8 +53,8 @@ COMMON_DEPEND="
 		dev-libs/glib:2=
 		x11-libs/gdk-pixbuf
 		x11-libs/gtk+:2
-		dev-python/pygtk[${PY2_USEDEP}] )
-	wxwidgets? ( >=dev-python/wxpython-2.8:*[${PY2_USEDEP}] )"
+		$(python_gen_cond_dep 'dev-python/pygtk[${PYTHON_USEDEP}]' python2_7) )
+	wxwidgets? ( $(python_gen_cond_dep '>=dev-python/wxpython-2.8:*[${PYTHON_USEDEP}]' python2_7) )"
 
 # internal copy of pycxx highly patched
 #	dev-python/pycxx
@@ -70,7 +69,7 @@ DEPEND="${COMMON_DEPEND}
 		dev-python/colorspacious[${PYTHON_USEDEP}]
 		dev-python/pillow[${PYTHON_USEDEP}]
 		dev-python/ipython[${PYTHON_USEDEP}]
-		dev-python/mock[${PY2_USEDEP}]
+		$(python_gen_cond_dep 'dev-python/mock[${PYTHON_USEDEP}]' python2_7)
 		dev-python/numpydoc[${PYTHON_USEDEP}]
 		sci-libs/scipy[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-1.3.0[${PYTHON_USEDEP}]
