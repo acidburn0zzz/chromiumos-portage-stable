@@ -1,0 +1,15 @@
+DEFINED_PHASES=compile configure install postinst postrm preinst prepare setup
+DEPEND=python_single_target_python3_6? ( dev-lang/python:3.6 >=dev-lang/python-exec-2:=[python_targets_python3_6] ) python_single_target_python3_7? ( dev-lang/python:3.7 >=dev-lang/python-exec-2:=[python_targets_python3_7] ) >=dev-libs/glib-2.6:2 dev-libs/libxslt >=dev-libs/libxml2-2.3.6:2 ~app-text/docbook-xml-dtd-4.3 app-text/docbook-xsl-stylesheets ~app-text/docbook-sgml-dtd-3.0 >=app-text/docbook-dsssl-stylesheets-1.40 emacs? ( >=app-editors/emacs-23.1:* ) python_single_target_python3_6? ( dev-python/pygments[python_targets_python3_6(-)] ) python_single_target_python3_7? ( dev-python/pygments[python_targets_python3_7(-)] ) ~dev-util/gtk-doc-am-1.32 dev-util/itstool virtual/pkgconfig >=app-portage/elt-patches-20170815 app-arch/xz-utils >=sys-apps/sed-4 dev-util/desktop-file-utils x11-misc/shared-mime-info
+DESCRIPTION=GTK+ Documentation Generator
+EAPI=6
+HOMEPAGE=https://www.gtk.org/gtk-doc/
+IUSE=debug doc emacs python_single_target_python3_6 python_single_target_python3_7
+KEYWORDS=*
+LICENSE=GPL-2 FDL-1.1
+RDEPEND=python_single_target_python3_6? ( dev-lang/python:3.6 >=dev-lang/python-exec-2:=[python_targets_python3_6] ) python_single_target_python3_7? ( dev-lang/python:3.7 >=dev-lang/python-exec-2:=[python_targets_python3_7] ) >=dev-libs/glib-2.6:2 dev-libs/libxslt >=dev-libs/libxml2-2.3.6:2 ~app-text/docbook-xml-dtd-4.3 app-text/docbook-xsl-stylesheets ~app-text/docbook-sgml-dtd-3.0 >=app-text/docbook-dsssl-stylesheets-1.40 emacs? ( >=app-editors/emacs-23.1:* ) python_single_target_python3_6? ( dev-python/pygments[python_targets_python3_6(-)] ) python_single_target_python3_7? ( dev-python/pygments[python_targets_python3_7(-)] )
+REQUIRED_USE=^^ ( python_single_target_python3_6 python_single_target_python3_7 )
+RESTRICT=test
+SLOT=0
+SRC_URI=mirror://gnome/sources/gtk-doc/1.32/gtk-doc-1.32.tar.xz
+_eclasses_=eapi7-ver	756b3f27d8e46131d5cf3c51bd876446	elisp-common	3322f14f031ddc95feccd9089c9adc59	estack	43ddf5aaffa7a8d0482df54d25a66a1f	eutils	06133990e861be0fe60c2b428fd025d9	gnome.org	532d56d07b9eace4831aaa817d2b756a	gnome2	acac536f2c3bbcd312ac3faaa3e55e40	gnome2-utils	c6060f4ab634aca444c4b2176b0f3877	libtool	f143db5a74ccd9ca28c1234deffede96	multilib	2477ebe553d3e4d2c606191fe6c33602	python-single-r1	43034a822923b18d8f3ab710b753f775	python-utils-r1	157a6a7a3e99c7dbdf81acc9dd4f57cd	readme.gentoo-r1	22ae82e140bdd95d17a34fd5fd733190	toolchain-funcs	605c126bed8d87e4378d5ff1645330cb	versionator	26ca8a8bd95d6a74122c08ba98a4ee72	xdg	c7ba313ea1eaf266f95cc6235f7d6a07	xdg-utils	ff2ff954e6b17929574eee4efc5152ba
+_md5_=4fb8c1921de52f6a30797ebe75f8ca52

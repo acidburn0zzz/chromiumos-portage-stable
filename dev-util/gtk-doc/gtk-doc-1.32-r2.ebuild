@@ -26,7 +26,9 @@ RDEPEND="
 	~app-text/docbook-sgml-dtd-3.0
 	>=app-text/docbook-dsssl-stylesheets-1.40
 	emacs? ( >=app-editors/emacs-23.1:* )
-	dev-python/pygments[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		dev-python/pygments[${PYTHON_MULTI_USEDEP}]
+	')
 "
 DEPEND="${RDEPEND}
 	~dev-util/gtk-doc-am-${PV}
@@ -48,6 +50,9 @@ pkg_setup() {
 src_prepare() {
 	# Remove global Emacs keybindings, bug #184588
 	eapply "${FILESDIR}"/${PN}-1.8-emacs-keybindings.patch
+	# Fix dev-libs/glib[gtk-doc] doc generation tests by fixing stuff surrounding deprecations
+	# https://gitlab.gnome.org/GNOME/glib/-/merge_requests/1488
+	eapply "${FILESDIR}"/${PV}-deprecation-parse-fixes.patch
 
 	gnome2_src_prepare
 }
