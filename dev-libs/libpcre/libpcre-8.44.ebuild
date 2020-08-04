@@ -1,9 +1,9 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=5
+EAPI=7
 
-inherit eutils multilib libtool flag-o-matic toolchain-funcs multilib-minimal
+inherit multilib libtool flag-o-matic toolchain-funcs multilib-minimal preserve-libs usr-ldscript
 
 DESCRIPTION="Perl-compatible regular expression library"
 HOMEPAGE="http://www.pcre.org/"
@@ -29,12 +29,9 @@ RDEPEND="
 	libedit? ( dev-libs/libedit )
 	readline? ( sys-libs/readline:0= )
 "
-DEPEND="
-	${RDEPEND}
+DEPEND="${RDEPEND}"
+BDEPEND="
 	virtual/pkgconfig
-"
-RDEPEND="
-	${RDEPEND}
 "
 
 S="${WORKDIR}/${MY_P}"
@@ -44,12 +41,11 @@ MULTILIB_CHOST_TOOLS=(
 )
 
 PATCHES=(
-	"${FILESDIR}"/${PN}-8.41-sljit_mips-label-statement-fix.patch
 	"${FILESDIR}"/${PN}-8.41-fix-stack-size-detection.patch
 )
 
 src_prepare() {
-	epatch "${PATCHES[@]}"
+	default
 	sed -i -e "s:-lpcre ::" libpcrecpp.pc.in || die
 	elibtoolize
 }
@@ -59,18 +55,18 @@ multilib_src_configure() {
 		--with-match-limit-recursion=$(usex recursion-limit 8192 MATCH_LIMIT)
 		$(multilib_native_use_enable bzip2 pcregrep-libbz2)
 		$(use_enable cxx cpp)
-		$(use_enable jit) $(use_enable jit pcregrep-jit)
+		$(use_enable jit)
+		$(use_enable jit pcregrep-jit)
 		$(use_enable pcre16)
 		$(use_enable pcre32)
 		$(multilib_native_use_enable libedit pcretest-libedit)
 		$(multilib_native_use_enable readline pcretest-libreadline)
 		$(use_enable static-libs static)
-		$(use_enable unicode utf) $(use_enable unicode unicode-properties)
+		$(use_enable unicode utf)
+		$(use_enable unicode unicode-properties)
 		$(multilib_native_use_enable zlib pcregrep-libz)
 		--enable-pcre8
 		--enable-shared
-		--htmldir="${EPREFIX}"/usr/share/doc/${PF}/html
-		--docdir="${EPREFIX}"/usr/share/doc/${PF}
 	)
 	ECONF_SOURCE="${S}" econf "${myeconfargs[@]}"
 }
@@ -88,7 +84,7 @@ multilib_src_install() {
 }
 
 multilib_src_install_all() {
-	prune_libtool_files
+	find "${ED}" -type f -name "*.la" -delete || die
 }
 
 pkg_preinst() {
