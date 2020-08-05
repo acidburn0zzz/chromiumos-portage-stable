@@ -19,10 +19,9 @@ SLOT="0"
 KEYWORDS="*"
 IUSE="doc mysql postgres sqlite test"
 
-PY2_USEDEP=$(python_gen_usedep 'python*')
 RDEPEND="dev-python/imaging[${PYTHON_USEDEP}]
-	postgres? ( dev-python/psycopg:2[${PY2_USEDEP}] )
-	mysql? ( >=dev-python/mysql-python-1.2.3[${PY2_USEDEP}] )"
+	postgres? ( $(python_gen_cond_dep 'dev-python/psycopg:2[${PYTHON_USEDEP}]' 'python*') )
+	mysql? ( $(python_gen_cond_dep '>=dev-python/mysql-python-1.2.3[${PYTHON_USEDEP}]' 'python*') )"
 DEPEND="${RDEPEND}
 	doc? ( >=dev-python/sphinx-1.0.7[${PYTHON_USEDEP}] )
 	test? ( $(python_gen_impl_dep sqlite) )"
