@@ -29,6 +29,7 @@ RDEPEND="
 "
 DEPEND="${RDEPEND}
 	virtual/pkgconfig
+	!!<dev-util/pkgconfig-0.29.2
 "
 
 MULTILIB_CHOST_TOOLS=(
