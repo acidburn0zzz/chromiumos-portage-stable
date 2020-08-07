@@ -1,16 +1,16 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="5"
-PYTHON_COMPAT=( python2_7 python3_4 python3_5 python3_6 )
-USE_RUBY="ruby22 ruby23"
+EAPI="6"
+PYTHON_COMPAT=( python3_{6..8} )
+USE_RUBY="ruby24 ruby25 ruby26"
 
 # No, I am not calling ruby-ng
-inherit multilib python-r1 toolchain-funcs eutils multilib-minimal
+inherit multilib python-r1 toolchain-funcs multilib-minimal
 
 MY_P="${P//_/-}"
 SEPOL_VER="${PV}"
-MY_RELEASEDATE="20170804"
+MY_RELEASEDATE="20191204"
 
 DESCRIPTION="SELinux userland library"
 HOMEPAGE="https://github.com/SELinuxProject/selinux/wiki"
@@ -20,14 +20,14 @@ if [[ ${PV} == 9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/SELinuxProject/selinux.git"
 	S="${WORKDIR}/${MY_P}/${PN}"
 else
-	SRC_URI="https://raw.githubusercontent.com/wiki/SELinuxProject/selinux/files/releases/${MY_RELEASEDATE}/${MY_P}.tar.gz"
+	SRC_URI="https://github.com/SELinuxProject/selinux/releases/download/${MY_RELEASEDATE}/${MY_P}.tar.gz"
 	KEYWORDS="*"
 	S="${WORKDIR}/${MY_P}"
 fi
 
 LICENSE="public-domain"
 SLOT="0"
-IUSE="pcre2 python ruby static-libs ruby_targets_ruby21 ruby_targets_ruby22 ruby_targets_ruby23"
+IUSE="pcre2 python ruby static-libs ruby_targets_ruby24 ruby_targets_ruby25 ruby_targets_ruby26"
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
 RDEPEND=">=sys-libs/libsepol-${SEPOL_VER}:=[${MULTILIB_USEDEP}]
@@ -35,15 +35,18 @@ RDEPEND=">=sys-libs/libsepol-${SEPOL_VER}:=[${MULTILIB_USEDEP}]
 	pcre2? ( dev-libs/libpcre2:=[static-libs?,${MULTILIB_USEDEP}] )
 	python? ( ${PYTHON_DEPS} )
 	ruby? (
-		ruby_targets_ruby22? ( dev-lang/ruby:2.2 )
-		ruby_targets_ruby23? ( dev-lang/ruby:2.3 )
-	)"
+		ruby_targets_ruby24? ( dev-lang/ruby:2.4 )
+		ruby_targets_ruby25? ( dev-lang/ruby:2.5 )
+		ruby_targets_ruby26? ( dev-lang/ruby:2.6 )
+	)
+	elibc_musl? ( sys-libs/fts-standalone )"
 DEPEND="${RDEPEND}
 	virtual/pkgconfig
-	python? ( >=dev-lang/swig-2.0.9 )"
+	python? ( >=dev-lang/swig-2.0.9 )
+	ruby? ( >=dev-lang/swig-2.0.9 )"
 
 src_prepare() {
-	epatch_user
+	eapply_user
 
 	multilib_copy_sources
 }
@@ -53,9 +56,10 @@ multilib_src_compile() {
 
 	emake \
 		LIBDIR="\$(PREFIX)/$(get_libdir)" \
-		SHLIBDIR="\$(DESTDIR)/$(get_libdir)" \
+		SHLIBDIR="/$(get_libdir)" \
 		LDFLAGS="-fPIC ${LDFLAGS} -pthread" \
 		USE_PCRE2="$(usex pcre2 y n)" \
+		FTS_LDLIBS="$(usex elibc_musl '-lfts' '')" \
 		all
 
 	if multilib_is_native_abi && use python; then
@@ -63,8 +67,9 @@ multilib_src_compile() {
 			emake \
 				LDFLAGS="-fPIC ${LDFLAGS} -lpthread" \
 				LIBDIR="\$(PREFIX)/$(get_libdir)" \
-				SHLIBDIR="\$(DESTDIR)/$(get_libdir)" \
+				SHLIBDIR="/$(get_libdir)" \
 				USE_PCRE2="$(usex pcre2 y n)" \
+				FTS_LDLIBS="$(usex elibc_musl '-lfts' '')" \
 				pywrap
 		}
 		python_foreach_impl building
@@ -79,8 +84,9 @@ multilib_src_compile() {
 				RUBY=${1} \
 				LDFLAGS="-fPIC ${LDFLAGS} -lpthread" \
 				LIBDIR="\$(PREFIX)/$(get_libdir)" \
-				SHLIBDIR="\$(DESTDIR)/$(get_libdir)" \
+				SHLIBDIR="/$(get_libdir)" \
 				USE_PCRE2="$(usex pcre2 y n)" \
+				FTS_LDLIBS="$(usex elibc_musl '-lfts' '')" \
 				rubywrap
 		}
 		for RUBYTARGET in ${USE_RUBY}; do
@@ -94,8 +100,7 @@ multilib_src_compile() {
 multilib_src_install() {
 	emake DESTDIR="${D}" \
 		LIBDIR="\$(PREFIX)/$(get_libdir)" \
-		SHLIBDIR="\$(DESTDIR)/$(get_libdir)" \
-		LIBSEPOLA="/usr/$(get_libdir)/libsepol.a" \
+		SHLIBDIR="/$(get_libdir)" \
 		USE_PCRE2="$(usex pcre2 y n)" \
 		install
 
@@ -103,7 +108,7 @@ multilib_src_install() {
 		installation() {
 			emake DESTDIR="${D}" \
 				LIBDIR="\$(PREFIX)/$(get_libdir)" \
-				LIBSEPOLA="/usr/$(get_libdir)/libsepol.a" \
+				SHLIBDIR="/$(get_libdir)" \
 				USE_PCRE2="$(usex pcre2 y n)" \
 				install-pywrap
 			python_optimize # bug 531638
@@ -118,7 +123,7 @@ multilib_src_install() {
 			rm src/selinuxswig_ruby_wrap.lo
 			emake DESTDIR="${D}" \
 				LIBDIR="\$(PREFIX)/$(get_libdir)" \
-				LIBSEPOLA="/usr/$(get_libdir)/libsepol.a" \
+				SHLIBDIR="/$(get_libdir)" \
 				RUBY=${1} \
 				USE_PCRE2="$(usex pcre2 y n)" \
 				install-rubywrap

@@ -1,11 +1,12 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
-PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
+EAPI=7
+
+PYTHON_COMPAT=( python2_7 python3_{6,7,8} )
 PYTHON_REQ_USE="xml"
 
-inherit libtool flag-o-matic ltprune python-r1 autotools prefix multilib-minimal
+inherit libtool flag-o-matic python-r1 autotools prefix multilib-minimal
 
 DESCRIPTION="XML C parser and toolkit"
 HOMEPAGE="http://www.xmlsoft.org/"
@@ -13,8 +14,9 @@ HOMEPAGE="http://www.xmlsoft.org/"
 LICENSE="MIT"
 SLOT="2"
 KEYWORDS="*"
-IUSE="debug examples icu ipv6 lzma python readline static-libs test"
+IUSE="debug examples icu ipv6 lzma +python readline static-libs test"
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
+RESTRICT="!test? ( test )"
 
 XSTS_HOME="http://www.w3.org/XML/2004/xml-schema-test-suite"
 XSTS_NAME_1="xmlschema2002-01-16"
@@ -24,6 +26,7 @@ XSTS_TARBALL_2="xsts-2004-01-14.tar.gz"
 XMLCONF_TARBALL="xmlts20080827.tar.gz"
 
 SRC_URI="ftp://xmlsoft.org/${PN}/${PN}-${PV/_rc/-rc}.tar.gz
+	https://dev.gentoo.org/~sam/distfiles/${CATEGORY}/${PN}/${P}-patchset.tar.xz
 	test? (
 		${XSTS_HOME}/${XSTS_NAME_1}/${XSTS_TARBALL_1}
 		${XSTS_HOME}/${XSTS_NAME_2}/${XSTS_TARBALL_2}
@@ -36,10 +39,10 @@ RDEPEND="
 	python? ( ${PYTHON_DEPS} )
 	readline? ( sys-libs/readline:= )
 "
-DEPEND="${RDEPEND}
+DEPEND="${RDEPEND}"
+BDEPEND="
 	dev-util/gtk-doc-am
 	virtual/pkgconfig
-	hppa? ( >=sys-devel/binutils-2.15.92.0.2 )
 "
 
 S="${WORKDIR}/${PN}-${PV%_rc*}"
@@ -52,6 +55,7 @@ src_unpack() {
 	# ${A} isn't used to avoid unpacking of test tarballs into $WORKDIR,
 	# as they are needed as tarballs in ${S}/xstc instead and not unpacked
 	unpack ${P/_rc/-rc}.tar.gz
+	unpack ${P}-patchset.tar.xz
 	cd "${S}" || die
 
 	if use test; then
@@ -68,6 +72,9 @@ src_prepare() {
 
 	DOCS=( AUTHORS ChangeLog NEWS README* TODO* )
 
+	# Selective cherry-picks from master up to 2019-02-28 (commit 8161b463f5)
+	eapply "${WORKDIR}"/patches
+
 	# Patches needed for prefix support
 	eapply "${FILESDIR}"/${PN}-2.7.1-catalog_path.patch
 
@@ -81,17 +88,14 @@ src_prepare() {
 	# https://bugzilla.gnome.org/show_bug.cgi?id=760458
 	eapply "${FILESDIR}"/${PN}-2.9.2-python-ABIFLAG.patch
 
-	# Fix infinite loop in LZMA decompression, bug #895084
-	# https://bugzilla.gnome.org/show_bug.cgi?id=794914
-	eapply "${FILESDIR}"/${PN}-2.9.8-infinite-loop-lzma.patch
+	# Fix python tests when building out of tree #565576
+	eapply "${FILESDIR}"/${PN}-2.9.8-out-of-tree-test.patch
 
-	# Fix null pointer reference in xpath, bug #888310
-	# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=901817
-	eapply "${FILESDIR}"/${PN}-2.9.8-null-ptr-ref.patch
-
-	# Avoid final linking arguments for python modules
 	if [[ ${CHOST} == *-darwin* ]] ; then
+		# Avoid final linking arguments for python modules
 		sed -i -e '/PYTHON_LIBS/s/ldflags/libs/' configure.ac || die
+		# gcc-apple doesn't grok -Wno-array-bounds
+		sed -i -e 's/-Wno-array-bounds//' configure.ac || die
 	fi
 
 	# Please do not remove, as else we get references to PORTAGE_TMPDIR
@@ -131,7 +135,10 @@ multilib_src_configure() {
 
 	libxml2_py_configure() {
 		mkdir -p "${BUILD_DIR}" || die # ensure python build dirs exist
-		run_in_build_dir libxml2_configure "--with-python=${ROOT%/}${PYTHON}" # odd build system, also see bug #582130
+		run_in_build_dir libxml2_configure \
+			"--with-python=${EPYTHON}" \
+			"--with-python-install-dir=$(python_get_sitedir)"
+			# odd build system, also see bug #582130
 	}
 
 	libxml2_configure --without-python # build python bindings separately
@@ -150,6 +157,7 @@ multilib_src_compile() {
 }
 
 multilib_src_test() {
+	ln -s "${S}"/xmlconf || die
 	emake check
 	multilib_is_native_abi && use python && python_foreach_impl libxml2_py_emake test
 }
@@ -186,7 +194,7 @@ multilib_src_install_all() {
 		rm -rf "${ED}"/usr/share/doc/${PF}/python/examples
 	fi
 
-	prune_libtool_files --modules
+	find "${D}" -name '*.la' -delete || die
 }
 
 pkg_postinst() {
@@ -196,13 +204,13 @@ pkg_postinst() {
 		elog "Skipping XML catalog creation for stage building (bug #208887)."
 	else
 		# need an XML catalog, so no-one writes to a non-existent one
-		CATALOG="${EROOT}etc/xml/catalog"
+		CATALOG="${EROOT}/etc/xml/catalog"
 
 		# we dont want to clobber an existing catalog though,
 		# only ensure that one is there
 		# <obz@gentoo.org>
 		if [[ ! -e ${CATALOG} ]]; then
-			[[ -d "${EROOT}etc/xml" ]] || mkdir -p "${EROOT}etc/xml"
+			[[ -d "${EROOT}/etc/xml" ]] || mkdir -p "${EROOT}/etc/xml"
 			"${EPREFIX}"/usr/bin/xmlcatalog --create > "${CATALOG}"
 			einfo "Created XML catalog in ${CATALOG}"
 		fi
