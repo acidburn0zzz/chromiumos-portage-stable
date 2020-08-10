@@ -1,0 +1,16 @@
+BDEPEND=|| ( ( dev-lang/python:3.8[xml(+)] dev-python/setuptools[python_targets_python3_8(-),python_single_target_python3_8(+)] ) ( dev-lang/python:3.7[xml(+)] dev-python/setuptools[python_targets_python3_7(-),python_single_target_python3_7(+)] ) ( dev-lang/python:3.6[xml(+)] dev-python/setuptools[python_targets_python3_6(-),python_single_target_python3_6(+)] ) ) gtk-doc? ( app-text/docbook-xml-dtd:4.1.2 app-text/docbook-xml-dtd:4.4 dev-util/gtk-doc ) vala? ( || ( dev-lang/vala:0.36[vapigen(+)] dev-lang/vala:0.34[vapigen(+)] dev-lang/vala:0.32[vapigen(+)] ) ) virtual/pkgconfig >=dev-util/meson-0.48.2 >=dev-util/ninja-1.7.2
+DEFINED_PHASES=compile configure install prepare setup test
+DEPEND=>=dev-libs/glib-2.44.0:2[abi_x86_32(-)?,abi_x86_64(-)?,abi_x86_x32(-)?,abi_mips_n32(-)?,abi_mips_n64(-)?,abi_mips_o32(-)?,abi_ppc_32(-)?,abi_ppc_64(-)?,abi_s390_32(-)?,abi_s390_64(-)?,abi_arm_32(-)?,abi_arm_64(-)?] virtual/libusb:1[udev,abi_x86_32(-)?,abi_x86_64(-)?,abi_x86_x32(-)?,abi_mips_n32(-)?,abi_mips_n64(-)?,abi_mips_o32(-)?,abi_ppc_32(-)?,abi_ppc_64(-)?,abi_s390_32(-)?,abi_s390_64(-)?,abi_arm_32(-)?,abi_arm_64(-)?] introspection? ( >=dev-libs/gobject-introspection-1.54:= ) sys-apps/hwids
+DESCRIPTION=GObject wrapper for libusb
+EAPI=7
+HOMEPAGE=https://github.com/hughsie/libgusb
+IUSE=gtk-doc +introspection static-libs test +vala abi_x86_32 abi_x86_64 abi_x86_x32 abi_mips_n32 abi_mips_n64 abi_mips_o32 abi_ppc_32 abi_ppc_64 abi_s390_32 abi_s390_64 abi_arm_32 abi_arm_64
+KEYWORDS=*
+LICENSE=LGPL-2.1+
+RDEPEND=>=dev-libs/glib-2.44.0:2[abi_x86_32(-)?,abi_x86_64(-)?,abi_x86_x32(-)?,abi_mips_n32(-)?,abi_mips_n64(-)?,abi_mips_o32(-)?,abi_ppc_32(-)?,abi_ppc_64(-)?,abi_s390_32(-)?,abi_s390_64(-)?,abi_arm_32(-)?,abi_arm_64(-)?] virtual/libusb:1[udev,abi_x86_32(-)?,abi_x86_64(-)?,abi_x86_x32(-)?,abi_mips_n32(-)?,abi_mips_n64(-)?,abi_mips_o32(-)?,abi_ppc_32(-)?,abi_ppc_64(-)?,abi_s390_32(-)?,abi_s390_64(-)?,abi_arm_32(-)?,abi_arm_64(-)?] introspection? ( >=dev-libs/gobject-introspection-1.54:= ) sys-apps/hwids
+REQUIRED_USE=vala? ( introspection )
+RESTRICT=!test? ( test )
+SLOT=0
+SRC_URI=https://people.freedesktop.org/~hughsient/releases/libgusb-0.3.5.tar.xz
+_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	meson	b5ee7a05833ab91225acf30ffdeed006	multibuild	40fe59465edacd730c644ec2bc197809	multilib	2477ebe553d3e4d2c606191fe6c33602	multilib-build	1979aa0ff4d356d32507ca4650d9f37d	multilib-minimal	8bddda43703ba94d8341f4e247f97566	multiprocessing	e32940a7b2a9992ad217eccddb84d548	ninja-utils	132cbb376048d079b5a012f5467c4e7f	python-any-r1	54a3178500786b0a7ede4a23b7f2a6ad	python-utils-r1	157a6a7a3e99c7dbdf81acc9dd4f57cd	toolchain-funcs	605c126bed8d87e4378d5ff1645330cb	vala	2f3804278870542119da624a5eded505
+_md5_=acbeba8182bc6189f7c1608c2d7ae3d5

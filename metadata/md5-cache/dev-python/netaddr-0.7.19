@@ -10,5 +10,5 @@ RDEPEND=cli? ( >=dev-python/ipython-0.13.1-r1[python_targets_python2_7(-)?,pytho
 REQUIRED_USE=|| ( python_targets_python2_7 python_targets_python3_6 python_targets_python3_7 )
 SLOT=0
 SRC_URI=mirror://pypi/n/netaddr/netaddr-0.7.19.tar.gz
-_eclasses_=distutils-r1	198e3b9ddb55ae36b2a50b07ca2877ef	eutils	06133990e861be0fe60c2b428fd025d9	multibuild	40fe59465edacd730c644ec2bc197809	multilib	2477ebe553d3e4d2c606191fe6c33602	multiprocessing	e32940a7b2a9992ad217eccddb84d548	python-r1	ce1cd23cfdc1848e8e32743efe34f299	python-utils-r1	931c328767d245c08a16a3f87be9ce9c	toolchain-funcs	605c126bed8d87e4378d5ff1645330cb	xdg-utils	ff2ff954e6b17929574eee4efc5152ba
+_eclasses_=distutils-r1	198e3b9ddb55ae36b2a50b07ca2877ef	eutils	06133990e861be0fe60c2b428fd025d9	multibuild	40fe59465edacd730c644ec2bc197809	multilib	2477ebe553d3e4d2c606191fe6c33602	multiprocessing	e32940a7b2a9992ad217eccddb84d548	python-r1	79e26ce8f853c9daebe9a4956e37cc1b	python-utils-r1	157a6a7a3e99c7dbdf81acc9dd4f57cd	toolchain-funcs	605c126bed8d87e4378d5ff1645330cb	xdg-utils	ff2ff954e6b17929574eee4efc5152ba
 _md5_=fb96f7e61ee4e0a0281d6fe8d9280aa3

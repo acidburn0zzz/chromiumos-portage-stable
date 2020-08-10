@@ -9,5 +9,5 @@ LICENSE=|| ( public-domain MIT )
 RESTRICT=!test? ( test )
 SLOT=0/23
 SRC_URI=https://github.com/open-source-parsers/jsoncpp/archive/90ca694e4697497a8c2bc8c60a9c9f89e7290a10.tar.gz -> jsoncpp-1.9.3_pre20200412.tar.gz
-_eclasses_=meson	b5ee7a05833ab91225acf30ffdeed006	multilib	2477ebe553d3e4d2c606191fe6c33602	multiprocessing	e32940a7b2a9992ad217eccddb84d548	ninja-utils	132cbb376048d079b5a012f5467c4e7f	python-any-r1	4900ae970f827a22d33d41bd8b8f9ace	python-utils-r1	931c328767d245c08a16a3f87be9ce9c	toolchain-funcs	605c126bed8d87e4378d5ff1645330cb
+_eclasses_=meson	b5ee7a05833ab91225acf30ffdeed006	multilib	2477ebe553d3e4d2c606191fe6c33602	multiprocessing	e32940a7b2a9992ad217eccddb84d548	ninja-utils	132cbb376048d079b5a012f5467c4e7f	python-any-r1	54a3178500786b0a7ede4a23b7f2a6ad	python-utils-r1	157a6a7a3e99c7dbdf81acc9dd4f57cd	toolchain-funcs	605c126bed8d87e4378d5ff1645330cb
 _md5_=a0085f25f8bb13b48245755e9359ce49

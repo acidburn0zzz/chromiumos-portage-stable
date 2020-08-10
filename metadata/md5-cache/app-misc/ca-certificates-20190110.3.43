@@ -9,5 +9,5 @@ LICENSE=MPL-1.1
 RDEPEND=app-misc/c_rehash sys-apps/debianutils
 SLOT=0
 SRC_URI=mirror://debian/pool/main/c/ca-certificates/ca-certificates_20190110.tar.xz https://archive.mozilla.org/pub/security/nss/releases/NSS_3_43_RTM/src/nss-3.43.tar.gz cacert? ( https://dev.gentoo.org/~axs/distfiles/nss-cacert-class1-class3.patch )
-_eclasses_=eapi7-ver	756b3f27d8e46131d5cf3c51bd876446	eutils	06133990e861be0fe60c2b428fd025d9	multilib	2477ebe553d3e4d2c606191fe6c33602	python-any-r1	4900ae970f827a22d33d41bd8b8f9ace	python-utils-r1	931c328767d245c08a16a3f87be9ce9c	toolchain-funcs	605c126bed8d87e4378d5ff1645330cb
+_eclasses_=eapi7-ver	756b3f27d8e46131d5cf3c51bd876446	eutils	06133990e861be0fe60c2b428fd025d9	multilib	2477ebe553d3e4d2c606191fe6c33602	python-any-r1	54a3178500786b0a7ede4a23b7f2a6ad	python-utils-r1	157a6a7a3e99c7dbdf81acc9dd4f57cd	toolchain-funcs	605c126bed8d87e4378d5ff1645330cb
 _md5_=feb77365a2e10eb7692a82a7f4d994a1
