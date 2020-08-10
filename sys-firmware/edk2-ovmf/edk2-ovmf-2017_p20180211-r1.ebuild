@@ -1,1 +1,0 @@
-edk2-ovmf-2017_p20180211.ebuild
