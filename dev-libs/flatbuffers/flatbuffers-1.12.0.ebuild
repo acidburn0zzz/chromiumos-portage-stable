@@ -1,9 +1,9 @@
-# Copyright 1999-2018 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
-inherit cmake-utils flag-o-matic
+inherit cmake
 
 DESCRIPTION="Memory efficient serialization library"
 HOMEPAGE="https://google.github.io/flatbuffers/"
@@ -14,19 +14,18 @@ SLOT="0"
 KEYWORDS="*"
 IUSE="static-libs test"
 
-src_configure() {
-	append-cxxflags -std=c++11
+RESTRICT="!test? ( test )"
 
+DOCS=( readme.md )
+
+src_configure() {
 	local mycmakeargs=(
 		-DFLATBUFFERS_BUILD_FLATLIB=$(usex static-libs)
 		-DFLATBUFFERS_BUILD_SHAREDLIB=ON
 		-DFLATBUFFERS_BUILD_TESTS=$(usex test)
 	)
 
-	cmake-utils_src_configure
-}
+	use elibc_musl && mycmakeargs+=( -DFLATBUFFERS_LOCALE_INDEPENDENT=0 )
 
-src_install() {
-	cmake-utils_src_install
-	dobin "${CMAKE_BUILD_DIR}"/flatc
+	cmake_src_configure
 }
