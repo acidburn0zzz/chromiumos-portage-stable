@@ -9,5 +9,5 @@ LICENSE=GPL-2
 RDEPEND=sys-libs/ncurses:0= qt5? ( dev-qt/qtcore:5 dev-qt/qtgui:5 dev-qt/qtwidgets:5 )
 SLOT=0
 SRC_URI=https://github.com/ajaiantilal/i7z/archive/5023138d7c35c4667c938b853e5ea89737334e92.tar.gz -> i7z-93_p20131012.tar.gz
-_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	2477ebe553d3e4d2c606191fe6c33602	qmake-utils	6f4ff01a55830f6d86647dc56dfaf3a7	toolchain-funcs	605c126bed8d87e4378d5ff1645330cb
+_eclasses_=estack	43ddf5aaffa7a8d0482df54d25a66a1f	eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	2477ebe553d3e4d2c606191fe6c33602	qmake-utils	bdf97e69a34b864d6d545f4ec3143ff7	toolchain-funcs	605c126bed8d87e4378d5ff1645330cb
 _md5_=517d92ecfc055128e10865f679fb0053
