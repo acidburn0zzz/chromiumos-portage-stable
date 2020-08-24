@@ -1,11 +1,11 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/eclass/autotools-utils.eclass,v 1.74 2014/07/31 23:24:56 reavertm Exp $
 
 # @ECLASS: autotools-utils.eclass
 # @MAINTAINER:
 # Maciej Mrozowski <reavertm@gentoo.org>
 # Michał Górny <mgorny@gentoo.org>
+# @SUPPORTED_EAPIS: 4 5
 # @BLURB: common ebuild functions for autotools-based packages
 # @DESCRIPTION:
 # autotools-utils.eclass is autotools.eclass(5) and base.eclass(5) wrapper
@@ -89,7 +89,8 @@
 # Keep variable names synced with cmake-utils and the other way around!
 
 case ${EAPI:-0} in
-	2|3|4|5) ;;
+	6) die "${ECLASS}.eclass is banned in EAPI ${EAPI}";;
+	4|5) ;;
 	*) die "EAPI=${EAPI} is not supported" ;;
 esac
 
@@ -113,7 +114,8 @@ esac
 # appropriate packages to DEPEND yourself.
 [[ ${AUTOTOOLS_AUTORECONF} ]] || : ${AUTOTOOLS_AUTO_DEPEND:=no}
 
-inherit autotools eutils libtool
+# eutils for eqawarn, path_exists
+inherit autotools epatch eutils libtool ltprune
 
 EXPORT_FUNCTIONS src_prepare src_configure src_compile src_install src_test
 
@@ -217,81 +219,6 @@ _check_build_dir() {
 	echo ">>> Working in BUILD_DIR: \"${BUILD_DIR}\""
 }
 
-# @FUNCTION: remove_libtool_files
-# @USAGE: [all]
-# @DESCRIPTION:
-# Determines unnecessary libtool files (.la) and libtool static archives (.a)
-# and removes them from installation image.
-#
-# To unconditionally remove all libtool files, pass 'all' as argument.
-# Otherwise, libtool archives required for static linking will be preserved.
-#
-# In most cases it's not necessary to manually invoke this function.
-# See autotools-utils_src_install for reference.
-remove_libtool_files() {
-	debug-print-function ${FUNCNAME} "$@"
-	local removing_all
-
-	eqawarn "The remove_libtool_files() function was deprecated."
-	eqawarn "Please use prune_libtool_files() from eutils eclass instead."
-
-	[[ ${#} -le 1 ]] || die "Invalid number of args to ${FUNCNAME}()"
-	if [[ ${#} -eq 1 ]]; then
-		case "${1}" in
-			all)
-				removing_all=1
-				;;
-			*)
-				die "Invalid argument to ${FUNCNAME}(): ${1}"
-		esac
-	fi
-
-	local pc_libs=()
-	if [[ ! ${removing_all} ]]; then
-		local arg
-		for arg in $(find "${D}" -name '*.pc' -exec \
-					sed -n -e 's;^Libs:;;p' {} +); do
-			[[ ${arg} == -l* ]] && pc_libs+=(lib${arg#-l}.la)
-		done
-	fi
-
-	local f
-	find "${D}" -type f -name '*.la' -print0 | while read -r -d '' f; do
-		local shouldnotlink=$(sed -ne '/^shouldnotlink=yes$/p' "${f}")
-		local archivefile=${f/%.la/.a}
-		[[ "${f}" != "${archivefile}" ]] || die 'regex sanity check failed'
-
-		# Remove static libs we're not supposed to link against.
-		if [[ ${shouldnotlink} ]]; then
-			einfo "Removing unnecessary ${archivefile#${D%/}}"
-			rm -f "${archivefile}" || die
-			# The .la file may be used by a module loader, so avoid removing it
-			# unless explicitly requested.
-			[[ ${removing_all} ]] || continue
-		fi
-
-		# Remove .la files when:
-		# - user explicitly wants us to remove all .la files,
-		# - respective static archive doesn't exist,
-		# - they are covered by a .pc file already,
-		# - they don't provide any new information (no libs & no flags).
-		local removing
-		if [[ ${removing_all} ]]; then removing='forced'
-		elif [[ ! -f ${archivefile} ]]; then removing='no static archive'
-		elif has "$(basename "${f}")" "${pc_libs[@]}"; then
-			removing='covered by .pc'
-		elif [[ ! $(sed -n -e \
-			"s/^\(dependency_libs\|inherited_linker_flags\)='\(.*\)'$/\2/p" \
-			"${f}") ]]; then removing='no libs & flags'
-		fi
-
-		if [[ ${removing} ]]; then
-			einfo "Removing unnecessary ${f#${D%/}} (${removing})"
-			rm -f "${f}" || die
-		fi
-	done
-}
-
 # @FUNCTION: autotools-utils_src_prepare
 # @DESCRIPTION:
 # The src_prepare function.
@@ -355,8 +282,6 @@ autotools-utils_src_configure() {
 	[[ -z ${myeconfargs+1} || $(declare -p myeconfargs) == 'declare -a'* ]] \
 		|| die 'autotools-utils.eclass: myeconfargs has to be an array.'
 
-	[[ ${EAPI} == 2 ]] && ! use prefix && EPREFIX=
-
 	# Common args
 	local econfargs=()
 
@@ -412,31 +337,12 @@ autotools-utils_src_install() {
 	emake DESTDIR="${D}" "$@" install || die "emake install failed"
 	popd > /dev/null || die
 
-	# Move docs installed by autotools (in EAPI < 4).
-	if [[ ${EAPI} == [23] ]] \
-			&& path_exists "${D}${EPREFIX}"/usr/share/doc/${PF}/*; then
-		if [[ $(find "${D}${EPREFIX}"/usr/share/doc/${PF}/* -type d) ]]; then
-			eqawarn "autotools-utils: directories in docdir require at least EAPI 4"
-		else
-			mkdir "${T}"/temp-docdir
-			mv "${D}${EPREFIX}"/usr/share/doc/${PF}/* "${T}"/temp-docdir/ \
-				|| die "moving docs to tempdir failed"
-
-			dodoc "${T}"/temp-docdir/* || die "docdir dodoc failed"
-			rm -r "${T}"/temp-docdir || die
-		fi
-	fi
-
 	# XXX: support installing them from builddir as well?
 	if declare -p DOCS &>/dev/null; then
 		# an empty list == don't install anything
 		if [[ ${DOCS[@]} ]]; then
-			if [[ ${EAPI} == [23] ]]; then
-				dodoc "${DOCS[@]}" || die
-			else
-				# dies by itself
-				dodoc -r "${DOCS[@]}"
-			fi
+			# dies by itself
+			dodoc -r "${DOCS[@]}"
 		fi
 	else
 		local f
