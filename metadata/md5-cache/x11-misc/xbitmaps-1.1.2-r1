@@ -1,0 +1,9 @@
+DEFINED_PHASES=compile
+DESCRIPTION=X.Org bitmaps data
+EAPI=7
+HOMEPAGE=https://www.x.org/wiki/
+KEYWORDS=*
+LICENSE=MIT
+SLOT=0
+SRC_URI=https://www.x.org/releases/individual/data/xbitmaps-1.1.2.tar.bz2
+_md5_=9efdd67bd4f3719f1ec741b229f398e4

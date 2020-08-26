@@ -1,13 +1,12 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=5
 
 inherit eutils multilib
 
-DESCRIPTION="Utility to change the OpenGL interface being used"
-HOMEPAGE="https://www.gentoo.org/"
+DESCRIPTION="Utility to switch between OpenGL implementations"
+HOMEPAGE="https://wiki.gentoo.org/wiki/No_homepage"
 
 # Source:
 # http://www.opengl.org/registry/api/glext.h
@@ -25,22 +24,7 @@ KEYWORDS="*"
 IUSE=""
 
 DEPEND="app-arch/xz-utils"
-RDEPEND=">=app-admin/eselect-1.2.4
-		 !<media-libs/mesa-10.3.4-r1
-		 !=media-libs/mesa-10.3.5
-		 !=media-libs/mesa-10.3.7-r1
-		 !<x11-proto/glproto-1.4.17-r1
-		 !<=x11-base/xorg-server-1.12.4-r5
-		 !=x11-base/xorg-server-1.15.2-r1
-		 !=x11-base/xorg-server-1.15.2-r2
-		 !~x11-base/xorg-server-1.16.3
-		 !=x11-base/xorg-server-1.16.4
-		 !=x11-base/xorg-server-1.16.4-r3
-		 !~x11-base/xorg-server-1.17.0
-		 !=x11-base/xorg-server-1.17.1
-		 !<x11-drivers/ati-drivers-14.9-r2
-		 !=x11-drivers/ati-drivers-14.12
-		 !<=app-emulation/emul-linux-x86-opengl-20140508"
+RDEPEND=">=app-admin/eselect-1.2.4"
 
 S=${WORKDIR}
 
@@ -50,11 +34,15 @@ pkg_preinst() {
 }
 
 pkg_postinst() {
-	if path_exists "${EROOT}"/usr/lib*/opengl; then
+	local shopt_save=$(shopt -p nullglob)
+	shopt -s nullglob
+	local opengl_dirs=( "${EROOT}"/usr/lib*/opengl )
+	${shopt_save}
+	if [[ -n ${opengl_dirs[@]} ]]; then
 		# delete broken symlinks
-		find "${EROOT}"/usr/lib*/opengl -xtype l -delete
+		find "${opengl_dirs[@]}" -xtype l -delete
 		# delete empty leftover directories (they confuse eselect)
-		find "${EROOT}"/usr/lib*/opengl -depth -type d -empty -exec rmdir -v {} +
+		find "${opengl_dirs[@]}" -depth -type d -empty -exec rmdir -v {} +
 	fi
 
 	if [[ -n "${OLD_IMPL}" && "${OLD_IMPL}" != '(none)' ]] ; then
