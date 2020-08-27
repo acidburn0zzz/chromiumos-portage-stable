@@ -1,0 +1,12 @@
+BDEPEND=>=app-portage/elt-patches-20170815 ppc-aix? ( >=sys-devel/libtool-2.2.6a sys-devel/m4 >=x11-misc/util-macros-1.18 >=media-fonts/font-util-1.2.0 ) x86-winnt? ( >=sys-devel/libtool-2.2.6a sys-devel/m4 >=x11-misc/util-macros-1.18 >=media-fonts/font-util-1.2.0 ) virtual/pkgconfig
+DEFINED_PHASES=compile configure install postinst postrm prepare unpack
+DEPEND=x11-base/xorg-proto !<sys-devel/gettext-0.18.1.1-r3 || ( >=sys-devel/automake-1.16.1:1.16 >=sys-devel/automake-1.15.1:1.15 ) >=sys-devel/autoconf-2.69 >=sys-devel/libtool-2.4
+DESCRIPTION=create dependencies in makefiles
+EAPI=7
+HOMEPAGE=https://www.x.org/wiki/ https://gitlab.freedesktop.org/xorg/util/makedepend
+KEYWORDS=*
+LICENSE=MIT
+SLOT=0
+SRC_URI=https://www.x.org/releases/individual/util/makedepend-1.0.6.tar.bz2
+_eclasses_=autotools	d0e5375d47f4c809f406eb892e531513	eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	libtool	f143db5a74ccd9ca28c1234deffede96	multilib	2477ebe553d3e4d2c606191fe6c33602	toolchain-funcs	605c126bed8d87e4378d5ff1645330cb	xorg-3	8cad61092536d3b5fcfc558b8c5d44cc
+_md5_=a65829299b44200529e4d57107a7bcff
