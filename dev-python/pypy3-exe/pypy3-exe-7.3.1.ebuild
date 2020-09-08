@@ -40,6 +40,7 @@ BDEPEND="
 
 PATCHES=(
 	"${FILESDIR}/pypy3-exe-7.3.1-respect-pkg-config.patch"
+	"${FILESDIR}/pypy3-exe-7.3.1-no-override-CC.patch"
 )
 
 check_env() {
@@ -136,7 +137,7 @@ src_configure() {
 	# translate into the C sources
 	# we're going to make them ourselves since otherwise pypy does not
 	# free up the unneeded memory before spawning the compiler
-	set -- "${interp[@]}" rpython/bin/rpython --batch --source "${args[@]}"
+	set -- "${interp[@]}" rpython/bin/rpython --batch --source --cc="${CC}" "${args[@]}"
 	echo -e "\033[1m${@}\033[0m"
 	"${@}" || die "translation failed"
 }
