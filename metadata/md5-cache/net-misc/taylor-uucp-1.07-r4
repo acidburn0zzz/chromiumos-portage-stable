@@ -1,11 +1,11 @@
-DEFINED_PHASES=compile install preinst unpack
-DEPEND=>=sys-apps/sed-4 >=app-portage/elt-patches-20170815 !<sys-devel/gettext-0.18.1.1-r3 || ( >=sys-devel/automake-1.16.1 >=sys-devel/automake-1.15.1 ) >=sys-devel/autoconf-2.69 >=sys-devel/libtool-2.4
+DEFINED_PHASES=configure install preinst prepare
+DEPEND=>=app-portage/elt-patches-20170815 !<sys-devel/gettext-0.18.1.1-r3 || ( >=sys-devel/automake-1.16.1:1.16 >=sys-devel/automake-1.15.1:1.15 ) >=sys-devel/autoconf-2.69 >=sys-devel/libtool-2.4
 DESCRIPTION=Taylor UUCP
-EAPI=0
-HOMEPAGE=http://www.airs.com/ian/uucp.html
+EAPI=5
+HOMEPAGE=https://www.airs.com/ian/uucp.html
 KEYWORDS=*
 LICENSE=GPL-2
 SLOT=0
 SRC_URI=mirror://gnu/uucp/uucp-1.07.tar.gz
 _eclasses_=autotools	d0e5375d47f4c809f406eb892e531513	eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	libtool	f143db5a74ccd9ca28c1234deffede96	multilib	2477ebe553d3e4d2c606191fe6c33602	toolchain-funcs	605c126bed8d87e4378d5ff1645330cb
-_md5_=93d44268cb2d815d28303f098f2b1615
+_md5_=aeb973a5c13c1ccadb01621ac8410a01
