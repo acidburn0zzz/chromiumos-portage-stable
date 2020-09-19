@@ -1,7 +1,7 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
 inherit flag-o-matic toolchain-funcs
 
@@ -20,9 +20,11 @@ RDEPEND="!static? ( ${LIB_DEPEND//\[static-libs(+)]} )
 	nls? ( virtual/libintl )
 	virtual/libiconv"
 DEPEND="${RDEPEND}
+	static? ( ${LIB_DEPEND} )"
+BDEPEND="
 	virtual/pkgconfig
 	nls? ( sys-devel/gettext )
-	static? ( ${LIB_DEPEND} )"
+"
 
 DOCS=( AUTHORS ChangeLog NEWS README THANKS TODO )
 
@@ -43,8 +45,10 @@ src_configure() {
 	export ac_cv_search_pcre_compile=$(
 		usex pcre "$($(tc-getPKG_CONFIG) --libs $(usex static --static '') libpcre)" ''
 	)
-	econf \
-		--bindir="${EPREFIX}"/bin \
-		$(use_enable nls) \
+	local myeconfargs=(
+		--bindir="${EPREFIX}"/bin
+		$(use_enable nls)
 		$(use_enable pcre perl-regexp)
+	)
+	econf "${myeconfargs[@]}"
 }
