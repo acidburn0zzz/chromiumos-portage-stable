@@ -26,6 +26,8 @@ DEPEND="sys-devel/autoconf"
 # avoid icon file collision bug #673880
 RDEPEND="!!<app-editors/gvim-8.1.0648"
 PDEPEND="!minimal? ( app-vim/gentoo-syntax )"
+# ncurses is required for it to build [OVER-6733]
+DEPEND="${DEPEND} sys-libs/ncurses"
 
 S=${WORKDIR}/vim-${PV}
 
