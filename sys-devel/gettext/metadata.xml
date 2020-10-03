@@ -16,6 +16,6 @@
 	</flag>
 </use>
 <upstream>
-	<remote-id type="cpe">cpe:/a:gnu:texinfo</remote-id>
+	<remote-id type="cpe">cpe:/a:gnu:gettext</remote-id>
 </upstream>
 </pkgmetadata>
