@@ -1,0 +1,15 @@
+DEFINED_PHASES=configure install postinst prepare setup test
+DEPEND=>=app-portage/elt-patches-20170815 !<sys-devel/gettext-0.18.1.1-r3 || ( >=sys-devel/automake-1.16.1:1.16 >=sys-devel/automake-1.15.1:1.15 ) >=sys-devel/autoconf-2.69 >=sys-devel/libtool-2.4 virtual/pkgconfig sys-apps/baselayout
+DESCRIPTION=A lightweight HTTP/SSL proxy
+EAPI=6
+HOMEPAGE=https://github.com/tinyproxy/tinyproxy/
+IUSE=test debug +filter-proxy reverse-proxy transparent-proxy +upstream-proxy +xtinyproxy-header
+KEYWORDS=*
+LICENSE=GPL-2
+RDEPEND=virtual/tmpfiles sys-apps/baselayout
+REQUIRED_USE=test? ( xtinyproxy-header )
+RESTRICT=!test? ( test )
+SLOT=0
+SRC_URI=https://github.com/tinyproxy/tinyproxy/releases/download/1.10.0/tinyproxy-1.10.0.tar.xz
+_eclasses_=autotools	d0e5375d47f4c809f406eb892e531513	libtool	f143db5a74ccd9ca28c1234deffede96	multilib	2477ebe553d3e4d2c606191fe6c33602	systemd	71fd8d2065d102753fb9e4d20eaf3e9f	tmpfiles	6170dc7770585fb3f16efdee789a3218	toolchain-funcs	605c126bed8d87e4378d5ff1645330cb	user	7c566af8c48023219fd63246e88d6621
+_md5_=e96bfff100efad6323febcc0d7faf80e
