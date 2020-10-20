@@ -11,5 +11,5 @@ RDEPEND=emacs? ( app-editors/emacs:* ) zlib? ( sys-libs/zlib[abi_x86_32(-)?,abi_
 RESTRICT=!test? ( test )
 SLOT=0/22
 SRC_URI=https://github.com/protocolbuffers/protobuf/archive/v3.11.4.tar.gz -> protobuf-3.11.4.tar.gz
-_eclasses_=autotools	d0e5375d47f4c809f406eb892e531513	elisp-common	3322f14f031ddc95feccd9089c9adc59	eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	libtool	f143db5a74ccd9ca28c1234deffede96	multibuild	40fe59465edacd730c644ec2bc197809	multilib	2477ebe553d3e4d2c606191fe6c33602	multilib-build	1979aa0ff4d356d32507ca4650d9f37d	multilib-minimal	8bddda43703ba94d8341f4e247f97566	toolchain-funcs	605c126bed8d87e4378d5ff1645330cb
+_eclasses_=autotools	d0e5375d47f4c809f406eb892e531513	elisp-common	3322f14f031ddc95feccd9089c9adc59	eutils	fcb2aa98e1948b835b5ae66ca52868c5	flag-o-matic	5d5921a298e95441da2f85be419894c0	libtool	f143db5a74ccd9ca28c1234deffede96	multibuild	40fe59465edacd730c644ec2bc197809	multilib	2477ebe553d3e4d2c606191fe6c33602	multilib-build	1979aa0ff4d356d32507ca4650d9f37d	multilib-minimal	8bddda43703ba94d8341f4e247f97566	toolchain-funcs	605c126bed8d87e4378d5ff1645330cb
 _md5_=6caadd8a988ac6097ac55e25cf45e4c2
