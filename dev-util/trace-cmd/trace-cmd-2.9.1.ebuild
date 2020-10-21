@@ -1,11 +1,11 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-PYTHON_COMPAT=( python2_7 python3_{6,7} )
+PYTHON_COMPAT=( python3_{6,7,8,9} )
 DISTUTILS_OPTIONAL=1
 
-inherit linux-info python-r1 toolchain-funcs
+inherit linux-info bash-completion-r1 python-r1 toolchain-funcs
 
 DESCRIPTION="User-space front-end for Ftrace"
 HOMEPAGE="https://git.kernel.org/cgit/linux/kernel/git/rostedt/trace-cmd.git"
@@ -21,33 +21,43 @@ fi
 
 LICENSE="GPL-2+ LGPL-2.1+"
 SLOT="0/${PV}"
-IUSE="+audit doc python udis86"
+IUSE="+audit doc python test udis86"
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
+RESTRICT="!test? ( test )"
 
-RDEPEND="audit? ( sys-process/audit )
+RDEPEND="
+	audit? ( sys-process/audit )
 	python? ( ${PYTHON_DEPS} )
-	udis86? ( dev-libs/udis86 )"
+	udis86? ( dev-libs/udis86 )
+"
 DEPEND="${RDEPEND}
 	sys-kernel/linux-headers
+	test? ( dev-util/cunit )
+"
+BDEPEND="
 	python? (
 		virtual/pkgconfig
 		dev-lang/swig
 	)
+	doc? ( app-text/asciidoc )
+"
 
-	doc? ( app-text/asciidoc )"
-
-CONFIG_CHECK="
-	~TRACING
-	~FTRACE
-	~BLK_DEV_IO_TRACE"
-
-PATCHES=(
-	"${FILESDIR}/trace-cmd-2.8-python-pkgconfig-name.patch"
-	"${FILESDIR}/trace-cmd-2.8.3-soname.patch"
-)
+# having trouble getting tests to compile
+RESTRICT+=" test"
 
 pkg_setup() {
+	local CONFIG_CHECK="
+		~TRACING
+		~FTRACE
+		~BLK_DEV_IO_TRACE"
+
 	linux-info_pkg_setup
+}
+
+src_prepare() {
+	default
+	sed -r -e 's:([[:space:]]+)install_bash_completion($|[[:space:]]+):\1:' \
+		-i Makefile || die "sed failed"
 }
 
 src_configure() {
@@ -57,8 +67,11 @@ src_configure() {
 		"libdir=${EPREFIX}/usr/$(get_libdir)"
 		"CC=$(tc-getCC)"
 		"AR=$(tc-getAR)"
-		$(usex audit '' '' '' 'NO_AUDIT=1')
-		$(usex udis86 '' '' '' 'NO_UDIS86=1')
+		"BASH_COMPLETE_DIR=$(get_bashcompdir)"
+		"etcdir=/etc"
+		$(usex audit '' 'NO_AUDIT=' '' '1')
+		$(usex test 'CUNIT_INSTALLED=' '' '1' '')
+		$(usex udis86 '' 'NO_UDIS86=' '' '1')
 		VERBOSE=1
 	)
 }
@@ -77,21 +90,26 @@ src_compile() {
 
 python_compile() {
 	pushd "${BUILD_DIR}" > /dev/null || die
-	python_is_python3 && eapply "${FILESDIR}/trace-cmd-2.8.3-python3-warnings.patch"
 
 	emake "${EMAKE_FLAGS[@]}" \
 		PYTHON_VERS="${EPYTHON}" \
 		PYTHON_PKGCONFIG_VERS="${EPYTHON//python/python-}" \
 		python_dir=$(python_get_sitedir)/${PN} \
-		python python-plugin
+		python ctracecmd.so
 
 	popd > /dev/null || die
+}
+
+src_test() {
+	emake "${EMAKE_FLAGS[@]}" test
 }
 
 src_install() {
 	emake "${EMAKE_FLAGS[@]}" NO_PYTHON=1 \
 		DESTDIR="${D}" \
 		install install_libs
+
+	newbashcomp tracecmd/trace-cmd.bash "${PN}"
 
 	use doc && emake DESTDIR="${D}" install_doc
 	use python && python_foreach_impl python_install
@@ -107,4 +125,6 @@ python_install() {
 		install_python
 
 	popd > /dev/null || die
+
+	python_optimize
 }
