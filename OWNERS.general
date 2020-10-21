@@ -7,6 +7,7 @@ ebuild-reviews@google.com
 allenwebb@google.com
 bmgordon@chromium.org
 chirantan@chromium.org
+jrosenth@chromium.org
 manojgupta@chromium.org
 
 include chromiumos/chromite:/OWNERS.build
