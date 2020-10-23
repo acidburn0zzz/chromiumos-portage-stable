@@ -1,10 +1,10 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 VALA_USE_DEPEND="vapigen"
 
-inherit gnome.org meson vala
+inherit gnome.org meson vala xdg
 
 DESCRIPTION="Library and tool for working with Microsoft Cabinet (CAB) files"
 HOMEPAGE="https://wiki.gnome.org/msitools"
@@ -17,11 +17,13 @@ IUSE="gtk-doc +introspection test vala"
 REQUIRED_USE="vala? ( introspection )"
 
 RDEPEND="
-	>=dev-libs/glib-2.44:2
+	>=dev-libs/glib-2.62.0:2
 	sys-libs/zlib
 	introspection? ( >=dev-libs/gobject-introspection-1.54:= )
 "
-DEPEND="${RDEPEND}
+DEPEND="${RDEPEND}"
+BDEPEND="
+	>=dev-util/meson-0.50.0
 	dev-util/glib-utils
 	gtk-doc? ( >=dev-util/gtk-doc-1.14
 		app-text/docbook-xml-dtd:4.3 )
@@ -32,19 +34,19 @@ DEPEND="${RDEPEND}
 
 RESTRICT="!test? ( test )"
 
-PATCHES=( "${FILESDIR}"/${PV}-optional-vapi.patch ) # https://gitlab.gnome.org/GNOME/gcab/merge_requests/1
-
 src_prepare() {
+	xdg_src_prepare
 	use vala && vala_src_prepare
-	default
 }
 
 src_configure() {
 	local emesonargs=(
 		$(meson_use gtk-doc docs)
 		$(meson_use introspection)
+		-Dnls=true
 		$(meson_use vala vapi)
 		$(meson_use test tests)
+		-Dinstalled_tests=false
 	)
 	meson_src_configure
 }

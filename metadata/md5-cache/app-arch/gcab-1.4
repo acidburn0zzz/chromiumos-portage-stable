@@ -1,0 +1,16 @@
+BDEPEND=>=dev-util/meson-0.50.0 dev-util/glib-utils gtk-doc? ( >=dev-util/gtk-doc-1.14 app-text/docbook-xml-dtd:4.3 ) >=sys-devel/gettext-0.19.8 virtual/pkgconfig vala? ( || ( dev-lang/vala:0.36[vapigen(+)] dev-lang/vala:0.34[vapigen(+)] dev-lang/vala:0.32[vapigen(+)] ) ) app-arch/xz-utils >=dev-util/meson-0.48.2 >=dev-util/ninja-1.7.2
+DEFINED_PHASES=compile configure install postinst postrm preinst prepare test
+DEPEND=>=dev-libs/glib-2.62.0:2 sys-libs/zlib introspection? ( >=dev-libs/gobject-introspection-1.54:= ) dev-util/desktop-file-utils x11-misc/shared-mime-info
+DESCRIPTION=Library and tool for working with Microsoft Cabinet (CAB) files
+EAPI=7
+HOMEPAGE=https://wiki.gnome.org/msitools
+IUSE=gtk-doc +introspection test vala
+KEYWORDS=*
+LICENSE=LGPL-2.1+
+RDEPEND=>=dev-libs/glib-2.62.0:2 sys-libs/zlib introspection? ( >=dev-libs/gobject-introspection-1.54:= )
+REQUIRED_USE=vala? ( introspection )
+RESTRICT=!test? ( test )
+SLOT=0
+SRC_URI=mirror://gnome/sources/gcab/1.4/gcab-1.4.tar.xz
+_eclasses_=eutils	fcb2aa98e1948b835b5ae66ca52868c5	gnome.org	532d56d07b9eace4831aaa817d2b756a	meson	b5ee7a05833ab91225acf30ffdeed006	multilib	2477ebe553d3e4d2c606191fe6c33602	multiprocessing	e32940a7b2a9992ad217eccddb84d548	ninja-utils	132cbb376048d079b5a012f5467c4e7f	python-utils-r1	157a6a7a3e99c7dbdf81acc9dd4f57cd	toolchain-funcs	605c126bed8d87e4378d5ff1645330cb	vala	2f3804278870542119da624a5eded505	xdg	c7ba313ea1eaf266f95cc6235f7d6a07	xdg-utils	ff2ff954e6b17929574eee4efc5152ba
+_md5_=88c830e3b9ac09e7135abe5d12d690f0
