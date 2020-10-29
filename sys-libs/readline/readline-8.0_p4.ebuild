@@ -41,7 +41,7 @@ esac
 
 LICENSE="GPL-3"
 SLOT="0/8"  # subslot matches SONAME major
-KEYWORDS="*"
+KEYWORDS="~*"
 IUSE="static-libs +unicode utils"
 
 RDEPEND=">=sys-libs/ncurses-5.9-r3:0=[static-libs?,unicode?,${MULTILIB_USEDEP}]"
