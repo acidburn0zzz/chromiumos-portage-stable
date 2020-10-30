@@ -3,7 +3,7 @@
 # $Header: /var/cvsroot/gentoo-x86/media-libs/libsndfile/libsndfile-1.0.25.ebuild,v 1.7 2011/09/27 19:39:02 ssuominen Exp $
 
 EAPI=4
-inherit autotools eutils flag-o-matic multilib
+inherit autotools epunt-cxx eutils flag-o-matic multilib
 
 MY_P=${P/_pre/pre}
 
