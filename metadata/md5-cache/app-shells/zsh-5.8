@@ -1,0 +1,15 @@
+BDEPEND=>=app-portage/elt-patches-20170815
+DEFINED_PHASES=compile configure install postinst prepare test
+DEPEND=sys-apps/groff >=sys-libs/ncurses-5.1:0= static? ( >=sys-libs/ncurses-5.7-r4:0=[static-libs] ) caps? ( sys-libs/libcap ) pcre? ( >=dev-libs/libpcre-3.9 static? ( >=dev-libs/libpcre-3.9[static-libs] ) ) gdbm? ( sys-libs/gdbm:= ) !<sys-apps/baselayout-2.4.1 !<sys-devel/gettext-0.18.1.1-r3 || ( >=sys-devel/automake-1.16.1:1.16 >=sys-devel/automake-1.15.1:1.15 ) >=sys-devel/autoconf-2.69 >=sys-devel/libtool-2.4
+DESCRIPTION=UNIX Shell similar to the Korn shell
+EAPI=7
+HOMEPAGE=https://www.zsh.org/
+IUSE=caps debug doc examples gdbm maildir pcre static unicode
+KEYWORDS=*
+LICENSE=ZSH gdbm? ( GPL-2 )
+PDEPEND=examples? ( app-doc/zsh-lovers )
+RDEPEND=>=sys-libs/ncurses-5.1:0= static? ( >=sys-libs/ncurses-5.7-r4:0=[static-libs] ) caps? ( sys-libs/libcap ) pcre? ( >=dev-libs/libpcre-3.9 static? ( >=dev-libs/libpcre-3.9[static-libs] ) ) gdbm? ( sys-libs/gdbm:= ) !<sys-apps/baselayout-2.4.1
+SLOT=0
+SRC_URI=https://www.zsh.org/pub/zsh-5.8.tar.xz https://www.zsh.org/pub/old/zsh-5.8.tar.xz mirror://sourceforge/zsh/zsh-5.8.tar.xz doc? ( https://www.zsh.org/pub/zsh-5.8-doc.tar.xz mirror://sourceforge/zsh/zsh-5.8-doc.tar.xz )
+_eclasses_=autotools	d0e5375d47f4c809f406eb892e531513	eutils	fcb2aa98e1948b835b5ae66ca52868c5	flag-o-matic	5d5921a298e95441da2f85be419894c0	libtool	f143db5a74ccd9ca28c1234deffede96	multilib	2477ebe553d3e4d2c606191fe6c33602	prefix	e51c7882b7b721e54e684f7eb143cbfe	toolchain-funcs	605c126bed8d87e4378d5ff1645330cb
+_md5_=f9a57dcba75a3f0f1dc3571a99320bb3
