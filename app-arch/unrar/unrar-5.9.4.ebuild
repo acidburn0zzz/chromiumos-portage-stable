@@ -1,7 +1,7 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="6"
+EAPI=7
 
 inherit flag-o-matic multilib toolchain-funcs
 
@@ -19,10 +19,10 @@ IUSE=""
 
 RDEPEND="!<=app-arch/unrar-gpl-0.0.1_p20080417"
 
-S=${WORKDIR}/unrar
+S="${WORKDIR}/unrar"
 
 PATCHES=(
-	"${FILESDIR}"/${PN}-5.5.5-build.patch
+	"${FILESDIR}"/${PN}-5.9.3-build.patch
 	"${FILESDIR}"/${PN}-5.5.5-honor-flags.patch
 )
 
@@ -46,7 +46,7 @@ src_configure() {
 
 src_compile() {
 	unrar_make() {
-		emake CXX="$(tc-getCXX)" CXXFLAGS="${CXXFLAGS}" STRIP=true "$@"
+		emake AR="$(tc-getAR)" CXX="$(tc-getCXX)" CXXFLAGS="${CXXFLAGS}" STRIP=true "$@"
 	}
 
 	unrar_make CXXFLAGS+=" -fPIC" -C build-lib lib
@@ -66,5 +66,5 @@ src_install() {
 	doins *.hpp
 	dosym libunrar${PV%.*.*} /usr/include/libunrar
 
-	find "${ED}" -name "*.a" -delete || die
+	find "${ED}" -type f -name "*.a" -delete || die
 }
