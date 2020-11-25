@@ -1,8 +1,0 @@
-DEFINED_PHASES=-
-DEPEND=|| ( dev-util/pkgconfig dev-util/pkg-config-lite dev-util/pkgconf[pkg-config] dev-util/pkgconfig-openbsd[pkg-config] )
-DESCRIPTION=virtual for pkg-config
-EAPI=2
-KEYWORDS=*
-RDEPEND=|| ( dev-util/pkgconfig dev-util/pkg-config-lite dev-util/pkgconf[pkg-config] dev-util/pkgconfig-openbsd[pkg-config] )
-SLOT=0
-_md5_=6a47bc72528abe759ccc678f35b814da
