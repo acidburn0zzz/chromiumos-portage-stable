@@ -5,11 +5,4 @@
 		<email>base-system@gentoo.org</email>
 		<name>Gentoo Base System</name>
 	</maintainer>
-	<use>
-		<flag name="perl">Install the ebtables-save script which uses perl</flag>
-	</use>
-	<upstream>
-		<remote-id type="sourceforge">ebtables</remote-id>
-		<remote-id type="cpe">cpe:/a:netfilter:ebtables</remote-id>
-	</upstream>
 </pkgmetadata>

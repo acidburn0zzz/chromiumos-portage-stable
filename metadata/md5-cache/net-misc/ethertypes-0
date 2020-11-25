@@ -1,0 +1,10 @@
+DEFINED_PHASES=install
+DESCRIPTION=Maps ethernet frame ids to symbolic names
+EAPI=6
+HOMEPAGE=https://netfilter.org/
+KEYWORDS=*
+LICENSE=GPL-2
+RDEPEND=!<net-firewall/ebtables-2.0.10.4-r2 !<net-firewall/iptables-1.6.2-r2[nftables(-)]
+SLOT=0
+SRC_URI=https://dev.gentoo.org/~floppym/dist/ethertypes-0.gz
+_md5_=11ca64c55fa54af2c39cf1cbf04706bb
