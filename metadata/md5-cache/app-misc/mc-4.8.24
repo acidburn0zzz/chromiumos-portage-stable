@@ -11,5 +11,5 @@ REQUIRED_USE=spell? ( edit )
 RESTRICT=!test? ( test )
 SLOT=0
 SRC_URI=http://ftp.midnight-commander.org/mc-4.8.24.tar.xz
-_eclasses_=eutils	06133990e861be0fe60c2b428fd025d9	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	b2f01ad412baf81650c23fcf0975fa33	toolchain-funcs	209edad4a5c4812e7b2f8021650974f0
+_eclasses_=eutils	fcb2aa98e1948b835b5ae66ca52868c5	flag-o-matic	5d5921a298e95441da2f85be419894c0	multilib	2477ebe553d3e4d2c606191fe6c33602	toolchain-funcs	605c126bed8d87e4378d5ff1645330cb
 _md5_=ed8f6accdd6c6214841a2c7ba38d2fe2
