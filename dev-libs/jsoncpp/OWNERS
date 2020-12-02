@@ -1,0 +1,7 @@
+# These projects use this library.
+include chromiumos/platform/gestures:/OWNERS
+
+# DriveFS.
+dats@google.com
+sammc@chromium.org
+slangley@chromium.org
