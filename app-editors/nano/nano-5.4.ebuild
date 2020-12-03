@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -18,7 +18,7 @@ HOMEPAGE="https://www.nano-editor.org/ https://wiki.gentoo.org/wiki/Nano/Basics_
 
 LICENSE="GPL-3"
 SLOT="0"
-IUSE="debug justify +magic minimal ncurses nls slang +spell +split-usr static unicode"
+IUSE="debug justify magic minimal ncurses nls slang +spell +split-usr static unicode"
 
 LIB_DEPEND=">=sys-libs/ncurses-5.9-r1:0=[unicode?]
 	sys-libs/ncurses:0=[static-libs(+)]
@@ -32,6 +32,12 @@ BDEPEND="
 	nls? ( sys-devel/gettext )
 	virtual/pkgconfig
 "
+
+REQUIRED_USE="
+	!ncurses? ( slang? ( minimal ) )
+	magic? ( !minimal )
+"
+
 src_prepare() {
 	default
 	if [[ ${PV} == "9999" ]] ; then
@@ -74,6 +80,12 @@ src_install() {
 		sed -i \
 			-e '/^# include /s:# *::' \
 			"${ED}"/etc/nanorc || die
+
+		# Since nano-5.0 these are no longer being "enabled" by default
+		# (bug #736848)
+		local rcdir="/usr/share/nano"
+		mv "${ED}"${rcdir}/extra/* "${ED}"/${rcdir}/ || die
+		rmdir "${ED}"${rcdir}/extra || die
 	fi
 
 	use split-usr && dosym ../../bin/nano /usr/bin/nano
