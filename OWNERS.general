@@ -4,6 +4,8 @@
 ebuild-reviews@google.com
 
 # Individual reviewers if needed.
+# When adding/removing people here, remember to update the gwsq group:
+# http://g/ebuild-reviews
 allenwebb@google.com
 bmgordon@chromium.org
 chirantan@chromium.org
