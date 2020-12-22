@@ -1,9 +1,9 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
-inherit flag-o-matic toolchain-funcs
+inherit autotools flag-o-matic toolchain-funcs
 
 if [[ ${PV} == "9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/strace/strace.git"
@@ -18,9 +18,17 @@ HOMEPAGE="https://strace.io/"
 
 LICENSE="BSD"
 SLOT="0"
-IUSE="aio perl static unwind"
+IUSE="aio perl static unwind elfutils"
 
-LIB_DEPEND="unwind? ( sys-libs/libunwind[static-libs(+)] )"
+REQUIRED_USE="?? ( unwind elfutils )"
+
+BDEPEND="
+	virtual/pkgconfig
+"
+LIB_DEPEND="
+	unwind? ( sys-libs/libunwind[static-libs(+)] )
+	elfutils? ( dev-libs/elfutils[static-libs(+)] )
+"
 # strace only uses the header from libaio to decode structs
 DEPEND="
 	static? ( ${LIB_DEPEND} )
@@ -32,20 +40,24 @@ RDEPEND="
 	perl? ( dev-lang/perl )
 "
 
+PATCHES=(
+	"${FILESDIR}/strace-5.5-static.patch"
+)
+
 src_prepare() {
 	default
 
+	eautoreconf
+
 	if [[ ! -e configure ]] ; then
 		# git generation
-		./xlat/gen.sh || die
-		./generate_mpers_am.sh || die
+		sed /autoreconf/d -i bootstrap || die
+		./bootstrap || die
 		eautoreconf
 		[[ ! -e CREDITS ]] && cp CREDITS{.in,}
 	fi
 
 	filter-lfs-flags # configure handles this sanely
-	# Add -pthread since strace wants -lrt for timer_create, and -lrt uses -lpthread.
-	use static && append-ldflags -static -pthread
 
 	export ac_cv_header_libaio_h=$(usex aio)
 	use elibc_musl && export ac_cv_header_stdc=no
@@ -64,13 +76,18 @@ src_configure() {
 	done
 
 	# Don't require mpers support on non-multilib systems. #649560
-	econf \
-		--enable-mpers=check \
+	local myeconfargs=(
+		--disable-gcc-Werror
+		--enable-mpers=check
+		$(use_enable static)
 		$(use_with unwind libunwind)
+		$(use_with elfutils libdw)
+	)
+	econf "${myeconfargs[@]}"
 }
 
 src_test() {
-	if has usersandbox $FEATURES ; then
+	if has usersandbox ${FEATURES} ; then
 		ewarn "Test suite is known to fail with FEATURES=usersandbox -- skipping ..." #643044
 		return 0
 	fi
@@ -80,6 +97,8 @@ src_test() {
 
 src_install() {
 	default
-	use perl || rm "${ED%/}"/usr/bin/strace-graph
+	if ! use perl ; then
+		rm "${ED}"/usr/bin/strace-graph || die
+	fi
 	dodoc CREDITS
 }
