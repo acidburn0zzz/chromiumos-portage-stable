@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-PYTHON_COMPAT=( python3_{6,7,8} )
+PYTHON_COMPAT=( python3_{6,7,8,9} )
 DISTUTILS_USE_SETUPTOOLS="rdepend"
 
 if [[ ${PV} = *9999* ]]; then
@@ -33,10 +33,6 @@ DEPEND="
 		virtual/pkgconfig
 	)
 "
-
-PATCHES=(
-	"${FILESDIR}"/0.54.2-multilib-clang.patch
-)
 
 python_prepare_all() {
 	local disable_unittests=(
