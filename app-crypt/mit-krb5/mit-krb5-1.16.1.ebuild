@@ -3,7 +3,7 @@
 
 EAPI=6
 
-PYTHON_COMPAT=( python2_7 )
+PYTHON_COMPAT=( python3_{6..9} )
 inherit autotools flag-o-matic multilib-minimal python-any-r1 systemd versionator
 
 MY_P="${P/mit-}"
