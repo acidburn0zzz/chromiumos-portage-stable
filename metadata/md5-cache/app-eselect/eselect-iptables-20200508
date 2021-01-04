@@ -1,0 +1,10 @@
+DEFINED_PHASES=install
+DESCRIPTION=Manages the {,/usr}/sbin/iptables symlink
+EAPI=7
+HOMEPAGE=https://wiki.gentoo.org/wiki/No_homepage
+KEYWORDS=*
+LICENSE=GPL-2
+RDEPEND=app-admin/eselect
+SLOT=0
+SRC_URI=https://dev.gentoo.org/~chutzpah/dist/iptables/eselect-iptables-20200508.tar.xz
+_md5_=da37f717dbe22154c5ea4a01cacde14b

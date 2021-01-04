@@ -1,0 +1,11 @@
+DEFINED_PHASES=install postinst postrm preinst
+DESCRIPTION=DSSSL Stylesheets for DocBook
+EAPI=7
+HOMEPAGE=https://github.com/docbook/wiki/wiki
+KEYWORDS=*
+LICENSE=MIT
+RDEPEND=app-text/docbook-sgml-dtd:3.0 >=app-text/sgml-common-0.6.3-r7
+SLOT=0
+SRC_URI=https://downloads.sourceforge.net/project/docbook/docbook-dsssl/1.79/docbook-dsssl-1.79.tar.bz2
+_eclasses_=sgml-catalog-r1	e6ff98989cdecb4311b67afb96edb6f8
+_md5_=3407d96c5691506b032f7dfb75c58d3d

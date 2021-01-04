@@ -1,0 +1,10 @@
+DEFINED_PHASES=install postinst postrm preinst prepare
+DESCRIPTION=Base ISO character entities and utilities for SGML
+EAPI=7
+HOMEPAGE=https://www.iso.org/standard/16387.html
+KEYWORDS=*
+LICENSE=FDL-1.1+ GPL-2
+SLOT=0
+SRC_URI=https://dev.gentoo.org/~floppym/dist/sgml-common/sgml-common-0.6.3-gentoo.tar.gz
+_eclasses_=prefix	e51c7882b7b721e54e684f7eb143cbfe	sgml-catalog-r1	e6ff98989cdecb4311b67afb96edb6f8
+_md5_=e6dfba05e0cd5b7de669b8084c9fd1ca
