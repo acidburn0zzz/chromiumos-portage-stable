@@ -13,7 +13,7 @@ LICENSE="curl"
 SLOT="0"
 #KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~ppc-aix ~x64-cygwin ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~m68k-mint ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris"
 KEYWORDS="*"
-IUSE="adns alt-svc brotli +ftp gnutls gopher +http2 idn +imap ipv6 kerberos ldap libressl mbedtls metalink nss +openssl +pop3 +progress-meter rtmp samba +smtp ssh ssl static-libs test telnet +tftp threads winssl"
+IUSE="adns alt-svc brotli +ftp gnutls gopher hsts +http2 idn +imap ipv6 kerberos ldap libressl mbedtls metalink nss +openssl +pop3 +progress-meter rtmp samba +smtp ssh ssl static-libs test telnet +tftp threads winssl zstd"
 IUSE+=" curl_ssl_gnutls curl_ssl_libressl curl_ssl_mbedtls curl_ssl_nss +curl_ssl_openssl curl_ssl_winssl"
 IUSE+=" nghttp3 quiche"
 IUSE+=" elibc_Winnt"
@@ -54,7 +54,8 @@ RDEPEND="ldap? ( net-nds/openldap[${MULTILIB_USEDEP}] )
 	metalink? ( >=media-libs/libmetalink-0.1.1[${MULTILIB_USEDEP}] )
 	rtmp? ( media-video/rtmpdump[${MULTILIB_USEDEP}] )
 	ssh? ( net-libs/libssh2[${MULTILIB_USEDEP}] )
-	sys-libs/zlib[${MULTILIB_USEDEP}]"
+	sys-libs/zlib[${MULTILIB_USEDEP}]
+	zstd? ( app-arch/zstd:=[${MULTILIB_USEDEP}] )"
 
 # Do we need to enforce the same ssl backend for curl and rtmpdump? Bug #423303
 #	rtmp? (
@@ -89,8 +90,8 @@ REQUIRED_USE="
 		)
 	)"
 
-DOCS=( CHANGES README docs/FEATURES docs/INTERNALS.md \
-	docs/FAQ docs/BUGS docs/CONTRIBUTE.md )
+DOCS=( CHANGES README docs/FEATURES.md docs/INTERNALS.md \
+	docs/FAQ docs/BUGS.md docs/CONTRIBUTE.md )
 
 MULTILIB_WRAPPED_HEADERS=(
 	/usr/include/curl/curlbuild.h
@@ -185,15 +186,15 @@ multilib_src_configure() {
 		$(use_enable alt-svc) \
 		--enable-crypto-auth \
 		--enable-dict \
-		--disable-esni \
+		--disable-ech \
 		--enable-file \
 		$(use_enable ftp) \
 		$(use_enable gopher) \
+		$(use_enable hsts) \
 		--enable-http \
 		$(use_enable imap) \
 		$(use_enable ldap) \
 		$(use_enable ldap ldaps) \
-		--disable-mqtt \
 		--disable-ntlm-wb \
 		$(use_enable pop3) \
 		--enable-rt  \
@@ -244,6 +245,7 @@ multilib_src_configure() {
 		--without-winidn \
 		--without-wolfssl \
 		--with-zlib \
+		$(use_with zstd) \
 		"${myconf[@]}"
 
 	if ! multilib_is_native_abi; then
