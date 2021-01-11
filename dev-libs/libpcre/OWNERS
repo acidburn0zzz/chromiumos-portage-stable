@@ -1,4 +1,2 @@
 # These projects use this library.
 include chromiumos/platform2:/authpolicy/OWNERS
-include chromiumos/platform2:/crash-reporter/OWNERS
-include chromiumos/platform2:/metrics/OWNERS
