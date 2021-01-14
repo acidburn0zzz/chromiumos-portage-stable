@@ -1,0 +1,15 @@
+BDEPEND=virtual/pkgconfig >=app-portage/elt-patches-20170815
+DEFINED_PHASES=configure install prepare test
+DEPEND=static? ( unwind? ( sys-libs/libunwind[static-libs(+)] ) elfutils? ( dev-libs/elfutils[static-libs(+)] ) ) aio? ( >=dev-libs/libaio-0.3.106 ) sys-kernel/linux-headers !<sys-devel/gettext-0.18.1.1-r3 || ( >=sys-devel/automake-1.16.1:1.16 >=sys-devel/automake-1.15.1:1.15 ) >=sys-devel/autoconf-2.69 >=sys-devel/libtool-2.4
+DESCRIPTION=A useful diagnostic, instructional, and debugging tool
+EAPI=7
+HOMEPAGE=https://strace.io/
+IUSE=aio perl static unwind elfutils
+KEYWORDS=*
+LICENSE=BSD
+RDEPEND=!static? ( unwind? ( sys-libs/libunwind ) elfutils? ( dev-libs/elfutils ) ) perl? ( dev-lang/perl )
+REQUIRED_USE=?? ( unwind elfutils )
+SLOT=0
+SRC_URI=https://github.com/strace/strace/releases/download/v5.8/strace-5.8.tar.xz
+_eclasses_=autotools	d0e5375d47f4c809f406eb892e531513	eutils	fcb2aa98e1948b835b5ae66ca52868c5	flag-o-matic	5d5921a298e95441da2f85be419894c0	libtool	f143db5a74ccd9ca28c1234deffede96	multilib	2477ebe553d3e4d2c606191fe6c33602	toolchain-funcs	605c126bed8d87e4378d5ff1645330cb
+_md5_=3ba65cb08baf363a4e0bc6a9068b5f4b
